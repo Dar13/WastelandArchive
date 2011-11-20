@@ -12,7 +12,7 @@ class StateManager : public Ogre::Singleton<StateManager>
 {
 public:
 	StateManager();
-	~StateManger(){Shutdown();}
+	~StateManager(){Shutdown();}
 
 	//StateManager status functions.
 	void Setup();
