@@ -19,14 +19,13 @@ public:
 
 	//Ogre Functions
 	//Adds resource locations held in the 
-	void addResources(std::vector<Ogre::String> &resourceLocations);
+	bool addResources(std::vector<Ogre::String> &location,std::vector<Ogre::String> &type,std::vector<Ogre::String> &name);
 
 	//Getting the Ogre pointers.
 	Ogre::Root* getRoot(){return _Root;}
 	Ogre::RenderWindow* getRenderWindow(){return _Window;}
 	unsigned long getWindowHandle(){return _windowHandle;}
 	Ogre::Log* getLog(){return _Log;}
-	Ogre::SceneManager* getSceneManager(){return _Scene;}
 	Ogre::Timer* getTimer(){return _Timer;}
 	
 
@@ -40,7 +39,6 @@ private:
 	Ogre::RenderWindow* _Window;
 	unsigned long _windowHandle;
 	Ogre::Log* _Log;
-	Ogre::SceneManager* _Scene;
 	Ogre::Timer* _Timer;
 };
 

@@ -7,7 +7,6 @@ OgreManager::OgreManager()
 	_Root=0;
 	_Window=0;
 	_Log=0;
-	_Scene=0;
 	_Timer=0;
 }
 
@@ -65,6 +64,36 @@ bool OgreManager::Setup()
 	{
 		retVal = false;
 		MessageBoxA(NULL,e.getFullDescription().c_str(),"EXCEPTION!",MB_OK | MB_ICONERROR);
+	}
+
+	return retVal;
+}
+
+bool OgreManager::addResources(std::vector<Ogre::String> &location,std::vector<Ogre::String> &type,std::vector<Ogre::String> &name)
+{
+	//return value
+	bool retVal=true;
+
+	//Invalid inputs
+	if(location.size()!=type.size() || location.size()!=name.size())
+	{
+		return false;
+	}
+
+	//Let's make sure this doesn't crash the program eh?
+	try
+	{
+		for(unsigned int i=0; i<location.size(); i++)
+		{
+			Ogre::ResourceGroupManager::getSingleton().addResourceLocation(location[i],type[i],name[i]);
+		}
+		//Initialise resource groups after adding them.
+		Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+	}
+	catch(Ogre::Exception& e)
+	{
+		OutputDebugString(e.getFullDescription().c_str());
+		retVal=false;
 	}
 
 	return retVal;
