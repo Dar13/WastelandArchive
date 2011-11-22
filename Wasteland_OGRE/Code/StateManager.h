@@ -4,6 +4,9 @@
 //Base state header, just for the heck of it.
 #include "State.h"
 
+//actual states
+#include "ArenaALL.h"
+
 #include <OgreSingleton.h>
 
 #include <map>

@@ -16,6 +16,9 @@
     <Filter Include="Include Files\State">
       <UniqueIdentifier>{cfe84787-90f9-40a7-bc38-b68e46ab4718}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include Files\State\Arena">
+      <UniqueIdentifier>{18a5d19b-7538-44b1-9e80-ff3c48b84e96}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\State.h">
@@ -30,6 +33,15 @@
     <ClInclude Include="Code\OISManager.h">
       <Filter>Include Files</Filter>
     </ClInclude>
+    <ClInclude Include="Code\Arena_Locker.h">
+      <Filter>Include Files\State\Arena</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\Arena_Tutorial.h">
+      <Filter>Include Files\State\Arena</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\ArenaALL.h">
+      <Filter>Include Files\State\Arena</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">
@@ -43,6 +55,12 @@
     </ClCompile>
     <ClCompile Include="Code\Main.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\Arena_Tutorial.cpp">
+      <Filter>Include Files\State\Arena</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\Arena_Locker.cpp">
+      <Filter>Include Files\State\Arena</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

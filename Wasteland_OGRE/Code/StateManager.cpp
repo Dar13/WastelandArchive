@@ -8,7 +8,7 @@ StateManager::StateManager()
 	//Make sure these pointers don't get lost!
 
 	//ToDo: Change the init to reflect the varying state classes.
-	//_States.insert(std::make_pair(MENU,new State()));
+	_States.insert(std::make_pair(GAME_ARENA,new ArenaTutorial()));
 }
 
 void StateManager::Setup()
@@ -18,13 +18,15 @@ void StateManager::Setup()
 
 void StateManager::Run()
 {
-	int curState=MENU;
+	int curState=GAME_ARENA;
+	int oldState=curState;
 
 	while(curState!=END)
 	{
 		_States[curState]->Setup();
+		oldState=curState;
 		curState=_States[curState]->Run();
-		_States[curState]->Shutdown();
+		_States[oldState]->Shutdown();
 	}
 
 	return;

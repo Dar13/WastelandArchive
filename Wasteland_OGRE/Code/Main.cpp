@@ -1,5 +1,6 @@
 #include "OgreManager.h"
 #include "OISManager.h"
+#include "StateManager.h"
 
 //CEGUI includes
 #include <CEGUI.h>
@@ -25,20 +26,34 @@ int main(int argc, char **argv[])
 		return 1;
 	}
 
+	//testing out the new function I made for adding resources.
+	std::vector<Ogre::String> loc,typ,name;
+	loc.push_back("resource\\models");
+	typ.push_back("FileSystem");
+	name.push_back("Models");
+	loc.push_back("resources");
+	typ.push_back("FileSystem");
+	name.push_back("General");
+
+	ogre->addResources(loc,typ,name);
+
 	unsigned long hWnd;
 	ogre->getRenderWindow()->getCustomAttribute("WINDOW",&hWnd);
 
+	//Setup the input handler(OIS)
 	OISManager* ois = new OISManager(hWnd);
 
-	//Main loop
-	bool noErrors=true;
-	while(!ois->escapePressed() && noErrors)
-	{
-		ois->capture();
+	//Set up the state manager
+	StateManager* wtld = new StateManager();
+	wtld->Setup();
+	
+	//run the app.
+	wtld->Run();
 
-		noErrors=ogre->Render();
-	}
+	//delete state manager
+	delete wtld;
 
+	//delete interfaces for OIS and Ogre3D
 	delete ois;
 	delete ogre;
 
