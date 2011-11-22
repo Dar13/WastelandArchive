@@ -21,14 +21,21 @@ void ArenaTutorial::Setup()
 
 	_rootNode = _scene->getRootSceneNode();
 	//Load any entities you want to here.
-	Ogre::Entity* ast = _scene->createEntity("AST1","AST_01.mesh","Models");
-	Ogre::SceneNode* ast1 = _rootNode->createChildSceneNode("ast01");
-	ast1->attachObject(ast);
-	_entities.push_back(ast);
-	_nodes.push_back(ast1);
+	Ogre::Entity* temp = _scene->createEntity("level","test_level.mesh","Models");
+	Ogre::SceneNode* tempNode = _rootNode->createChildSceneNode("Level");
+	tempNode->attachObject(temp);
+	_nodes.push_back(tempNode);
+	_entities.push_back(temp);
+
+	//get the vertex/index data
+	size_t amtVertex,amtIndex;
+	Ogre::Vector3* vertices;
+	unsigned long* indices;
+
+	getMeshInformation(&temp->getMesh(),amtVertex,vertices,amtIndex,indices);
 
 	//Let's position the camera so we can see it.
-	_camera->setPosition(Ogre::Vector3(0,0,500));
+	_camera->setPosition(Ogre::Vector3(0,150,500));
 	_camera->lookAt(0,0,0);
 	//set the camera aspect ratio
 	_camera->setAspectRatio(4.0f/3.0f);

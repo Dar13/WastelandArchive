@@ -2,17 +2,58 @@
 Microsoft Visual Studio Solution File, Format Version 11.00
 # Visual Studio 2010
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Wasteland_OGRE", "Wasteland_OGRE\Wasteland_OGRE.vcxproj", "{D60155D7-408F-405C-B316-BB67F83EE7F5}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C666443C-4078-4BFE-A457-57C08F4D7260} = {C666443C-4078-4BFE-A457-57C08F4D7260}
+		{77063C3D-6AC2-4874-93B3-C19D35AB9639} = {77063C3D-6AC2-4874-93B3-C19D35AB9639}
+		{7D4B08E5-5813-456F-8A2F-4FAC7466E2F5} = {7D4B08E5-5813-456F-8A2F-4FAC7466E2F5}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BulletCollision", "E:\Bullet\src\BulletCollision\BulletCollision.vcxproj", "{C666443C-4078-4BFE-A457-57C08F4D7260}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "BulletDynamics", "E:\Bullet\src\BulletDynamics\BulletDynamics.vcxproj", "{77063C3D-6AC2-4874-93B3-C19D35AB9639}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "LinearMath", "E:\Bullet\src\LinearMath\LinearMath.vcxproj", "{7D4B08E5-5813-456F-8A2F-4FAC7466E2F5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
+		MinSizeRel|Win32 = MinSizeRel|Win32
 		Release|Win32 = Release|Win32
+		RelWithDebInfo|Win32 = RelWithDebInfo|Win32
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{D60155D7-408F-405C-B316-BB67F83EE7F5}.Debug|Win32.ActiveCfg = Debug|Win32
 		{D60155D7-408F-405C-B316-BB67F83EE7F5}.Debug|Win32.Build.0 = Debug|Win32
+		{D60155D7-408F-405C-B316-BB67F83EE7F5}.MinSizeRel|Win32.ActiveCfg = Release|Win32
+		{D60155D7-408F-405C-B316-BB67F83EE7F5}.MinSizeRel|Win32.Build.0 = Release|Win32
 		{D60155D7-408F-405C-B316-BB67F83EE7F5}.Release|Win32.ActiveCfg = Release|Win32
 		{D60155D7-408F-405C-B316-BB67F83EE7F5}.Release|Win32.Build.0 = Release|Win32
+		{D60155D7-408F-405C-B316-BB67F83EE7F5}.RelWithDebInfo|Win32.ActiveCfg = Release|Win32
+		{D60155D7-408F-405C-B316-BB67F83EE7F5}.RelWithDebInfo|Win32.Build.0 = Release|Win32
+		{C666443C-4078-4BFE-A457-57C08F4D7260}.Debug|Win32.ActiveCfg = Debug|Win32
+		{C666443C-4078-4BFE-A457-57C08F4D7260}.Debug|Win32.Build.0 = Debug|Win32
+		{C666443C-4078-4BFE-A457-57C08F4D7260}.MinSizeRel|Win32.ActiveCfg = MinSizeRel|Win32
+		{C666443C-4078-4BFE-A457-57C08F4D7260}.MinSizeRel|Win32.Build.0 = MinSizeRel|Win32
+		{C666443C-4078-4BFE-A457-57C08F4D7260}.Release|Win32.ActiveCfg = Release|Win32
+		{C666443C-4078-4BFE-A457-57C08F4D7260}.Release|Win32.Build.0 = Release|Win32
+		{C666443C-4078-4BFE-A457-57C08F4D7260}.RelWithDebInfo|Win32.ActiveCfg = RelWithDebInfo|Win32
+		{C666443C-4078-4BFE-A457-57C08F4D7260}.RelWithDebInfo|Win32.Build.0 = RelWithDebInfo|Win32
+		{77063C3D-6AC2-4874-93B3-C19D35AB9639}.Debug|Win32.ActiveCfg = Debug|Win32
+		{77063C3D-6AC2-4874-93B3-C19D35AB9639}.Debug|Win32.Build.0 = Debug|Win32
+		{77063C3D-6AC2-4874-93B3-C19D35AB9639}.MinSizeRel|Win32.ActiveCfg = MinSizeRel|Win32
+		{77063C3D-6AC2-4874-93B3-C19D35AB9639}.MinSizeRel|Win32.Build.0 = MinSizeRel|Win32
+		{77063C3D-6AC2-4874-93B3-C19D35AB9639}.Release|Win32.ActiveCfg = Release|Win32
+		{77063C3D-6AC2-4874-93B3-C19D35AB9639}.Release|Win32.Build.0 = Release|Win32
+		{77063C3D-6AC2-4874-93B3-C19D35AB9639}.RelWithDebInfo|Win32.ActiveCfg = RelWithDebInfo|Win32
+		{77063C3D-6AC2-4874-93B3-C19D35AB9639}.RelWithDebInfo|Win32.Build.0 = RelWithDebInfo|Win32
+		{7D4B08E5-5813-456F-8A2F-4FAC7466E2F5}.Debug|Win32.ActiveCfg = Debug|Win32
+		{7D4B08E5-5813-456F-8A2F-4FAC7466E2F5}.Debug|Win32.Build.0 = Debug|Win32
+		{7D4B08E5-5813-456F-8A2F-4FAC7466E2F5}.MinSizeRel|Win32.ActiveCfg = MinSizeRel|Win32
+		{7D4B08E5-5813-456F-8A2F-4FAC7466E2F5}.MinSizeRel|Win32.Build.0 = MinSizeRel|Win32
+		{7D4B08E5-5813-456F-8A2F-4FAC7466E2F5}.Release|Win32.ActiveCfg = Release|Win32
+		{7D4B08E5-5813-456F-8A2F-4FAC7466E2F5}.Release|Win32.Build.0 = Release|Win32
+		{7D4B08E5-5813-456F-8A2F-4FAC7466E2F5}.RelWithDebInfo|Win32.ActiveCfg = RelWithDebInfo|Win32
+		{7D4B08E5-5813-456F-8A2F-4FAC7466E2F5}.RelWithDebInfo|Win32.Build.0 = RelWithDebInfo|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
