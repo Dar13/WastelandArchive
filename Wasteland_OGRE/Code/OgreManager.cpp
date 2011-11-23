@@ -17,7 +17,7 @@ bool OgreManager::Setup()
 	//Set up the Ogre logging system
 	Ogre::LogManager* logMgr = new Ogre::LogManager();
 	_Log=Ogre::LogManager::getSingleton().createLog("Ogre.log",true,true);
-	_Log->setLogDetail(Ogre::LoggingLevel::LL_BOREME);
+	_Log->setLogDetail(Ogre::LL_BOREME);
 	_Log->setDebugOutputEnabled(true);
 
 	//Ogre root setup

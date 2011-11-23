@@ -19,6 +19,9 @@
     <Filter Include="Include Files\State\Arena">
       <UniqueIdentifier>{18a5d19b-7538-44b1-9e80-ff3c48b84e96}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include Files\Bullet">
+      <UniqueIdentifier>{62a114a4-224f-48ae-9120-d7ca84e6467c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\State.h">
@@ -42,6 +45,9 @@
     <ClInclude Include="Code\ArenaALL.h">
       <Filter>Include Files\State\Arena</Filter>
     </ClInclude>
+    <ClInclude Include="Code\BulletManager.h">
+      <Filter>Include Files\Bullet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">
@@ -61,6 +67,9 @@
     </ClCompile>
     <ClCompile Include="Code\Arena_Locker.cpp">
       <Filter>Include Files\State\Arena</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\BulletManager.cpp">
+      <Filter>Include Files\Bullet</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
