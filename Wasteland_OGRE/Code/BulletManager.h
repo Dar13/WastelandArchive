@@ -18,7 +18,7 @@ public:
 
 	void setGravity(btVector3 &gravity);
 	void addRigidBody(btCollisionShape* shape,Ogre::SceneNode* node, btScalar &mass, btTransform &initTransform);
-
+	
 	btDiscreteDynamicsWorld* getWorld();
 
 private:

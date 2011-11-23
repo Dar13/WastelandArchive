@@ -15,6 +15,7 @@
     <ClInclude Include="Code\Arena_Locker.h" />
     <ClInclude Include="Code\Arena_Tutorial.h" />
     <ClInclude Include="Code\BulletManager.h" />
+    <ClInclude Include="Code\GameManager.h" />
     <ClInclude Include="Code\OgreManager.h" />
     <ClInclude Include="Code\OISManager.h" />
     <ClInclude Include="Code\State.h" />
@@ -24,6 +25,7 @@
     <ClCompile Include="Code\Arena_Locker.cpp" />
     <ClCompile Include="Code\Arena_Tutorial.cpp" />
     <ClCompile Include="Code\BulletManager.cpp" />
+    <ClCompile Include="Code\GameManager.cpp" />
     <ClCompile Include="Code\Main.cpp" />
     <ClCompile Include="Code\OgreManager.cpp" />
     <ClCompile Include="Code\OISManager.cpp" />

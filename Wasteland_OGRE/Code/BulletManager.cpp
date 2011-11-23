@@ -36,10 +36,10 @@ void BulletManager::addRigidBody(btCollisionShape* shape,Ogre::SceneNode* node,b
 	_Shapes.push_back(shape);
 
 	btVector3 inertia(0,0,0);
-	if(mass==0.0f)
-		mass = 0.1f;
-
-	shape->calculateLocalInertia(mass,inertia);
+	if(mass != 0.0f)
+	{
+		shape->calculateLocalInertia(mass,inertia);
+	}
 
 	OgreMotionState* motState = new OgreMotionState(initTransform,node);
 	btRigidBody::btRigidBodyConstructionInfo rbinfo(mass,motState,shape,inertia);

@@ -1,6 +1,5 @@
 #include "Arena_Tutorial.h"
-#include "OgreManager.h"
-#include "OISManager.h"
+#include "GameManager.h"
 
 #include <Ogre.h>
 
@@ -20,19 +19,13 @@ void ArenaTutorial::Setup()
 	_view->setBackgroundColour(Ogre::ColourValue(0,0,0));
 
 	_rootNode = _scene->getRootSceneNode();
-	//Load any entities you want to here.
-	Ogre::Entity* temp = _scene->createEntity("level","test_level.mesh","Models");
-	Ogre::SceneNode* tempNode = _rootNode->createChildSceneNode("Level");
-	tempNode->attachObject(temp);
-	_nodes.push_back(tempNode);
-	_entities.push_back(temp);
-
-	//get the vertex/index data
-	size_t amtVertex,amtIndex;
-	Ogre::Vector3* vertices;
-	unsigned long* indices;
-
-	getMeshInformation(&temp->getMesh(),amtVertex,vertices,amtIndex,indices);
+	
+	//Loading the level through the GameManager(takes care of Bullet initialization,etc)
+	std::map<std::string,std::string> opt; 
+	opt.insert(std::make_pair("name","arenaLevel"));
+	opt.insert(std::make_pair("filename","test_level.mesh"));
+	opt.insert(std::make_pair("resgroup","Models"));
+	Ogre::SceneNode* level = GameManager::getSingleton().createLevel(_scene,opt);
 
 	//Let's position the camera so we can see it.
 	_camera->setPosition(Ogre::Vector3(0,150,500));

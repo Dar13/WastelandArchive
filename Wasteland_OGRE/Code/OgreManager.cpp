@@ -123,9 +123,7 @@ void OgreManager::Shutdown()
 	delete _Root;
 }
 
-//Utility functions that should be included with the OgreManager
-
-void getMeshInformation(const Ogre::MeshPtr* const meshptr,
+void OgreManager::getMeshInformation(const Ogre::MeshPtr* const meshptr,
                         size_t &vertex_count,
                         Ogre::Vector3* &vertices,
                         size_t &index_count,

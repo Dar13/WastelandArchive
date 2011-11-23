@@ -1,5 +1,6 @@
 #include "OgreManager.h"
 #include "OISManager.h"
+#include "BulletManager.h"
 #include "StateManager.h"
 
 //CEGUI includes
@@ -42,6 +43,9 @@ int main(int argc, char **argv[])
 
 	//Setup the input handler(OIS)
 	OISManager* ois = new OISManager(hWnd);
+
+	//Setup Bullet manager
+	BulletManager* bullet = new BulletManager();
 
 	//Set up the state manager
 	StateManager* wtld = new StateManager();

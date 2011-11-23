@@ -22,6 +22,15 @@
     <Filter Include="Include Files\Bullet">
       <UniqueIdentifier>{62a114a4-224f-48ae-9120-d7ca84e6467c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include Files\Ogre">
+      <UniqueIdentifier>{fa8124fb-d141-40ff-b697-daef2df594d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files\OIS">
+      <UniqueIdentifier>{e59bc664-ba3a-4852-8724-e1f813ef22da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files\Game">
+      <UniqueIdentifier>{3ee38239-b89f-45c8-9bc3-b832e9336bc6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\State.h">
@@ -29,12 +38,6 @@
     </ClInclude>
     <ClInclude Include="Code\StateManager.h">
       <Filter>Include Files\State</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\OgreManager.h">
-      <Filter>Include Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\OISManager.h">
-      <Filter>Include Files</Filter>
     </ClInclude>
     <ClInclude Include="Code\Arena_Locker.h">
       <Filter>Include Files\State\Arena</Filter>
@@ -48,16 +51,19 @@
     <ClInclude Include="Code\BulletManager.h">
       <Filter>Include Files\Bullet</Filter>
     </ClInclude>
+    <ClInclude Include="Code\OgreManager.h">
+      <Filter>Include Files\Ogre</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\OISManager.h">
+      <Filter>Include Files\OIS</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\GameManager.h">
+      <Filter>Include Files\Game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">
       <Filter>Include Files\State</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\OgreManager.cpp">
-      <Filter>Include Files</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\OISManager.cpp">
-      <Filter>Include Files</Filter>
     </ClCompile>
     <ClCompile Include="Code\Main.cpp">
       <Filter>Source Files</Filter>
@@ -70,6 +76,15 @@
     </ClCompile>
     <ClCompile Include="Code\BulletManager.cpp">
       <Filter>Include Files\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\OgreManager.cpp">
+      <Filter>Include Files\Ogre</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\OISManager.cpp">
+      <Filter>Include Files\OIS</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\GameManager.cpp">
+      <Filter>Include Files\Game</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
