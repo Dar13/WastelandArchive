@@ -15,6 +15,23 @@ majority of the game code will be built, avoiding reliance
 on the individual managers.
 ==========================================================*/
 
+enum BulletCollisionShapes
+{
+	CONVEX_HULL = 0,
+	SPHERE,
+	BOX,
+	CAPSULE,
+	CONE,
+	CYLINDER,
+	CONVEX_TRIANGLEMESH
+};
+
+struct OgreBulletPair
+{
+	Ogre::SceneNode* ogreNode;
+	btRigidBody* btBody;
+};
+
 class GameManager : public Ogre::Singleton<GameManager>
 {
 public:
@@ -29,6 +46,23 @@ public:
 	name = name for the entity and scenenode (MANDATORY)
 	*/
 	Ogre::SceneNode* createLevel(Ogre::SceneManager* scene,std::map<std::string,std::string> &options);
+
+	/*
+	Creates an object, complete with Bullet Physics rigid body.
+	Options:
+	ogre_specific(OGRE)
+	----------------------------------------------
+	filename = filename for mesh(OGRE)
+	resgroup = name of resource group(OGRE)
+	name = name of ogre entity/scenenode(OGRE)
+	----------------------------------------------
+	*/
+	OgreBulletPair createObject(Ogre::SceneManager* scene,
+								std::map<std::string,std::string> &options,
+								btScalar &mass, 
+								btTransform &init,
+								btCollisionShape* shape);
+	OgreBulletPair createObject(Ogre::SceneNode* node,btCollisionShape* shape,btScalar &mass,btTransform &init);
 
 private:
 	btBvhTriangleMeshShape* buildLevelCollisionShape(Ogre::SceneNode* node);

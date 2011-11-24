@@ -31,7 +31,7 @@ void BulletManager::Setup()
 	_World = new btDiscreteDynamicsWorld(_Dispatch,_OverlapPairCache,_Solver,_Config);
 }
 
-void BulletManager::addRigidBody(btCollisionShape* shape,Ogre::SceneNode* node,btScalar &mass,btTransform &initTransform)
+btRigidBody* BulletManager::addRigidBody(btCollisionShape* shape,Ogre::SceneNode* node,btScalar &mass,btTransform &initTransform)
 {
 	_Shapes.push_back(shape);
 
@@ -46,6 +46,8 @@ void BulletManager::addRigidBody(btCollisionShape* shape,Ogre::SceneNode* node,b
 	btRigidBody* body = new btRigidBody(rbinfo);
 
 	_World->addRigidBody(body);
+
+	return body;
 }
 
 void BulletManager::setGravity(btVector3 &gravity)

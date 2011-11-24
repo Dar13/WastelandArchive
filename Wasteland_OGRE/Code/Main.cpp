@@ -1,6 +1,4 @@
-#include "OgreManager.h"
-#include "OISManager.h"
-#include "BulletManager.h"
+#include "GameManager.h"
 #include "StateManager.h"
 
 //CEGUI includes
@@ -46,6 +44,10 @@ int main(int argc, char **argv[])
 
 	//Setup Bullet manager
 	BulletManager* bullet = new BulletManager();
+	bullet->Setup();
+
+	//Setup the Game manager
+	GameManager* game = new GameManager();
 
 	//Set up the state manager
 	StateManager* wtld = new StateManager();

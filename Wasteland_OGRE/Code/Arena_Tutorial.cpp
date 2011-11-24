@@ -19,6 +19,9 @@ void ArenaTutorial::Setup()
 	_view->setBackgroundColour(Ogre::ColourValue(0,0,0));
 
 	_rootNode = _scene->getRootSceneNode();
+
+	//some special physics setup
+	BulletManager::getSingleton().setGravity(btVector3(0,-9.8f,0));
 	
 	//Loading the level through the GameManager(takes care of Bullet initialization,etc)
 	std::map<std::string,std::string> opt; 
@@ -27,8 +30,17 @@ void ArenaTutorial::Setup()
 	opt.insert(std::make_pair("resgroup","Models"));
 	Ogre::SceneNode* level = GameManager::getSingleton().createLevel(_scene,opt);
 
+	//test node;
+	Ogre::Entity* sphereEnt = _scene->createEntity("sphere","test_sphere.mesh","Models");
+	Ogre::SceneNode* sphereNode = _rootNode->createChildSceneNode("sphere");
+	sphereNode->attachObject(sphereEnt);
+	btCollisionShape* sphereCol = new btSphereShape(5.0f);
+	btScalar mass = 10.0f;
+	btTransform sphereT; sphereT.setIdentity(); sphereT.setOrigin(btVector3(150,150,145));
+	OgreBulletPair spherePair = GameManager::getSingleton().createObject(sphereNode,sphereCol,mass,sphereT);
+
 	//Let's position the camera so we can see it.
-	_camera->setPosition(Ogre::Vector3(0,150,500));
+	_camera->setPosition(Ogre::Vector3(0,500,500));
 	_camera->lookAt(0,0,0);
 	//set the camera aspect ratio
 	_camera->setAspectRatio(4.0f/3.0f);
@@ -39,6 +51,10 @@ int ArenaTutorial::Run()
 {
 	_stateShutdown=false;
 
+	float time,oldTime,dTime;
+	time = OgreManager::getSingleton().getTimer()->getMilliseconds();
+	oldTime = OgreManager::getSingleton().getTimer()->getMilliseconds();
+	dTime = (time - oldTime)/1000;
 
 	//while the escape key isn't pressed and the state isn't told to shutdown.
 	while(!OISManager::getSingleton().escapePressed() && !_stateShutdown)
@@ -48,6 +64,12 @@ int ArenaTutorial::Run()
 		
 		//Run the message pump
 		Ogre::WindowEventUtilities::messagePump();
+		
+		oldTime = time;
+		time = OgreManager::getSingleton().getTimer()->getMilliseconds();
+		dTime = (time-oldTime)/1000.0f;
+
+		BulletManager::getSingleton().Update(dTime);
 
 		//Have Ogre render a frame.
 		if(!OgreManager::getSingleton().Render())
