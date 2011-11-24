@@ -35,6 +35,32 @@ bool GameManager::UpdateManagers()
 	return retVal;
 }
 
+void GameManager::createCharacterController(Ogre::Camera* camera,Ogre::Vector3 initPosition)
+{
+	btTransform initial;
+	initial.setIdentity();
+	initial.setOrigin(btVector3(initPosition.x,initPosition.y,initPosition.z));
+
+	_Ghost = new btPairCachingGhostObject();
+	_Ghost->setWorldTransform(initial);
+
+	BulletManager::getSingleton().getWorld()->getPairCache()->setInternalGhostPairCallback(new btGhostPairCallback());
+	btScalar charHeight = 32.5f;
+	btScalar charWidth = 12.5f;
+	btConvexShape* capsule = new btCapsuleShape(charWidth,charHeight);
+	_Ghost->setCollisionShape(capsule);
+	_Ghost->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT);
+
+	btScalar stepHeight = 0.35f;
+	_Controller = new btKinematicCharacterController(_Ghost,capsule,stepHeight);
+
+	//adding the ghost and character controller to the physics world
+	BulletManager::getSingleton().getWorld()->addCollisionObject(_Ghost,btBroadphaseProxy::CharacterFilter,btBroadphaseProxy::StaticFilter|btBroadphaseProxy::DefaultFilter);
+	BulletManager::getSingleton().getWorld()->addAction(_Controller);
+
+	return;
+}
+
 OgreBulletPair GameManager::createObject(Ogre::SceneManager* scene,std::map<std::string,std::string> &options,btScalar &mass, btTransform &init,btCollisionShape* shape)
 {
 	//return variable

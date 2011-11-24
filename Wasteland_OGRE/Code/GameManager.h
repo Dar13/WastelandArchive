@@ -14,18 +14,6 @@ from an Ogre::Mesh. This is the abstraction upon which the
 majority of the game code will be built, avoiding reliance
 on the individual managers.
 ==========================================================*/
-
-enum BulletCollisionShapes
-{
-	CONVEX_HULL = 0,
-	SPHERE,
-	BOX,
-	CAPSULE,
-	CONE,
-	CYLINDER,
-	CONVEX_TRIANGLEMESH
-};
-
 struct OgreBulletPair
 {
 	Ogre::SceneNode* ogreNode;
@@ -62,8 +50,16 @@ public:
 								btScalar &mass, 
 								btTransform &init,
 								btCollisionShape* shape);
-	OgreBulletPair createObject(Ogre::SceneNode* node,btCollisionShape* shape,btScalar &mass,btTransform &init);
+	//Overload of above.
+	OgreBulletPair createObject(Ogre::SceneNode* node,
+								btCollisionShape* shape,
+								btScalar &mass,
+								btTransform &init);
 
+	//Create a btKinematicCharacterController, and link it to a Ogre::Camera*
+	void createCharacterController(Ogre::Camera* camera,Ogre::Vector3 initPosition);
+
+	//Updates the individual managers.
 	bool UpdateManagers();
 
 private:
@@ -72,6 +68,10 @@ private:
 	
 	//private timing variables
 	float Time,oldTime,deltaTime;
+
+	//Character controller variables
+	btKinematicCharacterController* _Controller;
+	btPairCachingGhostObject* _Ghost;
 
 	//Facilitates Ogre::Singleton.
 	GameManager(const GameManager&);

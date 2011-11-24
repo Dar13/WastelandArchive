@@ -5,6 +5,8 @@
 
 #include <btBulletDynamicsCommon.h>
 #include <btBulletCollisionCommon.h>
+#include <BulletDynamics\Character\btKinematicCharacterController.h>
+#include <BulletCollision\CollisionDispatch\btGhostObject.h>
 
 class BulletManager : public Ogre::Singleton<BulletManager>
 {
