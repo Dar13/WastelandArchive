@@ -64,8 +64,16 @@ public:
 								btCollisionShape* shape);
 	OgreBulletPair createObject(Ogre::SceneNode* node,btCollisionShape* shape,btScalar &mass,btTransform &init);
 
+	bool UpdateManagers();
+
 private:
+	//private utility function.
 	btBvhTriangleMeshShape* buildLevelCollisionShape(Ogre::SceneNode* node);
+	
+	//private timing variables
+	float Time,oldTime,deltaTime;
+
+	//Facilitates Ogre::Singleton.
 	GameManager(const GameManager&);
 	GameManager& operator=(GameManager&);
 };

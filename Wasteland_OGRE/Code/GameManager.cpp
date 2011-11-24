@@ -4,11 +4,35 @@ template<> GameManager* Ogre::Singleton<GameManager>::ms_Singleton = 0;
 
 GameManager::GameManager()
 {
+	Time = OgreManager::getSingleton().getTimer()->getMilliseconds();
 }
 
 GameManager::~GameManager()
 {
 	//destroy whatever I initialized(if anything) in the constructor.
+}
+
+bool GameManager::UpdateManagers()
+{
+	bool retVal = true;
+	//Update OISManager
+	OISManager::getSingleton().capture();
+	retVal = !OISManager::getSingleton().escapePressed();
+
+	//Update BulletManager
+	oldTime = Time;
+	Time = OgreManager::getSingleton().getTimer()->getMilliseconds();
+	deltaTime = (Time - oldTime)/1000.0f;
+	BulletManager::getSingleton().Update(deltaTime);
+
+	//Update Ogre
+	Ogre::WindowEventUtilities::messagePump();
+	if(!OgreManager::getSingleton().Render())
+	{
+		return false;
+	}
+
+	return retVal;
 }
 
 OgreBulletPair GameManager::createObject(Ogre::SceneManager* scene,std::map<std::string,std::string> &options,btScalar &mass, btTransform &init,btCollisionShape* shape)
