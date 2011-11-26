@@ -3,15 +3,22 @@
 
 #include "State.h"
 
+/*! \brief **NOT FULLY IMPLEMENTED** Application state that is the Locker Room scene in Wasteland.
+
+Is not a truly interactive scene, but shows an important plot point.
+*/
+
 class ArenaLocker : public State
 {
 public:
-	//Initial setup
+	//! Constructor, initializes all class members.
 	ArenaLocker();
 
-	//Actions for this state.
+	//! State-specific setup.
 	void Setup();
+	//! Runs the state code.
 	int Run();
+	//! Cleans up the state, releases all memory/assets allocated to it.
 	void Shutdown();
 
 private:

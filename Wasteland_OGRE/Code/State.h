@@ -1,10 +1,6 @@
 #ifndef _STATE_H_
 #define _STATE_H_
 
-/*
-Abstract class that sets the framework for the states the application will go through.
-*/
-
 enum ApplicationStates
 {
 	MENU = 0,
@@ -18,14 +14,22 @@ enum ApplicationStates
 	END
 };
 
+/*!
+\brief An abstract class that sets the framework for the states the application will go through.
+
+*/
+
 class State
 {
 public:
-	virtual void Setup() = 0; //Sets up the state.
-	virtual int Run() = 0; //Runs the game logic for the state.
-	virtual void Shutdown() = 0; //Cleans up the state.
+	//! Sets up the state.
+	virtual void Setup() = 0; 
+	//!Runs the game logic for the state.
+	virtual int Run() = 0; 
+	//!Cleans up the state.
+	virtual void Shutdown() = 0; 
 private:
-	//Just a bool to tell if the state should shutdown.
+	//!A boolean to tell if the state should shutdown.
 	bool _stateShutdown;
 };
 
