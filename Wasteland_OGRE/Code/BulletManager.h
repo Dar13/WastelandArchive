@@ -49,7 +49,7 @@ public:
 	btRigidBody* addRigidBody(btCollisionShape* shape,Ogre::SceneNode* node, btScalar &mass, btTransform &initTransform);
 	
 	//! Returns the Bullet Physics world pointer.
-	btDiscreteDynamicsWorld* getWorld();
+	btDiscreteDynamicsWorld* getWorld(){return _World;}
 
 private:
 	//Needed for this class to be a singleton

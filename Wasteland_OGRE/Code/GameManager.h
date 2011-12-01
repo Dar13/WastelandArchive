@@ -35,12 +35,12 @@ public:
 	/*!
 		\param scene The current Ogre SceneManager, required for the creation of the SceneNode.
 		\param options All the information needed to create the Ogre SceneNode and/or the Bullet rigid body.
-
-		Options:
-			- Ogre
-				-# filename = filename for the mesh (MANDATORY) 
-				-# resgroup = name of resource group (MANDATORY) 
-				-# name = name for the entity and scenenode (MANDATORY)
+		<ul>
+			<li>"name" Name for both the Entity and the SceneNode.</li>
+			<li>"filename" FileName for the Entity to load from(if needed for the type of Entity/SceneNode).</li>
+			<li>"type" The type of entity to be created.</li>
+			<li>"resgroup" Resource Group that holds the FileName.</li>
+		</ul>
 	*/
 	Ogre::SceneNode* createLevel(Ogre::SceneManager* scene,std::map<std::string,std::string> &options);
 
@@ -48,15 +48,15 @@ public:
 
 	\param scene Ogre SceneManager, required for SceneNode creation.
 	\param options Options for the Ogre SceneNode and/or Bullet rigid body.
+	<ul>
+		<li>"name" Name for both the Entity and the SceneNode.</li>
+		<li>"filename" FileName for the Entity to load from(if needed for the type of Entity/SceneNode).</li>
+		<li>"type" The type of entity to be created.</li>
+		<li>"resgroup" Resource Group that holds the FileName.</li>
+	</ul>
 	\param mass Mass for the Bullet rigid body.
 	\param init Initial transformation(position/rotation) for the Bullet rigid body/Ogre SceneNode.
 	\param shape Shape of the Bullet rigid body.
-	
-	Options:
-		- Ogre
-			-# filename = filename for mesh(OGRE)
-			-# resgroup = name of resource group(OGRE)
-			-# name = name of ogre entity/scenenode(OGRE)
 
 	\returns OgreBulletPair containing SceneNode* and btRigidBody*.
 	*/
@@ -86,7 +86,19 @@ public:
 	*/
 	void createCharacterController(Ogre::Camera* camera,Ogre::Vector3 initPosition);
 
-	//!Updates the individual managers.
+	/*! Updates the character controller created in createCharacterController.
+
+		If Ogre::Camera* is passed in, then this function will also update the camera's position and rotation.
+
+		\param camera If NULL(0) is passed in, then the class with refer to the stored camera.
+		If you didn't set a camera in the createCharacterController() then no camera will be updated at all.
+	*/
+	void updateCharacterController(Ogre::Camera* camera = NULL);
+
+	/*! Updates the individual managers.
+
+	\returns true if all managers updated properly.
+	*/
 	bool UpdateManagers();
 
 private:
@@ -99,8 +111,13 @@ private:
 	float Time,oldTime,deltaTime;
 
 	//Character controller variables
-	btKinematicCharacterController* _Controller;
-	btPairCachingGhostObject* _Ghost;
+	btKinematicCharacterController* _charController;
+	btPairCachingGhostObject* _charGhost;
+	Ogre::Camera* _charCamera;
+
+	//Utility functions, converts Ogre::Vector3 to btVector3
+	btVector3 convertOgreVector3(const Ogre::Vector3 &v);
+	Ogre::Vector3 convertBulletVector3(const btVector3 &v);
 
 	//Facilitates Ogre::Singleton.
 	GameManager(const GameManager&);

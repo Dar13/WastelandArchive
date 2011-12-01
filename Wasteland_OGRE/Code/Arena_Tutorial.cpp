@@ -42,11 +42,6 @@ int ArenaTutorial::Run()
 {
 	_stateShutdown=false;
 
-	float time,oldTime,dTime;
-	time = OgreManager::getSingleton().getTimer()->getMilliseconds();
-	oldTime = OgreManager::getSingleton().getTimer()->getMilliseconds();
-	dTime = (time - oldTime)/1000;
-
 	//while the escape key isn't pressed and the state isn't told to shutdown.
 	while(!_stateShutdown)
 	{

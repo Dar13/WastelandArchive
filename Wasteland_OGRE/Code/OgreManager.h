@@ -46,6 +46,22 @@ public:
 	Ogre::Log* getLog(){return _Log;}
 	//! Returns the current Timer.
 	Ogre::Timer* getTimer(){return _Timer;}
+
+	//! Creates an Ogre SceneNode and Entity based on passed in parameters
+	//! /returns Ogre::SceneNode*
+	/*!
+		\param scene The SceneManager that will create the SceneNode.
+		\param options std::map<string,string> that will hold all applicable data concerning the construction of the Entity/SceneNode.
+		<ul>
+			<li>"name" Name for both the Entity and the SceneNode.</li>
+			<li>"filename" FileName for the Entity to load from(if needed for the type of Entity/SceneNode).</li>
+			<li>"type" The type of entity to be created.</li>
+			<li>"resgroup" Resource Group that holds the FileName.</li>
+		</ul>
+		\param position The initial position of the SceneNode. Defaults to (0,0,0).
+		\param rotation The initial rotation of the SceneNode. Defaults to Ogre::Quaternion::ZERO.
+	*/
+	Ogre::SceneNode* createSceneNode(Ogre::SceneManager* scene, std::map<std::string,std::string> &options,Ogre::Vector3 &position = Ogre::Vector3::ZERO,Ogre::Quaternion &rotation = Ogre::Quaternion::ZERO);
 	
 	//! Retrieves all vertex and index data from a mesh.
 	//! Useful for generating complex Bullet rigid bodies.

@@ -4,7 +4,7 @@ template<> GameManager* Ogre::Singleton<GameManager>::ms_Singleton = 0;
 
 GameManager::GameManager()
 {
-	Time = OgreManager::getSingleton().getTimer()->getMilliseconds();
+	Time = (float)OgreManager::getSingleton().getTimer()->getMilliseconds();
 }
 
 GameManager::~GameManager()
@@ -15,21 +15,23 @@ GameManager::~GameManager()
 bool GameManager::UpdateManagers()
 {
 	bool retVal = true;
-	//Update OISManager
+	//Update OIS
 	OISManager::getSingleton().capture();
 	retVal = !OISManager::getSingleton().escapePressed();
 
-	//Update BulletManager
+	//Update Bullet
 	oldTime = Time;
-	Time = OgreManager::getSingleton().getTimer()->getMilliseconds();
+	Time = (float)OgreManager::getSingleton().getTimer()->getMilliseconds();
 	deltaTime = (Time - oldTime)/1000.0f;
 	BulletManager::getSingleton().Update(deltaTime);
 
 	//Update Ogre
 	Ogre::WindowEventUtilities::messagePump();
+	//If an error occurred...
 	if(!OgreManager::getSingleton().Render())
 	{
-		return false;
+		//state needs to end
+		retVal=false;
 	}
 
 	return retVal;
@@ -41,22 +43,25 @@ void GameManager::createCharacterController(Ogre::Camera* camera,Ogre::Vector3 i
 	initial.setIdentity();
 	initial.setOrigin(btVector3(initPosition.x,initPosition.y,initPosition.z));
 
-	_Ghost = new btPairCachingGhostObject();
-	_Ghost->setWorldTransform(initial);
+	_charGhost = new btPairCachingGhostObject();
+	_charGhost->setWorldTransform(initial);
 
 	BulletManager::getSingleton().getWorld()->getPairCache()->setInternalGhostPairCallback(new btGhostPairCallback());
 	btScalar charHeight = 32.5f;
 	btScalar charWidth = 12.5f;
 	btConvexShape* capsule = new btCapsuleShape(charWidth,charHeight);
-	_Ghost->setCollisionShape(capsule);
-	_Ghost->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT);
+	_charGhost->setCollisionShape(capsule);
+	_charGhost->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT);
 
 	btScalar stepHeight = 0.35f;
-	_Controller = new btKinematicCharacterController(_Ghost,capsule,stepHeight);
+	_charController = new btKinematicCharacterController(_charGhost,capsule,stepHeight);
 
 	//adding the ghost and character controller to the physics world
-	BulletManager::getSingleton().getWorld()->addCollisionObject(_Ghost,btBroadphaseProxy::CharacterFilter,btBroadphaseProxy::StaticFilter|btBroadphaseProxy::DefaultFilter);
-	BulletManager::getSingleton().getWorld()->addAction(_Controller);
+	BulletManager::getSingleton().getWorld()->addCollisionObject(_charGhost,btBroadphaseProxy::CharacterFilter,btBroadphaseProxy::StaticFilter|btBroadphaseProxy::DefaultFilter);
+	BulletManager::getSingleton().getWorld()->addAction(_charController);
+
+	//Stores the current camera that the character controller is controlling.
+	_charCamera = camera;
 
 	return;
 }
@@ -69,7 +74,7 @@ OgreBulletPair GameManager::createObject(Ogre::SceneManager* scene,std::map<std:
 	//Creating the Ogre SceneNode*
 	Ogre::Entity* ent = scene->createEntity(options["name"],options["filename"],options["resgroup"]);
 	Ogre::Vector3 pos; btVector3 orig = init.getOrigin();
-	pos.x = orig.x(); pos.y = orig.y(); pos.z = orig.z();
+	pos = convertBulletVector3(orig);
 	Ogre::Quaternion rot; btQuaternion orot = init.getRotation();
 	rot.w = orot.w(); rot.x = orot.x(); rot.y = orot.y(); rot.z = orot.z();
 	Ogre::SceneNode* node = scene->getRootSceneNode()->createChildSceneNode(options["name"],pos,rot);
@@ -113,6 +118,22 @@ Ogre::SceneNode* GameManager::createLevel(Ogre::SceneManager* scene,std::map<std
 	return tempNode;
 }
 
+//----------------------------------------
+//Private, utility functions start here...
+//----------------------------------------
+
+//converts bullet vector3 to ogre vector3
+Ogre::Vector3 GameManager::convertBulletVector3(const btVector3 &v)
+{
+	return Ogre::Vector3(v.x(),v.y(),v.z());
+}
+
+//converts ogre vector3 to bullet vector3
+btVector3 GameManager::convertOgreVector3(const Ogre::Vector3 &v)
+{
+	return btVector3(v.x,v.y,v.z);
+}
+
 btBvhTriangleMeshShape* GameManager::buildLevelCollisionShape(Ogre::SceneNode* node)
 {
 	btBvhTriangleMeshShape* shape;
@@ -127,7 +148,7 @@ btBvhTriangleMeshShape* GameManager::buildLevelCollisionShape(Ogre::SceneNode* n
 
 	btVector3 vert1,vert2,vert3;
 
-	for(int i=0; i<vertCnt; i+=3)
+	for(unsigned int i=0; i<vertCnt; i+=3)
 	{
 		vert1.setValue(vertices[indices[i]].x,vertices[indices[i]].y,vertices[indices[i]].z);
 		vert2.setValue(vertices[indices[i+1]].x,vertices[indices[i+1]].y,vertices[indices[i+1]].z);

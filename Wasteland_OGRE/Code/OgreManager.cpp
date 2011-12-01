@@ -123,6 +123,77 @@ void OgreManager::Shutdown()
 	delete _Root;
 }
 
+/*
+Options list:
+	node
+		- child : Name of child node
+	camera
+		- Aspect Ratio(?)
+		- ???
+
+	entity
+		- shadows :  true/false for casting shadows
+		- ???
+
+	light
+		- lighttype : determines the type of light it is
+		- lightradius : radius of light(omni?)
+*/
+
+Ogre::SceneNode* createSceneNode(Ogre::SceneManager* scene, 
+								 std::map<std::string,std::string> &options, 
+								 Ogre::Vector3 &position, 
+								 Ogre::Quaternion &rotation)
+{
+	Ogre::String realName = options["name"];
+	Ogre::SceneNode* node = NULL;
+	if(options["type"]=="camera")
+	{
+		realName = "cam" + realName; //"camMainPlayer" instead of "MainPlayer"
+		Ogre::Camera* cam = scene->createCamera(realName);
+		node = scene->getRootSceneNode()->createChildSceneNode(realName,position,rotation);
+		node->attachObject(cam);
+	}
+	if(options["type"]=="entity")
+	{
+		realName = "ent" + realName; //"entMainPlayer" instead of "MainPlayer"
+		Ogre::Entity* ent = scene->createEntity(realName,options["filename"],options["resgroup"]);
+		node = scene->getRootSceneNode()->createChildSceneNode(realName,position,rotation);
+		node->attachObject(ent);
+	}
+	if(options["type"]=="light")
+	{
+		//Set up the light
+		realName = "lgt" + realName; //"lgtMainLobby" instead of "MainLobby"
+		Ogre::Light* light = scene->createLight(realName);
+		if(options["lighttype"]=="spotlight")
+		{
+			light->setType(Ogre::Light::LT_SPOTLIGHT);
+			//check for spotlight specific options
+		}
+		else if(options["lighttype"]=="point" || options["lighttype"]=="")
+		{
+			light->setType(Ogre::Light::LT_POINT);
+			
+		}
+		else
+		{
+			light->setType(Ogre::Light::LT_DIRECTIONAL);
+		}
+
+		//Range of light, or rather the fading of the light as the distance from light to object gets larger.
+		//Attenuation can kiss my ass.
+		//btw, might want to check if options["lightradius"] isn't empty...
+		//ToDo, make a function that generates linear/quadratic numbers for different ranges.
+		int radius = atoi(options["lightradius"].c_str());
+		light->setAttenuation(radius,1.0f,0.045f,0.0075f);
+
+		//Create node and attach the light to it.
+		node = scene->getRootSceneNode()->createChildSceneNode(realName,position,rotation);
+		node->attachObject(light);
+	}
+}
+
 void OgreManager::getMeshInformation(const Ogre::MeshPtr* const meshptr,
                         size_t &vertex_count,
                         Ogre::Vector3* &vertices,
