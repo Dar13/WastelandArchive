@@ -90,6 +90,12 @@ private:
 	OgreManager(const OgreManager&);
 	OgreManager& operator=(const OgreManager&);
 
+	//Private helper functions
+	//! Calculates the attenuation for the passed-in Ogre::Light.
+	void setLightRange(Ogre::Light* l, Ogre::Real range);
+	//! Converts a hexadecimal number into an Ogre::ColourValue.
+	Ogre::ColourValue getColorFromHex(int hexColor, float alpha = 1.0f);
+
 	//Ogre pointers
 	Ogre::Root* _Root;
 	Ogre::RenderWindow* _Window;

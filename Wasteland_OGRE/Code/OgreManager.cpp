@@ -128,7 +128,7 @@ Options list:
 	node
 		- child : Name of child node
 	camera
-		- Aspect Ratio(?)
+		- ???
 		- ???
 
 	entity
@@ -138,62 +138,95 @@ Options list:
 	light
 		- lighttype : determines the type of light it is
 		- lightradius : radius of light(omni?)
+		- lightcolor : color of the light(hex code)
 */
 
-Ogre::SceneNode* createSceneNode(Ogre::SceneManager* scene, 
+Ogre::SceneNode* OgreManager::createSceneNode(Ogre::SceneManager* scene, 
 								 std::map<std::string,std::string> &options, 
 								 Ogre::Vector3 &position, 
 								 Ogre::Quaternion &rotation)
 {
 	Ogre::String realName = options["name"];
 	Ogre::SceneNode* node = NULL;
-	if(options["type"]=="camera")
+	//if this particular field is empty, this function will return NULL.
+	if(options["type"] == "camera")
 	{
 		realName = "cam" + realName; //"camMainPlayer" instead of "MainPlayer"
 		Ogre::Camera* cam = scene->createCamera(realName);
 		node = scene->getRootSceneNode()->createChildSceneNode(realName,position,rotation);
 		node->attachObject(cam);
 	}
-	if(options["type"]=="entity")
+	if(options["type"] == "entity")
 	{
 		realName = "ent" + realName; //"entMainPlayer" instead of "MainPlayer"
 		Ogre::Entity* ent = scene->createEntity(realName,options["filename"],options["resgroup"]);
+
+		//just to save some space and add a guaranteed default option(if blank, set to false).
+		ent->setCastShadows( options["shadows"] == "true" ? true : false );
+
 		node = scene->getRootSceneNode()->createChildSceneNode(realName,position,rotation);
 		node->attachObject(ent);
 	}
-	if(options["type"]=="light")
+	if(options["type"] == "light")
 	{
 		//Set up the light
-		realName = "lgt" + realName; //"lgtMainLobby" instead of "MainLobby"
+		realName = "light" + realName; //"lightMainLobby" instead of "MainLobby"
 		Ogre::Light* light = scene->createLight(realName);
 		if(options["lighttype"]=="spotlight")
 		{
 			light->setType(Ogre::Light::LT_SPOTLIGHT);
 			//check for spotlight specific options
+			//may add more, but not right now.
+			//ToDo: add spotlight specific options!!
+			light->setSpotlightRange(Ogre::Degree(10),Ogre::Degree(100),1.0f);
 		}
-		else if(options["lighttype"]=="point" || options["lighttype"]=="")
+		else if((options["lighttype"]=="point") || (options.find("lighttype") == options.end()))
 		{
+			//Not sure if there's anything else I need to do here. Probably not.
 			light->setType(Ogre::Light::LT_POINT);
-			
 		}
 		else
 		{
+			//I need to set the direction, but that's done for me with the SceneNode.
 			light->setType(Ogre::Light::LT_DIRECTIONAL);
 		}
 
 		//Range of light, or rather the fading of the light as the distance from light to object gets larger.
 		//Attenuation can kiss my ass.
-		//btw, might want to check if options["lightradius"] isn't empty...
-		//ToDo, make a function that generates linear/quadratic numbers for different ranges.
-		int radius = atoi(options["lightradius"].c_str());
-		light->setAttenuation(radius,1.0f,0.045f,0.0075f);
+		//Checks to make sure options["lightradius"] isn't empty, and that the light isn't directional(cause then the range doesn't matter).
+		if(options.find("lightradius") != options.end() && light->getType() != light->LT_DIRECTIONAL)
+		{
+			int radius = atoi(options["lightradius"].c_str());
+			setLightRange(light,radius);
+		}
+		else
+			setLightRange(light,100); //Default radius is 100.
+
+		//light color
+		if(options.find("lightcolor") != options.end())
+		{
+			int hex = atoi(options["lightcolor"].c_str());
+			light->setDiffuseColour(getColorFromHex(hex));
+		}
 
 		//Create node and attach the light to it.
 		node = scene->getRootSceneNode()->createChildSceneNode(realName,position,rotation);
 		node->attachObject(light);
 	}
+
+	//Node options
+	if(options.find("child") != options.end())
+	{
+		//if this isn't a scene node, I'm fucked.
+		Ogre::SceneNode* cNode = (Ogre::SceneNode*)scene->getRootSceneNode()->removeChild(options["child"]);
+		//add the node as a child to the current node.
+		node->addChild(cNode);
+	}
 }
 
+//This works, but isn't documented very well...
+//Might come back and document it later, but not right now...
+//In other words...!!!MAGIC DON'T TOUCH!!!
 void OgreManager::getMeshInformation(const Ogre::MeshPtr* const meshptr,
                         size_t &vertex_count,
                         Ogre::Vector3* &vertices,
@@ -319,4 +352,22 @@ void OgreManager::getMeshInformation(const Ogre::MeshPtr* const meshptr,
         ibuf->unlock();
         current_offset = next_offset;
     }
+}
+
+void OgreManager::setLightRange(Ogre::Light* l, Ogre::Real range)
+{
+	l->setAttenuation(range,1.0f,4.5/range,75.0f/(range*range));
+	return;
+}
+
+Ogre::ColourValue OgreManager::getColorFromHex(int hexColor, float alpha)
+{
+	float r,g,b,a;
+	a = 1.0f; //no transparency.
+
+	r = ((hexColor >> 16) & 0xFF) / 255.0f;
+	g = ((hexColor >> 8) & 0xFF) / 255.0f;
+	b = (hexColor & 0xFF) / 255.0f;
+
+	return Ogre::ColourValue(r,g,b,a);
 }
