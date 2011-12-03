@@ -8,7 +8,8 @@ class Node
 {
 public:
 	Node(std::string& name,Node* parent = NULL);
-	Node(std::string& name,std::string& value,Node* parent = NULL);
+	Node(std::string& name,std::string& value,Node* parent = NULL, bool addChild = false);
+	~Node();
 
 	void setValue(std::string &value);
 
@@ -24,8 +25,8 @@ public:
 	bool childExist(std::string& name, bool recursive = false);
 	//! Searches and removes child node from children list, while returning the found child.
 	Node* removeChild(std::string& name, bool recursive = false);
-	//! Removes all children. Deletes all children.
-	void removeAllChildren();
+	//!Deletes all children. Cleans up all pointers. Is recursive.
+	void deleteAllChildren();
 
 	//! Purely for internal use. Shouldn't be called outside the class.
 	void setParent(Node* p);
@@ -42,7 +43,8 @@ private:
 
 	std::vector<Node*> children;
 	Node* parent;
-}
+	bool created;
+};
 
 
 //do I need this...

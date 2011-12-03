@@ -2,17 +2,20 @@
 #ifndef _XML_READER_H_
 #define _XML_READER_H_
 
-#include <tinyxml.h>
+#include <pugixml.hpp>
 #include <OgreSingleton.h>
+#include "Tree.h"
 
 class XMLReader : public Ogre::Singleton<XMLReader>
 {
 public:
 	XMLReader();
 
-	void readFile(std::string fileName , std::map<std::string,std::string>& container);
+	void readFile(std::string filename, Node* root);
 
 private:
+	
+
 	XMLReader(const XMLReader&);
 	XMLReader& operator=(const XMLReader&);
 };

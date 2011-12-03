@@ -8,12 +8,14 @@ Node::Node(std::string& name,Node* parent)
 	value = ""; //blank value
 }
 
-Node::Node(std::string& name,std::string& value,Node* parent)
+Node::Node(std::string& name,std::string& value,Node* parent, bool addChild)
 {
 	this->parent = parent;
 
 	this->name = name;
 	this->value = value;
+
+	created = addChild;
 }
 
 void Node::setParent(Node* p)
@@ -45,7 +47,7 @@ void Node::addChild(Node* child)
 void Node::addChild(std::string &name,std::string& value)
 {
 	//create the node, setting the name, value, and parent.
-	Node* c = new Node(name,value,this);
+	Node* c = new Node(name,value,this,true);
 	//add it to the list of children.
 	children.push_back(c);
 }
@@ -71,4 +73,59 @@ bool Node::childExist(std::string& name, bool recursive)
 	}
 
 	return found;
+}
+
+void Node::deleteAllChildren()
+{
+	Node* tmpNode = NULL;
+
+	std::vector<Node*>::iterator itr = children.begin();
+
+	for( ; itr != children.end(); ++itr)
+	{
+		if((*itr)->childrenExist())
+		{
+			(*itr)->deleteAllChildren();
+		}
+
+		tmpNode = (*itr);
+		delete tmpNode;
+		(*itr) = NULL;
+	}
+
+	//should be clearing out the vector of NULL addresses.
+	children.clear();
+}
+
+Node* Node::removeChild(std::string& name, bool recursive)
+{
+	Node* node = NULL;
+
+	std::vector<Node*>::iterator itr = children.begin();
+
+	for( ; itr != children.end() && node != NULL ; ++itr)
+	{
+		if((*itr)->getName() == name)
+		{
+			node = (*itr);
+			children.erase(itr);
+		}
+
+		if(node == NULL && recursive)
+		{
+			if((*itr)->childrenExist())
+			{
+				//recursively checking for that child.
+				node = (*itr)->removeChild(name,recursive);
+			}
+		}
+	}
+
+	//If node == NULL then node doesn't exist in children list.
+	return node;
+}
+
+Node::~Node()
+{
+	deleteAllChildren();
 }
