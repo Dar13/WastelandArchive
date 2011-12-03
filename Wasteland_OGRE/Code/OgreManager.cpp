@@ -143,8 +143,8 @@ Options list:
 
 Ogre::SceneNode* OgreManager::createSceneNode(Ogre::SceneManager* scene, 
 								 std::map<std::string,std::string> &options, 
-								 Ogre::Vector3 &position, 
-								 Ogre::Quaternion &rotation)
+								 const Ogre::Vector3 &position, 
+								 const Ogre::Quaternion &rotation)
 {
 	Ogre::String realName = options["name"];
 	Ogre::SceneNode* node = NULL;
@@ -222,6 +222,8 @@ Ogre::SceneNode* OgreManager::createSceneNode(Ogre::SceneManager* scene,
 		//add the node as a child to the current node.
 		node->addChild(cNode);
 	}
+
+	return node;
 }
 
 //This works, but isn't documented very well...
