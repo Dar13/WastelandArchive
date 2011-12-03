@@ -2,7 +2,6 @@
 #ifndef _XML_READER_H_
 #define _XML_READER_H_
 
-#include <pugixml.hpp>
 #include <OgreSingleton.h>
 #include "Tree.h"
 
