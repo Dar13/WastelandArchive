@@ -5,6 +5,7 @@
 #include "OgreManager.h"
 #include "OISManager.h"
 #include "BulletManager.h"
+#include "XMLReader.h"
 
 /*! \brief Allows convenient returns of both Bullet rigid bodies and Ogre SceneNodes.
 */

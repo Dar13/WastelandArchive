@@ -3,6 +3,8 @@
 
 #include <Ogre.h>
 
+#include "XMLReader.h"
+
 #include <vector>
 #include <map>
 
@@ -51,17 +53,9 @@ public:
 	//! /returns Ogre::SceneNode*
 	/*!
 		\param scene The SceneManager that will create the SceneNode.
-		\param options std::map<string,string> that will hold all applicable data concerning the construction of the Entity/SceneNode.
-		<ul>
-			<li>"name" Name for both the Entity and the SceneNode.</li>
-			<li>"filename" FileName for the Entity to load from(if needed for the type of Entity/SceneNode).</li>
-			<li>"type" The type of entity to be created.</li>
-			<li>"resgroup" Resource Group that holds the FileName.</li>
-		</ul>
-		\param position The initial position of the SceneNode. Defaults to (0,0,0).
-		\param rotation The initial rotation of the SceneNode. Defaults to Ogre::Quaternion::ZERO.
+		\param objectInfo Class that holds all loaded information from the applicable xml file.
 	*/
-	Ogre::SceneNode* createSceneNode(Ogre::SceneManager* scene, std::map<std::string,std::string> &options,const Ogre::Vector3 &position = Ogre::Vector3::ZERO,const Ogre::Quaternion &rotation = Ogre::Quaternion::ZERO);
+	Ogre::SceneNode* createSceneNode(Ogre::SceneManager* scene, object_t* objectInfo);
 	
 	//! Retrieves all vertex and index data from a mesh.
 	//! Useful for generating complex Bullet rigid bodies.

@@ -109,6 +109,12 @@ type (const type_type& x)
   this->type_.set (x);
 }
 
+void object_t::
+type (::std::auto_ptr< type_type > x)
+{
+  this->type_.set (x);
+}
+
 const object_t::fileName_type& object_t::
 fileName () const
 {
@@ -703,9 +709,12 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "type" && n.namespace_ ().empty ())
     {
+      ::std::auto_ptr< type_type > r (
+        type_traits::create (i, f, this));
+
       if (!type_.present ())
       {
-        this->type_.set (type_traits::create (i, f, this));
+        this->type_.set (r);
         continue;
       }
     }

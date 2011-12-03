@@ -142,85 +142,52 @@ Options list:
 */
 
 Ogre::SceneNode* OgreManager::createSceneNode(Ogre::SceneManager* scene, 
-								 std::map<std::string,std::string> &options, 
-								 const Ogre::Vector3 &position, 
-								 const Ogre::Quaternion &rotation)
+								 object_t* objectInfo)
 {
-	Ogre::String realName = options["name"];
 	Ogre::SceneNode* node = NULL;
-	//if this particular field is empty, this function will return NULL.
-	if(options["type"] == "camera")
-	{
-		realName = "cam" + realName; //"camMainPlayer" instead of "MainPlayer"
-		Ogre::Camera* cam = scene->createCamera(realName);
-		node = scene->getRootSceneNode()->createChildSceneNode(realName,position,rotation);
-		node->attachObject(cam);
-	}
-	if(options["type"] == "entity")
-	{
-		realName = "ent" + realName; //"entMainPlayer" instead of "MainPlayer"
-		Ogre::Entity* ent = scene->createEntity(realName,options["filename"],options["resgroup"]);
+	
+	std::string type = objectInfo->type();
+	Ogre::Vector3 pos;
+	pos.x = objectInfo->positionX();
+	pos.y = objectInfo->positionY();
+	pos.z = objectInfo->positionZ();
+	Ogre::Quaternion rot;
+	rot.x = objectInfo->rotationX();
+	rot.y = objectInfo->rotationY();
+	rot.z = objectInfo->rotationZ();
+	
+	node = scene->getRootSceneNode()->createChildSceneNode(objectInfo->name(),pos,rot);
 
-		//just to save some space and add a guaranteed default option(if blank, set to false).
-		ent->setCastShadows( options["shadows"] == "true" ? true : false );
-
-		node = scene->getRootSceneNode()->createChildSceneNode(realName,position,rotation);
+	if(type == "entity")
+	{
+		Ogre::Entity* ent = scene->createEntity("ent" + objectInfo->name(),objectInfo->fileName(),objectInfo->resGroup());
+		ent->setCastShadows(objectInfo->shadows());
 		node->attachObject(ent);
 	}
-	if(options["type"] == "light")
+
+	if(type == "light")
 	{
-		//Set up the light
-		realName = "light" + realName; //"lightMainLobby" instead of "MainLobby"
-		Ogre::Light* light = scene->createLight(realName);
-		if(options["lighttype"]=="spotlight")
+		Ogre::Light* light = scene->createLight("light" + objectInfo->name());
+		setLightRange(light,objectInfo->lightRadius());
+		light->setDiffuseColour(getColorFromHex(objectInfo->lightColor()));
+		switch(objectInfo->lightType())
 		{
-			light->setType(Ogre::Light::LT_SPOTLIGHT);
-			//check for spotlight specific options
-			//may add more, but not right now.
-			//ToDo: add spotlight specific options!!
-			light->setSpotlightRange(Ogre::Degree(10),Ogre::Degree(100),1.0f);
-		}
-		else if((options["lighttype"]=="point") || (options.find("lighttype") == options.end()))
-		{
-			//Not sure if there's anything else I need to do here. Probably not.
-			light->setType(Ogre::Light::LT_POINT);
-		}
-		else
-		{
-			//I need to set the direction, but that's done for me with the SceneNode.
-			light->setType(Ogre::Light::LT_DIRECTIONAL);
-		}
-
-		//Range of light, or rather the fading of the light as the distance from light to object gets larger.
-		//Attenuation can kiss my ass.
-		//Checks to make sure options["lightradius"] isn't empty, and that the light isn't directional(cause then the range doesn't matter).
-		if(options.find("lightradius") != options.end() && light->getType() != light->LT_DIRECTIONAL)
-		{
-			int radius = atoi(options["lightradius"].c_str());
-			setLightRange(light,radius);
-		}
-		else
-			setLightRange(light,100); //Default radius is 100.
-
-		//light color
-		if(options.find("lightcolor") != options.end())
-		{
-			int hex = atoi(options["lightcolor"].c_str());
-			light->setDiffuseColour(getColorFromHex(hex));
-		}
-
-		//Create node and attach the light to it.
-		node = scene->getRootSceneNode()->createChildSceneNode(realName,position,rotation);
-		node->attachObject(light);
+		case Ogre::Light::LT_POINT:
+			//in case of needing to set other properties later on.
+			break;
+		case Ogre::Light::LT_SPOTLIGHT:
+			//in case of needing to set other properties later on.
+			break;
+		case Ogre::Light::LT_DIRECTIONAL:
+			//in case of needing to set other properties later on.
+			break;
+		};
 	}
 
-	//Node options
-	if(options.find("child") != options.end())
+	if(objectInfo->childName() != "NULL")
 	{
-		//if this isn't a scene node, I'm fucked.
-		Ogre::SceneNode* cNode = (Ogre::SceneNode*)scene->getRootSceneNode()->removeChild(options["child"]);
-		//add the node as a child to the current node.
-		node->addChild(cNode);
+		Ogre::Node* child = scene->getRootSceneNode()->removeChild(objectInfo->childName());
+		node->addChild(child);
 	}
 
 	return node;

@@ -275,7 +275,7 @@ class object_t: public ::xml_schema::type
 
   // type
   // 
-  typedef ::xml_schema::integer type_type;
+  typedef ::xml_schema::string type_type;
   typedef ::xsd::cxx::tree::traits< type_type, char > type_traits;
 
   const type_type&
@@ -286,6 +286,9 @@ class object_t: public ::xml_schema::type
 
   void
   type (const type_type& x);
+
+  void
+  type (::std::auto_ptr< type_type > p);
 
   // fileName
   // 

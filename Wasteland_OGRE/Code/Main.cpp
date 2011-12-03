@@ -20,7 +20,6 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine, 
 int main(int argc, char **argv[])
 {
 #endif
-	/*
 	OgreManager* ogre = new OgreManager();
 	if(!ogre->Setup())
 	{
@@ -41,18 +40,10 @@ int main(int argc, char **argv[])
 
 	unsigned long hWnd;
 	ogre->getRenderWindow()->getCustomAttribute("WINDOW",&hWnd);
-	*/
-	//quick test of the xml reader
+
+	//Setup the XMLReader singleton
 	XMLReader* xml = new XMLReader();
-	object_t* obj = (object_t*)xml->readFile("resource\\xml\\test.xml","object");
 
-	std::string name = obj->name();
-	std::string cname = obj->childName();
-
-	delete obj;
-	delete xml;
-
-	/*
 	//Setup the input handler(OIS)
 	OISManager* ois = new OISManager(hWnd);
 
@@ -75,8 +66,9 @@ int main(int argc, char **argv[])
 
 	//delete interfaces for OIS and Ogre3D
 	delete ois;
+	delete xml;
 	delete ogre;
-	*/
+	
 
 	return 0;
 }

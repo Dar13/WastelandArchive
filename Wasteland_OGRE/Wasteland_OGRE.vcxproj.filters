@@ -31,6 +31,12 @@
     <Filter Include="Include Files\Game">
       <UniqueIdentifier>{3ee38239-b89f-45c8-9bc3-b832e9336bc6}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include Files\XML">
+      <UniqueIdentifier>{c070b4b4-f980-4813-bf3e-5a12d1329ab0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files\XML\interfaces">
+      <UniqueIdentifier>{7e34b8de-cbbe-439a-9143-3fe9f1d9b97a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\State.h">
@@ -60,6 +66,12 @@
     <ClInclude Include="Code\GameManager.h">
       <Filter>Include Files\Game</Filter>
     </ClInclude>
+    <ClInclude Include="Code\XMLReader.h">
+      <Filter>Include Files\XML</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\interfaces\object.hxx">
+      <Filter>Include Files\XML\interfaces</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">
@@ -85,6 +97,12 @@
     </ClCompile>
     <ClCompile Include="Code\GameManager.cpp">
       <Filter>Include Files\Game</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\XMLReader.cpp">
+      <Filter>Include Files\XML</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\interfaces\object.cxx">
+      <Filter>Include Files\XML\interfaces</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
