@@ -21,7 +21,7 @@ void ArenaTutorial::Setup()
 	_rootNode = _scene->getRootSceneNode();
 
 	//some special physics setup
-	BulletManager::getSingleton().setGravity(btVector3(0,-9.8f,0));
+	BulletManager::getSingleton().setGravity(btVector3(0,-20.0f,0));
 	
 	//Loading the level through the GameManager(takes care of Bullet initialization,etc)
 	std::map<std::string,std::string> opt; 
@@ -29,6 +29,17 @@ void ArenaTutorial::Setup()
 	opt.insert(std::make_pair("filename","test_level.mesh"));
 	opt.insert(std::make_pair("resgroup","Models"));
 	Ogre::SceneNode* level = GameManager::getSingleton().createLevel(_scene,opt);
+
+	object_t* tmp = object("resource\\xml\\test_sphere.xml").release();
+	Ogre::SceneNode* test_sphere = OgreManager::getSingleton().createSceneNode(_scene,tmp);
+	
+	btTransform init;
+	init.setIdentity();
+	init.setOrigin(btVector3(tmp->positionX(),tmp->positionY(),tmp->positionZ()));
+	btCollisionShape* sphereCol = new btSphereShape(tmp->colSphereRadius());
+	OgreBulletPair retVal = GameManager::getSingleton().createObject(test_sphere,sphereCol,tmp->mass(),init);
+
+	delete tmp;
 
 	//Let's position the camera so we can see it.
 	_camera->setPosition(Ogre::Vector3(0,500,500));
@@ -42,12 +53,17 @@ int ArenaTutorial::Run()
 {
 	_stateShutdown=false;
 
+	Ogre::Node* tmp = _scene->getRootSceneNode()->getChild("testSphere");
+
 	//while the escape key isn't pressed and the state isn't told to shutdown.
 	while(!_stateShutdown)
 	{
 		//True indicates success, so react on if it doesn't react properly
 		if(!GameManager::getSingleton().UpdateManagers())
 			_stateShutdown = true;
+
+		//point camera at scene node
+		_camera->lookAt(tmp->getPosition());
 	}
 
 	//no matter what, end the program after this state.
