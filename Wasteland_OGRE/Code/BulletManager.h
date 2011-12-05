@@ -8,6 +8,8 @@
 #include <BulletDynamics\Character\btKinematicCharacterController.h>
 #include <BulletCollision\CollisionDispatch\btGhostObject.h>
 
+#include "interfaces\object.hxx"
+
 /*! \brief This class manages all of Bullet Physics.
 
 Performs various tasks specific to Bullet Physics, is mainly self-contained.
@@ -47,6 +49,8 @@ public:
 		\param initTrans The initial position/rotation of the rigid body in the simulation.
 	*/
 	btRigidBody* addRigidBody(btCollisionShape* shape,Ogre::SceneNode* node, btScalar &mass, btTransform &initTransform);
+
+	btCollisionShape* generateCollisionShape(object_t* objectInfo);
 	
 	//! Returns the Bullet Physics world pointer.
 	btDiscreteDynamicsWorld* getWorld(){return _World;}

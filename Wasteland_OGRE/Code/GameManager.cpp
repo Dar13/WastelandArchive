@@ -66,28 +66,30 @@ void GameManager::createCharacterController(Ogre::Camera* camera,Ogre::Vector3 i
 	return;
 }
 
-OgreBulletPair GameManager::createObject(Ogre::SceneManager* scene,std::map<std::string,std::string> &options,btScalar &mass, btTransform &init,btCollisionShape* shape)
+OgreBulletPair GameManager::createObject(Ogre::SceneManager* scene,object_t* objectInfo)
 {
 	//return variable
 	OgreBulletPair retVal;
 
-	//Creating the Ogre SceneNode*
-	Ogre::Entity* ent = scene->createEntity(options["name"],options["filename"],options["resgroup"]);
-	Ogre::Vector3 pos; btVector3 orig = init.getOrigin();
-	pos = convertBulletVector3(orig);
-	Ogre::Quaternion rot; btQuaternion orot = init.getRotation();
-	rot.w = orot.w(); rot.x = orot.x(); rot.y = orot.y(); rot.z = orot.z();
-	Ogre::SceneNode* node = scene->getRootSceneNode()->createChildSceneNode(options["name"],pos,rot);
+	//Ogre part of this arrangement.
+	Ogre::SceneNode* node = OgreManager::getSingleton().createSceneNode(scene,objectInfo);
 	retVal.ogreNode = node;
 
+	//Slightly longer Bullet part of this function.
+	btCollisionShape* shape = BulletManager::getSingleton().generateCollisionShape(objectInfo);
+
+	btTransform init;
+	init.setIdentity();
+	init.setOrigin(btVector3(objectInfo->positionX(),objectInfo->positionY(),objectInfo->positionZ()));
+
 	//Easy function call.
-	retVal.btBody=BulletManager::getSingleton().addRigidBody(shape,node,mass,init);
+	retVal.btBody=BulletManager::getSingleton().addRigidBody(shape,node,objectInfo->mass(),init);
 
 	//return by-value, not reference.
 	return retVal;
 }
 
-OgreBulletPair GameManager::createObject(Ogre::SceneNode* node,btCollisionShape* shape, btScalar &mass, btTransform &init)
+OgreBulletPair GameManager::createObject(Ogre::SceneNode* node,object_t* objectInfo)
 {
 	//Here's the variable that'll be passed back(by-value, not reference!).
 	OgreBulletPair retVal;
@@ -95,8 +97,14 @@ OgreBulletPair GameManager::createObject(Ogre::SceneNode* node,btCollisionShape*
 	//That's dead simple, it's already passed in!
 	retVal.ogreNode=node;
 
-	//Easy function call.
-	retVal.btBody = BulletManager::getSingleton().addRigidBody(shape,node,mass,init);
+	//Easy(ish) function call.
+	btCollisionShape* shape = BulletManager::getSingleton().generateCollisionShape(objectInfo);
+	btTransform init; init.setIdentity();
+	btVector3 pos;
+	pos.setX(objectInfo->positionX());
+	pos.setY(objectInfo->positionY());
+	pos.setZ(objectInfo->positionZ());
+	retVal.btBody = BulletManager::getSingleton().addRigidBody(shape,node,objectInfo->mass(),init);
 
 	return retVal;
 }

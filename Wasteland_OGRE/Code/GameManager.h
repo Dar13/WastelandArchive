@@ -62,10 +62,7 @@ public:
 	\returns OgreBulletPair containing SceneNode* and btRigidBody*.
 	*/
 	OgreBulletPair createObject(Ogre::SceneManager* scene,
-								std::map<std::string,std::string> &options,
-								btScalar &mass, 
-								btTransform &init,
-								btCollisionShape* shape);
+								object_t* objectInfo);
 	/*! Creates object, generates Ogre SceneNode and Bullet rigid body.
 
 		\param node Premade SceneNode.
@@ -76,9 +73,7 @@ public:
 		\returns OgreBulletPair containing the SceneNode* and btRigidBody*.
 	*/
 	OgreBulletPair createObject(Ogre::SceneNode* node,
-								btCollisionShape* shape,
-								btScalar &mass,
-								btTransform &init);
+								object_t* objectInfo);
 
 	//! Create a btKinematicCharacterController, and link it to a Ogre::Camera*
 	/*!

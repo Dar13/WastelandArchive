@@ -74,6 +74,43 @@ void BulletManager::Update(float deltaTime)
 	_World->stepSimulation(btScalar(deltaTime),subSteps);
 }
 
+btCollisionShape* BulletManager::generateCollisionShape(object_t* objectInfo)
+{
+	btCollisionShape* retVal = NULL;
+	std::string type = objectInfo->collisionShape();
+
+	//TriangleMesh isn't this particular function's responsibility.
+
+	if(type == "Sphere")
+	{
+		retVal = new btSphereShape(objectInfo->colSphereRadius());
+	}
+	
+	if(type == "Box")
+	{
+		retVal = new btBoxShape(btVector3(objectInfo->colBoxWidth(),objectInfo->colBoxHeight(),objectInfo->colBoxDepth()));
+	}
+
+	if(type == "Cube")
+	{
+		retVal = new btBoxShape(btVector3(objectInfo->colCubeSize(),objectInfo->colCubeSize(),objectInfo->colCubeSize()));
+	}
+
+	if(type == "Capsule")
+	{
+		retVal = new btCapsuleShape(objectInfo->colCapsuleWidth(),objectInfo->colCapsuleHeight());
+	}
+
+	if(type == "Custom")
+	{
+		//denotes previously serialized shape, need to load it in.
+		//that's for another day though.
+		retVal = NULL;
+	}
+
+	return retVal;
+}
+
 void BulletManager::Shutdown(bool reuse)
 {
 	//Deletes all rigid bodies and collision shapes, basically cleans out the class.
