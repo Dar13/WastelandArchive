@@ -5,6 +5,7 @@
 #include <OgreSingleton.h>
 #include "Tree.h"
 #include "interfaces\object.hxx"
+#include "interfaces\list.hxx"
 
 #include <iostream>
 

@@ -26,20 +26,22 @@ void ArenaTutorial::Setup()
 	//Loading the level through the GameManager(takes care of Bullet initialization,etc)
 	std::map<std::string,std::string> opt; 
 	opt.insert(std::make_pair("name","arenaLevel"));
-	opt.insert(std::make_pair("filename","test_level.mesh"));
+	opt.insert(std::make_pair("filename","test_levelNEW.mesh"));
 	opt.insert(std::make_pair("resgroup","Models"));
 	Ogre::SceneNode* level = GameManager::getSingleton().createLevel(_scene,opt);
+	((Ogre::Entity*)level->getAttachedObject("arenaLevel"))->setCastShadows(true);
 
 	object_t* tmp = object("resource\\xml\\test_sphere.xml").release();
-	Ogre::SceneNode* test_sphere = OgreManager::getSingleton().createSceneNode(_scene,tmp);
-	
-	btTransform init;
-	init.setIdentity();
-	init.setOrigin(btVector3(tmp->positionX(),tmp->positionY(),tmp->positionZ()));
-	btCollisionShape* sphereCol = new btSphereShape(tmp->colSphereRadius());
-	OgreBulletPair retVal = GameManager::getSingleton().createObject(test_sphere,sphereCol,tmp->mass(),init);
-
+	OgreBulletPair retVal = GameManager::getSingleton().createObject(_scene,tmp);
 	delete tmp;
+
+	object_t* enem = object("resource\\xml\\test_enem.xml").release();
+	//OgreBulletPair enemVal = GameManager::getSingleton().createObject(_scene,enem);
+	delete enem;
+
+	object_t* light = object("resource\\xml\\test_light.xml").release();
+	//OgreBulletPair lightVal = GameManager::getSingleton().createObject(_scene,light);
+	delete light;
 
 	//Let's position the camera so we can see it.
 	_camera->setPosition(Ogre::Vector3(0,500,500));

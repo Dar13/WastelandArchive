@@ -16,6 +16,7 @@
     <ClInclude Include="Code\Arena_Tutorial.h" />
     <ClInclude Include="Code\BulletManager.h" />
     <ClInclude Include="Code\GameManager.h" />
+    <ClInclude Include="Code\interfaces\list.hxx" />
     <ClInclude Include="Code\interfaces\object.hxx" />
     <ClInclude Include="Code\OgreManager.h" />
     <ClInclude Include="Code\OISManager.h" />
@@ -28,6 +29,7 @@
     <ClCompile Include="Code\Arena_Tutorial.cpp" />
     <ClCompile Include="Code\BulletManager.cpp" />
     <ClCompile Include="Code\GameManager.cpp" />
+    <ClCompile Include="Code\interfaces\list.cxx" />
     <ClCompile Include="Code\interfaces\object.cxx" />
     <ClCompile Include="Code\Main.cpp" />
     <ClCompile Include="Code\OgreManager.cpp" />

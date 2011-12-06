@@ -169,7 +169,7 @@ Ogre::SceneNode* OgreManager::createSceneNode(Ogre::SceneManager* scene,
 	{
 		Ogre::Light* light = scene->createLight("light" + objectInfo->name());
 		setLightRange(light,objectInfo->lightRadius());
-		light->setDiffuseColour(getColorFromHex(objectInfo->lightColor()));
+		light->setDiffuseColour(Ogre::ColourValue(objectInfo->lightColorRed(),objectInfo->lightColorGreen(),objectInfo->lightColorBlue(),1.0f));
 		switch(objectInfo->lightType())
 		{
 		case Ogre::Light::LT_POINT:

@@ -366,19 +366,47 @@ class object_t: public ::xml_schema::type
   void
   lightRadius (const lightRadius_type& x);
 
-  // lightColor
+  // lightColorRed
   // 
-  typedef ::xml_schema::integer lightColor_type;
-  typedef ::xsd::cxx::tree::traits< lightColor_type, char > lightColor_traits;
+  typedef ::xml_schema::integer lightColorRed_type;
+  typedef ::xsd::cxx::tree::traits< lightColorRed_type, char > lightColorRed_traits;
 
-  const lightColor_type&
-  lightColor () const;
+  const lightColorRed_type&
+  lightColorRed () const;
 
-  lightColor_type&
-  lightColor ();
+  lightColorRed_type&
+  lightColorRed ();
 
   void
-  lightColor (const lightColor_type& x);
+  lightColorRed (const lightColorRed_type& x);
+
+  // lightColorGreen
+  // 
+  typedef ::xml_schema::integer lightColorGreen_type;
+  typedef ::xsd::cxx::tree::traits< lightColorGreen_type, char > lightColorGreen_traits;
+
+  const lightColorGreen_type&
+  lightColorGreen () const;
+
+  lightColorGreen_type&
+  lightColorGreen ();
+
+  void
+  lightColorGreen (const lightColorGreen_type& x);
+
+  // lightColorBlue
+  // 
+  typedef ::xml_schema::integer lightColorBlue_type;
+  typedef ::xsd::cxx::tree::traits< lightColorBlue_type, char > lightColorBlue_traits;
+
+  const lightColorBlue_type&
+  lightColorBlue () const;
+
+  lightColorBlue_type&
+  lightColorBlue ();
+
+  void
+  lightColorBlue (const lightColorBlue_type& x);
 
   // mass
   // 
@@ -620,7 +648,9 @@ class object_t: public ::xml_schema::type
             const shadows_type&,
             const lightType_type&,
             const lightRadius_type&,
-            const lightColor_type&,
+            const lightColorRed_type&,
+            const lightColorGreen_type&,
+            const lightColorBlue_type&,
             const mass_type&,
             const collisionShape_type&,
             const colBoxHeight_type&,
@@ -669,7 +699,9 @@ class object_t: public ::xml_schema::type
   ::xsd::cxx::tree::one< shadows_type > shadows_;
   ::xsd::cxx::tree::one< lightType_type > lightType_;
   ::xsd::cxx::tree::one< lightRadius_type > lightRadius_;
-  ::xsd::cxx::tree::one< lightColor_type > lightColor_;
+  ::xsd::cxx::tree::one< lightColorRed_type > lightColorRed_;
+  ::xsd::cxx::tree::one< lightColorGreen_type > lightColorGreen_;
+  ::xsd::cxx::tree::one< lightColorBlue_type > lightColorBlue_;
   ::xsd::cxx::tree::one< mass_type > mass_;
   ::xsd::cxx::tree::one< collisionShape_type > collisionShape_;
   ::xsd::cxx::tree::one< colBoxHeight_type > colBoxHeight_;

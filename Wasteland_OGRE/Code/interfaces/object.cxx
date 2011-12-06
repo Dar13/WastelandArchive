@@ -217,22 +217,58 @@ lightRadius (const lightRadius_type& x)
   this->lightRadius_.set (x);
 }
 
-const object_t::lightColor_type& object_t::
-lightColor () const
+const object_t::lightColorRed_type& object_t::
+lightColorRed () const
 {
-  return this->lightColor_.get ();
+  return this->lightColorRed_.get ();
 }
 
-object_t::lightColor_type& object_t::
-lightColor ()
+object_t::lightColorRed_type& object_t::
+lightColorRed ()
 {
-  return this->lightColor_.get ();
+  return this->lightColorRed_.get ();
 }
 
 void object_t::
-lightColor (const lightColor_type& x)
+lightColorRed (const lightColorRed_type& x)
 {
-  this->lightColor_.set (x);
+  this->lightColorRed_.set (x);
+}
+
+const object_t::lightColorGreen_type& object_t::
+lightColorGreen () const
+{
+  return this->lightColorGreen_.get ();
+}
+
+object_t::lightColorGreen_type& object_t::
+lightColorGreen ()
+{
+  return this->lightColorGreen_.get ();
+}
+
+void object_t::
+lightColorGreen (const lightColorGreen_type& x)
+{
+  this->lightColorGreen_.set (x);
+}
+
+const object_t::lightColorBlue_type& object_t::
+lightColorBlue () const
+{
+  return this->lightColorBlue_.get ();
+}
+
+object_t::lightColorBlue_type& object_t::
+lightColorBlue ()
+{
+  return this->lightColorBlue_.get ();
+}
+
+void object_t::
+lightColorBlue (const lightColorBlue_type& x)
+{
+  this->lightColorBlue_.set (x);
 }
 
 const object_t::mass_type& object_t::
@@ -550,7 +586,9 @@ object_t (const name_type& name,
           const shadows_type& shadows,
           const lightType_type& lightType,
           const lightRadius_type& lightRadius,
-          const lightColor_type& lightColor,
+          const lightColorRed_type& lightColorRed,
+          const lightColorGreen_type& lightColorGreen,
+          const lightColorBlue_type& lightColorBlue,
           const mass_type& mass,
           const collisionShape_type& collisionShape,
           const colBoxHeight_type& colBoxHeight,
@@ -576,7 +614,9 @@ object_t (const name_type& name,
   shadows_ (shadows, ::xml_schema::flags (), this),
   lightType_ (lightType, ::xml_schema::flags (), this),
   lightRadius_ (lightRadius, ::xml_schema::flags (), this),
-  lightColor_ (lightColor, ::xml_schema::flags (), this),
+  lightColorRed_ (lightColorRed, ::xml_schema::flags (), this),
+  lightColorGreen_ (lightColorGreen, ::xml_schema::flags (), this),
+  lightColorBlue_ (lightColorBlue, ::xml_schema::flags (), this),
   mass_ (mass, ::xml_schema::flags (), this),
   collisionShape_ (collisionShape, ::xml_schema::flags (), this),
   colBoxHeight_ (colBoxHeight, ::xml_schema::flags (), this),
@@ -609,7 +649,9 @@ object_t (const object_t& x,
   shadows_ (x.shadows_, f, this),
   lightType_ (x.lightType_, f, this),
   lightRadius_ (x.lightRadius_, f, this),
-  lightColor_ (x.lightColor_, f, this),
+  lightColorRed_ (x.lightColorRed_, f, this),
+  lightColorGreen_ (x.lightColorGreen_, f, this),
+  lightColorBlue_ (x.lightColorBlue_, f, this),
   mass_ (x.mass_, f, this),
   collisionShape_ (x.collisionShape_, f, this),
   colBoxHeight_ (x.colBoxHeight_, f, this),
@@ -642,7 +684,9 @@ object_t (const ::xercesc::DOMElement& e,
   shadows_ (f, this),
   lightType_ (f, this),
   lightRadius_ (f, this),
-  lightColor_ (f, this),
+  lightColorRed_ (f, this),
+  lightColorGreen_ (f, this),
+  lightColorBlue_ (f, this),
   mass_ (f, this),
   collisionShape_ (f, this),
   colBoxHeight_ (f, this),
@@ -780,13 +824,35 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
-    // lightColor
+    // lightColorRed
     //
-    if (n.name () == "lightColor" && n.namespace_ ().empty ())
+    if (n.name () == "lightColorRed" && n.namespace_ ().empty ())
     {
-      if (!lightColor_.present ())
+      if (!lightColorRed_.present ())
       {
-        this->lightColor_.set (lightColor_traits::create (i, f, this));
+        this->lightColorRed_.set (lightColorRed_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // lightColorGreen
+    //
+    if (n.name () == "lightColorGreen" && n.namespace_ ().empty ())
+    {
+      if (!lightColorGreen_.present ())
+      {
+        this->lightColorGreen_.set (lightColorGreen_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // lightColorBlue
+    //
+    if (n.name () == "lightColorBlue" && n.namespace_ ().empty ())
+    {
+      if (!lightColorBlue_.present ())
+      {
+        this->lightColorBlue_.set (lightColorBlue_traits::create (i, f, this));
         continue;
       }
     }
@@ -1032,10 +1098,24 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "");
   }
 
-  if (!lightColor_.present ())
+  if (!lightColorRed_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
-      "lightColor",
+      "lightColorRed",
+      "");
+  }
+
+  if (!lightColorGreen_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "lightColorGreen",
+      "");
+  }
+
+  if (!lightColorBlue_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "lightColorBlue",
       "");
   }
 

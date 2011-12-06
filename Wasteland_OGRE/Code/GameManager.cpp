@@ -75,15 +75,19 @@ OgreBulletPair GameManager::createObject(Ogre::SceneManager* scene,object_t* obj
 	Ogre::SceneNode* node = OgreManager::getSingleton().createSceneNode(scene,objectInfo);
 	retVal.ogreNode = node;
 
-	//Slightly longer Bullet part of this function.
-	btCollisionShape* shape = BulletManager::getSingleton().generateCollisionShape(objectInfo);
+	//Only do this if it's an object.
+	if(objectInfo->type() == "entity")
+	{
+		//Slightly longer Bullet part of this function.
+		btCollisionShape* shape = BulletManager::getSingleton().generateCollisionShape(objectInfo);
 
-	btTransform init;
-	init.setIdentity();
-	init.setOrigin(btVector3(objectInfo->positionX(),objectInfo->positionY(),objectInfo->positionZ()));
+		btTransform init;
+		init.setIdentity();
+		init.setOrigin(btVector3(objectInfo->positionX(),objectInfo->positionY(),objectInfo->positionZ()));
 
-	//Easy function call.
-	retVal.btBody=BulletManager::getSingleton().addRigidBody(shape,node,objectInfo->mass(),init);
+		//Easy function call.
+		retVal.btBody=BulletManager::getSingleton().addRigidBody(shape,node,objectInfo->mass(),init);
+	}
 
 	//return by-value, not reference.
 	return retVal;

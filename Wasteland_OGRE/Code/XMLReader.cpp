@@ -11,6 +11,13 @@ void* XMLReader::readFile(std::string filename,const std::string& typeToLoad)
 		obj.reset(NULL); //no destructor called.
 		return (void*)objPtr;
 	}
+	else if(typeToLoad == "list")
+	{
+		std::auto_ptr<list_t> l = list(filename);
+		list_t* listPtr = l.release();
+		l.reset(NULL);
+		return (void*)listPtr;
+	}
 	//Just a catch-all if statement.
 	else
 	{
