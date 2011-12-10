@@ -31,17 +31,16 @@ void ArenaTutorial::Setup()
 	Ogre::SceneNode* level = GameManager::getSingleton().createLevel(_scene,opt);
 	((Ogre::Entity*)level->getAttachedObject("arenaLevel"))->setCastShadows(true);
 
-	object_t* tmp = object("resource\\xml\\test_sphere.xml").release();
-	OgreBulletPair retVal = GameManager::getSingleton().createObject(_scene,tmp);
-	delete tmp;
-
-	object_t* enem = object("resource\\xml\\test_enem.xml").release();
-	//OgreBulletPair enemVal = GameManager::getSingleton().createObject(_scene,enem);
-	delete enem;
-
-	object_t* light = object("resource\\xml\\test_light.xml").release();
-	//OgreBulletPair lightVal = GameManager::getSingleton().createObject(_scene,light);
-	delete light;
+	object_t* tmpObj = NULL;
+	list_t* tmpList = list("resource\\xml\\list.xml").release();
+	for(list_t::file_const_iterator itr = tmpList->file().begin(); itr != tmpList->file().end(); ++itr)
+	{
+		tmpObj = object((*itr)).release();
+		OgreBulletPair curVal = GameManager::getSingleton().createObject(_scene,tmpObj);
+		_pairs.push_back(curVal);
+		delete tmpObj;
+	}
+	delete tmpList;
 
 	//Let's position the camera so we can see it.
 	_camera->setPosition(Ogre::Vector3(0,500,500));

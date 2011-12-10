@@ -11,6 +11,9 @@
 
 #include <vector>
 
+// forward declaration, keeping the header file slim.
+struct OgreBulletPair;
+
 /*! \brief Application state that is the Tutorial scene in Wasteland.
 
 Teaches player how to move, shoot, and adds some background to the story. 
@@ -32,6 +35,9 @@ public:
 
 private:
 	bool _stateShutdown;
+
+	//! Tracks all OgreBulletPairs
+	std::vector<OgreBulletPair> _pairs;
 
 	//! State-specific Ogre::Camera*
 	Ogre::Camera* _camera;
