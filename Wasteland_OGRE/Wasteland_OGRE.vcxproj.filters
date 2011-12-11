@@ -75,6 +75,9 @@
     <ClInclude Include="Code\interfaces\list.hxx">
       <Filter>Include Files\XML\interfaces</Filter>
     </ClInclude>
+    <ClInclude Include="Code\interfaces\resource.hxx">
+      <Filter>Include Files\XML\interfaces</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">
@@ -108,6 +111,9 @@
       <Filter>Include Files\XML\interfaces</Filter>
     </ClCompile>
     <ClCompile Include="Code\interfaces\list.cxx">
+      <Filter>Include Files\XML\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\interfaces\resource.cxx">
       <Filter>Include Files\XML\interfaces</Filter>
     </ClCompile>
   </ItemGroup>

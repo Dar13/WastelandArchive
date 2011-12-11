@@ -42,7 +42,6 @@ void ArenaTutorial::Setup()
 	}
 	delete tmpList;
 
-	//Let's position the camera so we can see it.
 	_camera->setPosition(Ogre::Vector3(0,500,500));
 	_camera->lookAt(0,0,0);
 	//set the camera aspect ratio
@@ -54,7 +53,13 @@ int ArenaTutorial::Run()
 {
 	_stateShutdown=false;
 
-	Ogre::Node* tmp = _scene->getRootSceneNode()->getChild("testSphere");
+	Ogre::SceneNode* enem = _scene->getSceneNode("nodeEnemy");
+	Ogre::Entity* enemEnt = (Ogre::Entity*)enem->getAttachedObject("entEnemy");
+	Ogre::AnimationState* enemAnim = enemEnt->getAnimationState("Anim0");
+	enemAnim->setLoop(true);
+	enemAnim->setEnabled(true);
+
+	Ogre::Node* tmp = _scene->getRootSceneNode()->getChild("nodetestSphere");
 
 	//while the escape key isn't pressed and the state isn't told to shutdown.
 	while(!_stateShutdown)

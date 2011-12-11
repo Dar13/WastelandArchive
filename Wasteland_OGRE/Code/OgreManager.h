@@ -32,11 +32,9 @@ public:
 	//! Adds resource locations stored in vectors to Ogre.
 	//! Means that an external file can hold all resource locations.
 	/*!
-		\param location A string vector holding all locations of the resource locations.
-		\param type A string vector holding all types of resource locations(FileSystem, Zip, etc.)
-		\param name A string vector holding all the names of the resource groups formed by the location/type combinations.
+		\param filename Is a path to the relevant xml file that holds all the resource locations.
 	*/
-	bool addResources(std::vector<Ogre::String> &location,std::vector<Ogre::String> &type,std::vector<Ogre::String> &name);
+	bool addResources(std::string& filename);
 
 	//! Gives access to the Ogre::Root pointer.
 	Ogre::Root* getRoot(){return _Root;}

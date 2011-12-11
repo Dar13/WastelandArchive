@@ -1,5 +1,8 @@
 #include "OgreManager.h"
 
+#include "interfaces\list.hxx"
+#include "interfaces\resource.hxx"
+
 template<> OgreManager* Ogre::Singleton<OgreManager>::ms_Singleton=0;
 
 OgreManager::OgreManager()
@@ -69,32 +72,25 @@ bool OgreManager::Setup()
 	return retVal;
 }
 
-bool OgreManager::addResources(std::vector<Ogre::String> &location,std::vector<Ogre::String> &type,std::vector<Ogre::String> &name)
+bool OgreManager::addResources(std::string& filename)
 {
 	//return value
 	bool retVal=true;
 
-	//Invalid inputs
-	if(location.size()!=type.size() || location.size()!=name.size())
+	list_t* reslist = list(filename).release();
+	for(list_t::file_const_iterator itr = reslist->file().begin(); itr != reslist->file().end(); ++itr)
 	{
-		return false;
-	}
-
-	//Let's make sure this doesn't crash the program eh?
-	try
-	{
-		for(unsigned int i=0; i<location.size(); i++)
+		resource_t* res = resource((*itr)).release();
+		std::string grpName = res->GroupName();
+		for(resource_t::location_const_iterator itr = res->location().begin(); itr != res->location().end(); ++itr)
 		{
-			Ogre::ResourceGroupManager::getSingleton().addResourceLocation(location[i],type[i],name[i]);
+			Ogre::ResourceGroupManager::getSingleton().addResourceLocation((*itr).FileName(),(*itr).Type(),grpName,(*itr).Recursive());
 		}
-		//Initialise resource groups after adding them.
-		Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
+		delete res;
 	}
-	catch(Ogre::Exception& e)
-	{
-		OutputDebugString(e.getFullDescription().c_str());
-		retVal=false;
-	}
+	delete reslist;
+
+	Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
 	return retVal;
 }
@@ -156,7 +152,7 @@ Ogre::SceneNode* OgreManager::createSceneNode(Ogre::SceneManager* scene,
 	rot.y = objectInfo->rotationY();
 	rot.z = objectInfo->rotationZ();
 	
-	node = scene->getRootSceneNode()->createChildSceneNode(objectInfo->name(),pos,rot);
+	node = scene->getRootSceneNode()->createChildSceneNode("node" + objectInfo->name(),pos,rot);
 
 	if(type == "entity")
 	{
@@ -168,8 +164,8 @@ Ogre::SceneNode* OgreManager::createSceneNode(Ogre::SceneManager* scene,
 	if(type == "light")
 	{
 		Ogre::Light* light = scene->createLight("light" + objectInfo->name());
-		setLightRange(light,objectInfo->lightRadius());
-		light->setDiffuseColour(Ogre::ColourValue(objectInfo->lightColorRed(),objectInfo->lightColorGreen(),objectInfo->lightColorBlue(),1.0f));
+		setLightRange(light,(Ogre::Real)objectInfo->lightRadius());
+		light->setDiffuseColour(Ogre::ColourValue((Ogre::Real)objectInfo->lightColorRed(),(Ogre::Real)objectInfo->lightColorGreen(),(Ogre::Real)objectInfo->lightColorBlue(),1.0f));
 		switch(objectInfo->lightType())
 		{
 		case Ogre::Light::LT_POINT:

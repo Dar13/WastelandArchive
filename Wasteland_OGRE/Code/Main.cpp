@@ -28,15 +28,9 @@ int main(int argc, char **argv[])
 	}
 
 	//testing out the new function I made for adding resources.
-	std::vector<Ogre::String> loc,typ,name;
-	loc.push_back("resource\\models");
-	typ.push_back("FileSystem");
-	name.push_back("Models");
-	loc.push_back("resources");
-	typ.push_back("FileSystem");
-	name.push_back("General");
+	std::string resFile = "resource\\xml\\resource_list.xml";
 
-	ogre->addResources(loc,typ,name);
+	ogre->addResources(resFile);
 
 	unsigned long hWnd;
 	ogre->getRenderWindow()->getCustomAttribute("WINDOW",&hWnd);
