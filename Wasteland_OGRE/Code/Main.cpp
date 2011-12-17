@@ -23,7 +23,6 @@ int main(int argc, char **argv[])
 
 	//testing out the new function I made for adding resources.
 	std::string resFile = "resource\\xml\\resource_list.xml";
-
 	ogre->addResources(resFile);
 
 	unsigned long hWnd;
