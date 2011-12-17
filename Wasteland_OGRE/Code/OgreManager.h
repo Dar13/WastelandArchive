@@ -14,7 +14,7 @@ Exposes the various Ogre classes(Root,Time,RenderWindow,etc.) to the application
 such as get mesh information or making a scene node.
 */
 
-class OgreManager : public Ogre::Singleton<OgreManager>
+class OgreManager : public Ogre::Singleton<OgreManager>,Ogre::FrameListener
 {
 public:
 	//! Initializes all pointers to NULL.
@@ -76,6 +76,12 @@ public:
 							const Ogre::Quaternion &orient = Ogre::Quaternion::IDENTITY,
 							const Ogre::Vector3 &scale = Ogre::Vector3::UNIT_SCALE);
 	
+	void addAnimationState(Ogre::AnimationState* anim);
+	void clearAnimationStates();
+
+	bool frameStarted(const Ogre::FrameEvent& evt);
+	bool frameRenderingQueued(const Ogre::FrameEvent& evt);
+	bool frameEnded(const Ogre::FrameEvent& evt);
 
 private:
 	//Hidden methods
@@ -87,6 +93,8 @@ private:
 	void setLightRange(Ogre::Light* l, Ogre::Real range);
 	//! Converts a hexadecimal number into an Ogre::ColourValue.
 	Ogre::ColourValue getColorFromHex(int hexColor, float alpha = 1.0f);
+
+	std::vector<Ogre::AnimationState*> _animations;
 
 	//Ogre pointers
 	Ogre::Root* _Root;

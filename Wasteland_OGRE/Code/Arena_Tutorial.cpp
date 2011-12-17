@@ -24,12 +24,8 @@ void ArenaTutorial::Setup()
 	BulletManager::getSingleton().setGravity(btVector3(0,-20.0f,0));
 	
 	//Loading the level through the GameManager(takes care of Bullet initialization,etc)
-	std::map<std::string,std::string> opt; 
-	opt.insert(std::make_pair("name","arenaLevel"));
-	opt.insert(std::make_pair("filename","test_levelNEW.mesh"));
-	opt.insert(std::make_pair("resgroup","Models"));
-	Ogre::SceneNode* level = GameManager::getSingleton().createLevel(_scene,opt);
-	((Ogre::Entity*)level->getAttachedObject("arenaLevel"))->setCastShadows(true);
+	object_t* level = object("resource\\xml\\test.xml").release();
+	OgreBulletPair levelPair = GameManager::getSingleton().createObject(_scene,level);
 
 	object_t* tmpObj = NULL;
 	list_t* tmpList = list("resource\\xml\\list.xml").release();
@@ -42,7 +38,7 @@ void ArenaTutorial::Setup()
 	}
 	delete tmpList;
 
-	_camera->setPosition(Ogre::Vector3(0,500,500));
+	_camera->setPosition(Ogre::Vector3(300,80,0));
 	_camera->lookAt(0,0,0);
 	//set the camera aspect ratio
 	_camera->setAspectRatio(4.0f/3.0f);
@@ -55,11 +51,12 @@ int ArenaTutorial::Run()
 
 	Ogre::SceneNode* enem = _scene->getSceneNode("nodeEnemy");
 	Ogre::Entity* enemEnt = (Ogre::Entity*)enem->getAttachedObject("entEnemy");
-	Ogre::AnimationState* enemAnim = enemEnt->getAnimationState("Anim0");
+	Ogre::AnimationState* enemAnim = enemEnt->getAnimationState("MoveFast");
 	enemAnim->setLoop(true);
 	enemAnim->setEnabled(true);
+	OgreManager::getSingleton().addAnimationState(enemAnim);
 
-	Ogre::Node* tmp = _scene->getRootSceneNode()->getChild("nodetestSphere");
+	Ogre::Node* tmp = _scene->getRootSceneNode()->getChild("nodeEnemy");
 
 	//while the escape key isn't pressed and the state isn't told to shutdown.
 	while(!_stateShutdown)

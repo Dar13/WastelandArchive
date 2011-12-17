@@ -69,6 +69,8 @@ bool OgreManager::Setup()
 		MessageBoxA(NULL,e.getFullDescription().c_str(),"EXCEPTION!",MB_OK | MB_ICONERROR);
 	}
 
+	_Root->addFrameListener(this);
+
 	return retVal;
 }
 
@@ -115,6 +117,7 @@ bool OgreManager::Render()
 
 void OgreManager::Shutdown()
 {
+	clearAnimationStates();
 	_Root->shutdown();
 	delete _Root;
 }
@@ -317,6 +320,38 @@ void OgreManager::getMeshInformation(const Ogre::MeshPtr* const meshptr,
         ibuf->unlock();
         current_offset = next_offset;
     }
+}
+
+//Framelistener methods and any helpers that affect them.
+void OgreManager::addAnimationState(Ogre::AnimationState* anim)
+{
+	_animations.push_back(anim);
+}
+
+void OgreManager::clearAnimationStates()
+{
+	_animations.clear();
+}
+
+bool OgreManager::frameStarted(const Ogre::FrameEvent& evt)
+{
+	//update any animations that need it.
+	for(std::vector<Ogre::AnimationState*>::iterator itr = _animations.begin(); itr != _animations.end(); ++itr)
+	{
+		(*itr)->addTime(evt.timeSinceLastFrame);
+	}
+
+	return true;
+}
+
+bool OgreManager::frameRenderingQueued(const Ogre::FrameEvent& evt)
+{
+	return true;
+}
+
+bool OgreManager::frameEnded(const Ogre::FrameEvent& evt)
+{
+	return true;
 }
 
 void OgreManager::setLightRange(Ogre::Light* l, Ogre::Real range)

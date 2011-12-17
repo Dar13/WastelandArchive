@@ -107,11 +107,6 @@ btCollisionShape* BulletManager::generateCollisionShape(object_t* objectInfo)
 		//that's for another day though.
 		retVal = NULL;
 	}
-	
-	if(type == "NULL")
-	{
-		retVal = NULL;
-	}
 
 	return retVal;
 }

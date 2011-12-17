@@ -75,12 +75,22 @@ OgreBulletPair GameManager::createObject(Ogre::SceneManager* scene,object_t* obj
 	Ogre::SceneNode* node = OgreManager::getSingleton().createSceneNode(scene,objectInfo);
 	retVal.ogreNode = node;
 
+	btCollisionShape* shape = NULL;
+
 	//Only do this if it's an object.
 	if(objectInfo->type() == "entity")
 	{
-		//Slightly longer Bullet part of this function.
-		btCollisionShape* shape = BulletManager::getSingleton().generateCollisionShape(objectInfo);
-
+		if(objectInfo->mass()!=0.0f)
+		{
+			//get the collision shape.
+			shape = BulletManager::getSingleton().generateCollisionShape(objectInfo);
+		}
+		else
+		{
+			//assumes that all non-mass objects will be static triangle meshes.
+			shape = buildTriangleCollisionShape(node);
+		}
+		
 		btTransform init;
 		init.setIdentity();
 		init.setOrigin(btVector3(objectInfo->positionX(),objectInfo->positionY(),objectInfo->positionZ()));
@@ -88,6 +98,7 @@ OgreBulletPair GameManager::createObject(Ogre::SceneManager* scene,object_t* obj
 		//Easy function call.
 		retVal.btBody=BulletManager::getSingleton().addRigidBody(shape,node,objectInfo->mass(),init);
 	}
+
 
 	//return by-value, not reference.
 	return retVal;
@@ -102,7 +113,15 @@ OgreBulletPair GameManager::createObject(Ogre::SceneNode* node,object_t* objectI
 	retVal.ogreNode=node;
 
 	//Easy(ish) function call.
-	btCollisionShape* shape = BulletManager::getSingleton().generateCollisionShape(objectInfo);
+	btCollisionShape* shape = NULL;
+	if(objectInfo->mass()!=0.0f)
+	{
+		shape = BulletManager::getSingleton().generateCollisionShape(objectInfo);
+	}
+	else
+	{
+		shape = buildTriangleCollisionShape(node);
+	}
 	btTransform init; init.setIdentity();
 	btVector3 pos;
 	pos.setX(objectInfo->positionX());
@@ -111,23 +130,6 @@ OgreBulletPair GameManager::createObject(Ogre::SceneNode* node,object_t* objectI
 	retVal.btBody = BulletManager::getSingleton().addRigidBody(shape,node,objectInfo->mass(),init);
 
 	return retVal;
-}
-
-Ogre::SceneNode* GameManager::createLevel(Ogre::SceneManager* scene,std::map<std::string,std::string> &options)
-{
-	Ogre::Entity* tempEnt = scene->createEntity(options["name"],options["filename"],options["resgroup"]);
-	Ogre::SceneNode* tempNode = scene->getRootSceneNode()->createChildSceneNode(options["name"]);
-	tempNode->attachObject(tempEnt);
-
-	btBvhTriangleMeshShape* shape = buildLevelCollisionShape(tempNode);
-	btScalar mass = 0.0f; //can be zero, it's a level collision shape. not going anywhere.
-	btVector3 inertia(0,0,0); //no inertia, can't move;
-	btTransform init;
-	init.setIdentity();
-	init.setOrigin(btVector3(0,0,0));
-	BulletManager::getSingleton().addRigidBody(shape,tempNode,mass,init);
-
-	return tempNode;
 }
 
 //----------------------------------------
@@ -146,7 +148,7 @@ btVector3 GameManager::convertOgreVector3(const Ogre::Vector3 &v)
 	return btVector3(v.x,v.y,v.z);
 }
 
-btBvhTriangleMeshShape* GameManager::buildLevelCollisionShape(Ogre::SceneNode* node)
+btBvhTriangleMeshShape* GameManager::buildTriangleCollisionShape(Ogre::SceneNode* node)
 {
 	btBvhTriangleMeshShape* shape;
 	btTriangleMesh* bmesh = new btTriangleMesh();

@@ -32,32 +32,12 @@ public:
 	GameManager();
 	~GameManager(); 
 	
-	//! Creates a level, complete with a Bullet Physics btBvhTriangleMesh rigid body.
-	/*!
-		\param scene The current Ogre SceneManager, required for the creation of the SceneNode.
-		\param options All the information needed to create the Ogre SceneNode and/or the Bullet rigid body.
-		<ul>
-			<li>"name" Name for both the Entity and the SceneNode.</li>
-			<li>"filename" FileName for the Entity to load from(if needed for the type of Entity/SceneNode).</li>
-			<li>"type" The type of entity to be created.</li>
-			<li>"resgroup" Resource Group that holds the FileName.</li>
-		</ul>
-	*/
-	Ogre::SceneNode* createLevel(Ogre::SceneManager* scene,std::map<std::string,std::string> &options);
+	
 
 	/*!Creates an object, complete with Bullet Physics rigid body.
 
 	\param scene Ogre SceneManager, required for SceneNode creation.
-	\param options Options for the Ogre SceneNode and/or Bullet rigid body.
-	<ul>
-		<li>"name" Name for both the Entity and the SceneNode.</li>
-		<li>"filename" FileName for the Entity to load from(if needed for the type of Entity/SceneNode).</li>
-		<li>"type" The type of entity to be created.</li>
-		<li>"resgroup" Resource Group that holds the FileName.</li>
-	</ul>
-	\param mass Mass for the Bullet rigid body.
-	\param init Initial transformation(position/rotation) for the Bullet rigid body/Ogre SceneNode.
-	\param shape Shape of the Bullet rigid body.
+	\param objectInfo Pointer to class that holds all information for object.
 
 	\returns OgreBulletPair containing SceneNode* and btRigidBody*.
 	*/
@@ -66,9 +46,7 @@ public:
 	/*! Creates object, generates Ogre SceneNode and Bullet rigid body.
 
 		\param node Premade SceneNode.
-		\param shape Premade Bullet collision shape.
-		\param mass Mass for the rigid body.
-		\param init Initial position/rotation for the rigid body/scene node.
+		\param objectInfo Pointer to class that holds all object information.
 
 		\returns OgreBulletPair containing the SceneNode* and btRigidBody*.
 	*/
@@ -101,7 +79,7 @@ private:
 	//private utility function.
 	//! Utilizes a special OgreManager function to create a triangle mesh collision shape.
 	//! \sa OgreManager::getMeshInformation()
-	btBvhTriangleMeshShape* buildLevelCollisionShape(Ogre::SceneNode* node);
+	btBvhTriangleMeshShape* buildTriangleCollisionShape(Ogre::SceneNode* node);
 	
 	//private timing variables
 	float Time,oldTime,deltaTime;
