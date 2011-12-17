@@ -1,3 +1,5 @@
+#include "StdAfx.h"
+
 #ifndef _STATE_MANAGER_H_
 #define _STATE_MANAGER_H_
 
@@ -6,10 +8,6 @@
 
 //actual states
 #include "ArenaALL.h"
-
-#include <OgreSingleton.h>
-
-#include <map>
 
 /*!
 \brief The manager class for all of the application states.

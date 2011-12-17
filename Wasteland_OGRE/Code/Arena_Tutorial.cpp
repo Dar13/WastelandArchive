@@ -1,7 +1,7 @@
+#include "StdAfx.h"
+
 #include "Arena_Tutorial.h"
 #include "GameManager.h"
-
-#include <Ogre.h>
 
 ArenaTutorial::ArenaTutorial()
 {

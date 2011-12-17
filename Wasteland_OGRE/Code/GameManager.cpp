@@ -1,3 +1,4 @@
+#include "StdAfx.h"
 #include "GameManager.h"
 
 template<> GameManager* Ogre::Singleton<GameManager>::ms_Singleton = 0;

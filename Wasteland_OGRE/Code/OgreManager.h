@@ -1,12 +1,9 @@
+#include "StdAfx.h"
+
 #ifndef _OGRE_MANAGER_H_
 #define _OGRE_MANAGER_H_
 
-#include <Ogre.h>
-
 #include "XMLReader.h"
-
-#include <vector>
-#include <map>
 
 /*! \brief This class manages the entirety of Ogre3D(OOP Graphics Rendering Engine).
 

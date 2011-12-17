@@ -1,8 +1,7 @@
+#include "StdAfx.h"
+
 #ifndef _OIS_MANAGER_H_
 #define _OIS_MANAGER_H_
-
-#include <OIS.h>
-#include <OgreSingleton.h>
 
 /*! \brief The OIS(Object Oriented Input System) Manager. Handles all input for Wasteland.
 

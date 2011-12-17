@@ -1,7 +1,8 @@
+#include "StdAfx.h"
+
 #ifndef _GAME_MANAGER_H_
 #define _GAME_MANAGER_H_
 
-#include <OgreSingleton.h>
 #include "OgreManager.h"
 #include "OISManager.h"
 #include "BulletManager.h"

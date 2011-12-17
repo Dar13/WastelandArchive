@@ -1,19 +1,13 @@
+#include "StdAfx.h"
+
 #include "GameManager.h"
 #include "StateManager.h"
 
-//CEGUI includes
-#include <CEGUI.h>
-#include <RendererModules\Ogre\CEGUIOgreRenderer.h>
-
-//Ogre includes
-#include <Ogre.h>
 #include <OgreWindowEventUtilities.h>
 
 #include "XMLReader.h"
 
 #if defined(WIN32)
-#include <Windows.h>
-
 int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine, int nCmdShow)
 {
 #else

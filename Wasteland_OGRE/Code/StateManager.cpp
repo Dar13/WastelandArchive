@@ -1,3 +1,5 @@
+#include "StdAfx.h"
+
 #include "StateManager.h"
 
 template<> StateManager* Ogre::Singleton<StateManager>::ms_Singleton = 0;

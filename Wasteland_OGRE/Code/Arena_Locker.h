@@ -1,3 +1,5 @@
+#include "StdAfx.h"
+
 #ifndef _ARENA_LOCKER_H_
 #define _ARENA_LOCKER_H_
 

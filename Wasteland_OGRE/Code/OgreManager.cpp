@@ -1,3 +1,5 @@
+#include "StdAfx.h"
+
 #include "OgreManager.h"
 
 #include "interfaces\list.hxx"

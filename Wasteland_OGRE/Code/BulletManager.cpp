@@ -1,5 +1,5 @@
+#include "StdAfx.h"
 #include "BulletManager.h"
-#include <OgreSceneNode.h>
 
 //====================
 // Bullet Manager
@@ -104,7 +104,7 @@ btCollisionShape* BulletManager::generateCollisionShape(object_t* objectInfo)
 	if(type == "Custom")
 	{
 		//denotes previously serialized shape, need to load it in.
-		//that's for another day though.
+		//implementation is for another day however.
 		retVal = NULL;
 	}
 

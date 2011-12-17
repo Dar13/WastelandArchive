@@ -37,6 +37,9 @@
     <Filter Include="Include Files\XML\interfaces">
       <UniqueIdentifier>{7e34b8de-cbbe-439a-9143-3fe9f1d9b97a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include Files\PCH">
+      <UniqueIdentifier>{88e08e02-a526-43cc-babf-4e45daf89922}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\State.h">
@@ -78,6 +81,9 @@
     <ClInclude Include="Code\interfaces\resource.hxx">
       <Filter>Include Files\XML\interfaces</Filter>
     </ClInclude>
+    <ClInclude Include="Code\precompiled\StdAfx.h">
+      <Filter>Include Files\PCH</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">
@@ -115,6 +121,9 @@
     </ClCompile>
     <ClCompile Include="Code\interfaces\resource.cxx">
       <Filter>Include Files\XML\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\precompiled\StdAfx.cpp">
+      <Filter>Include Files\PCH</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

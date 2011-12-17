@@ -1,10 +1,8 @@
+#include "StdAfx.h"
+
 #ifndef _BULLET_MANAGER_H_
 #define _BULLET_MANAGER_H_
 
-#include <OgreSingleton.h>
-
-#include <btBulletDynamicsCommon.h>
-#include <btBulletCollisionCommon.h>
 #include <BulletDynamics\Character\btKinematicCharacterController.h>
 #include <BulletCollision\CollisionDispatch\btGhostObject.h>
 

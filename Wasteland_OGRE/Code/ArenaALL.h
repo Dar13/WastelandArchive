@@ -1,3 +1,5 @@
+#include "StdAfx.h"
+
 #ifndef _ARENA_ALL_H_
 #define _ARENA_ALL_H_
 

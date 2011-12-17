@@ -1,8 +1,8 @@
+#include "StdAfx.h"
 
 #ifndef _XML_READER_H_
 #define _XML_READER_H_
 
-#include <OgreSingleton.h>
 #include "Tree.h"
 #include "interfaces\object.hxx"
 #include "interfaces\list.hxx"

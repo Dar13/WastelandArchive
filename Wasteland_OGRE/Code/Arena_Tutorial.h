@@ -1,15 +1,9 @@
+#include "StdAfx.h"
+
 #ifndef _ARENA_TUTORIAL_H_
 #define _ARENA_TUTORIAL_H_
 
 #include "State.h"
-
-#include <OgreSceneManager.h>
-#include <OgreSceneNode.h>
-#include <OgreEntity.h>
-#include <OgreCamera.h>
-#include <OgreMesh.h>
-
-#include <vector>
 
 // forward declaration, keeping the header file slim.
 struct OgreBulletPair;

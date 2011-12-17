@@ -21,6 +21,7 @@
     <ClInclude Include="Code\interfaces\resource.hxx" />
     <ClInclude Include="Code\OgreManager.h" />
     <ClInclude Include="Code\OISManager.h" />
+    <ClInclude Include="Code\precompiled\StdAfx.h" />
     <ClInclude Include="Code\State.h" />
     <ClInclude Include="Code\StateManager.h" />
     <ClInclude Include="Code\XMLReader.h" />
@@ -36,6 +37,10 @@
     <ClCompile Include="Code\Main.cpp" />
     <ClCompile Include="Code\OgreManager.cpp" />
     <ClCompile Include="Code\OISManager.cpp" />
+    <ClCompile Include="Code\precompiled\StdAfx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">/Zm200 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
     <ClCompile Include="Code\StateManager.cpp" />
     <ClCompile Include="Code\XMLReader.cpp" />
   </ItemGroup>
@@ -84,17 +89,17 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>E:\boost\boost_1_44\;$(OGRE_HOME)\include\OGRE;$(OGRE_HOME)\include\OIS;$(OGRE_HOME)\include;$(IncludePath)</IncludePath>
+    <IncludePath>C:\Users\Neil Moore\Documents\Visual Studio 2010\Projects\Wasteland_OGRE\Wasteland_OGRE\Code\precompiled;E:\boost\boost_1_44\;$(OGRE_HOME)\include\OGRE;$(OGRE_HOME)\include\OIS;$(OGRE_HOME)\include;$(IncludePath)</IncludePath>
     <LibraryPath>E:\boost\boost_1_44\lib;$(OGRE_HOME)\lib\$(Configuration);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>E:\bullet-2.77\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\Neil Moore\Documents\Visual Studio 2010\Projects\Wasteland_OGRE\Wasteland_OGRE\Code\precompiled;E:\bullet-2.77\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -108,8 +113,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
-      <PrecompiledHeader>
-      </PrecompiledHeader>
+      <PrecompiledHeader>Create</PrecompiledHeader>
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
