@@ -1,4 +1,5 @@
 #include "StdAfx.h"
+#include "interfaces\interfaces.h"
 
 #ifndef _GAME_MANAGER_H_
 #define _GAME_MANAGER_H_

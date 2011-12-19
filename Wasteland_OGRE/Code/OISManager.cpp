@@ -52,6 +52,11 @@ void OISManager::capture()
 	_keyObj->capture();
 }
 
+bool OISManager::isCFGKeyPressed(unsigned int key)
+{
+	return _keyDown[key];
+}
+
 bool OISManager::keyPressed(const OIS::KeyEvent &evt)
 {
 	//Checking for escape-key press
@@ -61,6 +66,20 @@ bool OISManager::keyPressed(const OIS::KeyEvent &evt)
 	}
 
 	//Will eventually inject input into CEGUI/Bullet/etc.
+	//injection into CEGUI...
+	/*
+	CEGUI::System::getSingleton().injectKeyDown(evt.key);
+	CEGUI::System::getSingleton().injectChar(evt.text);
+	*/
+
+	char character = evt.text;
+	for(unsigned int i = FORWARD; i<MAXVALUE; ++i)
+	{
+		if((_keyValues[i])[0] == character)
+		{
+			_keyDown[i] = true;	
+		}
+	}
 
 	return true;
 }
@@ -68,13 +87,24 @@ bool OISManager::keyPressed(const OIS::KeyEvent &evt)
 bool OISManager::keyReleased(const OIS::KeyEvent &evt)
 {
 	//Will eventually inject input into CEGUI/Bullet/etc.
+	//injection into CEGUI...
+	//CEGUI::System::getSingleton().injectKeyUp(evt.key);
+
+	char character = evt.text;
+	for(unsigned int i = FORWARD; i<MAXVALUE; ++i)
+	{
+		if((_keyValues[i])[0] == character)
+		{
+			_keyDown[i] = false;
+		}
+	}
 
 	return true;
 }
 
 bool OISManager::mouseMoved(const OIS::MouseEvent &evt)
 {
-
+	
 	return true;
 }
 
@@ -91,4 +121,32 @@ bool OISManager::mouseReleased(const OIS::MouseEvent &evt,OIS::MouseButtonID id)
 void OISManager::setConfiguration(configuration_t* config)
 {
 	_config = config;
+	_keyValues.clear();
+	//follows the convention set in CONFIG_KEY_VALUES.
+	//This can be added to, but CONFIG_KEY_VALUES must also be changed as well.
+	_config->movement().forward()[0] = tolower(_config->movement().forward()[0]);
+	_config->movement().backward()[0] = tolower(_config->movement().backward()[0]);
+	_config->movement().right()[0] = tolower(_config->movement().right()[0]);
+	_config->movement().left()[0] = tolower(_config->movement().left()[0]);
+	_config->movement().sprint()[0] = tolower(_config->movement().sprint()[0]);
+	_config->movement().jump()[0] = tolower(_config->movement().jump()[0]);
+	_config->action().use()[0] = tolower(_config->action().use()[0]);
+	_config->action().envwarnsys()[0] = tolower(_config->action().envwarnsys()[0]);
+	_config->action().reload()[0] = tolower(_config->action().reload()[0]);
+	_keyValues.push_back(_config->movement().forward()); //forward first
+	_keyValues.push_back(_config->movement().backward());
+	_keyValues.push_back(_config->movement().right());
+	_keyValues.push_back(_config->movement().left());
+	_keyValues.push_back(_config->movement().jump());
+	_keyValues.push_back(_config->movement().sprint());
+	_keyValues.push_back(_config->action().use());
+	_keyValues.push_back(_config->action().envwarnsys());
+	_keyValues.push_back(_config->action().reload()); //reload last.
+
+	//just setting up this vector
+	_keyDown.clear();
+	for(unsigned int i = 0; i<MAXVALUE; ++i)
+	{
+		_keyDown.push_back(false);
+	}
 }

@@ -17,6 +17,7 @@
     <ClInclude Include="Code\BulletManager.h" />
     <ClInclude Include="Code\GameManager.h" />
     <ClInclude Include="Code\interfaces\configuration.hxx" />
+    <ClInclude Include="Code\interfaces\interfaces.h" />
     <ClInclude Include="Code\interfaces\list.hxx" />
     <ClInclude Include="Code\interfaces\object.hxx" />
     <ClInclude Include="Code\interfaces\resource.hxx" />

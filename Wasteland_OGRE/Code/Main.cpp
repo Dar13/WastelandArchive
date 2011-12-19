@@ -40,6 +40,8 @@ int main(int argc, char **argv[])
 
 	//Setup the Game manager
 	GameManager* game = new GameManager();
+	resFile = "resource\\xml\\config.xml"; //why not re-use variables?
+	game->loadConfiguration(resFile);
 
 	//Set up the state manager
 	StateManager* wtld = new StateManager();

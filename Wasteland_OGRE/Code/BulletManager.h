@@ -1,4 +1,5 @@
 #include "StdAfx.h"
+#include "interfaces\interfaces.h"
 
 #ifndef _BULLET_MANAGER_H_
 #define _BULLET_MANAGER_H_

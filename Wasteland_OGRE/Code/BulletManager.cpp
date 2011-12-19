@@ -83,7 +83,7 @@ btCollisionShape* BulletManager::generateCollisionShape(object_t* objectInfo)
 
 	if(type == "Sphere")
 	{
-		retVal = new btSphereShape(objectInfo->colSphereRadius());
+		retVal = new btSphereShape((btScalar)objectInfo->colSphereRadius());
 	}
 	
 	if(type == "Box")
@@ -93,7 +93,7 @@ btCollisionShape* BulletManager::generateCollisionShape(object_t* objectInfo)
 
 	if(type == "Cube")
 	{
-		retVal = new btBoxShape(btVector3(objectInfo->colCubeSize(),objectInfo->colCubeSize(),objectInfo->colCubeSize()));
+		retVal = new btBoxShape(btVector3((btScalar)objectInfo->colCubeSize(),(btScalar)objectInfo->colCubeSize(),(btScalar)objectInfo->colCubeSize()));
 	}
 
 	if(type == "Capsule")

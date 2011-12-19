@@ -1,7 +1,22 @@
 #include "StdAfx.h"
+#include "interfaces\interfaces.h"
 
 #ifndef _OIS_MANAGER_H_
 #define _OIS_MANAGER_H_
+
+enum CONFIG_KEY_VALUES
+{
+	FORWARD = 0,
+	BACKWARD,
+	RIGHT,
+	LEFT,
+	JUMP,
+	SPRINT,
+	USE,
+	ENVWARNSYS,
+	RELOAD,
+	MAXVALUE
+};
 
 /*! \brief The OIS(Object Oriented Input System) Manager. Handles all input for Wasteland.
 
@@ -21,6 +36,9 @@ public:
 
 	//! Capture the input
 	void capture();
+
+	//! Gets whether a config key is pressed.
+	bool isCFGKeyPressed(unsigned int key);
 
 	//! Handles all key presses.
 	bool keyPressed(const OIS::KeyEvent &evt);
@@ -54,6 +72,8 @@ private:
 
 	//configuration
 	configuration_t* _config;
+	std::vector<std::string> _keyValues;
+	std::vector<bool> _keyDown;
 };
 
 #endif

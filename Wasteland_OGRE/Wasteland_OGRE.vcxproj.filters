@@ -72,19 +72,22 @@
     <ClInclude Include="Code\XMLReader.h">
       <Filter>Include Files\XML</Filter>
     </ClInclude>
-    <ClInclude Include="Code\interfaces\object.hxx">
+    <ClInclude Include="Code\precompiled\StdAfx.h">
+      <Filter>Include Files\PCH</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\interfaces\configuration.hxx">
       <Filter>Include Files\XML\interfaces</Filter>
     </ClInclude>
     <ClInclude Include="Code\interfaces\list.hxx">
       <Filter>Include Files\XML\interfaces</Filter>
     </ClInclude>
+    <ClInclude Include="Code\interfaces\object.hxx">
+      <Filter>Include Files\XML\interfaces</Filter>
+    </ClInclude>
     <ClInclude Include="Code\interfaces\resource.hxx">
       <Filter>Include Files\XML\interfaces</Filter>
     </ClInclude>
-    <ClInclude Include="Code\precompiled\StdAfx.h">
-      <Filter>Include Files\PCH</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\interfaces\configuration.hxx">
+    <ClInclude Include="Code\interfaces\interfaces.h">
       <Filter>Include Files\XML\interfaces</Filter>
     </ClInclude>
   </ItemGroup>
@@ -116,19 +119,19 @@
     <ClCompile Include="Code\XMLReader.cpp">
       <Filter>Include Files\XML</Filter>
     </ClCompile>
-    <ClCompile Include="Code\interfaces\object.cxx">
+    <ClCompile Include="Code\precompiled\StdAfx.cpp">
+      <Filter>Include Files\PCH</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\interfaces\configuration.cxx">
       <Filter>Include Files\XML\interfaces</Filter>
     </ClCompile>
     <ClCompile Include="Code\interfaces\list.cxx">
       <Filter>Include Files\XML\interfaces</Filter>
     </ClCompile>
-    <ClCompile Include="Code\interfaces\resource.cxx">
+    <ClCompile Include="Code\interfaces\object.cxx">
       <Filter>Include Files\XML\interfaces</Filter>
     </ClCompile>
-    <ClCompile Include="Code\precompiled\StdAfx.cpp">
-      <Filter>Include Files\PCH</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\interfaces\configuration.cxx">
+    <ClCompile Include="Code\interfaces\resource.cxx">
       <Filter>Include Files\XML\interfaces</Filter>
     </ClCompile>
   </ItemGroup>

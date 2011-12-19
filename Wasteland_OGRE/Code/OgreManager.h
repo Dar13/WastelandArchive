@@ -1,4 +1,5 @@
 #include "StdAfx.h"
+#include "interfaces\interfaces.h"
 
 #ifndef _OGRE_MANAGER_H_
 #define _OGRE_MANAGER_H_
