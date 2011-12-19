@@ -15,6 +15,11 @@
 #include <algorithm>
 #include <string>
 
+#include "..\interfaces\configuration.hxx"
+#include "..\interfaces\list.hxx"
+#include "..\interfaces\object.hxx"
+#include "..\interfaces\resource.hxx"
+
 #if defined(WIN32) || defined(_WIN32)
 #include <Windows.h>
 #endif

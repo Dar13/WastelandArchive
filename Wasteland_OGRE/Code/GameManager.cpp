@@ -5,12 +5,17 @@ template<> GameManager* Ogre::Singleton<GameManager>::ms_Singleton = 0;
 
 GameManager::GameManager()
 {
+	_config = NULL;
 	Time = (float)OgreManager::getSingleton().getTimer()->getMilliseconds();
 }
 
 GameManager::~GameManager()
 {
 	//destroy whatever I initialized(if anything) in the constructor.
+	if(_config)
+	{
+		delete _config;
+	}
 }
 
 bool GameManager::UpdateManagers()
@@ -36,6 +41,17 @@ bool GameManager::UpdateManagers()
 	}
 
 	return retVal;
+}
+
+void GameManager::loadConfiguration(std::string& file)
+{
+	_config = configuration(file).release();
+	OISManager::getSingleton().setConfiguration(_config);
+}
+
+configuration_t* GameManager::getConfiguration()
+{
+	return _config;
 }
 
 void GameManager::createCharacterController(Ogre::Camera* camera,Ogre::Vector3 initPosition)

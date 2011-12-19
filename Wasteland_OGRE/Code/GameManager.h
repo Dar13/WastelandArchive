@@ -32,8 +32,6 @@ public:
 	//! Constructor
 	GameManager();
 	~GameManager(); 
-	
-	
 
 	/*!Creates an object, complete with Bullet Physics rigid body.
 
@@ -76,6 +74,17 @@ public:
 	*/
 	bool UpdateManagers();
 
+	/*! Load configuration values
+
+	*/
+	void loadConfiguration(std::string& file);
+
+	/*! Get the current configuration values.
+
+	\returns configuration_t pointer to variable.
+	*/
+	configuration_t* getConfiguration();
+
 private:
 	//private utility function.
 	//! Utilizes a special OgreManager function to create a triangle mesh collision shape.
@@ -93,6 +102,9 @@ private:
 	//Utility functions, converts Ogre::Vector3 to btVector3
 	btVector3 convertOgreVector3(const Ogre::Vector3 &v);
 	Ogre::Vector3 convertBulletVector3(const btVector3 &v);
+
+	//Holds current configuration values.
+	configuration_t* _config;
 
 	//Facilitates Ogre::Singleton.
 	GameManager(const GameManager&);

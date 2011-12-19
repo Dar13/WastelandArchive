@@ -2,9 +2,6 @@
 
 #include "OgreManager.h"
 
-#include "interfaces\list.hxx"
-#include "interfaces\resource.hxx"
-
 template<> OgreManager* Ogre::Singleton<OgreManager>::ms_Singleton=0;
 
 OgreManager::OgreManager()

@@ -87,3 +87,8 @@ bool OISManager::mouseReleased(const OIS::MouseEvent &evt,OIS::MouseButtonID id)
 {
 	return true;
 }
+
+void OISManager::setConfiguration(configuration_t* config)
+{
+	_config = config;
+}

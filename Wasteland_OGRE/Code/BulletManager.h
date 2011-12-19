@@ -6,8 +6,6 @@
 #include <BulletDynamics\Character\btKinematicCharacterController.h>
 #include <BulletCollision\CollisionDispatch\btGhostObject.h>
 
-#include "interfaces\object.hxx"
-
 /*! \brief This class manages all of Bullet Physics.
 
 Performs various tasks specific to Bullet Physics, is mainly self-contained.

@@ -84,6 +84,9 @@
     <ClInclude Include="Code\precompiled\StdAfx.h">
       <Filter>Include Files\PCH</Filter>
     </ClInclude>
+    <ClInclude Include="Code\interfaces\configuration.hxx">
+      <Filter>Include Files\XML\interfaces</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">
@@ -124,6 +127,9 @@
     </ClCompile>
     <ClCompile Include="Code\precompiled\StdAfx.cpp">
       <Filter>Include Files\PCH</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\interfaces\configuration.cxx">
+      <Filter>Include Files\XML\interfaces</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -33,6 +33,9 @@ public:
 	//! Handles all mouse button releases.
 	bool mouseReleased(const OIS::MouseEvent &evt,OIS::MouseButtonID id);
 
+	//! Sets configuration.
+	void setConfiguration(configuration_t* config);
+
 	//! Returns true if the Escape key is pressed.
 	bool escapePressed(){return _appShutdown;}
 private:
@@ -42,10 +45,15 @@ private:
 
 	//Private members
 	bool _appShutdown;
+
+	//OIS stuff
 	OIS::InputManager* _inputSystem;
 	unsigned long _windowHandle;
 	OIS::Mouse* _mouseObj;
 	OIS::Keyboard* _keyObj;
+
+	//configuration
+	configuration_t* _config;
 };
 
 #endif
