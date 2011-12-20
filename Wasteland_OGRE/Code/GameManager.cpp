@@ -56,13 +56,16 @@ configuration_t* GameManager::getConfiguration()
 
 void GameManager::createCharacterController(Ogre::Camera* camera,Ogre::Vector3 initPosition)
 {
+	//sets up a variable that holds the character controller's initial position.
 	btTransform initial;
 	initial.setIdentity();
 	initial.setOrigin(btVector3(initPosition.x,initPosition.y,initPosition.z));
 
+	//this object detects the collisions for the character controller
 	_charGhost = new btPairCachingGhostObject();
 	_charGhost->setWorldTransform(initial);
 
+	//create collision shape
 	BulletManager::getSingleton().getWorld()->getPairCache()->setInternalGhostPairCallback(new btGhostPairCallback());
 	btScalar charHeight = 32.5f;
 	btScalar charWidth = 12.5f;
@@ -79,6 +82,7 @@ void GameManager::createCharacterController(Ogre::Camera* camera,Ogre::Vector3 i
 
 	//Stores the current camera that the character controller is controlling.
 	_charCamera = camera;
+	//also attaches it to a scenenode, so that other objects can be oriented around the camera.
 	_charNode = camera->getSceneManager()->getRootSceneNode()->createChildSceneNode("charCameraNode");
 	_charNode->setPosition(_charCamera->getPosition());
 	_charNode->setOrientation(_charCamera->getOrientation());
@@ -102,9 +106,29 @@ void GameManager::updateCharacterController(Ogre::Camera* camera)
 		_charCamera = camera;
 	}
 
+	//update the bullet character controller
+	btTransform camTrans = _charGhost->getWorldTransform();
+	btVector3 forDir = camTrans.getBasis()[2]; forDir.normalize();
+	btVector3 upDir = camTrans.getBasis()[1]; upDir.normalize();
+	btVector3 strafeDir = camTrans.getBasis()[0]; strafeDir.normalize();
+	btVector3 walkDir = btVector3(0,0,0);
+	btScalar walkVel = btScalar(2.0f)*4.0f;
+	btScalar walkSpd = walkVel * phyTime;
+
+	if(OISManager::getSingleton().isCFGKeyPressed(FORWARD))
+	{
+		walkDir += forDir;
+	}
+
+	if(OISManager::getSingleton().isCFGKeyPressed(BACKWARD))
+	{
+		walkDir -= forDir;
+	}
+
+	_charController->setWalkDirection(walkDir * walkSpd);
+
 	//use internal camera
 	Ogre::Quaternion oRot; btQuaternion btRot;
-	btTransform camTrans = _charGhost->getWorldTransform();
 	btRot = camTrans.getRotation();
 	oRot.x = btRot.x();
 	oRot.y = btRot.y();
@@ -112,7 +136,7 @@ void GameManager::updateCharacterController(Ogre::Camera* camera)
 	oRot.w = btRot.w();
 	Ogre::Vector3 oPos = convertBulletVector3(camTrans.getOrigin());
 	//update camera position/rotation
-	//should I use a scene node instead...?
+	//uses scene node created in createCharacterController().
 	_charNode->setPosition(oPos);
 	_charNode->setOrientation(oRot);
 
