@@ -79,8 +79,43 @@ void GameManager::createCharacterController(Ogre::Camera* camera,Ogre::Vector3 i
 
 	//Stores the current camera that the character controller is controlling.
 	_charCamera = camera;
+	_charNode = camera->getSceneManager()->getRootSceneNode()->createChildSceneNode("charCameraNode");
+	_charNode->setPosition(_charCamera->getPosition());
+	_charNode->setOrientation(_charCamera->getOrientation());
+	_charNode->attachObject(_charCamera);
 
 	return;
+}
+
+void GameManager::updateCharacterController(Ogre::Camera* camera)
+{
+	//update bullet character controller and apply transformations to ogre camera
+	//if no camera is available, then don't apply to a camera
+	if(!camera && !_charCamera)
+	{
+		//for now return
+		return;
+	}
+	//if a camera is passed in, but there isn't one set already then set the internal camera to the passed-in one.
+	if(camera && !_charCamera)
+	{
+		_charCamera = camera;
+	}
+
+	//use internal camera
+	Ogre::Quaternion oRot; btQuaternion btRot;
+	btTransform camTrans = _charGhost->getWorldTransform();
+	btRot = camTrans.getRotation();
+	oRot.x = btRot.x();
+	oRot.y = btRot.y();
+	oRot.z = btRot.z();
+	oRot.w = btRot.w();
+	Ogre::Vector3 oPos = convertBulletVector3(camTrans.getOrigin());
+	//update camera position/rotation
+	//should I use a scene node instead...?
+	_charNode->setPosition(oPos);
+	_charNode->setOrientation(oRot);
+
 }
 
 OgreBulletPair GameManager::createObject(Ogre::SceneManager* scene,object_t* objectInfo)

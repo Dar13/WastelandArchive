@@ -99,6 +99,7 @@ private:
 	btKinematicCharacterController* _charController;
 	btPairCachingGhostObject* _charGhost;
 	Ogre::Camera* _charCamera;
+	Ogre::SceneNode* _charNode;
 
 	//Utility functions, converts Ogre::Vector3 to btVector3
 	btVector3 convertOgreVector3(const Ogre::Vector3 &v);
