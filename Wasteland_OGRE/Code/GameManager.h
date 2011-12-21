@@ -67,7 +67,7 @@ public:
 		\param camera If NULL(0) is passed in, then the class with refer to the stored camera.
 		If you didn't set a camera in the createCharacterController() then no camera will be updated at all.
 	*/
-	void updateCharacterController(Ogre::Camera* camera = NULL);
+	void updateCharacterController(float phyTime,Ogre::Camera* camera = NULL);
 
 	/*! Updates the individual managers.
 

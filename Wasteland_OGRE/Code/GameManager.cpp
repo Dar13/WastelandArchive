@@ -29,6 +29,11 @@ bool GameManager::UpdateManagers()
 	oldTime = Time;
 	Time = (float)OgreManager::getSingleton().getTimer()->getMilliseconds();
 	deltaTime = (Time - oldTime)/1000.0f;
+	//update character controller if _charCamera is set
+	if(_charCamera)
+	{
+		updateCharacterController(deltaTime,0);
+	}
 	BulletManager::getSingleton().Update(deltaTime);
 
 	//Update Ogre
@@ -88,10 +93,12 @@ void GameManager::createCharacterController(Ogre::Camera* camera,Ogre::Vector3 i
 	_charNode->setOrientation(_charCamera->getOrientation());
 	_charNode->attachObject(_charCamera);
 
+	_charController->setGravity(btScalar(9.8f));
+
 	return;
 }
 
-void GameManager::updateCharacterController(Ogre::Camera* camera)
+void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 {
 	//update bullet character controller and apply transformations to ogre camera
 	//if no camera is available, then don't apply to a camera
@@ -112,7 +119,7 @@ void GameManager::updateCharacterController(Ogre::Camera* camera)
 	btVector3 upDir = camTrans.getBasis()[1]; upDir.normalize();
 	btVector3 strafeDir = camTrans.getBasis()[0]; strafeDir.normalize();
 	btVector3 walkDir = btVector3(0,0,0);
-	btScalar walkVel = btScalar(2.0f)*4.0f;
+	btScalar walkVel = btScalar(2.0f) * 4.0f;
 	btScalar walkSpd = walkVel * phyTime;
 
 	if(OISManager::getSingleton().isCFGKeyPressed(FORWARD))
@@ -125,7 +132,7 @@ void GameManager::updateCharacterController(Ogre::Camera* camera)
 		walkDir -= forDir;
 	}
 
-	_charController->setWalkDirection(walkDir * walkSpd);
+	_charController->setWalkDirection(walkDir);
 
 	//use internal camera
 	Ogre::Quaternion oRot; btQuaternion btRot;

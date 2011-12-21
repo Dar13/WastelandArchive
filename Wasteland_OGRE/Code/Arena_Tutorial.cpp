@@ -38,7 +38,8 @@ void ArenaTutorial::Setup()
 	}
 	delete tmpList;
 
-	_camera->setPosition(Ogre::Vector3(300,80,0));
+	_camera->setPosition(Ogre::Vector3(300,60,0));
+	GameManager::getSingleton().createCharacterController(_camera,_camera->getPosition());
 	_camera->lookAt(0,0,0);
 	//set the camera aspect ratio
 	_camera->setAspectRatio(4.0f/3.0f);
@@ -66,7 +67,7 @@ int ArenaTutorial::Run()
 			_stateShutdown = true;
 
 		//point camera at scene node
-		_camera->lookAt(tmp->getPosition());
+		//_camera->lookAt(tmp->getPosition());
 	}
 
 	//no matter what, end the program after this state.

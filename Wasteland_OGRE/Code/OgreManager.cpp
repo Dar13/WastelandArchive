@@ -51,7 +51,7 @@ bool OgreManager::Setup()
 	Ogre::NameValuePairList options;
 	options["resolution"] = "1280x1024";
 	options["fullscreen"] = "false";
-	options["vsync"] = "false";
+	options["vsync"] = "true";
 
 	_Window = _Root->createRenderWindow("WasTeLanD - DEBUG",1280,1024,false,&options);
 	

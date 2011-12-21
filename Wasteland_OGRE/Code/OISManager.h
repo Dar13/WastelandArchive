@@ -74,6 +74,10 @@ private:
 	configuration_t* _config;
 	std::vector<std::string> _keyValues;
 	std::vector<bool> _keyDown;
+
+
+	std::map<int,char> _KC_map;
+	char getCharFromKeyCode(unsigned int keyCode);
 };
 
 #endif

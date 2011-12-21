@@ -25,7 +25,36 @@ OISManager::OISManager(unsigned long windowHandle)
 
 	_mouseObj->setEventCallback(this); //this class is a mouseListener
 	_keyObj->setEventCallback(this); //this class is a keyboardListener
+
+	//set up the keycode stuff
+	_KC_map[OIS::KC_A] = 'a';
+	_KC_map[OIS::KC_B] = 'b';
+	_KC_map[OIS::KC_C] = 'c';
+	_KC_map[OIS::KC_D] = 'e';
+	_KC_map[OIS::KC_E] = 'd';
+	_KC_map[OIS::KC_F] = 'f';
+	_KC_map[OIS::KC_G] = 'g';
+	_KC_map[OIS::KC_H] = 'h';
+	_KC_map[OIS::KC_I] = 'i';
+	_KC_map[OIS::KC_J] = 'j';
+	_KC_map[OIS::KC_K] = 'k';
+	_KC_map[OIS::KC_L] = 'l';
+	_KC_map[OIS::KC_M] = 'm';
+	_KC_map[OIS::KC_N] = 'n';
+	_KC_map[OIS::KC_O] = 'o';
+	_KC_map[OIS::KC_P] = 'p';
+	_KC_map[OIS::KC_Q] = 'q';
+	_KC_map[OIS::KC_R] = 'r';
+	_KC_map[OIS::KC_S] = 's';
+	_KC_map[OIS::KC_T] = 't';
+	_KC_map[OIS::KC_U] = 'u';
+	_KC_map[OIS::KC_V] = 'v';
+	_KC_map[OIS::KC_W] = 'w';
+	_KC_map[OIS::KC_X] = 'x';
+	_KC_map[OIS::KC_Y] = 'y';
+	_KC_map[OIS::KC_Z] = 'z';
 }
+
 
 //Cleaning up.
 OISManager::~OISManager()
@@ -89,8 +118,8 @@ bool OISManager::keyReleased(const OIS::KeyEvent &evt)
 	//Will eventually inject input into CEGUI/Bullet/etc.
 	//injection into CEGUI...
 	//CEGUI::System::getSingleton().injectKeyUp(evt.key);
-
-	char character = evt.text;
+	
+	char character = getCharFromKeyCode(evt.key);
 	for(unsigned int i = FORWARD; i<MAXVALUE; ++i)
 	{
 		if((_keyValues[i])[0] == character)
@@ -149,4 +178,9 @@ void OISManager::setConfiguration(configuration_t* config)
 	{
 		_keyDown.push_back(false);
 	}
+}
+
+char OISManager::getCharFromKeyCode(unsigned int keyCode)
+{
+	return _KC_map[keyCode];
 }
