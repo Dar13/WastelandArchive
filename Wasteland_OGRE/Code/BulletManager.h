@@ -7,6 +7,8 @@
 #include <BulletDynamics\Character\btKinematicCharacterController.h>
 #include <BulletCollision\CollisionDispatch\btGhostObject.h>
 
+#include "BulletDebugDraw\DebugDraw.hpp"
+
 /*! \brief This class manages all of Bullet Physics.
 
 Performs various tasks specific to Bullet Physics, is mainly self-contained.
@@ -52,6 +54,9 @@ public:
 	//! Returns the Bullet Physics world pointer.
 	btDiscreteDynamicsWorld* getWorld(){return _World;}
 
+	//! Sets Debug Drawer variable. This class takes over the responsibility of cleaning it up.
+	void setDebugDrawer(CDebugDraw* drawer);
+
 private:
 	//Needed for this class to be a singleton
 	BulletManager(const BulletManager&);
@@ -69,6 +74,9 @@ private:
 
 	//Current gravity.
 	btVector3 _Gravity;
+
+	//Debug Drawer variable.
+	CDebugDraw* _debugDrawer;
 
 };
 

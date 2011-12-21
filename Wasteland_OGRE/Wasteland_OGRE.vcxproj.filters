@@ -40,6 +40,9 @@
     <Filter Include="Include Files\PCH">
       <UniqueIdentifier>{88e08e02-a526-43cc-babf-4e45daf89922}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include Files\Bullet\DebugDrawer">
+      <UniqueIdentifier>{ef893743-226f-49f0-8f36-2fecc532cf20}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\State.h">
@@ -90,6 +93,12 @@
     <ClInclude Include="Code\interfaces\interfaces.h">
       <Filter>Include Files\XML\interfaces</Filter>
     </ClInclude>
+    <ClInclude Include="Code\debug_draw\DebugDraw.hpp">
+      <Filter>Include Files\Bullet\DebugDrawer</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\debug_draw\DynamicLineDrawer.hpp">
+      <Filter>Include Files\Bullet\DebugDrawer</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">
@@ -133,6 +142,12 @@
     </ClCompile>
     <ClCompile Include="Code\interfaces\resource.cxx">
       <Filter>Include Files\XML\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\debug_draw\DebugDraw.cpp">
+      <Filter>Include Files\Bullet\DebugDrawer</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\debug_draw\DynamicLineDrawer.cpp">
+      <Filter>Include Files\Bullet\DebugDrawer</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

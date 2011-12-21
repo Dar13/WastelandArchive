@@ -15,6 +15,7 @@ BulletManager::BulletManager()
 	_Config = 0;
 	_Solver = 0;
 	_Gravity = btVector3(0,0,0);
+	_debugDrawer = 0;
 }
 
 BulletManager::~BulletManager()
@@ -29,6 +30,11 @@ void BulletManager::Setup()
 	_OverlapPairCache = new btDbvtBroadphase();
 	_Solver = new btSequentialImpulseConstraintSolver();
 	_World = new btDiscreteDynamicsWorld(_Dispatch,_OverlapPairCache,_Solver,_Config);
+}
+
+void BulletManager::setDebugDrawer(CDebugDraw* drawer)
+{
+	_debugDrawer = drawer;
 }
 
 btRigidBody* BulletManager::addRigidBody(btCollisionShape* shape,Ogre::SceneNode* node,btScalar &mass,btTransform &initTransform)
@@ -72,6 +78,11 @@ void BulletManager::Update(float deltaTime)
 	}
 
 	_World->stepSimulation(btScalar(deltaTime),subSteps);
+
+	if(_debugDrawer)
+	{
+		_debugDrawer->Update();
+	}
 }
 
 btCollisionShape* BulletManager::generateCollisionShape(object_t* objectInfo)
@@ -139,6 +150,11 @@ void BulletManager::Shutdown(bool reuse)
 	if(!reuse)
 	{
 		//Delete all the Bullet pointers.
+		//in opposite creation order.
+		if(_debugDrawer)
+		{
+			delete _debugDrawer;
+		}
 		delete _World;
 		delete _Solver;
 		delete _OverlapPairCache;

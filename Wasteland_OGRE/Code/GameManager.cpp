@@ -1,11 +1,23 @@
 #include "StdAfx.h"
 #include "GameManager.h"
 
+//=======================================
+/*
+(!!!)NOTE(!!!)
+	Bullet units are 1 unit = 1 meter.
+	So that means that OGRE units are now 1 unit = 1 meter.
+*/
+//=======================================
+
 template<> GameManager* Ogre::Singleton<GameManager>::ms_Singleton = 0;
 
 GameManager::GameManager()
 {
 	_config = NULL;
+	_charCamera = NULL;
+	_charNode = NULL;
+	_charGhost = NULL;
+	_charController = NULL;
 	Time = (float)OgreManager::getSingleton().getTimer()->getMilliseconds();
 }
 
@@ -59,6 +71,12 @@ configuration_t* GameManager::getConfiguration()
 	return _config;
 }
 
+void GameManager::useDebugDrawer(Ogre::SceneManager* scene)
+{
+	CDebugDraw* draw = new CDebugDraw(scene,BulletManager::getSingleton().getWorld());
+	BulletManager::getSingleton().setDebugDrawer(draw);
+}
+
 void GameManager::createCharacterController(Ogre::Camera* camera,Ogre::Vector3 initPosition)
 {
 	//sets up a variable that holds the character controller's initial position.
@@ -72,8 +90,8 @@ void GameManager::createCharacterController(Ogre::Camera* camera,Ogre::Vector3 i
 
 	//create collision shape
 	BulletManager::getSingleton().getWorld()->getPairCache()->setInternalGhostPairCallback(new btGhostPairCallback());
-	btScalar charHeight = 32.5f;
-	btScalar charWidth = 12.5f;
+	btScalar charHeight = .35f;
+	btScalar charWidth = .125f;
 	btConvexShape* capsule = new btCapsuleShape(charWidth,charHeight);
 	_charGhost->setCollisionShape(capsule);
 	_charGhost->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT);
@@ -115,9 +133,9 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 
 	//update the bullet character controller
 	btTransform camTrans = _charGhost->getWorldTransform();
-	btVector3 forDir = camTrans.getBasis()[2]; forDir.normalize();
+	btVector3 forDir = camTrans.getBasis()[0]; forDir.normalize();
 	btVector3 upDir = camTrans.getBasis()[1]; upDir.normalize();
-	btVector3 strafeDir = camTrans.getBasis()[0]; strafeDir.normalize();
+	btVector3 strafeDir = camTrans.getBasis()[2]; strafeDir.normalize();
 	btVector3 walkDir = btVector3(0,0,0);
 	btScalar walkVel = btScalar(2.0f) * 4.0f;
 	btScalar walkSpd = walkVel * phyTime;
@@ -130,6 +148,16 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 	if(OISManager::getSingleton().isCFGKeyPressed(BACKWARD))
 	{
 		walkDir -= forDir;
+	}
+
+	if(OISManager::getSingleton().isCFGKeyPressed(RIGHT))
+	{
+		walkDir -= strafeDir;
+	}
+
+	if(OISManager::getSingleton().isCFGKeyPressed(LEFT))
+	{
+		walkDir += strafeDir;
 	}
 
 	_charController->setWalkDirection(walkDir);

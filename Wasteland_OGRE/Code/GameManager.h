@@ -53,6 +53,12 @@ public:
 	OgreBulletPair createObject(Ogre::SceneNode* node,
 								object_t* objectInfo);
 
+	/*! Tells class to use the debug drawer, to verify collisions are happening correctly.
+		
+		\param scene Current SceneManager for Ogre, needed to draw the stuff.
+	*/
+	void useDebugDrawer(Ogre::SceneManager* scene);
+
 	//! Create a btKinematicCharacterController, and link it to a Ogre::Camera*
 	/*!
 		\param camera The camera you want the character controller to control.

@@ -30,8 +30,8 @@ OISManager::OISManager(unsigned long windowHandle)
 	_KC_map[OIS::KC_A] = 'a';
 	_KC_map[OIS::KC_B] = 'b';
 	_KC_map[OIS::KC_C] = 'c';
-	_KC_map[OIS::KC_D] = 'e';
-	_KC_map[OIS::KC_E] = 'd';
+	_KC_map[OIS::KC_D] = 'd';
+	_KC_map[OIS::KC_E] = 'e';
 	_KC_map[OIS::KC_F] = 'f';
 	_KC_map[OIS::KC_G] = 'g';
 	_KC_map[OIS::KC_H] = 'h';
