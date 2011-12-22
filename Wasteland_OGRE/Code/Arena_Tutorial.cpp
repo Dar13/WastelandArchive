@@ -8,6 +8,8 @@ ArenaTutorial::ArenaTutorial()
 	_camera = 0;
 	_scene = 0;
 	_rootNode = 0;
+	_stateShutdown = false;
+	_view = 0;
 }
 
 void ArenaTutorial::Setup()
