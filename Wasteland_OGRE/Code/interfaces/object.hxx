@@ -543,7 +543,7 @@ class object_t: public ::xml_schema::type
 
   // colSphereRadius
   // 
-  typedef ::xml_schema::integer colSphereRadius_type;
+  typedef ::xml_schema::float_ colSphereRadius_type;
   typedef ::xsd::cxx::tree::traits< colSphereRadius_type, char > colSphereRadius_traits;
 
   const colSphereRadius_type&

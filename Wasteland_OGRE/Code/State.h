@@ -22,7 +22,6 @@ enum ApplicationStates
 class State
 {
 public:
-	State();
 	//! Sets up the state.
 	virtual void Setup() = 0; 
 	//!Runs the game logic for the state.

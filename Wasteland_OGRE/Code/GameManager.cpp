@@ -201,7 +201,15 @@ OgreBulletPair GameManager::createObject(Ogre::SceneManager* scene,object_t* obj
 		else
 		{
 			//assumes that all non-mass objects will be static triangle meshes.
-			shape = buildTriangleCollisionShape(node);
+			//unless otherwise told
+			if(objectInfo->collisionShape() == "TriangleMesh")
+			{
+				shape = buildTriangleCollisionShape(node);
+			}
+			else
+			{
+				shape = BulletManager::getSingleton().generateCollisionShape(objectInfo);
+			}
 		}
 		
 		btTransform init;
@@ -275,7 +283,7 @@ btBvhTriangleMeshShape* GameManager::buildTriangleCollisionShape(Ogre::SceneNode
 
 	btVector3 vert1,vert2,vert3;
 
-	for(unsigned int i=0; i<vertCnt; i+=3)
+	for(unsigned int i=0; i<inCnt; i+=3)
 	{
 		vert1.setValue(vertices[indices[i]].x,vertices[indices[i]].y,vertices[indices[i]].z);
 		vert2.setValue(vertices[indices[i+1]].x,vertices[indices[i+1]].y,vertices[indices[i+1]].z);
@@ -284,7 +292,7 @@ btBvhTriangleMeshShape* GameManager::buildTriangleCollisionShape(Ogre::SceneNode
 		bmesh->addTriangle(vert1,vert2,vert3);
 	}
 
-	shape = new btBvhTriangleMeshShape(bmesh,true,true);
+	shape = new btBvhTriangleMeshShape(bmesh,false,true);
 
 	delete[] vertices;
 	delete[] indices;

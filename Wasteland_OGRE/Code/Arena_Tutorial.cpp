@@ -28,45 +28,29 @@ void ArenaTutorial::Setup()
 	//Loading the level through the GameManager(takes care of Bullet initialization,etc)
 	object_t* level = object("resource\\xml\\test.xml").release();
 	OgreBulletPair levelPair = GameManager::getSingleton().createObject(_scene,level);
+	levelPair.ogreNode->setVisible(false);
+	levelPair.btBody->setCcdSweptSphereRadius(0.1f);
+	delete level;
 
-	/*
-	object_t* tmpObj = NULL;
-	list_t* tmpList = list("resource\\xml\\list.xml").release();
-	for(list_t::file_const_iterator itr = tmpList->file().begin(); itr != tmpList->file().end(); ++itr)
-	{
-		tmpObj = object((*itr)).release();
-		OgreBulletPair curVal = GameManager::getSingleton().createObject(_scene,tmpObj);
-		_pairs.push_back(curVal);
-		delete tmpObj;
-	}
-	delete tmpList;
-	*/
+	object_t* sphere = object("resource\\xml\\test_sphere.xml").release();
+	OgreBulletPair spherePair = GameManager::getSingleton().createObject(_scene,sphere);
+	delete sphere;
+	//spherePair.btBody->setCcdMotionThreshold(.02f);
 
-	_camera->setPosition(Ogre::Vector3(25,25,25));
+	_camera->setPosition(Ogre::Vector3(-25,8,0));
 	_camera->setNearClipDistance(.001);
 	_camera->setFarClipDistance(500);
-	//GameManager::getSingleton().createCharacterController(_camera,_camera->getPosition());
 	
 	//set the camera aspect ratio
 	_camera->setAspectRatio(4.0f/3.0f);
 
-	//GameManager::getSingleton().useDebugDrawer(_scene);
+	GameManager::getSingleton().useDebugDrawer(_scene);
 }
 
 int ArenaTutorial::Run()
 {
 	_stateShutdown=false;
-
-	/*
-	Ogre::SceneNode* enem = _scene->getSceneNode("nodeEnemy");
-	Ogre::Entity* enemEnt = (Ogre::Entity*)enem->getAttachedObject("entEnemy");
-	Ogre::AnimationState* enemAnim = enemEnt->getAnimationState("MoveFast");
-	enemAnim->setLoop(true);
-	enemAnim->setEnabled(true);
-	OgreManager::getSingleton().addAnimationState(enemAnim);
-	*/
-
-	//Ogre::Node* tmp = _scene->getRootSceneNode()->getChild("nodeEnemy");
+	Ogre::Node* tmp = _scene->getRootSceneNode()->getChild("nodetestSphere");
 
 	//while the escape key isn't pressed and the state isn't told to shutdown.
 	while(!_stateShutdown)
@@ -75,9 +59,7 @@ int ArenaTutorial::Run()
 		if(!GameManager::getSingleton().UpdateManagers())
 			_stateShutdown = true;
 
-		_camera->lookAt(0,0,0);
-		//point camera at scene node
-		//_camera->lookAt(tmp->getPosition());
+		_camera->lookAt(tmp->getPosition());
 	}
 
 	//no matter what, end the program after this state.
