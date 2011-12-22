@@ -18,6 +18,8 @@ GameManager::GameManager()
 	_charNode = NULL;
 	_charGhost = NULL;
 	_charController = NULL;
+	oldTime = 0;
+	deltaTime = 0;
 	Time = (float)OgreManager::getSingleton().getTimer()->getMilliseconds();
 }
 
