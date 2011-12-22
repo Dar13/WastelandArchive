@@ -269,6 +269,7 @@ btVector3 GameManager::convertOgreVector3(const Ogre::Vector3 &v)
 	return btVector3(v.x,v.y,v.z);
 }
 
+//manually builds triangle mesh collision shape.
 btBvhTriangleMeshShape* GameManager::buildTriangleCollisionShape(Ogre::SceneNode* node)
 {
 	btBvhTriangleMeshShape* shape;
@@ -292,7 +293,7 @@ btBvhTriangleMeshShape* GameManager::buildTriangleCollisionShape(Ogre::SceneNode
 		bmesh->addTriangle(vert1,vert2,vert3);
 	}
 
-	shape = new btBvhTriangleMeshShape(bmesh,false,true);
+	shape = new btBvhTriangleMeshShape(bmesh,true,true);
 
 	delete[] vertices;
 	delete[] indices;
