@@ -10,6 +10,7 @@ OgreManager::OgreManager()
 	_Window=0;
 	_Log=0;
 	_Timer=0;
+	_windowHandle = 0;
 }
 
 bool OgreManager::Setup()
