@@ -59,7 +59,7 @@ public:
 private:
 	//This way, they're not implemented.
 	OISManager(const OISManager&){}
-	OISManager& operator= (const OISManager&){}
+	OISManager& operator= (const OISManager&);
 
 	//Private members
 	bool _appShutdown;
