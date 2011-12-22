@@ -35,7 +35,6 @@ void ArenaTutorial::Setup()
 	object_t* sphere = object("resource\\xml\\test_sphere.xml").release();
 	OgreBulletPair spherePair = GameManager::getSingleton().createObject(_scene,sphere);
 	delete sphere;
-	//spherePair.btBody->setCcdMotionThreshold(.02f);
 
 	_camera->setPosition(Ogre::Vector3(-25,8,0));
 	_camera->setNearClipDistance(.001);
