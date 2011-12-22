@@ -28,7 +28,7 @@ void ArenaTutorial::Setup()
 	//Loading the level through the GameManager(takes care of Bullet initialization,etc)
 	object_t* level = object("resource\\xml\\test.xml").release();
 	OgreBulletPair levelPair = GameManager::getSingleton().createObject(_scene,level);
-	levelPair.ogreNode->setVisible(false);
+	//levelPair.ogreNode->setVisible(false);
 	levelPair.btBody->setCcdSweptSphereRadius(0.1f);
 	delete level;
 
@@ -36,7 +36,7 @@ void ArenaTutorial::Setup()
 	OgreBulletPair spherePair = GameManager::getSingleton().createObject(_scene,sphere);
 	delete sphere;
 
-	_camera->setPosition(Ogre::Vector3(-25,8,0));
+	_camera->setPosition(Ogre::Vector3(0,5,0));
 	_camera->setNearClipDistance(.001);
 	_camera->setFarClipDistance(500);
 	
