@@ -254,7 +254,7 @@ OgreBulletPair GameManager::createObject(Ogre::SceneNode* node,object_t* objectI
 }
 
 //----------------------------------------
-//Private, utility functions start here...
+//Private, utility functions start here..
 //----------------------------------------
 
 //converts bullet vector3 to ogre vector3
