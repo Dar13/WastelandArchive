@@ -175,20 +175,20 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 	if(OISManager::getSingleton().isCFGKeyPressed(RIGHT))
 	{
 		btMatrix3x3 orn = camTrans.getBasis();
-		orn *= btMatrix3x3(btQuaternion(btVector3(0,1,0),-0.05));
+		orn *= btMatrix3x3(btQuaternion(btVector3(0,1,0),-0.03));
 		_charGhost->getWorldTransform().setBasis(orn);
 	}
 
 	if(OISManager::getSingleton().isCFGKeyPressed(LEFT))
 	{
 		btMatrix3x3 orn = camTrans.getBasis();
-		orn *= btMatrix3x3(btQuaternion(btVector3(0,1,0),0.05));
+		orn *= btMatrix3x3(btQuaternion(btVector3(0,1,0),0.03));
 		_charGhost->getWorldTransform().setBasis(orn);
 	}
 
 	_charController->setWalkDirection(walkDir * walkSpd);
 
-	//use internal camera
+	//convert bullet position/rotation to ogre position rotation.
 	Ogre::Quaternion oRot; btQuaternion btRot;
 	btRot = camTrans.getRotation();
 	oRot = convertBulletQuat(btRot);
