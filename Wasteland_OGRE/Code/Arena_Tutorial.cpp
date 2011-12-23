@@ -36,12 +36,16 @@ void ArenaTutorial::Setup()
 	OgreBulletPair spherePair = GameManager::getSingleton().createObject(_scene,sphere);
 	delete sphere;
 
-	_camera->setPosition(Ogre::Vector3(0,5,0));
+	_camera->setPosition(Ogre::Vector3(-1,1.3,0));
 	_camera->setNearClipDistance(.001);
 	_camera->setFarClipDistance(500);
+	_camera->lookAt(0,1.2,0);
 	
 	//set the camera aspect ratio
 	_camera->setAspectRatio(4.0f/3.0f);
+
+	//let's try out the character controller
+	GameManager::getSingleton().createCharacterController(_camera,_camera->getPosition());
 
 	GameManager::getSingleton().useDebugDrawer(_scene);
 }
@@ -58,7 +62,7 @@ int ArenaTutorial::Run()
 		if(!GameManager::getSingleton().UpdateManagers())
 			_stateShutdown = true;
 
-		_camera->lookAt(tmp->getPosition());
+		//_camera->lookAt(tmp->getPosition());
 	}
 
 	//no matter what, end the program after this state.

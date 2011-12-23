@@ -106,10 +106,12 @@ private:
 	btPairCachingGhostObject* _charGhost;
 	Ogre::Camera* _charCamera;
 	Ogre::SceneNode* _charNode;
+	Ogre::SceneNode* _dummyNode;
 
 	//Utility functions, converts Ogre::Vector3 to btVector3
 	btVector3 convertOgreVector3(const Ogre::Vector3 &v);
 	Ogre::Vector3 convertBulletVector3(const btVector3 &v);
+	Ogre::Quaternion convertBulletQuat(const btQuaternion &q);
 
 	//Holds current configuration values.
 	configuration_t* _config;

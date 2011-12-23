@@ -92,8 +92,8 @@ void GameManager::createCharacterController(Ogre::Camera* camera,Ogre::Vector3 i
 
 	//create collision shape
 	BulletManager::getSingleton().getWorld()->getPairCache()->setInternalGhostPairCallback(new btGhostPairCallback());
-	btScalar charHeight = .35f;
-	btScalar charWidth = .125f;
+	btScalar charHeight = .6f;
+	btScalar charWidth = .25f;
 	btConvexShape* capsule = new btCapsuleShape(charWidth,charHeight);
 	_charGhost->setCollisionShape(capsule);
 	_charGhost->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT);
@@ -112,6 +112,11 @@ void GameManager::createCharacterController(Ogre::Camera* camera,Ogre::Vector3 i
 	_charNode->setPosition(_charCamera->getPosition());
 	_charNode->setOrientation(_charCamera->getOrientation());
 	_charNode->attachObject(_charCamera);
+
+	_dummyNode = _charNode->createChildSceneNode("dummyNode",Ogre::Vector3::UNIT_X);
+	_dummyNode->setPosition(1,1.2f,0);
+
+	_charCamera->setAutoTracking(true,_dummyNode);
 
 	_charController->setGravity(btScalar(9.8f));
 
@@ -142,36 +147,53 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 	btScalar walkVel = btScalar(2.0f) * 4.0f;
 	btScalar walkSpd = walkVel * phyTime;
 
+	Ogre::Vector3 dir;
+	Ogre::Quaternion rot;
+	//This is creates a vector that moves along the quat.
+	//Refer to Ogre::Node::translate for formula.
+	//basically is:
+	// direction vector = orientation * (orientation * unit vector)
 	if(OISManager::getSingleton().isCFGKeyPressed(FORWARD))
 	{
 		walkDir += forDir;
+		dir = convertBulletVector3(walkDir);
+		rot = _charNode->getOrientation();
+		
+		dir = rot * (rot * dir);
+		walkDir = convertOgreVector3(dir);
 	}
 
 	if(OISManager::getSingleton().isCFGKeyPressed(BACKWARD))
 	{
 		walkDir -= forDir;
+		dir = convertBulletVector3(walkDir);
+		rot = _charNode->getOrientation();
+		dir = rot * (rot * dir);
+		walkDir = convertOgreVector3(dir);
 	}
 
 	if(OISManager::getSingleton().isCFGKeyPressed(RIGHT))
 	{
-		walkDir -= strafeDir;
+		btMatrix3x3 orn = camTrans.getBasis();
+		orn *= btMatrix3x3(btQuaternion(btVector3(0,1,0),-0.05));
+		_charGhost->getWorldTransform().setBasis(orn);
 	}
 
 	if(OISManager::getSingleton().isCFGKeyPressed(LEFT))
 	{
-		walkDir += strafeDir;
+		btMatrix3x3 orn = camTrans.getBasis();
+		orn *= btMatrix3x3(btQuaternion(btVector3(0,1,0),0.05));
+		_charGhost->getWorldTransform().setBasis(orn);
 	}
 
-	_charController->setWalkDirection(walkDir);
+	_charController->setWalkDirection(walkDir * walkSpd);
 
 	//use internal camera
 	Ogre::Quaternion oRot; btQuaternion btRot;
 	btRot = camTrans.getRotation();
-	oRot.x = btRot.x();
-	oRot.y = btRot.y();
-	oRot.z = btRot.z();
-	oRot.w = btRot.w();
+	oRot = convertBulletQuat(btRot);
 	Ogre::Vector3 oPos = convertBulletVector3(camTrans.getOrigin());
+
 	//update camera position/rotation
 	//uses scene node created in createCharacterController().
 	_charNode->setPosition(oPos);
@@ -267,6 +289,11 @@ Ogre::Vector3 GameManager::convertBulletVector3(const btVector3 &v)
 btVector3 GameManager::convertOgreVector3(const Ogre::Vector3 &v)
 {
 	return btVector3(v.x,v.y,v.z);
+}
+
+Ogre::Quaternion GameManager::convertBulletQuat(const btQuaternion &q)
+{
+	return Ogre::Quaternion(q.w(),q.x(),q.y(),q.z());
 }
 
 //manually builds triangle mesh collision shape.
