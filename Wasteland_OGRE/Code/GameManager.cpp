@@ -200,24 +200,11 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 	//x-axis?
 	//will only apply to scene node, not bullet physics.
 	//have to get current x-rotation from node, not bullet
-	//still haven't figured it quite out yet.
-	//quat * quat = combined rotation?
-	//doesn't work
-	/*
-	btQuaternion xRot,yRot;
-	yorn.getRotation(yRot);
-	Ogre::Matrix3 ogreMat;
-	_charNode->getOrientation().ToRotationMatrix(ogreMat);
-	btMatrix3x3 xorn = convertOgreMatrix3(ogreMat);
-	xorn *= btMatrix3x3(btQuaternion(btVector3(0,0,1),(-mmy * 0.005f)));
-	xorn.getRotation(xRot);
-	btQuaternion testRot = yRot * xRot;
-	*/
+	//this works.
 	Ogre::Quaternion quat;
 	Ogre::Vector3 zUp;
 	quat.FromAngleAxis(Ogre::Radian(-mmy * 0.005f),Ogre::Vector3::UNIT_Z);
 	
-
 	//this works.
 	_charController->setWalkDirection(walkDir * walkSpd);
 
@@ -231,8 +218,12 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 	//update camera position/rotation
 	//uses scene node created in createCharacterController().
 	_charNode->setPosition(oPos);
+	Ogre::Quaternion zRot = _charNode->getOrientation();
+	zRot.x=0;
+	zRot.y=0;
 	_charNode->setOrientation(oRot);
-	_charNode->rotate(quat);
+	_charNode->rotate(zRot); //original z-rotation
+	_charNode->rotate(quat); //then the new z-rotation.
 
 }
 
