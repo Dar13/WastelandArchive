@@ -73,17 +73,45 @@ void OISManager::setCaptureWindow(int width,int height)
 	const OIS::MouseState &ms = _mouseObj->getMouseState();
 	ms.width=width;
 	ms.height=height;
+	OIS::MouseState &mutms = const_cast<OIS::MouseState &>(_mouseObj->getMouseState());
+	mutms.X.abs = width/2;
+	mutms.Y.abs = height/2;
 }
 
 void OISManager::capture()
 {
 	_mouseObj->capture();
 	_keyObj->capture();
+	
+	if(_lockMouse)
+	{
+		OIS::MouseState &mutMS = const_cast<OIS::MouseState &>(_mouseObj->getMouseState());
+		mutMS.X.abs = mutMS.width/2;
+		mutMS.Y.abs = mutMS.height/2;
+	}
+
+	_mouseMoveX = _mouseObj->getMouseState().X.rel;
+	_mouseMoveY = _mouseObj->getMouseState().Y.rel;
 }
 
 bool OISManager::isCFGKeyPressed(unsigned int key)
 {
 	return _keyDown[key];
+}
+
+void OISManager::setMouseLock(bool lock)
+{
+	_lockMouse = lock;
+}
+
+int OISManager::getMMX()
+{
+	return _mouseMoveX;
+}
+
+int OISManager::getMMY()
+{
+	return _mouseMoveY;
 }
 
 bool OISManager::keyPressed(const OIS::KeyEvent &evt)
@@ -133,7 +161,7 @@ bool OISManager::keyReleased(const OIS::KeyEvent &evt)
 
 bool OISManager::mouseMoved(const OIS::MouseEvent &evt)
 {
-	
+
 	return true;
 }
 

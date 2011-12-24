@@ -92,8 +92,8 @@ void GameManager::createCharacterController(Ogre::Camera* camera,Ogre::Vector3 i
 
 	//create collision shape
 	BulletManager::getSingleton().getWorld()->getPairCache()->setInternalGhostPairCallback(new btGhostPairCallback());
-	btScalar charHeight = .6f;
-	btScalar charWidth = .25f;
+	btScalar charHeight = .9f;
+	btScalar charWidth = .3f;
 	btConvexShape* capsule = new btCapsuleShape(charWidth,charHeight);
 	_charGhost->setCollisionShape(capsule);
 	_charGhost->setCollisionFlags(btCollisionObject::CF_CHARACTER_OBJECT);
@@ -114,9 +114,9 @@ void GameManager::createCharacterController(Ogre::Camera* camera,Ogre::Vector3 i
 	_charNode->attachObject(_charCamera);
 
 	_dummyNode = _charNode->createChildSceneNode("dummyNode",Ogre::Vector3::UNIT_X);
-	_dummyNode->setPosition(1,1.2f,0);
+	_dummyNode->setPosition(1,1.8f,0);
 
-	_charCamera->setAutoTracking(true,_dummyNode);
+	//_charCamera->setAutoTracking(true,_dummyNode);
 
 	_charController->setGravity(btScalar(9.8f));
 
@@ -158,7 +158,6 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 		walkDir += forDir;
 		dir = convertBulletVector3(walkDir);
 		rot = _charNode->getOrientation();
-		
 		dir = rot * (rot * dir);
 		walkDir = convertOgreVector3(dir);
 	}
@@ -172,6 +171,7 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 		walkDir = convertOgreVector3(dir);
 	}
 
+	/*
 	if(OISManager::getSingleton().isCFGKeyPressed(RIGHT))
 	{
 		btMatrix3x3 orn = camTrans.getBasis();
@@ -185,19 +185,54 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 		orn *= btMatrix3x3(btQuaternion(btVector3(0,1,0),0.03));
 		_charGhost->getWorldTransform().setBasis(orn);
 	}
+	*/
 
+	//going to try out using mouse-look real quick.
+	int mmx,mmy;
+	mmx = OISManager::getSingleton().getMMX();
+	mmy = OISManager::getSingleton().getMMY();
+	//going to try only y-axis for now(mmx only)
+	//this code works.
+	btMatrix3x3 yorn = camTrans.getBasis();
+	yorn *= btMatrix3x3(btQuaternion(btVector3(0,1,0),(-mmx * 0.005f)));
+	_charGhost->getWorldTransform().setBasis(yorn);
+
+	//x-axis?
+	//will only apply to scene node, not bullet physics.
+	//have to get current x-rotation from node, not bullet
+	//still haven't figured it quite out yet.
+	//quat * quat = combined rotation?
+	//doesn't work
+	/*
+	btQuaternion xRot,yRot;
+	yorn.getRotation(yRot);
+	Ogre::Matrix3 ogreMat;
+	_charNode->getOrientation().ToRotationMatrix(ogreMat);
+	btMatrix3x3 xorn = convertOgreMatrix3(ogreMat);
+	xorn *= btMatrix3x3(btQuaternion(btVector3(0,0,1),(-mmy * 0.005f)));
+	xorn.getRotation(xRot);
+	btQuaternion testRot = yRot * xRot;
+	*/
+	Ogre::Quaternion quat;
+	Ogre::Vector3 zUp;
+	quat.FromAngleAxis(Ogre::Radian(-mmy * 0.005f),Ogre::Vector3::UNIT_Z);
+	
+
+	//this works.
 	_charController->setWalkDirection(walkDir * walkSpd);
 
 	//convert bullet position/rotation to ogre position rotation.
 	Ogre::Quaternion oRot; btQuaternion btRot;
-	btRot = camTrans.getRotation();
+	//need to multiply by xRot to get x-axis mouse-look rotations.
+	btRot = _charGhost->getWorldTransform().getRotation();
 	oRot = convertBulletQuat(btRot);
-	Ogre::Vector3 oPos = convertBulletVector3(camTrans.getOrigin());
+	Ogre::Vector3 oPos = convertBulletVector3(_charGhost->getWorldTransform().getOrigin());
 
 	//update camera position/rotation
 	//uses scene node created in createCharacterController().
 	_charNode->setPosition(oPos);
 	_charNode->setOrientation(oRot);
+	_charNode->rotate(quat);
 
 }
 
@@ -294,6 +329,29 @@ btVector3 GameManager::convertOgreVector3(const Ogre::Vector3 &v)
 Ogre::Quaternion GameManager::convertBulletQuat(const btQuaternion &q)
 {
 	return Ogre::Quaternion(q.w(),q.x(),q.y(),q.z());
+}
+
+btQuaternion GameManager::convertOgreQuat(const Ogre::Quaternion &q)
+{
+	return btQuaternion(q.x,q.y,q.z,q.w);
+}
+
+Ogre::Matrix3 GameManager::convertBulletMatrix3(const btMatrix3x3 &m)
+{
+	Ogre::Matrix3 mat;
+	mat.SetColumn(0,convertBulletVector3(m[0]));
+	mat.SetColumn(1,convertBulletVector3(m[1]));
+	mat.SetColumn(2,convertBulletVector3(m[2]));
+	return mat;
+}
+
+btMatrix3x3 GameManager::convertOgreMatrix3(const Ogre::Matrix3 &m)
+{
+	btMatrix3x3 mat;
+	Ogre::Quaternion quat;
+	quat.FromRotationMatrix(m);
+	mat.setRotation(convertOgreQuat(quat));
+	return mat;
 }
 
 //manually builds triangle mesh collision shape.

@@ -40,6 +40,14 @@ public:
 	//! Gets whether a config key is pressed.
 	bool isCFGKeyPressed(unsigned int key);
 
+	//! Sets whether or not OIS should lock the abs location of the mouse.
+	void setMouseLock(bool lock);
+
+	//! Gets current state of mouse movement horizontally(x-axis).
+	int getMMX();
+	//! Gets current state of mouse movement vertically(y-axis).
+	int getMMY();
+
 	//! Handles all key presses.
 	bool keyPressed(const OIS::KeyEvent &evt);
 	//! Handles all key releases.
@@ -75,9 +83,13 @@ private:
 	std::vector<std::string> _keyValues;
 	std::vector<bool> _keyDown;
 
-
+	//holds conversion from OIS keycodes to char
 	std::map<int,char> _KC_map;
 	char getCharFromKeyCode(unsigned int keyCode);
+
+	//mouse movement variables
+	bool _lockMouse;
+	int _mouseMoveX,_mouseMoveY;
 };
 
 #endif

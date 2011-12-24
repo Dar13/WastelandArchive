@@ -107,11 +107,16 @@ private:
 	Ogre::Camera* _charCamera;
 	Ogre::SceneNode* _charNode;
 	Ogre::SceneNode* _dummyNode;
+	Ogre::Quaternion _oldRot;
+	Ogre::Quaternion _oldOrn;
 
 	//Utility functions, converts Ogre::Vector3 to btVector3
 	btVector3 convertOgreVector3(const Ogre::Vector3 &v);
 	Ogre::Vector3 convertBulletVector3(const btVector3 &v);
+	btQuaternion convertOgreQuat(const Ogre::Quaternion &q);
 	Ogre::Quaternion convertBulletQuat(const btQuaternion &q);
+	btMatrix3x3 convertOgreMatrix3(const Ogre::Matrix3 &m);
+	Ogre::Matrix3 convertBulletMatrix3(const btMatrix3x3 &m);
 
 	//Holds current configuration values.
 	configuration_t* _config;
