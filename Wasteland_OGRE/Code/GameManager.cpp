@@ -114,7 +114,7 @@ void GameManager::createCharacterController(Ogre::Camera* camera,Ogre::Vector3 i
 	_charNode->attachObject(_charCamera);
 
 	_dummyNode = _charNode->createChildSceneNode("dummyNode",Ogre::Vector3::UNIT_X);
-	_dummyNode->setPosition(1,1.8f,0);
+	_dummyNode->setPosition(0.5f,1.5f,0.5f);
 
 	//_charCamera->setAutoTracking(true,_dummyNode);
 
@@ -170,22 +170,6 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 		dir = rot * (rot * dir);
 		walkDir = convertOgreVector3(dir);
 	}
-
-	/*
-	if(OISManager::getSingleton().isCFGKeyPressed(RIGHT))
-	{
-		btMatrix3x3 orn = camTrans.getBasis();
-		orn *= btMatrix3x3(btQuaternion(btVector3(0,1,0),-0.03));
-		_charGhost->getWorldTransform().setBasis(orn);
-	}
-
-	if(OISManager::getSingleton().isCFGKeyPressed(LEFT))
-	{
-		btMatrix3x3 orn = camTrans.getBasis();
-		orn *= btMatrix3x3(btQuaternion(btVector3(0,1,0),0.03));
-		_charGhost->getWorldTransform().setBasis(orn);
-	}
-	*/
 
 	//going to try out using mouse-look real quick.
 	int mmx,mmy;
