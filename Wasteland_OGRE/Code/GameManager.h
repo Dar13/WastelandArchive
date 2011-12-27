@@ -107,8 +107,6 @@ private:
 	Ogre::Camera* _charCamera;
 	Ogre::SceneNode* _charNode;
 	Ogre::SceneNode* _dummyNode;
-	Ogre::Quaternion _oldRot;
-	Ogre::Quaternion _oldOrn;
 
 	//Utility functions, converts Ogre::Vector3 to btVector3
 	btVector3 convertOgreVector3(const Ogre::Vector3 &v);

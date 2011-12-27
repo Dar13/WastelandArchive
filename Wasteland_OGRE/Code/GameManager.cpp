@@ -178,7 +178,7 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 	//going to try only y-axis for now(mmx only)
 	//this code works.
 	btMatrix3x3 yorn = camTrans.getBasis();
-	yorn *= btMatrix3x3(btQuaternion(btVector3(0,1,0),(-mmx * 0.005f)));
+	yorn *= btMatrix3x3(btQuaternion(btVector3(0,1,0),(-mmx * 0.007f)));
 	_charGhost->getWorldTransform().setBasis(yorn);
 
 	//x-axis?
@@ -187,7 +187,7 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 	//this works.
 	Ogre::Quaternion quat;
 	Ogre::Vector3 zUp;
-	quat.FromAngleAxis(Ogre::Radian(-mmy * 0.005f),Ogre::Vector3::UNIT_Z);
+	quat.FromAngleAxis(Ogre::Radian(-mmy * 0.007f),Ogre::Vector3::UNIT_Z);
 	
 	//this works.
 	_charController->setWalkDirection(walkDir * walkSpd);
