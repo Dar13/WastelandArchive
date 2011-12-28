@@ -156,20 +156,27 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 	if(OISManager::getSingleton().isCFGKeyPressed(FORWARD))
 	{
 		walkDir += forDir;
-		dir = convertBulletVector3(walkDir);
-		rot = _charNode->getOrientation();
-		dir = rot * (rot * dir);
-		walkDir = convertOgreVector3(dir);
 	}
 
 	if(OISManager::getSingleton().isCFGKeyPressed(BACKWARD))
 	{
 		walkDir -= forDir;
-		dir = convertBulletVector3(walkDir);
-		rot = _charNode->getOrientation();
-		dir = rot * (rot * dir);
-		walkDir = convertOgreVector3(dir);
 	}
+
+	if(OISManager::getSingleton().isCFGKeyPressed(RIGHT))
+	{
+		walkDir += strafeDir;
+	}
+
+	if(OISManager::getSingleton().isCFGKeyPressed(LEFT))
+	{
+		walkDir -= strafeDir;
+	}
+
+	dir = convertBulletVector3(walkDir);
+	rot = _charNode->getOrientation();
+	dir = rot * (rot * dir);
+	walkDir = convertOgreVector3(dir);
 
 	//going to try out using mouse-look real quick.
 	int mmx,mmy;
