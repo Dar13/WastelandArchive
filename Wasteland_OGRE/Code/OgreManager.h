@@ -75,6 +75,7 @@ public:
 							const Ogre::Vector3 &scale = Ogre::Vector3::UNIT_SCALE);
 	
 	void addAnimationState(Ogre::AnimationState* anim);
+	void removeAnimationState(Ogre::AnimationState* anim);
 	void clearAnimationStates();
 
 	bool frameStarted(const Ogre::FrameEvent& evt);

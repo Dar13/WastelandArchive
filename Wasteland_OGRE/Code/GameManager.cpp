@@ -218,6 +218,15 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 
 }
 
+void loadWeapons(std::string file)
+{
+	list_t* wepList = list(file).release();
+	for(unsigned int i=0; i<wepList->file().size(); ++i)
+	{
+
+	}
+}
+
 OgreBulletPair GameManager::createObject(Ogre::SceneManager* scene,object_t* objectInfo)
 {
 	//return variable

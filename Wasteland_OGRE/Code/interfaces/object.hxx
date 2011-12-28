@@ -512,7 +512,7 @@ class object_t: public ::xml_schema::type
 
   // colCubeSize
   // 
-  typedef ::xml_schema::integer colCubeSize_type;
+  typedef ::xml_schema::float_ colCubeSize_type;
   typedef ::xsd::cxx::tree::traits< colCubeSize_type, char > colCubeSize_traits;
 
   const colCubeSize_type&

@@ -116,6 +116,54 @@ use (::std::auto_ptr< use_type > x)
   this->use_.set (x);
 }
 
+const action_t::weapon1_type& action_t::
+weapon1 () const
+{
+  return this->weapon1_.get ();
+}
+
+action_t::weapon1_type& action_t::
+weapon1 ()
+{
+  return this->weapon1_.get ();
+}
+
+void action_t::
+weapon1 (const weapon1_type& x)
+{
+  this->weapon1_.set (x);
+}
+
+void action_t::
+weapon1 (::std::auto_ptr< weapon1_type > x)
+{
+  this->weapon1_.set (x);
+}
+
+const action_t::weapon2_type& action_t::
+weapon2 () const
+{
+  return this->weapon2_.get ();
+}
+
+action_t::weapon2_type& action_t::
+weapon2 ()
+{
+  return this->weapon2_.get ();
+}
+
+void action_t::
+weapon2 (const weapon2_type& x)
+{
+  this->weapon2_.set (x);
+}
+
+void action_t::
+weapon2 (::std::auto_ptr< weapon2_type > x)
+{
+  this->weapon2_.set (x);
+}
+
 
 // movement_t
 // 
@@ -407,11 +455,15 @@ volume (::std::auto_ptr< volume_type > x)
 action_t::
 action_t (const reload_type& reload,
           const envwarnsys_type& envwarnsys,
-          const use_type& use)
+          const use_type& use,
+          const weapon1_type& weapon1,
+          const weapon2_type& weapon2)
 : ::xml_schema::type (),
   reload_ (reload, ::xml_schema::flags (), this),
   envwarnsys_ (envwarnsys, ::xml_schema::flags (), this),
-  use_ (use, ::xml_schema::flags (), this)
+  use_ (use, ::xml_schema::flags (), this),
+  weapon1_ (weapon1, ::xml_schema::flags (), this),
+  weapon2_ (weapon2, ::xml_schema::flags (), this)
 {
 }
 
@@ -422,7 +474,9 @@ action_t (const action_t& x,
 : ::xml_schema::type (x, f, c),
   reload_ (x.reload_, f, this),
   envwarnsys_ (x.envwarnsys_, f, this),
-  use_ (x.use_, f, this)
+  use_ (x.use_, f, this),
+  weapon1_ (x.weapon1_, f, this),
+  weapon2_ (x.weapon2_, f, this)
 {
 }
 
@@ -433,7 +487,9 @@ action_t (const ::xercesc::DOMElement& e,
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
   reload_ (f, this),
   envwarnsys_ (f, this),
-  use_ (f, this)
+  use_ (f, this),
+  weapon1_ (f, this),
+  weapon2_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -494,6 +550,34 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // weapon1
+    //
+    if (n.name () == "weapon1" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< weapon1_type > r (
+        weapon1_traits::create (i, f, this));
+
+      if (!weapon1_.present ())
+      {
+        this->weapon1_.set (r);
+        continue;
+      }
+    }
+
+    // weapon2
+    //
+    if (n.name () == "weapon2" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< weapon2_type > r (
+        weapon2_traits::create (i, f, this));
+
+      if (!weapon2_.present ())
+      {
+        this->weapon2_.set (r);
+        continue;
+      }
+    }
+
     break;
   }
 
@@ -515,6 +599,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "use",
+      "");
+  }
+
+  if (!weapon1_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "weapon1",
+      "");
+  }
+
+  if (!weapon2_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "weapon2",
       "");
   }
 }

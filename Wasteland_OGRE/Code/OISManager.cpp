@@ -88,10 +88,12 @@ void OISManager::capture()
 		OIS::MouseState &mutMS = const_cast<OIS::MouseState &>(_mouseObj->getMouseState());
 		mutMS.X.abs = mutMS.width/2;
 		mutMS.Y.abs = mutMS.height/2;
+		//mutMS.Z.abs = 0;
 	}
 
 	_mouseMoveX = _mouseObj->getMouseState().X.rel;
 	_mouseMoveY = _mouseObj->getMouseState().Y.rel;
+	//_mouseMoveZ = _mouseObj->getMouseState().Z.abs;
 }
 
 bool OISManager::isCFGKeyPressed(unsigned int key)
@@ -112,6 +114,12 @@ int OISManager::getMMX()
 int OISManager::getMMY()
 {
 	return _mouseMoveY;
+}
+
+int OISManager::getMMZ()
+{
+	//return _mouseMoveZ;
+	return 0; // doesn't work.
 }
 
 bool OISManager::keyPressed(const OIS::KeyEvent &evt)
@@ -190,6 +198,8 @@ void OISManager::setConfiguration(configuration_t* config)
 	_config->action().use()[0] = tolower(_config->action().use()[0]);
 	_config->action().envwarnsys()[0] = tolower(_config->action().envwarnsys()[0]);
 	_config->action().reload()[0] = tolower(_config->action().reload()[0]);
+	_config->action().weapon1()[0] = tolower(_config->action().weapon1()[0]);
+	_config->action().weapon2()[0] = tolower(_config->action().weapon2()[0]);
 	_keyValues.push_back(_config->movement().forward()); //forward first
 	_keyValues.push_back(_config->movement().backward());
 	_keyValues.push_back(_config->movement().right());
@@ -198,7 +208,9 @@ void OISManager::setConfiguration(configuration_t* config)
 	_keyValues.push_back(_config->movement().sprint());
 	_keyValues.push_back(_config->action().use());
 	_keyValues.push_back(_config->action().envwarnsys());
-	_keyValues.push_back(_config->action().reload()); //reload last.
+	_keyValues.push_back(_config->action().reload()); 
+	_keyValues.push_back(_config->action().weapon1());
+	_keyValues.push_back(_config->action().weapon2());//weapon2 last.
 
 	//just setting up this vector
 	_keyDown.clear();

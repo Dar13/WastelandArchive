@@ -328,6 +328,18 @@ void OgreManager::addAnimationState(Ogre::AnimationState* anim)
 	_animations.push_back(anim);
 }
 
+void OgreManager::removeAnimationState(Ogre::AnimationState* anim)
+{
+	for(std::vector<Ogre::AnimationState*>::iterator itr = _animations.begin(); itr != _animations.end(); ++itr)
+	{
+		if( (*itr) == anim )
+		{
+			_animations.erase(itr);
+			itr = _animations.end();
+		}
+	}
+}
+
 void OgreManager::clearAnimationStates()
 {
 	_animations.clear();

@@ -294,11 +294,47 @@ class action_t: public ::xml_schema::type
   void
   use (::std::auto_ptr< use_type > p);
 
+  // weapon1
+  // 
+  typedef ::xml_schema::string weapon1_type;
+  typedef ::xsd::cxx::tree::traits< weapon1_type, char > weapon1_traits;
+
+  const weapon1_type&
+  weapon1 () const;
+
+  weapon1_type&
+  weapon1 ();
+
+  void
+  weapon1 (const weapon1_type& x);
+
+  void
+  weapon1 (::std::auto_ptr< weapon1_type > p);
+
+  // weapon2
+  // 
+  typedef ::xml_schema::string weapon2_type;
+  typedef ::xsd::cxx::tree::traits< weapon2_type, char > weapon2_traits;
+
+  const weapon2_type&
+  weapon2 () const;
+
+  weapon2_type&
+  weapon2 ();
+
+  void
+  weapon2 (const weapon2_type& x);
+
+  void
+  weapon2 (::std::auto_ptr< weapon2_type > p);
+
   // Constructors.
   //
   action_t (const reload_type&,
             const envwarnsys_type&,
-            const use_type&);
+            const use_type&,
+            const weapon1_type&,
+            const weapon2_type&);
 
   action_t (const ::xercesc::DOMElement& e,
             ::xml_schema::flags f = 0,
@@ -326,6 +362,8 @@ class action_t: public ::xml_schema::type
   ::xsd::cxx::tree::one< reload_type > reload_;
   ::xsd::cxx::tree::one< envwarnsys_type > envwarnsys_;
   ::xsd::cxx::tree::one< use_type > use_;
+  ::xsd::cxx::tree::one< weapon1_type > weapon1_;
+  ::xsd::cxx::tree::one< weapon2_type > weapon2_;
 };
 
 class movement_t: public ::xml_schema::type

@@ -15,6 +15,8 @@ enum CONFIG_KEY_VALUES
 	USE,
 	ENVWARNSYS,
 	RELOAD,
+	WEAPON1,
+	WEAPON2,
 	MAXVALUE
 };
 
@@ -47,6 +49,8 @@ public:
 	int getMMX();
 	//! Gets current state of mouse movement vertically(y-axis).
 	int getMMY();
+	//! Gets current state of mouse movement depth(wheel/z-axis).
+	int getMMZ();
 
 	//! Handles all key presses.
 	bool keyPressed(const OIS::KeyEvent &evt);
@@ -89,7 +93,7 @@ private:
 
 	//mouse movement variables
 	bool _lockMouse;
-	int _mouseMoveX,_mouseMoveY;
+	int _mouseMoveX,_mouseMoveY,_mouseMoveZ;
 };
 
 #endif

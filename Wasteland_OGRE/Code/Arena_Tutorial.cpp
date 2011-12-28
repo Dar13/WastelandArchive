@@ -36,6 +36,13 @@ void ArenaTutorial::Setup()
 	OgreBulletPair spherePair = GameManager::getSingleton().createObject(_scene,sphere);
 	delete sphere;
 
+	object_t* box = object("resource\\xml\\test_box.xml").release();
+	OgreBulletPair boxPair = GameManager::getSingleton().createObject(_scene,box);
+	delete box;
+
+	_pairs.push_back(spherePair);
+	_pairs.push_back(boxPair);
+
 	_camera->setPosition(Ogre::Vector3(-1,1.9f,0));
 	_camera->setNearClipDistance(.001);
 	_camera->setFarClipDistance(500);
@@ -63,8 +70,6 @@ int ArenaTutorial::Run()
 		//True indicates success, so react on if it doesn't react properly
 		if(!GameManager::getSingleton().UpdateManagers())
 			_stateShutdown = true;
-
-		//_camera->lookAt(tmp->getPosition());
 	}
 
 	//no matter what, end the program after this state.

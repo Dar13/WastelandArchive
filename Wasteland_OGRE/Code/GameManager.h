@@ -75,6 +75,11 @@ public:
 	*/
 	void updateCharacterController(float phyTime,Ogre::Camera* camera = NULL);
 
+	/*! Loads all weapons in list xml file that is passed in.
+
+	*/
+	void loadWeapons(std::string file);
+
 	/*! Updates the individual managers.
 
 	\returns true if all managers updated properly.

@@ -26,6 +26,7 @@
     <ClInclude Include="Code\interfaces\weapon.hxx" />
     <ClInclude Include="Code\OgreManager.h" />
     <ClInclude Include="Code\OISManager.h" />
+    <ClInclude Include="Code\Player.h" />
     <ClInclude Include="Code\precompiled\StdAfx.h" />
     <ClInclude Include="Code\State.h" />
     <ClInclude Include="Code\StateManager.h" />
@@ -46,6 +47,7 @@
     <ClCompile Include="Code\Main.cpp" />
     <ClCompile Include="Code\OgreManager.cpp" />
     <ClCompile Include="Code\OISManager.cpp" />
+    <ClCompile Include="Code\Player.cpp" />
     <ClCompile Include="Code\precompiled\StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">/Zm200 %(AdditionalOptions)</AdditionalOptions>

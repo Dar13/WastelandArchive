@@ -43,6 +43,9 @@
     <Filter Include="Include Files\Bullet\DebugDrawer">
       <UniqueIdentifier>{ef893743-226f-49f0-8f36-2fecc532cf20}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include Files\Player">
+      <UniqueIdentifier>{533af87e-0ac3-412f-b7cd-4c8b879ff3c1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\State.h">
@@ -102,6 +105,9 @@
     <ClInclude Include="Code\interfaces\weapon.hxx">
       <Filter>Include Files\XML\interfaces</Filter>
     </ClInclude>
+    <ClInclude Include="Code\Player.h">
+      <Filter>Include Files\Player</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">
@@ -154,6 +160,9 @@
     </ClCompile>
     <ClCompile Include="Code\interfaces\weapon.cxx">
       <Filter>Include Files\XML\interfaces</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\Player.cpp">
+      <Filter>Include Files\Player</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
