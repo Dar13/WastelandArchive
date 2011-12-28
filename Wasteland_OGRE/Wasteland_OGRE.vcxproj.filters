@@ -99,6 +99,9 @@
     <ClInclude Include="Code\debug_draw\DynamicLineDrawer.hpp">
       <Filter>Include Files\Bullet\DebugDrawer</Filter>
     </ClInclude>
+    <ClInclude Include="Code\interfaces\weapon.hxx">
+      <Filter>Include Files\XML\interfaces</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">
@@ -148,6 +151,9 @@
     </ClCompile>
     <ClCompile Include="Code\debug_draw\DynamicLineDrawer.cpp">
       <Filter>Include Files\Bullet\DebugDrawer</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\interfaces\weapon.cxx">
+      <Filter>Include Files\XML\interfaces</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
