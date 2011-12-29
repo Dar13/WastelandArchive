@@ -52,6 +52,9 @@ public:
 	//! Gets current state of mouse movement depth(wheel/z-axis).
 	int getMMZ();
 
+	//! Get current state 
+	bool isMBPressed(OIS::MouseButtonID id);
+
 	//! Handles all key presses.
 	bool keyPressed(const OIS::KeyEvent &evt);
 	//! Handles all key releases.
@@ -94,6 +97,9 @@ private:
 	//mouse movement variables
 	bool _lockMouse;
 	int _mouseMoveX,_mouseMoveY,_mouseMoveZ;
+
+	//mouse click variable(s)
+	bool _mouseRB,_mouseMB,_mouseLB;
 };
 
 #endif

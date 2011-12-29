@@ -122,6 +122,25 @@ int OISManager::getMMZ()
 	return 0; // doesn't work.
 }
 
+bool OISManager::isMBPressed(OIS::MouseButtonID id)
+{
+	switch(id)
+	{
+	case OIS::MB_Right:
+		return _mouseRB;
+		break;
+	case OIS::MB_Middle:
+		return _mouseMB;
+		break;
+	case OIS::MB_Left:
+		return _mouseLB;
+		break;
+	default:
+		return false;
+		break;
+	}
+}
+
 bool OISManager::keyPressed(const OIS::KeyEvent &evt)
 {
 	//Checking for escape-key press
@@ -175,11 +194,41 @@ bool OISManager::mouseMoved(const OIS::MouseEvent &evt)
 
 bool OISManager::mousePressed(const OIS::MouseEvent &evt,OIS::MouseButtonID id)
 {
+	switch(id)
+	{
+	case OIS::MB_Right:
+		_mouseRB = true;
+		break;
+	case OIS::MB_Left:
+		_mouseLB = true;
+		break;
+	case OIS::MB_Middle:
+		_mouseMB = true;
+		break;
+	default:
+		//nothing.
+		break;
+	};
 	return true;
 }
 
 bool OISManager::mouseReleased(const OIS::MouseEvent &evt,OIS::MouseButtonID id)
 {
+	switch(id)
+	{
+	case OIS::MB_Right:
+		_mouseRB = false;
+		break;
+	case OIS::MB_Left:
+		_mouseLB = false;
+		break;
+	case OIS::MB_Middle:
+		_mouseMB = false;
+		break;
+	default:
+		//nothing.
+		break;
+	};
 	return true;
 }
 

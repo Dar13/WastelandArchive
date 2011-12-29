@@ -18,6 +18,7 @@ GameManager::GameManager()
 	_charNode = NULL;
 	_charGhost = NULL;
 	_charController = NULL;
+	_dummyNode = NULL;
 	oldTime = 0;
 	deltaTime = 0;
 	Time = (float)OgreManager::getSingleton().getTimer()->getMilliseconds();
@@ -175,6 +176,8 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 
 	dir = convertBulletVector3(walkDir);
 	rot = _charNode->getOrientation();
+	//this is needed to prevent the z-component that interferes with the movement.
+	rot.z = 0.0f;
 	dir = rot * (rot * dir);
 	walkDir = convertOgreVector3(dir);
 
