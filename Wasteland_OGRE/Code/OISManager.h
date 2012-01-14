@@ -90,6 +90,9 @@ private:
 	std::vector<std::string> _keyValues;
 	std::vector<bool> _keyDown;
 
+	//control character keyvalues
+	std::vector<std::string> _ckeyValues;
+
 	//holds conversion from OIS keycodes to char
 	std::map<int,char> _KC_map;
 	char getCharFromKeyCode(unsigned int keyCode);

@@ -56,7 +56,7 @@ void ArenaTutorial::Setup()
 	//since we're using the character controller, should also lock the mouse.
 	OISManager::getSingleton().setMouseLock(true);
 
-	GameManager::getSingleton().useDebugDrawer(_scene);
+	//GameManager::getSingleton().useDebugDrawer(_scene);
 }
 
 int ArenaTutorial::Run()

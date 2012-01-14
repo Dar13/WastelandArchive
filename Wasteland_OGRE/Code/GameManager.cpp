@@ -176,12 +176,12 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 
 	dir = convertBulletVector3(walkDir);
 	rot = _charNode->getOrientation();
-	//this is needed to prevent the z-component that interferes with the movement.
+	//this is needed to prevent the z-component interfering with the movement.
 	rot.z = 0.0f;
 	dir = rot * (rot * dir);
 	walkDir = convertOgreVector3(dir);
 
-	//going to try out using mouse-look real quick.
+	//mouse-look code.
 	int mmx,mmy;
 	mmx = OISManager::getSingleton().getMMX();
 	mmy = OISManager::getSingleton().getMMY();

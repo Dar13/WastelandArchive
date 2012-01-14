@@ -6,6 +6,8 @@
 
 template<> OISManager* Ogre::Singleton<OISManager>::ms_Singleton=0;
 
+bool isControlCharacter(OIS::KeyCode keyCode);
+
 OISManager::OISManager(unsigned long windowHandle)
 {
 	//init some of the member variables
@@ -55,7 +57,6 @@ OISManager::OISManager(unsigned long windowHandle)
 	_KC_map[OIS::KC_Z] = 'z';
 }
 
-
 //Cleaning up.
 OISManager::~OISManager()
 {
@@ -88,12 +89,12 @@ void OISManager::capture()
 		OIS::MouseState &mutMS = const_cast<OIS::MouseState &>(_mouseObj->getMouseState());
 		mutMS.X.abs = mutMS.width/2;
 		mutMS.Y.abs = mutMS.height/2;
-		//mutMS.Z.abs = 0;
+		//mutMS.Z.abs = 0; doesn't work
 	}
 
 	_mouseMoveX = _mouseObj->getMouseState().X.rel;
 	_mouseMoveY = _mouseObj->getMouseState().Y.rel;
-	//_mouseMoveZ = _mouseObj->getMouseState().Z.abs;
+	//_mouseMoveZ = _mouseObj->getMouseState().Z.abs; doesn't work
 }
 
 bool OISManager::isCFGKeyPressed(unsigned int key)
@@ -157,9 +158,43 @@ bool OISManager::keyPressed(const OIS::KeyEvent &evt)
 	*/
 
 	char character = evt.text;
+	std::string checkString;
+	checkString = character;
+
+	//check for specific control characters, if applicable for the KeyValues.
+	//unfortunately can't figure out how to make it dynamic enough to handle all characters on keyboard
+	if(evt.key == OIS::KC_SPACE)
+	{
+		checkString = "space";
+	}
+	if(evt.key == OIS::KC_RCONTROL)
+	{
+		checkString = "rcontrol";
+	}
+	if(evt.key == OIS::KC_LCONTROL)
+	{
+		checkString = "lcontrol";
+	}
+	if(evt.key == OIS::KC_UP)
+	{
+		checkString = "uparrow";
+	}
+	if(evt.key == OIS::KC_DOWN)
+	{
+		checkString = "downarrow";
+	}
+	if(evt.key == OIS::KC_RIGHT)
+	{
+		checkString = "rightarrow";
+	}
+	if(evt.key == OIS::KC_LEFT)
+	{
+		checkString = "leftarrow";
+	}
+
 	for(unsigned int i = FORWARD; i<MAXVALUE; ++i)
 	{
-		if((_keyValues[i])[0] == character)
+		if(_keyValues[i] == checkString)
 		{
 			_keyDown[i] = true;	
 		}
@@ -175,9 +210,43 @@ bool OISManager::keyReleased(const OIS::KeyEvent &evt)
 	//CEGUI::System::getSingleton().injectKeyUp(evt.key);
 	
 	char character = getCharFromKeyCode(evt.key);
+	std::string checkString;
+	checkString = character;
+
+	//check for specific control characters, if applicable for the KeyValues.
+	//unfortunately can't figure out how to make it dynamic enough to handle all characters on keyboard
+	if(evt.key == OIS::KC_SPACE)
+	{
+		checkString = "space";
+	}
+	if(evt.key == OIS::KC_RCONTROL)
+	{
+		checkString = "rcontrol";
+	}
+	if(evt.key == OIS::KC_LCONTROL)
+	{
+		checkString = "lcontrol";
+	}
+	if(evt.key == OIS::KC_UP)
+	{
+		checkString = "uparrow";
+	}
+	if(evt.key == OIS::KC_DOWN)
+	{
+		checkString = "downarrow";
+	}
+	if(evt.key == OIS::KC_RIGHT)
+	{
+		checkString = "rightarrow";
+	}
+	if(evt.key == OIS::KC_LEFT)
+	{
+		checkString = "leftarrow";
+	}
+
 	for(unsigned int i = FORWARD; i<MAXVALUE; ++i)
 	{
-		if((_keyValues[i])[0] == character)
+		if(_keyValues[i] == checkString)
 		{
 			_keyDown[i] = false;
 		}
@@ -243,7 +312,6 @@ void OISManager::setConfiguration(configuration_t* config)
 	_config->movement().right()[0] = tolower(_config->movement().right()[0]);
 	_config->movement().left()[0] = tolower(_config->movement().left()[0]);
 	_config->movement().sprint()[0] = tolower(_config->movement().sprint()[0]);
-	_config->movement().jump()[0] = tolower(_config->movement().jump()[0]);
 	_config->action().use()[0] = tolower(_config->action().use()[0]);
 	_config->action().envwarnsys()[0] = tolower(_config->action().envwarnsys()[0]);
 	_config->action().reload()[0] = tolower(_config->action().reload()[0]);
@@ -272,4 +340,10 @@ void OISManager::setConfiguration(configuration_t* config)
 char OISManager::getCharFromKeyCode(unsigned int keyCode)
 {
 	return _KC_map[keyCode];
+}
+
+bool isControlCharacter(OIS::KeyCode keyCode)
+{
+	//gotta be a better way...
+	return false;
 }
