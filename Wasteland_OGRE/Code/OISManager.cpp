@@ -163,34 +163,42 @@ bool OISManager::keyPressed(const OIS::KeyEvent &evt)
 
 	//check for specific control characters, if applicable for the KeyValues.
 	//unfortunately can't figure out how to make it dynamic enough to handle all characters on keyboard
-	if(evt.key == OIS::KC_SPACE)
+	switch(evt.key)
 	{
+	case OIS::KC_SPACE:
 		checkString = "space";
-	}
-	if(evt.key == OIS::KC_RCONTROL)
-	{
+		break;
+	case OIS::KC_RCONTROL:
 		checkString = "rcontrol";
-	}
-	if(evt.key == OIS::KC_LCONTROL)
-	{
+		break;
+	case OIS::KC_LCONTROL:
 		checkString = "lcontrol";
-	}
-	if(evt.key == OIS::KC_UP)
-	{
+		break;
+	case OIS::KC_UP:
 		checkString = "uparrow";
-	}
-	if(evt.key == OIS::KC_DOWN)
-	{
+		break;
+	case OIS::KC_DOWN:
 		checkString = "downarrow";
-	}
-	if(evt.key == OIS::KC_RIGHT)
-	{
-		checkString = "rightarrow";
-	}
-	if(evt.key == OIS::KC_LEFT)
-	{
+		break;
+	case OIS::KC_LEFT:
 		checkString = "leftarrow";
-	}
+		break;
+	case OIS::KC_RIGHT:
+		checkString = "rightarrow";
+		break;
+	case OIS::KC_RSHIFT:
+		checkString = "rshift";
+		break;
+	case OIS::KC_LSHIFT:
+		checkString = "lshift";
+		break;
+	case OIS::KC_RMENU:
+		checkString = "ralt";
+		break;
+	case OIS::KC_LMENU:
+		checkString = "lalt";
+		break;
+	};
 
 	for(unsigned int i = FORWARD; i<MAXVALUE; ++i)
 	{
@@ -215,34 +223,42 @@ bool OISManager::keyReleased(const OIS::KeyEvent &evt)
 
 	//check for specific control characters, if applicable for the KeyValues.
 	//unfortunately can't figure out how to make it dynamic enough to handle all characters on keyboard
-	if(evt.key == OIS::KC_SPACE)
+	switch(evt.key)
 	{
+	case OIS::KC_SPACE:
 		checkString = "space";
-	}
-	if(evt.key == OIS::KC_RCONTROL)
-	{
+		break;
+	case OIS::KC_RCONTROL:
 		checkString = "rcontrol";
-	}
-	if(evt.key == OIS::KC_LCONTROL)
-	{
+		break;
+	case OIS::KC_LCONTROL:
 		checkString = "lcontrol";
-	}
-	if(evt.key == OIS::KC_UP)
-	{
+		break;
+	case OIS::KC_UP:
 		checkString = "uparrow";
-	}
-	if(evt.key == OIS::KC_DOWN)
-	{
+		break;
+	case OIS::KC_DOWN:
 		checkString = "downarrow";
-	}
-	if(evt.key == OIS::KC_RIGHT)
-	{
-		checkString = "rightarrow";
-	}
-	if(evt.key == OIS::KC_LEFT)
-	{
+		break;
+	case OIS::KC_LEFT:
 		checkString = "leftarrow";
-	}
+		break;
+	case OIS::KC_RIGHT:
+		checkString = "rightarrow";
+		break;
+	case OIS::KC_RSHIFT:
+		checkString = "rshift";
+		break;
+	case OIS::KC_LSHIFT:
+		checkString = "lshift";
+		break;
+	case OIS::KC_RMENU:
+		checkString = "ralt";
+		break;
+	case OIS::KC_LMENU:
+		checkString = "lalt";
+		break;
+	};
 
 	for(unsigned int i = FORWARD; i<MAXVALUE; ++i)
 	{
@@ -311,6 +327,7 @@ void OISManager::setConfiguration(configuration_t* config)
 	_config->movement().backward()[0] = tolower(_config->movement().backward()[0]);
 	_config->movement().right()[0] = tolower(_config->movement().right()[0]);
 	_config->movement().left()[0] = tolower(_config->movement().left()[0]);
+	_config->movement().jump()[0] = tolower(_config->movement().jump()[0]);
 	_config->movement().sprint()[0] = tolower(_config->movement().sprint()[0]);
 	_config->action().use()[0] = tolower(_config->action().use()[0]);
 	_config->action().envwarnsys()[0] = tolower(_config->action().envwarnsys()[0]);

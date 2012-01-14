@@ -120,6 +120,9 @@ void GameManager::createCharacterController(Ogre::Camera* camera,Ogre::Vector3 i
 	//_charCamera->setAutoTracking(true,_dummyNode);
 
 	_charController->setGravity(btScalar(9.8f));
+	//doesn't do anything...
+	//_charController->setMaxJumpHeight(btScalar(.5f));
+	_charController->setJumpSpeed(btScalar(6.0f));
 
 	return;
 }
@@ -143,6 +146,8 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 	btTransform camTrans = _charGhost->getWorldTransform();
 	btVector3 forDir = camTrans.getBasis()[0]; forDir.normalize();
 	btVector3 upDir = camTrans.getBasis()[1]; upDir.normalize();
+	//let's halve the upDir
+	upDir /= 2;
 	btVector3 strafeDir = camTrans.getBasis()[2]; strafeDir.normalize();
 	btVector3 walkDir = btVector3(0,0,0);
 	btScalar walkVel = btScalar(2.0f) * 4.0f;
@@ -172,6 +177,20 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 	if(OISManager::getSingleton().isCFGKeyPressed(LEFT))
 	{
 		walkDir -= strafeDir;
+	}
+
+	if(OISManager::getSingleton().isCFGKeyPressed(JUMP))
+	{
+		//seems like it is implemented. At least partially.
+		_charController->jump();
+		//since the kinematic controller doesn't have jumping implemented
+		//try something else.
+		/*
+		if(_charController->canJump())
+		{
+			walkDir += upDir;
+		}
+		*/
 	}
 
 	dir = convertBulletVector3(walkDir);
