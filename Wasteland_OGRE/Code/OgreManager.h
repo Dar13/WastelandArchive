@@ -82,6 +82,9 @@ public:
 	bool frameRenderingQueued(const Ogre::FrameEvent& evt);
 	bool frameEnded(const Ogre::FrameEvent& evt);
 
+	//Some math-related functions
+	Ogre::Quaternion eulerToQuat(Ogre::Radian rX,Ogre::Radian rY,Ogre::Radian rZ);
+
 private:
 	//Hidden methods
 	OgreManager(const OgreManager&);

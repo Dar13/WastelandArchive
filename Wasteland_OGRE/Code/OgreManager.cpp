@@ -383,3 +383,14 @@ Ogre::ColourValue OgreManager::getColorFromHex(int hexColor, float alpha)
 
 	return Ogre::ColourValue(r,g,b,a);
 }
+
+Ogre::Quaternion OgreManager::eulerToQuat(Ogre::Radian rX,Ogre::Radian rY,Ogre::Radian rZ)
+{
+	Ogre::Quaternion qX,qY,qZ,qT;
+	qX.FromAngleAxis(rX,Ogre::Vector3::UNIT_X);
+	qY.FromAngleAxis(rY,Ogre::Vector3::UNIT_Y);
+	qZ.FromAngleAxis(rZ,Ogre::Vector3::UNIT_Z);
+
+	qT = qX * qY;
+	return (qT * qZ);
+}

@@ -195,8 +195,7 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 
 	dir = convertBulletVector3(walkDir);
 	rot = _charNode->getOrientation();
-	//this is needed to prevent the z-component interfering with the movement.
-	rot.z = 0.0f;
+	rot.z = 0.0f; //this is needed to prevent the z-component interfering with the movement.
 	dir = rot * (rot * dir);
 	walkDir = convertOgreVector3(dir);
 
@@ -215,8 +214,13 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 	//have to get current x-rotation from node, not bullet
 	//this works.
 	Ogre::Quaternion quat;
-	Ogre::Vector3 zUp;
-	quat.FromAngleAxis(Ogre::Radian(-mmy * 0.007f),Ogre::Vector3::UNIT_Z);
+	Ogre::Radian angle;
+
+	angle = (-mmy) * 0.007f;
+	quat.FromAngleAxis(angle,Ogre::Vector3::UNIT_Z);
+
+	Ogre::Quaternion zrestrict(Ogre::Radian((8*Ogre::Math::PI)/9.0f),Ogre::Vector3::UNIT_Z);
+	Ogre::Quaternion znegrestrict(Ogre::Radian((-8*Ogre::Math::PI)/9.0f),Ogre::Vector3::UNIT_Z);
 	
 	//this works.
 	_charController->setWalkDirection(walkDir * walkSpd);
@@ -234,6 +238,7 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 	Ogre::Quaternion zRot = _charNode->getOrientation();
 	zRot.x=0;
 	zRot.y=0;
+	//attempt at limiting mouselook up/down
 	_charNode->setOrientation(oRot);
 	_charNode->rotate(zRot); //original z-rotation
 	_charNode->rotate(quat); //then the new z-rotation.

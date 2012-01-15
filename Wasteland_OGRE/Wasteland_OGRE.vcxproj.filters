@@ -46,6 +46,12 @@
     <Filter Include="Include Files\Player">
       <UniqueIdentifier>{533af87e-0ac3-412f-b7cd-4c8b879ff3c1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include Files\Debug">
+      <UniqueIdentifier>{a52906f9-561e-4ddd-8334-3d02ae6b57eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files\Debug\Screen">
+      <UniqueIdentifier>{f100b78c-b322-4b3e-b617-d61bb993651b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\State.h">
@@ -108,6 +114,9 @@
     <ClInclude Include="Code\Player.h">
       <Filter>Include Files\Player</Filter>
     </ClInclude>
+    <ClInclude Include="Code\debug\print.h">
+      <Filter>Include Files\Debug\Screen</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">
@@ -163,6 +172,9 @@
     </ClCompile>
     <ClCompile Include="Code\Player.cpp">
       <Filter>Include Files\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\debug\print.cpp">
+      <Filter>Include Files\Debug\Screen</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
