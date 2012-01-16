@@ -15,11 +15,14 @@ DebugPrint::DebugPrint()
 DebugPrint::~DebugPrint()
 {
 	//cleanup
+	Clean();
 }
 
 //!Has to be called from separate app states. Requires scene manager
 void DebugPrint::Setup(Ogre::SceneManager* scene)
 {
+	_used = true;
+
 	_rectangle = new Ogre::Rectangle2D(true);
 	_rectangle->setCorners(-1,1,1,0);
 	_rectangle->setMaterial("debug/print");
@@ -44,18 +47,82 @@ void DebugPrint::Setup(Ogre::SceneManager* scene)
 
 void DebugPrint::Clean()
 {
-	delete _rectangle;
-	delete _node;
-	delete _textBox;
-	delete _overlay;
+	if(_used)
+	{
+		_used = false;
+		if(_rectangle)
+		{
+			delete _rectangle;
+		}
+		if(_node)
+		{
+			//taken care of by app-state scene manager.
+			//delete _node;
+		}
+		//thank god I'm using CEGUI for a GUI. This would really screw me up.
+		Ogre::OverlayManager::getSingleton().destroyAll();
+	}
+}
+
+//Private, so it can't be abused.
+//Saves a couple of string copy-overs and such.
+void DebugPrint::printVar()
+{
+	//All but std::string overload eventually comes here.
+	//making sure it counts
+	_printCount = 1;
+	//assumes usage of internal conversion string
+	_prints.push_back(convString);
+	convString="";
+	convStream.str("");
 }
 
 void DebugPrint::printVar(std::string text)
 {
 	//tell the update function to print something.
-	_printCount++;
+	_printCount = 1;
 	//hold the requested printed string in a vector
 	_prints.push_back(text);
+}
+
+void DebugPrint::printVar(int integer)
+{
+	//convert into string.
+	//clear the stream first.
+	convStream.clear();
+	convStream << integer;
+	convString = convStream.str();
+	//conversion done, moving on.
+	printVar();	
+}
+
+void DebugPrint::printVar(float num)
+{
+	//convert into string...
+	convStream << num;
+	convString = convStream.str();
+	//conversion done, send to std::string overload
+	printVar();
+}
+
+void DebugPrint::printVar(bool flag)
+{
+	//basically true or false.
+	if(flag)
+	{
+		printVar("true");
+	}
+	else
+	{
+		printVar("false");
+	}
+}
+
+void DebugPrint::printVar(const char* strPtr)
+{
+	//makes it easy for us.
+	convString.assign(strPtr);
+	printVar();
 }
 
 void DebugPrint::Update()

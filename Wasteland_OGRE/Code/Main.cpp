@@ -2,6 +2,7 @@
 
 #include "GameManager.h"
 #include "StateManager.h"
+#include "debug\print.h"
 
 #include <OgreWindowEventUtilities.h>
 
@@ -43,6 +44,9 @@ int main(int argc, char **argv[])
 	resFile = "resource\\xml\\config.xml"; //why not re-use variables?
 	game->loadConfiguration(resFile);
 
+	//debugger helper
+	DebugPrint* realtimeDebugger = new DebugPrint();
+
 	//Set up the state manager
 	StateManager* wtld = new StateManager();
 	wtld->Setup();
@@ -52,6 +56,8 @@ int main(int argc, char **argv[])
 
 	//delete state manager
 	delete wtld;
+
+	delete realtimeDebugger;
 
 	//delete interfaces for OIS and Ogre3D
 	delete ois;

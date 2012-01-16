@@ -2,6 +2,7 @@
 
 #include "Arena_Tutorial.h"
 #include "GameManager.h"
+#include "debug\print.h"
 
 ArenaTutorial::ArenaTutorial()
 {
@@ -56,6 +57,7 @@ void ArenaTutorial::Setup()
 	//since we're using the character controller, should also lock the mouse.
 	OISManager::getSingleton().setMouseLock(true);
 
+	DebugPrint::getSingleton().Setup(_scene);
 	//GameManager::getSingleton().useDebugDrawer(_scene);
 }
 
@@ -95,6 +97,9 @@ void ArenaTutorial::Shutdown()
 	//Clear the vectors
 	_nodes.clear();
 	_entities.clear();
+
+	//Has to be cleaned after every Setup, in the same app-state.
+	DebugPrint::getSingleton().Clean();
 
 	//Destroy the scene manager.
 	OgreManager::getSingleton().getRoot()->destroySceneManager(_scene);

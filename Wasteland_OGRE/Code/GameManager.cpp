@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 #include "GameManager.h"
+#include "debug\print.h"
 
 //=======================================
 /*
@@ -50,6 +51,12 @@ bool GameManager::UpdateManagers()
 		updateCharacterController(deltaTime,0);
 	}
 	BulletManager::getSingleton().Update(deltaTime);
+
+	//if the debug printer is active, update it
+	if(DebugPrint::getSingleton().isActive())
+	{
+		DebugPrint::getSingleton().Update();
+	}
 
 	//Update Ogre
 	Ogre::WindowEventUtilities::messagePump();
@@ -183,14 +190,6 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 	{
 		//seems like it is implemented. At least partially.
 		_charController->jump();
-		//since the kinematic controller doesn't have jumping implemented
-		//try something else.
-		/*
-		if(_charController->canJump())
-		{
-			walkDir += upDir;
-		}
-		*/
 	}
 
 	dir = convertBulletVector3(walkDir);
@@ -239,6 +238,12 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 	zRot.x=0;
 	zRot.y=0;
 	//attempt at limiting mouselook up/down
+	//first let's test my debugging tool
+	DebugPrint::getSingleton().printVar(zRot.w);
+	DebugPrint::getSingleton().printVar(zRot.x);
+	DebugPrint::getSingleton().printVar(zRot.y);
+	DebugPrint::getSingleton().printVar(zRot.z);
+
 	_charNode->setOrientation(oRot);
 	_charNode->rotate(zRot); //original z-rotation
 	_charNode->rotate(quat); //then the new z-rotation.

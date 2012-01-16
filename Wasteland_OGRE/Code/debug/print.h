@@ -3,26 +3,35 @@
 #ifndef _DEBUG_PRINT_
 #define _DEBUG_PRINT_
 
-class DebugPrint : Ogre::Singleton
+class DebugPrint : public Ogre::Singleton<DebugPrint>
 {
 public:
 	DebugPrint();
 	~DebugPrint();
 
 	void printVar(std::string text);
+	void printVar(float num);
+	void printVar(int integer);
+	void printVar(bool flag);
+	void printVar(const char* strPtr);
 
 	void Setup(Ogre::SceneManager* scene); //required.
 	void Update();
 	void Clean();
+
+	bool isActive(){return _used;}
 	
 	bool isVisible();
 	void setVisible(bool visible = true);
 
 private:
+	void printVar(); //assumes usage of internal convString variable
 	DebugPrint(const DebugPrint&){}
 	DebugPrint& operator= (const DebugPrint&);
 
 	bool _visible;
+	
+	bool _used;
 	
 	//ogre stuff
 	Ogre::Rectangle2D* _rectangle;
@@ -30,8 +39,12 @@ private:
 	Ogre::OverlayElement* _textBox;
 	Ogre::Overlay* _overlay;
 
+	//conversion thingies
+	std::stringstream convStream;
+	std::string convString;
+
 	int _printCount;
 	std::vector<std::string> _prints;
-}
+};
 
 #endif
