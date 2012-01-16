@@ -218,8 +218,8 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 	angle = (-mmy) * 0.007f;
 	quat.FromAngleAxis(angle,Ogre::Vector3::UNIT_Z);
 
-	Ogre::Quaternion zrestrict(Ogre::Radian((8*Ogre::Math::PI)/9.0f),Ogre::Vector3::UNIT_Z);
-	Ogre::Quaternion znegrestrict(Ogre::Radian((-8*Ogre::Math::PI)/9.0f),Ogre::Vector3::UNIT_Z);
+	Ogre::Quaternion zrestrict(Ogre::Radian(Ogre::Math::PI),Ogre::Vector3::UNIT_Z);
+	//Ogre::Quaternion znegrestrict(Ogre::Radian(Ogre::Math::PI),Ogre::Vector3::UNIT_Z);
 	
 	//this works.
 	_charController->setWalkDirection(walkDir * walkSpd);
@@ -238,15 +238,33 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 	zRot.x=0;
 	zRot.y=0;
 	//attempt at limiting mouselook up/down
-	//first let's test my debugging tool
-	DebugPrint::getSingleton().printVar(zRot.w);
-	DebugPrint::getSingleton().printVar(zRot.x);
-	DebugPrint::getSingleton().printVar(zRot.y);
+	Ogre::Quaternion testQ = zRot * zrestrict;
+	DebugPrint::getSingleton().printVar(testQ.w);
+	DebugPrint::getSingleton().printVar(testQ.x);
+	DebugPrint::getSingleton().printVar(testQ.y);
 	DebugPrint::getSingleton().printVar(zRot.z);
+
+	bool extraRotate = true;
+	if(zRot.z > .5f)
+	{
+		extraRotate = false;
+		//just in case it jumps around
+		zRot.z = .5f;
+	}
+	if(zRot.z < -.5f)
+	{
+		extraRotate = false;
+		//just in case it jumps around.
+		zRot.z = -.5f;
+	}
+
 
 	_charNode->setOrientation(oRot);
 	_charNode->rotate(zRot); //original z-rotation
-	_charNode->rotate(quat); //then the new z-rotation.
+	if(extraRotate)
+	{
+		_charNode->rotate(quat); //then the new z-rotation.
+	}
 
 }
 
