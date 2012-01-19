@@ -7,8 +7,11 @@
 
 struct SWeapon
 {
+	SWeapon(weapon_t* p = NULL,Ogre::SceneNode* n = NULL) : info(p),node(n) {}
 	weapon_t* info;
 	Ogre::SceneNode* node;
+
+	static const SWeapon EMPTY;
 };
 
 class Player : public Ogre::Singleton<Player>

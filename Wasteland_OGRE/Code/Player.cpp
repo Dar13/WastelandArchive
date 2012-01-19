@@ -7,10 +7,14 @@
 
 template<> Player* Ogre::Singleton<Player>::ms_Singleton = 0;
 
+const SWeapon SWeapon::EMPTY(0,0);
+
 Player::Player()
 {
 	_firingWeapon = false;
 	_reloadingWeapon = false;
+	_currentWeapon = SWeapon::EMPTY;
+	_holsteredWeapon = SWeapon::EMPTY;
 }
 
 Player::~Player()

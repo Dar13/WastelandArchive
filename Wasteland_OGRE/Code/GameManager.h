@@ -111,7 +111,7 @@ private:
 	btPairCachingGhostObject* _charGhost;
 	Ogre::Camera* _charCamera;
 	Ogre::SceneNode* _charNode;
-	Ogre::SceneNode* _dummyNode;
+	Ogre::SceneNode* _charWeaponNode;
 
 	//Utility functions, converts Ogre::Vector3 to btVector3
 	btVector3 convertOgreVector3(const Ogre::Vector3 &v);

@@ -19,7 +19,7 @@ GameManager::GameManager()
 	_charNode = NULL;
 	_charGhost = NULL;
 	_charController = NULL;
-	_dummyNode = NULL;
+	_charWeaponNode = NULL;
 	oldTime = 0;
 	deltaTime = 0;
 	Time = (float)OgreManager::getSingleton().getTimer()->getMilliseconds();
@@ -121,10 +121,14 @@ void GameManager::createCharacterController(Ogre::Camera* camera,Ogre::Vector3 i
 	_charNode->setOrientation(_charCamera->getOrientation());
 	_charNode->attachObject(_charCamera);
 
-	_dummyNode = _charNode->createChildSceneNode("dummyNode",Ogre::Vector3::UNIT_X);
-	_dummyNode->setPosition(0.5f,1.5f,0.5f);
+	//This will hold the weapon entities. Probably should be renamed to reflect this, no?
+	//Changed to reflect real purpose.
+	_charWeaponNode = _charNode->createChildSceneNode("charWeaponNode",Ogre::Vector3::UNIT_X);
+	_charWeaponNode->setPosition(0.5f,1.5f,0.5f);
 
-	//_charCamera->setAutoTracking(true,_dummyNode);
+	//restriction node is no longer needed
+	//the point can be derived purely mathematically based on _charNode's global position.
+	//A much more elegant solution, in my opinion.
 
 	_charController->setGravity(btScalar(9.8f));
 	//doesn't do anything...
@@ -134,38 +138,40 @@ void GameManager::createCharacterController(Ogre::Camera* camera,Ogre::Vector3 i
 	return;
 }
 
+//update bullet character controller and apply transformations to ogre camera
 void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 {
-	//update bullet character controller and apply transformations to ogre camera
-	//if no camera is available, then don't apply to a camera
-	if(!camera && !_charCamera)
+	//If no internal camera, check for passed-in camera.
+	if(!_charCamera)
 	{
-		//for now return
-		return;
-	}
-	//if a camera is passed in, but there isn't one set already then set the internal camera to the passed-in one.
-	if(camera && !_charCamera)
-	{
-		_charCamera = camera;
+		//No passed in camera, exit function cleanly.
+		if(!camera)
+		{
+			return;
+		}
+		//Passed-in camera, set internal to passed-in.
+		if(camera)
+		{
+			_charCamera = camera;
+		}
 	}
 
-	//update the bullet character controller
+	//Update the bullet character controller
 	btTransform camTrans = _charGhost->getWorldTransform();
 	btVector3 forDir = camTrans.getBasis()[0]; forDir.normalize();
 	btVector3 upDir = camTrans.getBasis()[1]; upDir.normalize();
-	//let's halve the upDir
-	upDir /= 2;
 	btVector3 strafeDir = camTrans.getBasis()[2]; strafeDir.normalize();
 	btVector3 walkDir = btVector3(0,0,0);
 	btScalar walkVel = btScalar(2.0f) * 4.0f;
 	btScalar walkSpd = walkVel * phyTime;
 
+	//These are the basic variables that calculate the movement of the character controller.
 	Ogre::Vector3 dir;
 	Ogre::Quaternion rot;
 	//This is creates a vector that moves along the quat.
 	//Refer to Ogre::Node::translate for formula.
 	//basically is:
-	// direction vector = orientation * (orientation * unit vector)
+	//direction vector = orientation * (orientation * unit vector)
 	if(OISManager::getSingleton().isCFGKeyPressed(FORWARD))
 	{
 		walkDir += forDir;
@@ -195,8 +201,8 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 	dir = convertBulletVector3(walkDir);
 	rot = _charNode->getOrientation();
 	rot.z = 0.0f; //this is needed to prevent the z-component interfering with the movement.
-	dir = rot * (rot * dir);
-	walkDir = convertOgreVector3(dir);
+	dir = rot * (rot * dir); //direction vector = orientation * (orientation * unit movement vector). dirVec = (Orn*Orn) + (Orn*UnVec) ???
+	walkDir = convertOgreVector3(dir); //converts Ogre Vec3 to Bullet Vec3
 
 	//mouse-look code.
 	int mmx,mmy;
@@ -204,8 +210,11 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 	mmy = OISManager::getSingleton().getMMY();
 	//going to try only y-axis for now(mmx only)
 	//this code works.
+	//get current rotation matrix
 	btMatrix3x3 yorn = camTrans.getBasis();
+	//multiply current rotation by a quaternion. Quaternion is created from an axis-angle rotation.
 	yorn *= btMatrix3x3(btQuaternion(btVector3(0,1,0),(-mmx * 0.007f)));
+	//set the rotation of the 'ghost' collision detecter.
 	_charGhost->getWorldTransform().setBasis(yorn);
 
 	//x-axis?
@@ -215,13 +224,12 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 	Ogre::Quaternion quat;
 	Ogre::Radian angle;
 
+	//get angle from movement of the mouse on the y-axis
 	angle = (-mmy) * 0.007f;
+	//generate quaternion from axis-angle rotation
 	quat.FromAngleAxis(angle,Ogre::Vector3::UNIT_Z);
-
-	Ogre::Quaternion zrestrict(Ogre::Radian(Ogre::Math::PI),Ogre::Vector3::UNIT_Z);
-	//Ogre::Quaternion znegrestrict(Ogre::Radian(Ogre::Math::PI),Ogre::Vector3::UNIT_Z);
 	
-	//this works.
+	//Set walk direction and speed. Should I normalize the walkDir before this step??
 	_charController->setWalkDirection(walkDir * walkSpd);
 
 	//convert bullet position/rotation to ogre position rotation.
@@ -235,32 +243,30 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 	//uses scene node created in createCharacterController().
 	_charNode->setPosition(oPos);
 	Ogre::Quaternion zRot = _charNode->getOrientation();
+	//only care about the z-rotation.
 	zRot.x=0;
 	zRot.y=0;
-	//attempt at limiting mouselook up/down
-	Ogre::Quaternion testQ = zRot * zrestrict;
-	DebugPrint::getSingleton().printVar(testQ.w);
-	DebugPrint::getSingleton().printVar(testQ.x);
-	DebugPrint::getSingleton().printVar(testQ.y);
-	DebugPrint::getSingleton().printVar(zRot.z);
 
 	bool extraRotate = true;
-	if(zRot.z > .5f)
+	//NOTE: restriction values are not set in stone. !!!THEY *SHOULD* BE ADJUSTED!!!
+	//Successfully restricts looking up consistently.
+	Ogre::Vector3 rPos = Ogre::Vector3(0,5,0) + _charNode->_getDerivedPosition();//_restrictNode->_getDerivedPosition();
+	if(_charCamera->isVisible(rPos) && (angle.valueRadians() > 0))
 	{
 		extraRotate = false;
-		//just in case it jumps around
-		zRot.z = .5f;
+		//quat = Ogre::Quaternion::ZERO; //??
 	}
-	if(zRot.z < -.5f)
+	//Successfully restricts looking down consistently.
+	rPos = Ogre::Vector3(0,-1,0) - _charNode->_getDerivedPosition();
+	if(_charCamera->isVisible(rPos) && (angle.valueRadians() < 0))
 	{
 		extraRotate = false;
-		//just in case it jumps around.
-		zRot.z = -.5f;
+		//quat = Ogre::Quaternion::ZERO; //??
 	}
-
 
 	_charNode->setOrientation(oRot);
 	_charNode->rotate(zRot); //original z-rotation
+	//If legal, let it rotate again.
 	if(extraRotate)
 	{
 		_charNode->rotate(quat); //then the new z-rotation.
@@ -268,6 +274,7 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 
 }
 
+//Unfinished, maybe unneeded.
 void loadWeapons(std::string file)
 {
 	list_t* wepList = list(file).release();

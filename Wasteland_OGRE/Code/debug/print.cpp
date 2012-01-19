@@ -10,6 +10,10 @@ DebugPrint::DebugPrint()
 	_textBox = NULL;
 	_rectangle = NULL;
 	_overlay = NULL;
+	_node = NULL;
+	_visible = false;
+	_used = false;
+	_printCount = 0;
 }
 
 DebugPrint::~DebugPrint()
@@ -24,7 +28,7 @@ void DebugPrint::Setup(Ogre::SceneManager* scene)
 	_used = true;
 
 	_rectangle = new Ogre::Rectangle2D(true);
-	_rectangle->setCorners(-1,1,1,0);
+	_rectangle->setCorners(-1,1,1,.5);
 	_rectangle->setMaterial("debug/print");
 	_rectangle->setRenderQueueGroup(Ogre::RENDER_QUEUE_OVERLAY);
 	_rectangle->setBoundingBox(Ogre::AxisAlignedBox(-100000.0*Ogre::Vector3::UNIT_SCALE,100000.0*Ogre::Vector3::UNIT_SCALE));
