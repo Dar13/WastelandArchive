@@ -129,11 +129,56 @@ void DebugPrint::printVar(const char* strPtr)
 	printVar();
 }
 
+void DebugPrint::printVar(void* vector3,int vecType)
+{
+	Ogre::Vector3 tmpO;
+	btVector3 tmpB;
+	float x,y,z;
+	switch(vecType)
+	{
+	case OGRE:
+		tmpO = *((Ogre::Vector3*)vector3);
+		x = tmpO.x;
+		y = tmpO.y;
+		z = tmpO.z;
+		break;
+	case BULLET:
+		tmpB = *((btVector3*)vector3);
+		x = tmpB.x();
+		y = tmpB.y();
+		z = tmpB.z();
+		break;
+	default:
+		//invalid type, exit.
+		return;
+		break;
+	};
+
+	//convert numbers into string
+	convStream << x;
+	convStream << ",";
+	convStream << y;
+	convStream << ",";
+	convStream << z;
+	convString = convStream.str();
+	printVar();
+}
+
 void DebugPrint::Update()
 {
+	if(_visible != _rectangle->isVisible())
+	{
+		//update rectangle(?) visibility
+		_rectangle->setVisible(_visible);
+	}
 	if(_printCount == 0)
 	{
+		_visible = false;
 		return;
+	}
+	else
+	{
+		_visible = true;
 	}
 	_textBox->setCaption(""); //clears the textbox, nothing sticks around
 	size_t vSize = _prints.size();

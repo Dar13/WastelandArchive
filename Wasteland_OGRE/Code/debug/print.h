@@ -3,6 +3,13 @@
 #ifndef _DEBUG_PRINT_
 #define _DEBUG_PRINT_
 
+enum DBG_VECTOR_TYPE
+{
+	NONE = 0,
+	OGRE,
+	BULLET
+};
+
 class DebugPrint : public Ogre::Singleton<DebugPrint>
 {
 public:
@@ -14,6 +21,7 @@ public:
 	void printVar(int integer);
 	void printVar(bool flag);
 	void printVar(const char* strPtr);
+	void printVar(void* vector3,int vecType);
 
 	void Setup(Ogre::SceneManager* scene); //required.
 	void Update();

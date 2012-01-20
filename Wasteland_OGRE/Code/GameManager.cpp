@@ -251,25 +251,35 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 	//NOTE: restriction values are not set in stone. !!!THEY *SHOULD* BE ADJUSTED!!!
 	//Successfully restricts looking up consistently.
 	Ogre::Vector3 rPos = Ogre::Vector3(0,5,0) + _charNode->_getDerivedPosition();//_restrictNode->_getDerivedPosition();
+	DebugPrint::getSingleton().printVar("Up restrict point:");
+	DebugPrint::getSingleton().printVar((void*)&rPos,OGRE);
 	if(_charCamera->isVisible(rPos) && (angle.valueRadians() > 0))
 	{
 		extraRotate = false;
 		//quat = Ogre::Quaternion::ZERO; //??
 	}
 	//Successfully restricts looking down consistently.
-	rPos = Ogre::Vector3(0,-1,0) - _charNode->_getDerivedPosition();
+	//need to tweak value significantly.
+	rPos = Ogre::Vector3(0,-1,0) + _charNode->_getDerivedPosition();
+	DebugPrint::getSingleton().printVar("Down restrict point:");
+	DebugPrint::getSingleton().printVar((void*)&rPos,OGRE);
 	if(_charCamera->isVisible(rPos) && (angle.valueRadians() < 0))
 	{
 		extraRotate = false;
 		//quat = Ogre::Quaternion::ZERO; //??
 	}
 
+	DebugPrint::getSingleton().printVar("Camera world position");
+	DebugPrint::getSingleton().printVar((void*)&_charNode->_getDerivedPosition(),OGRE);
+
+	DebugPrint::getSingleton().printVar(extraRotate);
+
 	_charNode->setOrientation(oRot);
 	_charNode->rotate(zRot); //original z-rotation
 	//If legal, let it rotate again.
 	if(extraRotate)
 	{
-		_charNode->rotate(quat); //then the new z-rotation.
+		_charNode->rotate(quat); //new z-rotation.
 	}
 
 }
@@ -326,7 +336,7 @@ OgreBulletPair GameManager::createObject(Ogre::SceneManager* scene,object_t* obj
 	}
 
 
-	//return by-value, not reference.
+	//return by value, not reference.
 	return retVal;
 }
 
