@@ -46,7 +46,7 @@ void ArenaTutorial::Setup()
 
 	_camera->setPosition(Ogre::Vector3(-1,1.9f,0));
 	_camera->setNearClipDistance(.001);
-	_camera->setFarClipDistance(500);
+	_camera->setFarClipDistance(1000);
 	_camera->lookAt(0,1.8,0);
 	
 	//set the camera aspect ratio

@@ -51,10 +51,12 @@ bool OgreManager::Setup()
 	//Will have this read-in from a config file, but for now it'll be hard-coded.
 	Ogre::NameValuePairList options;
 	options["resolution"] = "1280x1024";
-	options["fullscreen"] = "false";
+	options["fullscreen"] = "true";
 	options["vsync"] = "true";
+	options["FSAAHint"] = "Quality";
+	options["FSAA"] = "4x";
 
-	_Window = _Root->createRenderWindow("WasTeLanD - DEBUG",1280,1024,false,&options);
+	_Window = _Root->createRenderWindow("WasTeLanD - DEBUG",1280,1024,true,&options);
 	
 	//Leave the SceneManager, Camera/Viewport stuff for the appstates to deal with.
 
@@ -368,7 +370,7 @@ bool OgreManager::frameEnded(const Ogre::FrameEvent& evt)
 
 void OgreManager::setLightRange(Ogre::Light* l, Ogre::Real range)
 {
-	l->setAttenuation(range,1.0f,4.5/range,75.0f/(range*range));
+	l->setAttenuation(range,(Ogre::Real)1.0f,(Ogre::Real)4.5f/range,75.0f/(range*range));
 	return;
 }
 
