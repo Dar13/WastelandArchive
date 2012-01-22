@@ -31,6 +31,8 @@ void ArenaTutorial::Setup()
 	OgreBulletPair levelPair = GameManager::getSingleton().createObject(_scene,level);
 	//levelPair.ogreNode->setVisible(false);
 	levelPair.btBody->setCcdSweptSphereRadius(0.1f);
+	Ogre::Entity* entlvl = (Ogre::Entity*)levelPair.ogreNode->getAttachedObject("entArenaLevel");
+	entlvl->setMaterialName("level/arena");
 	delete level;
 
 	object_t* sphere = object("resource\\xml\\test_sphere.xml").release();
@@ -48,6 +50,8 @@ void ArenaTutorial::Setup()
 	_camera->setNearClipDistance(.001);
 	_camera->setFarClipDistance(1000);
 	_camera->lookAt(0,1.8,0);
+
+	//_camera->setPolygonMode(Ogre::PM_WIREFRAME);
 	
 	//set the camera aspect ratio
 	_camera->setAspectRatio(4.0f/3.0f);
