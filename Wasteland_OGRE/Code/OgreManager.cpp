@@ -51,12 +51,12 @@ bool OgreManager::Setup()
 	//Will have this read-in from a config file, but for now it'll be hard-coded.
 	Ogre::NameValuePairList options;
 	options["resolution"] = "1280x1024";
-	options["fullscreen"] = "true";
+	options["fullscreen"] = "false";
 	options["vsync"] = "true";
 	options["FSAAHint"] = "Quality";
 	options["FSAA"] = "4x";
 
-	_Window = _Root->createRenderWindow("WasTeLanD - DEBUG",1280,1024,true,&options);
+	_Window = _Root->createRenderWindow("WasTeLanD - DEBUG",1280,1024,false,&options);
 	
 	//Leave the SceneManager, Camera/Viewport stuff for the appstates to deal with.
 
@@ -79,13 +79,26 @@ bool OgreManager::Setup()
 bool OgreManager::addResources(std::string& filename)
 {
 	//return value
-	bool retVal=true;
+	bool retVal=true; //honestly don't know what to check for to make this false. Catch an exception?
 
+	//Takes an XML struct that holds all the files that refer to specific resource locations.
+	//i.e. general_resgroup.xml holds the information for the General resource group for Ogre.
+
+	//no idea if this'll work(the exception catching that is).
+	try{
 	list_t* reslist = list(filename).release();
+	}
+	catch(std::exception& e)
+	{
+		retVal = false;
+		OutputDebugString(e.what());
+	}
+
 	for(list_t::file_const_iterator itr = reslist->file().begin(); itr != reslist->file().end(); ++itr)
 	{
-		resource_t* res = resource((*itr)).release();
-		std::string grpName = res->GroupName();
+		//have to make sure to delete this pointer.
+		resource_t* res = resource((*itr)).release(); //get pointer to resource to load.
+		std::string grpName = res->GroupName(); //get the group name.
 		for(resource_t::location_const_iterator itr = res->location().begin(); itr != res->location().end(); ++itr)
 		{
 			Ogre::ResourceGroupManager::getSingleton().addResourceLocation((*itr).FileName(),(*itr).Type(),grpName,(*itr).Recursive());
@@ -94,6 +107,7 @@ bool OgreManager::addResources(std::string& filename)
 	}
 	delete reslist;
 
+	//Initialize resGroups.
 	Ogre::ResourceGroupManager::getSingleton().initialiseAllResourceGroups();
 
 	return retVal;
@@ -109,7 +123,7 @@ bool OgreManager::Render()
 	catch(Ogre::Exception& e)
 	{
 		//Not going to proclaim it, just silently shutdown.
-		//MessageBoxA(NULL,e.getFullDescription().c_str(),"Exception!",MB_OK | MB_ICONERROR);
+		//MessageBoxA(NULL,e.getFullDescription().c_str(),"Exception!",MB_OK | MB_ICONERROR); //this is proclaiming it.
 		OutputDebugString(e.getFullDescription().c_str());
 		retVal=false;
 	}
@@ -125,21 +139,8 @@ void OgreManager::Shutdown()
 }
 
 /*
-Options list:
-	node
-		- child : Name of child node
-	camera
-		- ???
-		- ???
-
-	entity
-		- shadows :  true/false for casting shadows
-		- ???
-
-	light
-		- lighttype : determines the type of light it is
-		- lightradius : radius of light(omni?)
-		- lightcolor : color of the light(hex code)
+Options list: (defined in object.xsd)
+note: most all properties are floats or strings. Only special fields get integers.
 */
 
 Ogre::SceneNode* OgreManager::createSceneNode(Ogre::SceneManager* scene, 
@@ -147,17 +148,26 @@ Ogre::SceneNode* OgreManager::createSceneNode(Ogre::SceneManager* scene,
 {
 	Ogre::SceneNode* node = NULL;
 	
+	//gets node type.
 	std::string type = objectInfo->type();
+	//get position information
 	Ogre::Vector3 pos;
 	pos.x = objectInfo->positionX();
 	pos.y = objectInfo->positionY();
 	pos.z = objectInfo->positionZ();
-	Ogre::Quaternion rot;
-	rot.x = objectInfo->rotationX();
-	rot.y = objectInfo->rotationY();
-	rot.z = objectInfo->rotationZ();
+	//get orientation information
+	Ogre::Vector3 point;
+	point.x = objectInfo->pointX();
+	point.y = objectInfo->pointY();
+	point.z = objectInfo->pointZ();
 	
-	node = scene->getRootSceneNode()->createChildSceneNode("node" + objectInfo->name(),pos,rot);
+	//create node.
+	node = scene->getRootSceneNode()->createChildSceneNode("node" + objectInfo->name(),pos);
+	//that way, it doesn't default to looking at the origin.
+	if(point != Ogre::Vector3::ZERO)
+	{
+		node->lookAt(point);
+	}
 
 	if(type == "entity")
 	{
@@ -169,8 +179,13 @@ Ogre::SceneNode* OgreManager::createSceneNode(Ogre::SceneManager* scene,
 	if(type == "light")
 	{
 		Ogre::Light* light = scene->createLight("light" + objectInfo->name());
+		//you'd think this would be easy to do. Instead there's a whole function for it.
 		setLightRange(light,(Ogre::Real)objectInfo->lightRadius());
-		light->setDiffuseColour(Ogre::ColourValue((Ogre::Real)objectInfo->lightColorRed(),(Ogre::Real)objectInfo->lightColorGreen(),(Ogre::Real)objectInfo->lightColorBlue(),1.0f));
+		//set the color.
+		light->setDiffuseColour(Ogre::ColourValue((Ogre::Real)objectInfo->lightColorRed(),
+												  (Ogre::Real)objectInfo->lightColorGreen(),
+												  (Ogre::Real)objectInfo->lightColorBlue(),1.0f));
+		//dunno if this is needed.
 		switch(objectInfo->lightType())
 		{
 		case Ogre::Light::LT_POINT:
@@ -187,6 +202,7 @@ Ogre::SceneNode* OgreManager::createSceneNode(Ogre::SceneManager* scene,
 
 	if(objectInfo->childName() != "NULL")
 	{
+		//add the node whose name == childName(if it exists) to the current node's children list.
 		Ogre::Node* child = scene->getRootSceneNode()->removeChild(objectInfo->childName());
 		node->addChild(child);
 	}

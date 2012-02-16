@@ -29,10 +29,6 @@ void ArenaTutorial::Setup()
 	//Loading the level through the GameManager(takes care of Bullet initialization,etc)
 	object_t* level = object("resource\\xml\\test.xml").release();
 	OgreBulletPair levelPair = GameManager::getSingleton().createObject(_scene,level);
-	//levelPair.ogreNode->setVisible(false);
-	levelPair.btBody->setCcdSweptSphereRadius(0.1f);
-	Ogre::Entity* entlvl = (Ogre::Entity*)levelPair.ogreNode->getAttachedObject("entArenaLevel");
-	entlvl->setMaterialName("level/arena");
 	delete level;
 
 	object_t* sphere = object("resource\\xml\\test_sphere.xml").release();
@@ -43,18 +39,23 @@ void ArenaTutorial::Setup()
 	OgreBulletPair boxPair = GameManager::getSingleton().createObject(_scene,box);
 	delete box;
 
+	object_t* test_barrier = object("resource\\xml\\test_enem.xml").release();
+	OgreBulletPair barPair = GameManager::getSingleton().createObject(_scene,test_barrier);
+	delete test_barrier;
+
 	_pairs.push_back(spherePair);
 	_pairs.push_back(boxPair);
+	_pairs.push_back(barPair);
 
 	_camera->setPosition(Ogre::Vector3(-1,1.9f,0));
 	_camera->setNearClipDistance(.001);
 	_camera->setFarClipDistance(1000);
 	_camera->lookAt(0,1.8,0);
 
-	//_camera->setPolygonMode(Ogre::PM_WIREFRAME);
+	_camera->setPolygonMode(Ogre::PM_WIREFRAME);
 	
 	//set the camera aspect ratio
-	_camera->setAspectRatio(4.0f/3.0f);
+	//_camera->setAspectRatio(4.0f/3.0f);
 
 	//let's try out the character controller
 	GameManager::getSingleton().createCharacterController(_camera,_camera->getPosition());
@@ -62,7 +63,7 @@ void ArenaTutorial::Setup()
 	OISManager::getSingleton().setMouseLock(true);
 
 	DebugPrint::getSingleton().Setup(_scene);
-	//GameManager::getSingleton().useDebugDrawer(_scene);
+	GameManager::getSingleton().useDebugDrawer(_scene);
 }
 
 int ArenaTutorial::Run()
