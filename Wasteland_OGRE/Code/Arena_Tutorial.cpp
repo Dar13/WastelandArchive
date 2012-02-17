@@ -79,7 +79,7 @@ int ArenaTutorial::Run()
 			_stateShutdown = true;
 	}
 
-	//no matter what, end the program after this state.
+	//no matter what, end the program after this state. **TESTING ONLY**
 	return END;
 }
 

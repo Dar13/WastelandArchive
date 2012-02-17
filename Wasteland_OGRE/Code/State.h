@@ -3,8 +3,8 @@
 
 enum ApplicationStates
 {
-	MENU = 0,
-	INTRO,
+	INTRO = 0,
+	MENU,
 	GAME_ARENA,
 	GAME_LOCKER,
 	GAME_LOBBY,

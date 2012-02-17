@@ -20,7 +20,8 @@ void StateManager::Setup()
 
 void StateManager::Run()
 {
-	int curState=GAME_ARENA;
+	//int curState=INTRO; //true start value
+	int curState=GAME_ARENA; //will really start at INTRO
 	int oldState=curState;
 
 	while(curState!=END)
