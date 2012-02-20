@@ -294,6 +294,16 @@ void loadWeapons(std::string file)
 	}
 }
 
+//just a wrapper for the createObject function. Gets rid of some of the code needed in the states.
+OgreBulletPair GameManager::createObject(Ogre::SceneManager* scene,std::string& file)
+{
+	OgreBulletPair ret;
+	object_t* obj = object(file.c_str()).release();
+	ret = createObject(scene,obj);
+	delete obj;
+	return ret;
+}
+
 OgreBulletPair GameManager::createObject(Ogre::SceneManager* scene,object_t* objectInfo)
 {
 	//return variable

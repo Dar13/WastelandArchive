@@ -27,9 +27,11 @@ void ArenaTutorial::Setup()
 	BulletManager::getSingleton().setGravity(btVector3(0,-9.8f,0));
 	
 	//Loading the level through the GameManager(takes care of Bullet initialization,etc)
+	/*
 	object_t* level = object("resource\\xml\\test.xml").release();
 	OgreBulletPair levelPair = GameManager::getSingleton().createObject(_scene,level);
 	delete level;
+	
 
 	object_t* sphere = object("resource\\xml\\test_sphere.xml").release();
 	OgreBulletPair spherePair = GameManager::getSingleton().createObject(_scene,sphere);
@@ -42,20 +44,29 @@ void ArenaTutorial::Setup()
 	object_t* test_barrier = object("resource\\xml\\test_enem.xml").release();
 	OgreBulletPair barPair = GameManager::getSingleton().createObject(_scene,test_barrier);
 	delete test_barrier;
-
+	
 	_pairs.push_back(spherePair);
 	_pairs.push_back(boxPair);
 	_pairs.push_back(barPair);
+	*/
+
+	//using a list instead of hardcoded files
+	std::auto_ptr<list_t> objList = list("resource\\xml\\arena_list.xml");
+	for(list_t::file_const_iterator itr = objList.get()->file().begin(); itr != objList.get()->file().end(); ++itr)
+	{
+		std::string tmp = (*itr);
+		_pairs.push_back(GameManager::getSingleton().createObject(_scene,tmp));
+	}
 
 	_camera->setPosition(Ogre::Vector3(-1,1.9f,0));
-	_camera->setNearClipDistance(.001);
-	_camera->setFarClipDistance(1000);
+	_camera->setNearClipDistance(.001f);
+	_camera->setFarClipDistance(1000.0f);
 	_camera->lookAt(0,1.8,0);
 
 	//_camera->setPolygonMode(Ogre::PM_WIREFRAME);
 	
 	//set the camera aspect ratio
-	//_camera->setAspectRatio(4.0f/3.0f);
+	_camera->setAspectRatio(4.0f/3.0f);
 
 	//let's try out the character controller
 	GameManager::getSingleton().createCharacterController(_camera,_camera->getPosition());

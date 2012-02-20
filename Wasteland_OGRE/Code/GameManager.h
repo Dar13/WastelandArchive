@@ -42,6 +42,8 @@ public:
 	\returns OgreBulletPair containing SceneNode* and btRigidBody*.
 	*/
 	OgreBulletPair createObject(Ogre::SceneManager* scene,
+								std::string& file);
+	OgreBulletPair createObject(Ogre::SceneManager* scene,
 								object_t* objectInfo);
 	/*! Creates object, generates Ogre SceneNode and Bullet rigid body.
 
