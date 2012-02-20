@@ -52,7 +52,7 @@ void ArenaTutorial::Setup()
 	_camera->setFarClipDistance(1000);
 	_camera->lookAt(0,1.8,0);
 
-	_camera->setPolygonMode(Ogre::PM_WIREFRAME);
+	//_camera->setPolygonMode(Ogre::PM_WIREFRAME);
 	
 	//set the camera aspect ratio
 	//_camera->setAspectRatio(4.0f/3.0f);
@@ -63,7 +63,7 @@ void ArenaTutorial::Setup()
 	OISManager::getSingleton().setMouseLock(true);
 
 	DebugPrint::getSingleton().Setup(_scene);
-	GameManager::getSingleton().useDebugDrawer(_scene);
+	//GameManager::getSingleton().useDebugDrawer(_scene);
 }
 
 int ArenaTutorial::Run()

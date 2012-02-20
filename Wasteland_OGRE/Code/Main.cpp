@@ -30,7 +30,7 @@ int main(int argc, char **argv[])
 	ogre->getRenderWindow()->getCustomAttribute("WINDOW",&hWnd);
 
 	//Setup the XMLReader singleton
-	XMLReader* xml = new XMLReader();
+	//XMLReader* xml = new XMLReader();
 
 	//Setup the input handler(OIS)
 	OISManager* ois = new OISManager(hWnd);
@@ -61,7 +61,7 @@ int main(int argc, char **argv[])
 
 	//delete interfaces for OIS and Ogre3D
 	delete ois;
-	delete xml;
+	//delete xml;
 	delete ogre;
 	
 

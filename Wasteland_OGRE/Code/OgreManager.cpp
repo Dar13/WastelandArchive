@@ -85,14 +85,7 @@ bool OgreManager::addResources(std::string& filename)
 	//i.e. general_resgroup.xml holds the information for the General resource group for Ogre.
 
 	//no idea if this'll work(the exception catching that is).
-	try{
 	list_t* reslist = list(filename).release();
-	}
-	catch(std::exception& e)
-	{
-		retVal = false;
-		OutputDebugString(e.what());
-	}
 
 	for(list_t::file_const_iterator itr = reslist->file().begin(); itr != reslist->file().end(); ++itr)
 	{
@@ -166,7 +159,7 @@ Ogre::SceneNode* OgreManager::createSceneNode(Ogre::SceneManager* scene,
 	//that way, it doesn't default to looking at the origin.
 	if(point != Ogre::Vector3::ZERO)
 	{
-		node->lookAt(point);
+		node->lookAt(point,Ogre::SceneNode::TS_WORLD);
 	}
 
 	if(type == "entity")
