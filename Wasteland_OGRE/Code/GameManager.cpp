@@ -221,6 +221,7 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 	//will only apply to scene node, not bullet physics.
 	//have to get current x-rotation from node, not bullet
 	//this works.
+	//--OPTIMIZATION--instead of using a new Quaternion, can reuse 'rot' from earlier in function.
 	Ogre::Quaternion quat;
 	Ogre::Radian angle;
 
