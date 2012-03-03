@@ -24,7 +24,9 @@ private:
 	Ogre::TexturePtr _ewsTexture;
 	Ogre::MaterialPtr _material;
 	Ogre::HardwarePixelBufferSharedPtr _pixelBuffer;
-	Ogre::PixelBox _pixelBox;
+	//Ogre::PixelBox& _pixelBox;
+	Ogre::SceneNode* _ewsNode;
+	Ogre::Entity* _ewsEntity;
 
 	//Ogre::Singleton stuff, have to make this inaccessible.
 	EWSManager(const EWSManager&);
