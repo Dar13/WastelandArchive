@@ -123,6 +123,9 @@
     <ClInclude Include="Code\Intro.h">
       <Filter>Include Files\State\Intro</Filter>
     </ClInclude>
+    <ClInclude Include="Code\EWS.h">
+      <Filter>Include Files\Game</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">
@@ -184,6 +187,9 @@
     </ClCompile>
     <ClCompile Include="Code\Intro.cpp">
       <Filter>Include Files\State\Intro</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\EWS.cpp">
+      <Filter>Include Files\Game</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

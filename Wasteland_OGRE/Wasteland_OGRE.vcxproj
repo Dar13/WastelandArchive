@@ -18,6 +18,7 @@
     <ClInclude Include="Code\debug\print.h" />
     <ClInclude Include="Code\debug_draw\DebugDraw.hpp" />
     <ClInclude Include="Code\debug_draw\DynamicLineDrawer.hpp" />
+    <ClInclude Include="Code\EWS.h" />
     <ClInclude Include="Code\GameManager.h" />
     <ClInclude Include="Code\interfaces\configuration.hxx" />
     <ClInclude Include="Code\interfaces\interfaces.h" />
@@ -41,6 +42,7 @@
     <ClCompile Include="Code\debug\print.cpp" />
     <ClCompile Include="Code\debug_draw\DebugDraw.cpp" />
     <ClCompile Include="Code\debug_draw\DynamicLineDrawer.cpp" />
+    <ClCompile Include="Code\EWS.cpp" />
     <ClCompile Include="Code\GameManager.cpp" />
     <ClCompile Include="Code\interfaces\configuration.cxx" />
     <ClCompile Include="Code\interfaces\list.cxx" />
