@@ -19,6 +19,9 @@ public:
 protected:
 	void Fill(Ogre::ColourValue& color);
 	void Box(Ogre::Rect& rect, Ogre::ColourValue& color);
+	void Line(Ogre::Vector2 start, Ogre::Vector2 end, Ogre::ColourValue& color);
+	void SetPixel(Ogre::uint8* data, Ogre::ColourValue& color);
+	int getOffset(int x, int y, int rowPitch);
 
 private:
 	Ogre::TexturePtr _ewsTexture;

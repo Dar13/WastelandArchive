@@ -8,6 +8,7 @@
 #include "OISManager.h"
 #include "BulletManager.h"
 #include "XMLReader.h"
+#include "EWS.h"
 
 /*! \brief Allows convenient returns of both Bullet rigid bodies and Ogre SceneNodes.
 */
@@ -25,6 +26,9 @@ perform certain tasks(example: building a btBvhTriangleMeshShape
 from an Ogre::Mesh. This is the abstraction upon which the
 majority of the game code will be built, avoiding reliance
 on the individual managers.
+Will handle certain gameplay-specific managers(EWS and player) from
+beginning to end of the game(from 'new' to 'delete'). Keeps from crowding
+Main.cpp
 */
 
 class GameManager : public Ogre::Singleton<GameManager>
@@ -125,6 +129,9 @@ private:
 
 	//Holds current configuration values.
 	configuration_t* _config;
+
+	//Gameplay-specific managers that GameManager controls.
+	EWSManager* _ews;
 
 	//Facilitates Ogre::Singleton.
 	GameManager(const GameManager&);

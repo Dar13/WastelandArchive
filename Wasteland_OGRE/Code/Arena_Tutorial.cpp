@@ -61,7 +61,7 @@ void ArenaTutorial::Setup()
 	_camera->setPosition(Ogre::Vector3(-1,1.9f,0));
 	_camera->setNearClipDistance(.001f);
 	_camera->setFarClipDistance(1000.0f);
-	_camera->lookAt(0,1.8,0);
+	_camera->lookAt(0,1.8f,0);
 
 	//_camera->setPolygonMode(Ogre::PM_WIREFRAME);
 	
@@ -75,6 +75,9 @@ void ArenaTutorial::Setup()
 
 	DebugPrint::getSingleton().Setup(_scene);
 	//GameManager::getSingleton().useDebugDrawer(_scene);
+
+	//let's setup the EWS system
+	EWSManager::getSingletonPtr()->Setup(_scene);
 }
 
 int ArenaTutorial::Run()
@@ -88,6 +91,8 @@ int ArenaTutorial::Run()
 		//True indicates success, so react on if it doesn't react properly
 		if(!GameManager::getSingleton().UpdateManagers())
 			_stateShutdown = true;
+
+		EWSManager::getSingletonPtr()->Update(50); //testing the EWS system.
 	}
 
 	//no matter what, end the program after this state. **TESTING ONLY**
@@ -96,6 +101,9 @@ int ArenaTutorial::Run()
 
 void ArenaTutorial::Shutdown()
 {
+	//Needs to reset first.
+	EWSManager::getSingleton().Reset();
+
 	//undo what I set in OIS
 	OISManager::getSingleton().setMouseLock(false);
 

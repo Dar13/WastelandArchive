@@ -20,6 +20,7 @@ GameManager::GameManager()
 	_charGhost = NULL;
 	_charController = NULL;
 	_charWeaponNode = NULL;
+	_ews = new EWSManager();
 	oldTime = 0;
 	deltaTime = 0;
 	Time = (float)OgreManager::getSingleton().getTimer()->getMilliseconds();
@@ -28,9 +29,17 @@ GameManager::GameManager()
 GameManager::~GameManager()
 {
 	//destroy whatever I initialized(if anything) in the constructor.
+	//Deleting the configuration settings.
+	//Need to add a check to see if this one is different than the 
+	//original, saved to disk configuration settings.
 	if(_config)
 	{
 		delete _config;
+	}
+	//Deleting the EWS system that I initialized.
+	if(_ews)
+	{
+		delete _ews;
 	}
 }
 
