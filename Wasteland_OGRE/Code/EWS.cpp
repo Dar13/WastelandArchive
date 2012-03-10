@@ -12,36 +12,15 @@ EWSManager::EWSManager()
 void EWSManager::Setup(Ogre::SceneManager* scene)
 {
 	//check for if the texture is made.
-	if(_ewsTexture.isNull())
+	Ogre::ResourcePtr test;
+	test = Ogre::MaterialManager::getSingleton().getByName("ews_base");
+	if(!test.isNull())
 	{
-		_ewsTexture = Ogre::TextureManager::getSingleton().createManual("EWSTexture",
-																		"EWS",
-																		Ogre::TEX_TYPE_2D,
-																		512,512,
-																		0,
-																		Ogre::PF_BYTE_RGBA,
-																		Ogre::TU_DYNAMIC_WRITE_ONLY_DISCARDABLE);
+		_material = test;
 	}
-	else
-	{
-		Fill(Ogre::ColourValue(1.0f,1.0f,1.0f,1.0f));
-	}
+	_ewsTexture = _material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->_getTexturePtr();
 	//get pixel buffer
 	_pixelBuffer = _ewsTexture->getBuffer();
-
-	//fill in data
-	Fill(Ogre::ColourValue(0.5f,1.0f,1.0f,1.0f));
-	
-	//Line(Ogre::Vector2(0,256),Ogre::Vector2(512,1),Ogre::ColourValue(0.0f,0.0f,0.0f,1.0f));
-
-	//create material
-	if(_material.isNull())
-	{
-		_material = Ogre::MaterialManager::getSingletonPtr()->create("EWSDynTexture",
-																     "EWS");
-		_material->getTechnique(0)->getPass(0)->createTextureUnitState("EWSTexture");
-		_material->getTechnique(0)->getPass(0)->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
-	}
 
 	//setting up the scene nodes and entities.
 	_ewsNode = scene->getRootSceneNode()->createChildSceneNode("EWSNode");
@@ -50,6 +29,7 @@ void EWSManager::Setup(Ogre::SceneManager* scene)
 	_ewsNode->setPosition(0.0f,2.0f,0.0f);
 	_ewsEntity->setMaterial(_material);
 
+	//Justing testing some stuff out.
 	Ogre::Rect testRect;
 	testRect.left = 10;
 	testRect.right = 200;
@@ -142,7 +122,7 @@ void EWSManager::Line(Ogre::Vector2 start, Ogre::Vector2 end, Ogre::ColourValue&
 
 	for(unsigned int ix = start.x; ix <= end.x; ++ix)
 	{
-		unsigned int offset = getOffset(ix,iy,pixbox.rowPitch);
+		unsigned int offset = getOffset(ix,start.x,pixbox.rowPitch);
 		SetPixel(pData + offset,color);
 	}
 
