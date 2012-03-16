@@ -18,6 +18,7 @@ void ArenaTutorial::Setup()
 	_scene = OgreManager::getSingleton().getRoot()->createSceneManager(Ogre::ST_INTERIOR,"arenaTut");
 
 	_camera = _scene->createCamera("arenaTutCam");
+	_camera->setAspectRatio(16.0f/9.0f);
 	_view = OgreManager::getSingleton().getRenderWindow()->addViewport(_camera);
 	_view->setBackgroundColour(Ogre::ColourValue(0,0,0));
 

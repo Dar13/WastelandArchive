@@ -50,13 +50,14 @@ bool OgreManager::Setup()
 
 	//Will have this read-in from a config file, but for now it'll be hard-coded.
 	Ogre::NameValuePairList options;
-	options["resolution"] = "1280x1024";
+	options["resolution"] = "1920x1080";
 	options["fullscreen"] = "false";
 	options["vsync"] = "true";
 	options["FSAAHint"] = "Quality";
 	options["FSAA"] = "4x";
+	options["monitorIndex"] = "0";
 
-	_Window = _Root->createRenderWindow("WasTeLanD - DEBUG",1280,1024,false,&options);
+	_Window = _Root->createRenderWindow("WasTeLanD - DEBUG",1920,1080,false,&options);
 	
 	//Leave the SceneManager, Camera/Viewport stuff for the appstates to deal with.
 

@@ -19,6 +19,7 @@ void EWSManager::Setup(Ogre::SceneManager* scene)
 		_material = test;
 	}
 	_ewsTexture = _material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->_getTexturePtr();
+	//_material->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
 	//get pixel buffer
 	_pixelBuffer = _ewsTexture->getBuffer();
 
@@ -29,13 +30,7 @@ void EWSManager::Setup(Ogre::SceneManager* scene)
 	_ewsNode->setPosition(0.0f,2.0f,0.0f);
 	_ewsEntity->setMaterial(_material);
 
-	//Justing testing some stuff out.
-	Ogre::Rect testRect;
-	testRect.left = 10;
-	testRect.right = 200;
-	testRect.top = 10;
-	testRect.bottom = 200;
-	Box(testRect,Ogre::ColourValue(.5f,1.0f,0.0f,1.0f));
+	Circle(Ogre::Vector2(256,256),100,Ogre::ColourValue(1.0f,1.0f,1.0f,.5f));
 }
 
 void EWSManager::Update(int health)
@@ -45,7 +40,12 @@ void EWSManager::Update(int health)
 	r.top = r.bottom - health;
 	r.left = 50;
 	r.right = 150;
-	Box(r,Ogre::ColourValue(1.0f,0.1f,0.1f,1.0f));
+	Box(r,Ogre::ColourValue(.1f,0.1f,0.1f,1.0f));
+
+	_material->setDepthWriteEnabled(false);
+	_material->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
+	_material->setDiffuse(Ogre::ColourValue(1.0f,1.0f,1.0f,.5f));
+
 	return;
 }
 
@@ -102,8 +102,11 @@ void EWSManager::Box(Ogre::Rect &rect, Ogre::ColourValue& color)
 	{
 		for(unsigned int iy = rect.top; iy <= rect.bottom; ++iy)
 		{
-			unsigned int offset = getOffset(ix,iy,pixBox.rowPitch);
-			SetPixel(pData + offset,color);
+			if((ix >= 0 && ix < 512) && (iy >= 0 && iy < 512))
+			{
+				unsigned int offset = getOffset(ix,iy,pixBox.rowPitch);
+				SetPixel(pData + offset,color);
+			}
 		}
 	}
 	
@@ -117,8 +120,6 @@ void EWSManager::Line(Ogre::Vector2 start, Ogre::Vector2 end, Ogre::ColourValue&
 	const Ogre::PixelBox& pixbox = _pixelBuffer->getCurrentLock();
 
 	Ogre::uint8* pData = static_cast<Ogre::uint8*>(pixbox.data);
-	//unsigned int startOffset = (start.x * 4) + (start.y * 4 * pixbox.rowPitch);
-	//unsigned int endOffset = (end.x * 4) + (end.y * 4 * pixbox.rowPitch);
 
 	for(unsigned int ix = start.x; ix <= end.x; ++ix)
 	{
@@ -131,13 +132,50 @@ void EWSManager::Line(Ogre::Vector2 start, Ogre::Vector2 end, Ogre::ColourValue&
 	return;
 }
 
+void EWSManager::Circle(Ogre::Vector2 center,int radius, Ogre::ColourValue& color)
+{
+	_pixelBuffer->lock(Ogre::HardwareBuffer::HBL_NORMAL);
+	const Ogre::PixelBox& pixBox = _pixelBuffer->getCurrentLock();
+
+	Ogre::uint8* pData = static_cast<Ogre::uint8*>(pixBox.data);
+
+	int dots = radius * (Ogre::Math::TWO_PI*4);
+	float deg2dot = 360 / (dots * 1.0f);
+
+	for(int f = 0; f <= radius; ++f)
+	{
+		for(int d = 0; d <= dots; ++d)
+		{
+			int u = sin(d * deg2dot) * (radius - f);
+			int v = cos(d * deg2dot) * (radius - f);
+			if(((center.x + u) >= 0 && (center.x + u) < 512) && ((center.y + v) >= 0 && (center.y + v) < 512))
+			{
+				int offset = getOffset(center.x + u,center.y + v,pixBox.rowPitch);
+				SetPixel(pData + offset,color);
+			}
+		}
+	}
+
+	_pixelBuffer->unlock();
+}
+
 void EWSManager::SetPixel(Ogre::uint8* data,Ogre::ColourValue& color)
 {
 	//assumes data pointer is set to the correct setting.
-	*data++ = (Ogre::uint8)color.r*255;
-	*data++ = (Ogre::uint8)color.g*255;
-	*data++ = (Ogre::uint8)color.b*255;
-	*data++ = (Ogre::uint8)color.a*255;
+	if(_pixelBuffer->getFormat() == Ogre::PF_R8G8B8A8)
+	{
+		*data++ = (Ogre::uint8)color.r*255;
+		*data++ = (Ogre::uint8)color.g*255;
+		*data++ = (Ogre::uint8)color.b*255;
+		*data++ = (Ogre::uint8)color.a*255;
+	}
+	if(_pixelBuffer->getFormat() == Ogre::PF_A8R8G8B8)
+	{
+		*data++ = (Ogre::uint8)color.a*255;
+		*data++ = (Ogre::uint8)color.r*255;
+		*data++ = (Ogre::uint8)color.g*255;
+		*data++ = (Ogre::uint8)color.b*255;
+	}
 	 
 	return;
 }
