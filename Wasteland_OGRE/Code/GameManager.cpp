@@ -67,6 +67,13 @@ bool GameManager::UpdateManagers()
 		DebugPrint::getSingleton().Update();
 	}
 
+	//Update EWS before Ogre
+	if(_ewsSetup)
+	{
+		//_ews->Update(Player::getSingleton().getHealth(),Player::getSingleton().getAmmoInformation,(Time - oldTime));
+		_ews->Update(1,(Time - oldTime));
+	}
+
 	//Update Ogre
 	Ogre::WindowEventUtilities::messagePump();
 	//If an error occurred...
@@ -77,6 +84,21 @@ bool GameManager::UpdateManagers()
 	}
 
 	return retVal;
+}
+
+void GameManager::setupEWS(Ogre::SceneManager* scene)
+{
+	_ews->Setup(scene);
+	_ewsSetup = true;
+}
+
+void GameManager::resetEWS()
+{
+	_ews->Reset();
+	_ewsSetup = false;
+
+	//Purge scene manager?
+	//_currentScene = NULL;
 }
 
 void GameManager::loadConfiguration(std::string& file)
@@ -94,6 +116,10 @@ void GameManager::useDebugDrawer(Ogre::SceneManager* scene)
 {
 	CDebugDraw* draw = new CDebugDraw(scene,BulletManager::getSingleton().getWorld());
 	BulletManager::getSingleton().setDebugDrawer(draw);
+	if(_currentScene == 0 || _currentScene != scene)
+	{
+		_currentScene = scene;
+	}
 }
 
 void GameManager::createCharacterController(Ogre::Camera* camera,Ogre::Vector3 initPosition)
@@ -311,6 +337,12 @@ OgreBulletPair GameManager::createObject(Ogre::SceneManager* scene,std::string& 
 	object_t* obj = object(file.c_str()).release();
 	ret = createObject(scene,obj);
 	delete obj;
+
+	if(_currentScene == 0 || _currentScene != scene)
+	{
+		_currentScene = scene;
+	}
+
 	return ret;
 }
 
@@ -355,6 +387,11 @@ OgreBulletPair GameManager::createObject(Ogre::SceneManager* scene,object_t* obj
 		retVal.btBody=BulletManager::getSingleton().addRigidBody(shape,node,objectInfo->mass(),init);
 	}
 
+	//updates current SceneManager for use in EWS system and maybe some others.
+	if(_currentScene == 0 || _currentScene != scene)
+	{
+		_currentScene = scene;
+	}
 
 	//return by value, not reference.
 	return retVal;

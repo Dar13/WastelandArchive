@@ -103,6 +103,26 @@ public:
 	*/
 	configuration_t* getConfiguration();
 
+	/*! Sets up Environmental Warning System using passed-in SceneManager.
+
+		Basically boilerplate code to easily facilitate appstate startup.
+		Individual states can do this manually if needed.
+		EWSManager::getSingleton().Setup(scene);
+		
+		\sa EWSManager::Setup()
+	*/
+	void setupEWS(Ogre::SceneManager* scene);
+
+	/*! Resets Environmental Warning System to uninitialized state.
+
+		Boilerplate code to easily facilitate appstate startup.
+		Individual states can do this manually if needed
+		EWSManager::getSingleton().Reset();
+
+		\sa EWSManager::Reset()
+	*/
+	void resetEWS();
+
 private:
 	//private utility function.
 	//! Utilizes a special OgreManager function to create a triangle mesh collision shape.
@@ -132,6 +152,10 @@ private:
 
 	//Gameplay-specific managers that GameManager controls.
 	EWSManager* _ews;
+	bool _ewsSetup;
+
+	//Ogre stuff
+	Ogre::SceneManager* _currentScene;
 
 	//Facilitates Ogre::Singleton.
 	GameManager(const GameManager&);

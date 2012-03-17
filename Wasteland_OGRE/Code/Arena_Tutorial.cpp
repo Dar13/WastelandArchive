@@ -78,7 +78,7 @@ void ArenaTutorial::Setup()
 	//GameManager::getSingleton().useDebugDrawer(_scene);
 
 	//let's setup the EWS system
-	EWSManager::getSingletonPtr()->Setup(_scene);
+	GameManager::getSingleton().setupEWS(_scene);
 }
 
 int ArenaTutorial::Run()
@@ -93,7 +93,8 @@ int ArenaTutorial::Run()
 		if(!GameManager::getSingleton().UpdateManagers())
 			_stateShutdown = true;
 
-		EWSManager::getSingletonPtr()->Update(50); //testing the EWS system.
+		//EWS updates in GameManager::UpdateManagers()
+		//EWSManager::getSingletonPtr()->Update(50,0);
 	}
 
 	//no matter what, end the program after this state. **TESTING ONLY**
@@ -103,7 +104,7 @@ int ArenaTutorial::Run()
 void ArenaTutorial::Shutdown()
 {
 	//Needs to reset first.
-	EWSManager::getSingleton().Reset();
+	//EWSManager::getSingleton().Reset();
 
 	//undo what I set in OIS
 	OISManager::getSingleton().setMouseLock(false);

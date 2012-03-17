@@ -11,7 +11,7 @@ public:
 	void Setup(Ogre::SceneManager* scene);
 	//Passing in the current information needed to be represented.
 	//Would be called by the appState(maybe) or the GameManager(probably).
-	void Update(int health);//, void* ammoInfo);
+	void Update(int health,int timeElapsed);//, void* ammoInfo);
 
 	//Have to wait for the class to be destroyed for it to be totally cleaned.
 	void Reset();
