@@ -18,7 +18,7 @@ void EWSManager::Setup(Ogre::SceneManager* scene)
 	{
 		_material = test;
 	}
-	_ewsTexture = _material->getTechnique(0)->getPass(0)->getTextureUnitState(0)->_getTexturePtr();
+	_ewsTexture = _material->getTechnique(0)->getPass(0)->getTextureUnitState(1)->_getTexturePtr();
 	
 	//get pixel buffer
 	_pixelBuffer = _ewsTexture->getBuffer();
@@ -31,7 +31,7 @@ void EWSManager::Setup(Ogre::SceneManager* scene)
 	_ewsEntity->setMaterial(_material);
 	 
 	//acts as filling a mask. Needed, as otherwise transparency is all fucked up.
-	Fill(Ogre::ColourValue(1.0f,1.0f,1.0f,0.5f));
+	//Fill(Ogre::ColourValue(1.0f,1.0f,1.0f,0.5f));
 }
 
 void EWSManager::Update(int health,int timeElapsed)
