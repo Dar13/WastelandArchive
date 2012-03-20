@@ -29,9 +29,7 @@ void EWSManager::Setup(Ogre::SceneManager* scene)
 	_ewsNode->attachObject(_ewsEntity);
 	_ewsNode->setPosition(0.0f,2.0f,0.0f);
 	_ewsEntity->setMaterial(_material);
-	 
-	//acts as filling a mask. Needed, as otherwise transparency is all fucked up.
-	//Fill(Ogre::ColourValue(1.0f,1.0f,1.0f,0.5f));
+
 }
 
 void EWSManager::Update(int health,int timeElapsed)
@@ -40,12 +38,9 @@ void EWSManager::Update(int health,int timeElapsed)
 	if(timeElapsed > 250)
 	{
 		//draw health information
-		Ogre::Rect r;
-		r.bottom = 150;
-		r.top = r.bottom - health;
-		r.left = 50;
-		r.right = 150;
-		Box(r,Ogre::ColourValue(.1f,0.1f,0.1f,1.0f));
+		CircleSector(Ogre::Vector2(203,186),143,100,-(Ogre::Math::PI) / 2,Ogre::ColourValue(1.0f,1.0f,1.0f,.5f),true);
+		//Circle(Ogre::Vector2(256,200),100,Ogre::ColourValue(1.0f,0.0f,0.0f,.5f));
+		CircleOutline(Ogre::Vector2(203,186),143,50,Ogre::Math::HALF_PI,Ogre::ColourValue(1.0f,1.0f,0.0f,1.0f));
 
 		//draw ammo information
 		//NOT DONE YET!
