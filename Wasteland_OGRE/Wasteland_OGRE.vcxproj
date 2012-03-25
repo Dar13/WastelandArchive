@@ -15,6 +15,7 @@
     <ClInclude Include="Code\Arena_Locker.h" />
     <ClInclude Include="Code\Arena_Tutorial.h" />
     <ClInclude Include="Code\BulletManager.h" />
+    <ClInclude Include="Code\CharacterController.h" />
     <ClInclude Include="Code\debug\print.h" />
     <ClInclude Include="Code\debug_draw\DebugDraw.hpp" />
     <ClInclude Include="Code\debug_draw\DynamicLineDrawer.hpp" />
@@ -33,12 +34,14 @@
     <ClInclude Include="Code\precompiled\StdAfx.h" />
     <ClInclude Include="Code\State.h" />
     <ClInclude Include="Code\StateManager.h" />
+    <ClInclude Include="Code\Utility.h" />
     <ClInclude Include="Code\XMLReader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\Arena_Locker.cpp" />
     <ClCompile Include="Code\Arena_Tutorial.cpp" />
     <ClCompile Include="Code\BulletManager.cpp" />
+    <ClCompile Include="Code\CharacterController.cpp" />
     <ClCompile Include="Code\debug\print.cpp" />
     <ClCompile Include="Code\debug_draw\DebugDraw.cpp" />
     <ClCompile Include="Code\debug_draw\DynamicLineDrawer.cpp" />
@@ -59,6 +62,7 @@
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">/Zm200 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <ClCompile Include="Code\StateManager.cpp" />
+    <ClCompile Include="Code\Utility.cpp" />
     <ClCompile Include="Code\XMLReader.cpp" />
   </ItemGroup>
   <ItemGroup>

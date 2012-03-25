@@ -4,8 +4,6 @@
 
 #include <OgreStringConverter.h>
 
-template<> OISManager* Ogre::Singleton<OISManager>::ms_Singleton=0;
-
 bool isControlCharacter(OIS::KeyCode keyCode);
 
 OISManager::OISManager(unsigned long windowHandle)
@@ -79,6 +77,26 @@ void OISManager::setCaptureWindow(int width,int height)
 	mutms.Y.abs = height/2;
 }
 
+void OISManager::setMousePosition(int& x,int& y)
+{
+	OIS::MouseState &m = const_cast<OIS::MouseState&>(_mouseObj->getMouseState());
+	m.X.abs = x;
+	m.Y.abs = y;
+}
+
+bool OISManager::Update(bool checkEscapeKey)
+{
+	//get input
+	capture();
+
+	//check if exit char is pressed.
+	if(checkEscapeKey)
+		return _appShutdown;
+
+	//return false by default.
+	return false;
+}
+
 void OISManager::capture()
 {
 	_mouseObj->capture();
@@ -107,17 +125,17 @@ void OISManager::setMouseLock(bool lock)
 	_lockMouse = lock;
 }
 
-int OISManager::getMMX()
+int OISManager::getMouseMoveX()
 {
 	return _mouseMoveX;
 }
 
-int OISManager::getMMY()
+int OISManager::getMouseMoveY()
 {
 	return _mouseMoveY;
 }
 
-int OISManager::getMMZ()
+int OISManager::getMouseMoveZ()
 {
 	//return _mouseMoveZ;
 	return 0; // doesn't work.

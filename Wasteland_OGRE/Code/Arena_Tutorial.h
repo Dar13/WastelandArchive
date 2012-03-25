@@ -4,6 +4,9 @@
 #define _ARENA_TUTORIAL_H_
 
 #include "State.h"
+#include "OISManager.h"
+#include "CharacterController.h"
+#include "EWS.h"
 
 // forward declaration, keeping the header file slim.
 struct OgreBulletPair;
@@ -21,11 +24,11 @@ public:
 	ArenaTutorial();
 
 	//! State-specific setup.
-	void Setup();
+	void Setup(OISManager* input);
 	//! Runs the state.
-	int Run();
+	int Run(OISManager* input);
 	//! Shutsdown and cleans up the application state.
-	void Shutdown();
+	void Shutdown(OISManager* input);
 
 private:
 	bool _stateShutdown;
@@ -48,6 +51,8 @@ private:
 	//Entity management
 	std::vector<Ogre::Entity*> _entities;
 
+	CharacterController* _controller;
+	EWSManager* _ews;
 };
 
 #endif

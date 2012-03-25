@@ -37,6 +37,7 @@ void Player::Setup(std::string file)
 
 bool Player::Update()
 {
+	/*
 	if(!_reloadingWeapon)
 	{
 		if(OISManager::getSingleton().isMBPressed(OIS::MB_Left))
@@ -65,7 +66,7 @@ bool Player::Update()
 		//reload gun action.
 
 	}
-
+	*/
 	return true;
 }
 

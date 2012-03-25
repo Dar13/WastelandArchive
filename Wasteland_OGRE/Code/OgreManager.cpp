@@ -138,7 +138,7 @@ note: most all properties are floats or strings. Only special fields get integer
 */
 
 Ogre::SceneNode* OgreManager::createSceneNode(Ogre::SceneManager* scene, 
-								 object_t* objectInfo)
+								 object_t* objectInfo,Ogre::SceneNode* parent)
 {
 	Ogre::SceneNode* node = NULL;
 	
@@ -156,7 +156,14 @@ Ogre::SceneNode* OgreManager::createSceneNode(Ogre::SceneManager* scene,
 	point.z = objectInfo->pointZ();
 	
 	//create node.
-	node = scene->getRootSceneNode()->createChildSceneNode("node" + objectInfo->name(),pos);
+	if(parent == NULL)
+	{
+		node = scene->getRootSceneNode()->createChildSceneNode("node" + objectInfo->name(),pos);
+	}
+	else
+	{
+		node = parent->createChildSceneNode("node" + objectInfo->name(),pos);
+	}
 	//that way, it doesn't default to looking at the origin.
 	if(point != Ogre::Vector3::ZERO)
 	{

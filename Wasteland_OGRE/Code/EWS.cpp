@@ -1,12 +1,20 @@
 #include "StdAfx.h"
 #include "EWS.h"
 
-template<> EWSManager* Ogre::Singleton<EWSManager>::ms_Singleton = 0;
-
-EWSManager::EWSManager()
+EWSManager::EWSManager(Ogre::SceneManager* scene)
 {
 	//setting up and initializing the pointers and stuff.
 	_ewsTexture.setNull();
+	Setup(scene);
+}
+
+EWSManager::~EWSManager()
+{
+	//fill overlay texture with transparent black
+	if(_ewsTexture.isNull()==false)
+	{
+		Fill(Ogre::ColourValue(0,0,0,0));
+	}
 }
 
 void EWSManager::Setup(Ogre::SceneManager* scene)
@@ -18,7 +26,7 @@ void EWSManager::Setup(Ogre::SceneManager* scene)
 	{
 		_material = test;
 	}
-	_ewsTexture = _material->getTechnique(0)->getPass(0)->getTextureUnitState(1)->_getTexturePtr();
+	_ewsTexture = _material->getTechnique(0)->getPass(0)->getTextureUnitState(2)->_getTexturePtr();
 	
 	//get pixel buffer
 	_pixelBuffer = _ewsTexture->getBuffer();
@@ -38,9 +46,7 @@ void EWSManager::Update(int health,int timeElapsed)
 	if(timeElapsed > 250)
 	{
 		//draw health information
-		CircleSector(Ogre::Vector2(203,186),143,100,-(Ogre::Math::PI) / 2,Ogre::ColourValue(1.0f,1.0f,1.0f,.5f),true);
-		//Circle(Ogre::Vector2(256,200),100,Ogre::ColourValue(1.0f,0.0f,0.0f,.5f));
-		CircleOutline(Ogre::Vector2(203,186),143,50,Ogre::Math::HALF_PI,Ogre::ColourValue(1.0f,1.0f,0.0f,1.0f));
+		Circle(Ogre::Vector2(256,200),100,Ogre::ColourValue(1.0f,0.0f,0.0f,1.0f));
 
 		//draw ammo information
 		//NOT DONE YET!
@@ -50,24 +56,6 @@ void EWSManager::Update(int health,int timeElapsed)
 		_material->setDiffuse(Ogre::ColourValue(1.0f,1.0f,1.0f,1.0f));
 	}
 
-	return;
-}
-
-void EWSManager::Reset()
-{
-	//reset the textures/etc.
-	if(_ewsNode->getCreator()->hasEntity(_ewsEntity->getName()))
-	{
-		_ewsNode->getCreator()->destroyEntity(_ewsEntity);
-	}
-	if(_ewsNode->isInSceneGraph())
-	{
-		_ewsNode->getParentSceneNode()->removeAndDestroyChild(_ewsNode->getName());
-	}
-
-	_ewsEntity = NULL;
-	_ewsNode = NULL;
-	
 	return;
 }
 

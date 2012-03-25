@@ -13,9 +13,11 @@ StateManager::StateManager()
 	_States.insert(std::make_pair(GAME_ARENA,new ArenaTutorial()));
 }
 
-void StateManager::Setup()
+void StateManager::Setup(OISManager* ois)
 {
 	//Not sure if I need this step at the moment. We'll see.
+	//looks like I need it
+	_OIS = ois;
 }
 
 void StateManager::Run()
@@ -26,10 +28,10 @@ void StateManager::Run()
 
 	while(curState!=END)
 	{
-		_States[curState]->Setup();
+		_States[curState]->Setup(_OIS);
 		oldState=curState;
-		curState=_States[curState]->Run();
-		_States[oldState]->Shutdown();
+		curState=_States[curState]->Run(_OIS);
+		_States[oldState]->Shutdown(_OIS);
 	}
 
 	return;

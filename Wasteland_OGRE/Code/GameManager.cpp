@@ -15,12 +15,13 @@ template<> GameManager* Ogre::Singleton<GameManager>::ms_Singleton = 0;
 GameManager::GameManager()
 {
 	_config = NULL;
+	/*
 	_charCamera = NULL;
 	_charNode = NULL;
 	_charGhost = NULL;
 	_charController = NULL;
 	_charWeaponNode = NULL;
-	_ews = new EWSManager();
+	*/
 	oldTime = 0;
 	deltaTime = 0;
 	Time = (float)OgreManager::getSingleton().getTimer()->getMilliseconds();
@@ -36,42 +37,22 @@ GameManager::~GameManager()
 	{
 		delete _config;
 	}
-	//Deleting the EWS system that I initialized.
-	if(_ews)
-	{
-		delete _ews;
-	}
 }
 
 bool GameManager::UpdateManagers()
 {
 	bool retVal = true;
-	//Update OIS
-	OISManager::getSingleton().capture();
-	retVal = !OISManager::getSingleton().escapePressed();
 
 	//Update Bullet
 	oldTime = Time;
 	Time = (float)OgreManager::getSingleton().getTimer()->getMilliseconds();
 	deltaTime = (Time - oldTime)/1000.0f;
-	//update character controller if _charCamera is set
-	if(_charCamera)
-	{
-		updateCharacterController(deltaTime,0);
-	}
 	BulletManager::getSingleton().Update(deltaTime);
 
 	//if the debug printer is active, update it
 	if(DebugPrint::getSingleton().isActive())
 	{
 		DebugPrint::getSingleton().Update();
-	}
-
-	//Update EWS before Ogre
-	if(_ewsSetup)
-	{
-		//_ews->Update(Player::getSingleton().getHealth(),Player::getSingleton().getAmmoInformation,(Time - oldTime));
-		_ews->Update(1,(Time - oldTime));
 	}
 
 	//Update Ogre
@@ -86,25 +67,9 @@ bool GameManager::UpdateManagers()
 	return retVal;
 }
 
-void GameManager::setupEWS(Ogre::SceneManager* scene)
+void GameManager::setConfiguration(configuration_t* configuration)
 {
-	_ews->Setup(scene);
-	_ewsSetup = true;
-}
-
-void GameManager::resetEWS()
-{
-	_ews->Reset();
-	_ewsSetup = false;
-
-	//Purge scene manager?
-	//_currentScene = NULL;
-}
-
-void GameManager::loadConfiguration(std::string& file)
-{
-	_config = configuration(file).release();
-	OISManager::getSingleton().setConfiguration(_config);
+	_config = configuration;
 }
 
 configuration_t* GameManager::getConfiguration()
@@ -121,7 +86,7 @@ void GameManager::useDebugDrawer(Ogre::SceneManager* scene)
 		_currentScene = scene;
 	}
 }
-
+/*
 void GameManager::createCharacterController(Ogre::Camera* camera,Ogre::Vector3 initPosition)
 {
 	//sets up a variable that holds the character controller's initial position.
@@ -256,14 +221,13 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 	//will only apply to scene node, not bullet physics.
 	//have to get current x-rotation from node, not bullet
 	//this works.
-	//--OPTIMIZATION--instead of using a new Quaternion, can reuse 'rot' from earlier in function.
-	Ogre::Quaternion quat;
+	rot = Ogre::Quaternion::ZERO; //reuses variable
 	Ogre::Radian angle;
 
 	//get angle from movement of the mouse on the y-axis
 	angle = (-mmy) * 0.007f;
 	//generate quaternion from axis-angle rotation
-	quat.FromAngleAxis(angle,Ogre::Vector3::UNIT_Z);
+	rot.FromAngleAxis(angle,Ogre::Vector3::UNIT_Z);
 	
 	//Set walk direction and speed. Should I normalize the walkDir before this step??
 	_charController->setWalkDirection(walkDir * walkSpd);
@@ -315,10 +279,11 @@ void GameManager::updateCharacterController(float phyTime,Ogre::Camera* camera)
 	//If legal, let it rotate again.
 	if(extraRotate)
 	{
-		_charNode->rotate(quat); //new z-rotation.
+		_charNode->rotate(rot); //new z-rotation.
 	}
 
 }
+*/
 
 //Unfinished, maybe unneeded.
 void loadWeapons(std::string file)
@@ -352,7 +317,7 @@ OgreBulletPair GameManager::createObject(Ogre::SceneManager* scene,object_t* obj
 	OgreBulletPair retVal;
 
 	//Ogre part of this arrangement.
-	Ogre::SceneNode* node = OgreManager::getSingleton().createSceneNode(scene,objectInfo);
+	Ogre::SceneNode* node = OgreManager::getSingleton().createSceneNode(scene,objectInfo,NULL);
 	retVal.ogreNode = node;
 
 	btCollisionShape* shape = NULL;

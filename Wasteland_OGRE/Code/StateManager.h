@@ -1,4 +1,5 @@
 #include "StdAfx.h"
+#include "OISManager.h"
 
 #ifndef _STATE_MANAGER_H_
 #define _STATE_MANAGER_H_
@@ -25,7 +26,7 @@ public:
 	~StateManager(){Shutdown();}
 
 	//! Sets up the StateManager.
-	void Setup();
+	void Setup(OISManager* ois);
 	//! Runs the StateManager, until the End state is reached.
 	void Run();
 	//! Shutsdown and cleans up the StateManager. Is called in the destructor.
@@ -39,6 +40,8 @@ private:
 	StateManager& operator= (const StateManager&);
 
 	std::map<int,State*> _States;
+
+	OISManager* _OIS;
 };
 
 #endif

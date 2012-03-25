@@ -13,7 +13,7 @@ ArenaTutorial::ArenaTutorial()
 	_view = 0;
 }
 
-void ArenaTutorial::Setup()
+void ArenaTutorial::Setup(OISManager* input)
 {
 	_scene = OgreManager::getSingleton().getRoot()->createSceneManager(Ogre::ST_INTERIOR,"arenaTut");
 
@@ -32,7 +32,6 @@ void ArenaTutorial::Setup()
 	object_t* level = object("resource\\xml\\test.xml").release();
 	OgreBulletPair levelPair = GameManager::getSingleton().createObject(_scene,level);
 	delete level;
-	
 
 	object_t* sphere = object("resource\\xml\\test_sphere.xml").release();
 	OgreBulletPair spherePair = GameManager::getSingleton().createObject(_scene,sphere);
@@ -70,18 +69,19 @@ void ArenaTutorial::Setup()
 	_camera->setAspectRatio(4.0f/3.0f);
 
 	//let's try out the character controller
-	GameManager::getSingleton().createCharacterController(_camera,_camera->getPosition());
+	_controller = new CharacterController(_camera,_camera->getPosition(),BulletManager::getSingleton().getWorld());
 	//since we're using the character controller, should also lock the mouse.
-	OISManager::getSingleton().setMouseLock(true);
+	//OISManager::getSingleton().setMouseLock(true);
+	input->setMouseLock(true);
 
 	DebugPrint::getSingleton().Setup(_scene);
 	//GameManager::getSingleton().useDebugDrawer(_scene);
 
 	//let's setup the EWS system
-	GameManager::getSingleton().setupEWS(_scene);
+	_ews = new EWSManager(_scene);
 }
 
-int ArenaTutorial::Run()
+int ArenaTutorial::Run(OISManager* input)
 {
 	_stateShutdown=false;
 	Ogre::Node* tmp = _scene->getRootSceneNode()->getChild("nodetestSphere");
@@ -89,6 +89,14 @@ int ArenaTutorial::Run()
 	//while the escape key isn't pressed and the state isn't told to shutdown.
 	while(!_stateShutdown)
 	{
+		_stateShutdown = input->Update(true);
+
+		//Update the character controller
+		_controller->update(GameManager::getSingleton().getCurrentElapsedTime(),input);
+
+		//Update the EWS system
+		_ews->Update(250 * rand() % 10,GameManager::getSingleton().getCurrentElapsedTime());
+
 		//True indicates success, so react on if it doesn't react properly
 		if(!GameManager::getSingleton().UpdateManagers())
 			_stateShutdown = true;
@@ -101,13 +109,13 @@ int ArenaTutorial::Run()
 	return END;
 }
 
-void ArenaTutorial::Shutdown()
+void ArenaTutorial::Shutdown(OISManager* input)
 {
 	//Needs to reset first.
 	//EWSManager::getSingleton().Reset();
 
 	//undo what I set in OIS
-	OISManager::getSingleton().setMouseLock(false);
+	input->setMouseLock(false);
 
 	//clean up what you initialized in the Setup() function.
 	OgreManager::getSingleton().getRenderWindow()->removeAllViewports();
@@ -123,6 +131,10 @@ void ArenaTutorial::Shutdown()
 	//Clear the vectors
 	_nodes.clear();
 	_entities.clear();
+
+	//cleaning up state-specific pointers.
+	delete _controller;
+	delete _ews;
 
 	//Has to be cleaned after every Setup, in the same app-state.
 	DebugPrint::getSingleton().Clean();

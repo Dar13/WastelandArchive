@@ -65,22 +65,6 @@ public:
 	*/
 	void useDebugDrawer(Ogre::SceneManager* scene);
 
-	//! Create a btKinematicCharacterController, and link it to a Ogre::Camera*
-	/*!
-		\param camera The camera you want the character controller to control.
-		\param initPosition The initial position the character controller will start at.
-	*/
-	void createCharacterController(Ogre::Camera* camera,Ogre::Vector3 initPosition);
-
-	/*! Updates the character controller created in createCharacterController.
-
-		If Ogre::Camera* is passed in, then this function will also update the camera's position and rotation.
-
-		\param camera If NULL(0) is passed in, then the class with refer to the stored camera.
-		If you didn't set a camera in the createCharacterController() then no camera will be updated at all.
-	*/
-	void updateCharacterController(float phyTime,Ogre::Camera* camera = NULL);
-
 	/*! Loads all weapons in list xml file that is passed in.
 
 	*/
@@ -95,7 +79,7 @@ public:
 	/*! Load configuration values
 
 	*/
-	void loadConfiguration(std::string& file);
+	void setConfiguration(configuration_t* configuration);
 
 	/*! Get the current configuration values.
 
@@ -103,25 +87,10 @@ public:
 	*/
 	configuration_t* getConfiguration();
 
-	/*! Sets up Environmental Warning System using passed-in SceneManager.
-
-		Basically boilerplate code to easily facilitate appstate startup.
-		Individual states can do this manually if needed.
-		EWSManager::getSingleton().Setup(scene);
-		
-		\sa EWSManager::Setup()
-	*/
-	void setupEWS(Ogre::SceneManager* scene);
-
-	/*! Resets Environmental Warning System to uninitialized state.
-
-		Boilerplate code to easily facilitate appstate startup.
-		Individual states can do this manually if needed
-		EWSManager::getSingleton().Reset();
-
-		\sa EWSManager::Reset()
-	*/
-	void resetEWS();
+	float getCurrentElapsedTime()
+	{
+		return deltaTime;
+	}
 
 private:
 	//private utility function.
@@ -132,27 +101,16 @@ private:
 	//private timing variables
 	float Time,oldTime,deltaTime;
 
-	//Character controller variables
-	btKinematicCharacterController* _charController;
-	btPairCachingGhostObject* _charGhost;
-	Ogre::Camera* _charCamera;
-	Ogre::SceneNode* _charNode;
-	Ogre::SceneNode* _charWeaponNode;
-
 	//Utility functions, converts Ogre::Vector3 to btVector3
-	btVector3 convertOgreVector3(const Ogre::Vector3 &v);
-	Ogre::Vector3 convertBulletVector3(const btVector3 &v);
-	btQuaternion convertOgreQuat(const Ogre::Quaternion &q);
-	Ogre::Quaternion convertBulletQuat(const btQuaternion &q);
-	btMatrix3x3 convertOgreMatrix3(const Ogre::Matrix3 &m);
-	Ogre::Matrix3 convertBulletMatrix3(const btMatrix3x3 &m);
+	static btVector3 convertOgreVector3(const Ogre::Vector3 &v);
+	static Ogre::Vector3 convertBulletVector3(const btVector3 &v);
+	static btQuaternion convertOgreQuat(const Ogre::Quaternion &q);
+	static Ogre::Quaternion convertBulletQuat(const btQuaternion &q);
+	static btMatrix3x3 convertOgreMatrix3(const Ogre::Matrix3 &m);
+	static Ogre::Matrix3 convertBulletMatrix3(const btMatrix3x3 &m);
 
 	//Holds current configuration values.
 	configuration_t* _config;
-
-	//Gameplay-specific managers that GameManager controls.
-	EWSManager* _ews;
-	bool _ewsSetup;
 
 	//Ogre stuff
 	Ogre::SceneManager* _currentScene;

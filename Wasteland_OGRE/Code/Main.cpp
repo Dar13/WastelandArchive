@@ -34,6 +34,8 @@ int main(int argc, char **argv[])
 
 	//Setup the input handler(OIS)
 	OISManager* ois = new OISManager(hWnd);
+	resFile = "resource\\xml\\config.xml";
+	ois->setConfiguration(configuration(resFile).release());
 
 	//Setup Bullet manager
 	BulletManager* bullet = new BulletManager();
@@ -41,15 +43,13 @@ int main(int argc, char **argv[])
 
 	//Setup the Game manager
 	GameManager* game = new GameManager();
-	resFile = "resource\\xml\\config.xml"; //why not re-use variables?
-	game->loadConfiguration(resFile);
 
 	//debugger helper
 	DebugPrint* realtimeDebugger = new DebugPrint();
 
 	//Set up the state manager
 	StateManager* wtld = new StateManager();
-	wtld->Setup();
+	wtld->Setup(ois);
 	
 	//run the app.
 	wtld->Run();

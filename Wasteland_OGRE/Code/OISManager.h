@@ -26,7 +26,7 @@ Is entirely self-contained, has no reliance on any other Manager.
 Needs an interface to find out about specific key presses.
 */
 
-class OISManager : public Ogre::Singleton<OISManager>,OIS::MouseListener, OIS::KeyListener
+class OISManager : OIS::MouseListener, OIS::KeyListener
 {
 public:
 	//! Constructor, sets up the class members.
@@ -35,6 +35,8 @@ public:
 
 	//! Sets the capture window for input during the application.
 	void setCaptureWindow(int width,int height);
+
+	bool Update(bool checkEscapeKey = true);
 
 	//! Capture the input
 	void capture();
@@ -45,12 +47,15 @@ public:
 	//! Sets whether or not OIS should lock the abs location of the mouse.
 	void setMouseLock(bool lock);
 
+	//! Sets absolute location of the mouse
+	void setMousePosition(int& x,int& y);
+
 	//! Gets current state of mouse movement horizontally(x-axis).
-	int getMMX();
+	int getMouseMoveX();
 	//! Gets current state of mouse movement vertically(y-axis).
-	int getMMY();
+	int getMouseMoveY();
 	//! Gets current state of mouse movement depth(wheel/z-axis).
-	int getMMZ();
+	int getMouseMoveZ();
 
 	//! Get current state 
 	bool isMBPressed(OIS::MouseButtonID id);
@@ -72,10 +77,6 @@ public:
 	//! Returns true if the Escape key is pressed.
 	bool escapePressed(){return _appShutdown;}
 private:
-	//This way, they're not implemented.
-	OISManager(const OISManager&){}
-	OISManager& operator= (const OISManager&);
-
 	//Private members
 	bool _appShutdown;
 
