@@ -31,13 +31,9 @@ beginning to end of the game(from 'new' to 'delete'). Keeps from crowding
 Main.cpp
 */
 
-class GameManager : public Ogre::Singleton<GameManager>
-{
-public:
-	//! Constructor
-	GameManager();
-	~GameManager(); 
 
+namespace GameManager
+{
 	/*!Creates an object, complete with Bullet Physics rigid body.
 
 	\param scene Ogre SceneManager, required for SceneNode creation.
@@ -46,9 +42,13 @@ public:
 	\returns OgreBulletPair containing SceneNode* and btRigidBody*.
 	*/
 	OgreBulletPair createObject(Ogre::SceneManager* scene,
-								std::string& file);
+								std::string& file,
+								BulletManager* phyManager,
+								OgreManager* graphics);
 	OgreBulletPair createObject(Ogre::SceneManager* scene,
-								object_t* objectInfo);
+								object_t* objectInfo,
+								BulletManager* phyManager,
+								OgreManager* graphics);
 	/*! Creates object, generates Ogre SceneNode and Bullet rigid body.
 
 		\param node Premade SceneNode.
@@ -57,67 +57,24 @@ public:
 		\returns OgreBulletPair containing the SceneNode* and btRigidBody*.
 	*/
 	OgreBulletPair createObject(Ogre::SceneNode* node,
-								object_t* objectInfo);
+								object_t* objectInfo,
+								BulletManager* phyManager);
 
 	/*! Tells class to use the debug drawer, to verify collisions are happening correctly.
 		
 		\param scene Current SceneManager for Ogre, needed to draw the stuff.
 	*/
-	void useDebugDrawer(Ogre::SceneManager* scene);
-
-	/*! Loads all weapons in list xml file that is passed in.
-
-	*/
-	void loadWeapons(std::string file);
-
+	void setDebugDrawer(Ogre::SceneManager* scene,BulletManager* phyManager);
+	
 	/*! Updates the individual managers.
 
 	\returns true if all managers updated properly.
 	*/
-	bool UpdateManagers();
-
-	/*! Load configuration values
-
-	*/
-	void setConfiguration(configuration_t* configuration);
-
-	/*! Get the current configuration values.
-
-	\returns configuration_t pointer to variable.
-	*/
-	configuration_t* getConfiguration();
-
-	float getCurrentElapsedTime()
-	{
-		return deltaTime;
-	}
-
-private:
-	//private utility function.
+	bool UpdateManagers(OgreManager* graphicsManager,BulletManager* phyManager,float deltaTime);
+	
 	//! Utilizes a special OgreManager function to create a triangle mesh collision shape.
 	//! \sa OgreManager::getMeshInformation()
 	btBvhTriangleMeshShape* buildTriangleCollisionShape(Ogre::SceneNode* node);
-	
-	//private timing variables
-	float Time,oldTime,deltaTime;
-
-	//Utility functions, converts Ogre::Vector3 to btVector3
-	static btVector3 convertOgreVector3(const Ogre::Vector3 &v);
-	static Ogre::Vector3 convertBulletVector3(const btVector3 &v);
-	static btQuaternion convertOgreQuat(const Ogre::Quaternion &q);
-	static Ogre::Quaternion convertBulletQuat(const btQuaternion &q);
-	static btMatrix3x3 convertOgreMatrix3(const Ogre::Matrix3 &m);
-	static Ogre::Matrix3 convertBulletMatrix3(const btMatrix3x3 &m);
-
-	//Holds current configuration values.
-	configuration_t* _config;
-
-	//Ogre stuff
-	Ogre::SceneManager* _currentScene;
-
-	//Facilitates Ogre::Singleton.
-	GameManager(const GameManager&);
-	GameManager& operator=(GameManager&);
 };
 
 #endif

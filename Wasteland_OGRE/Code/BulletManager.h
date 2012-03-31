@@ -14,7 +14,7 @@
 Performs various tasks specific to Bullet Physics, is mainly self-contained.
 */
 
-class BulletManager : public Ogre::Singleton<BulletManager>
+class BulletManager
 {
 public:
 	//! Initializes all Bullet pointers to zero.
@@ -58,9 +58,6 @@ public:
 	void setDebugDrawer(CDebugDraw* drawer);
 
 private:
-	//Needed for this class to be a singleton
-	BulletManager(const BulletManager&);
-	BulletManager& operator=(const BulletManager&);
 
 	//Bullet pointers
 	btDiscreteDynamicsWorld* _World;

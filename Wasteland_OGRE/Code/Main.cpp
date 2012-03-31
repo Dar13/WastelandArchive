@@ -1,12 +1,12 @@
 #include "StdAfx.h"
 
+#include <new>
+
 #include "GameManager.h"
 #include "StateManager.h"
 #include "debug\print.h"
 
 #include <OgreWindowEventUtilities.h>
-
-#include "XMLReader.h"
 
 #if defined(WIN32)
 int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine, int nCmdShow)
@@ -15,10 +15,20 @@ int WINAPI WinMain(HINSTANCE hInstance,HINSTANCE hPrevInstance,LPSTR lpCmdLine, 
 int main(int argc, char **argv[])
 {
 #endif
-	OgreManager* ogre = new OgreManager();
+	/*
+	OgreManager* ogre = NULL;
+	OISManager* ois = NULL;
+	GameManager* game = NULL;
+	DebugPrint* realtimeDebugger = NULL;
+	StateManager* wtld = NULL;
+	*/
+
+	const std::auto_ptr<OgreManager> ogre(new OgreManager());
+	//ogre = new OgreManager();
 	if(!ogre->Setup())
 	{
-		delete ogre;
+		//not needed with auto_ptr
+		//delete ogre;
 		return 1;
 	}
 
@@ -29,31 +39,31 @@ int main(int argc, char **argv[])
 	unsigned long hWnd;
 	ogre->getRenderWindow()->getCustomAttribute("WINDOW",&hWnd);
 
-	//Setup the XMLReader singleton
-	//XMLReader* xml = new XMLReader();
-
+	const std::auto_ptr<OISManager> ois(new OISManager(hWnd));
 	//Setup the input handler(OIS)
-	OISManager* ois = new OISManager(hWnd);
+	//ois = new OISManager(hWnd);
 	resFile = "resource\\xml\\config.xml";
 	ois->setConfiguration(configuration(resFile).release());
 
-	//Setup Bullet manager
-	BulletManager* bullet = new BulletManager();
-	bullet->Setup();
-
+	//GameManager class doesn't exist anymore
+	//const std::auto_ptr<GameManager> game(new GameManager());
 	//Setup the Game manager
-	GameManager* game = new GameManager();
+	//game = new GameManager();
 
 	//debugger helper
-	DebugPrint* realtimeDebugger = new DebugPrint();
+	const std::auto_ptr<DebugPrint> realtimeDebugger(new DebugPrint());
+	//realtimeDebugger = new DebugPrint();
 
 	//Set up the state manager
-	StateManager* wtld = new StateManager();
-	wtld->Setup(ois);
+	const std::auto_ptr<StateManager> wtld(new StateManager());
+	//wtld = new StateManager();
+	wtld->Setup(ois.get(),ogre.get());
 	
-	//run the app.
+		//run the app.
 	wtld->Run();
 
+	/*
+	//aren't needed when using auto_ptr, are deleted automatically.
 	//delete state manager
 	delete wtld;
 
@@ -61,8 +71,34 @@ int main(int argc, char **argv[])
 
 	//delete interfaces for OIS and Ogre3D
 	delete ois;
-	//delete xml;
 	delete ogre;
+	*/
+	/*
+	catch(std::bad_alloc &ba)
+	{
+		OutputDebugString(ba.what());
+		if(NULL != ogre)
+		{
+			delete ogre;
+		}
+		if(NULL != ois)
+		{
+			delete ois;
+		}
+		if(NULL != game)
+		{
+			delete game;
+		}
+		if(NULL != realtimeDebugger)
+		{
+			delete realtimeDebugger;
+		}
+		if(NULL != wtld)
+		{
+			delete wtld;
+		}
+	}
+	*/
 	
 
 	return 0;

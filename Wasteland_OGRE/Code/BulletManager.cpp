@@ -5,8 +5,6 @@
 // Bullet Manager
 //====================
 
-template<> BulletManager* Ogre::Singleton<BulletManager>::ms_Singleton = 0;
-
 BulletManager::BulletManager()
 {
 	_World = 0;
@@ -21,6 +19,8 @@ BulletManager::BulletManager()
 BulletManager::~BulletManager()
 {
 	Shutdown(false);
+
+	delete _debugDrawer;
 }
 
 void BulletManager::Setup()
@@ -130,9 +130,12 @@ void BulletManager::Shutdown(bool reuse)
 	{
 		btCollisionObject* obj = _World->getCollisionObjectArray()[i];
 		btRigidBody* body = btRigidBody::upcast(obj);
-		if(body && body->getMotionState())
+		if(body != NULL)
 		{
-			delete body->getMotionState();
+			if(body->getMotionState() != NULL)
+			{
+				delete body->getMotionState();
+			}
 		}
 		_World->removeCollisionObject(obj);
 		delete obj;

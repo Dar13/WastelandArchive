@@ -2,6 +2,7 @@
 #define _STATE_H_
 
 #include "OISManager.h"
+#include "OgreManager.h"
 
 enum ApplicationStates
 {
@@ -25,14 +26,17 @@ class State
 {
 public:
 	//! Sets up the state.
-	virtual void Setup(OISManager* input) = 0; 
+	virtual void Setup(OISManager* Input,OgreManager* Graphics) = 0; 
 	//!Runs the game logic for the state.
-	virtual int Run(OISManager* input) = 0; 
+	virtual int Run(OISManager* Input,OgreManager* Graphics) = 0; 
 	//!Cleans up the state.
-	virtual void Shutdown(OISManager* input) = 0; 
-private:
+	virtual void Shutdown(OISManager* Input,OgreManager* Graphics) = 0; 
+protected:
 	//!A boolean to tell if the state should shutdown.
 	bool _stateShutdown;
+
+	float _deltaTime;
+	float _oldTime;
 };
 
 #endif

@@ -13,11 +13,12 @@ StateManager::StateManager()
 	_States.insert(std::make_pair(GAME_ARENA,new ArenaTutorial()));
 }
 
-void StateManager::Setup(OISManager* ois)
+void StateManager::Setup(OISManager* input,OgreManager* graphics)
 {
 	//Not sure if I need this step at the moment. We'll see.
 	//looks like I need it
-	_OIS = ois;
+	_Input = input;
+	_Graphics = graphics;
 }
 
 void StateManager::Run()
@@ -28,10 +29,54 @@ void StateManager::Run()
 
 	while(curState!=END)
 	{
-		_States[curState]->Setup(_OIS);
-		oldState=curState;
-		curState=_States[curState]->Run(_OIS);
-		_States[oldState]->Shutdown(_OIS);
+		if(_States[curState] != NULL)
+		{
+			//setting up the current state
+			_States[curState]->Setup(_Input,_Graphics);
+			//saving the state, so we can do clean up later
+			oldState=curState;
+			//run the state, gets next state from run method
+			curState=_States[curState]->Run(_Input,_Graphics);
+			//clean up old state(really the current state but eh)
+			_States[oldState]->Shutdown(_Input,_Graphics);
+			delete _States[oldState];
+			//make sure they know it's deleted
+			_States[oldState] = NULL;
+		}
+		else
+		{
+			//remake state
+			switch(curState)
+			{
+			case INTRO:
+				//_States[curState] = new
+				break;
+			case MENU:
+				//_States[curState] = new
+				break;
+			case GAME_ARENA:
+				_States[curState] = new ArenaTutorial();
+				break;
+			case GAME_LOCKER:
+				//_States[curState] = new ArenaLocker();
+				break;
+			case GAME_LOBBY:
+				//_States[curState] = new Lobby();
+				break;
+			case GAME_OFFICE:
+				//_States[curState] = new Office();
+				break;
+			case GAME_ROOF:
+				//_States[curState] = new Roof();
+				break;
+			case CREDITS:
+				//_States[curState] = new Credits
+				break;
+			case END:
+
+				break;
+			};
+		}
 	}
 
 	return;

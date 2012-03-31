@@ -15,10 +15,11 @@ OgreManager::OgreManager()
 
 bool OgreManager::Setup()
 {
+	Ogre::LogManager* logMgr = NULL;
 	bool retVal=true;
 	try{
 	//Set up the Ogre logging system
-	Ogre::LogManager* logMgr = new Ogre::LogManager();
+	logMgr = new Ogre::LogManager();
 	_Log=Ogre::LogManager::getSingleton().createLog("Ogre.log",true,true);
 	_Log->setLogDetail(Ogre::LL_BOREME);
 	_Log->setDebugOutputEnabled(true);
@@ -70,6 +71,17 @@ bool OgreManager::Setup()
 	{
 		retVal = false;
 		MessageBoxA(NULL,e.getFullDescription().c_str(),"EXCEPTION!",MB_OK | MB_ICONERROR);
+		if(logMgr != NULL)
+		{
+			delete logMgr;
+		}
+	}
+	catch(std::bad_alloc &ba)
+	{
+		if(logMgr != NULL)
+		{
+			delete logMgr;
+		}
 	}
 
 	_Root->addFrameListener(this);
@@ -93,9 +105,9 @@ bool OgreManager::addResources(std::string& filename)
 		//have to make sure to delete this pointer.
 		resource_t* res = resource((*itr)).release(); //get pointer to resource to load.
 		std::string grpName = res->GroupName(); //get the group name.
-		for(resource_t::location_const_iterator itr = res->location().begin(); itr != res->location().end(); ++itr)
+		for(resource_t::location_const_iterator inner_itr = res->location().begin(); inner_itr != res->location().end(); ++inner_itr)
 		{
-			Ogre::ResourceGroupManager::getSingleton().addResourceLocation((*itr).FileName(),(*itr).Type(),grpName,(*itr).Recursive());
+			Ogre::ResourceGroupManager::getSingleton().addResourceLocation((*inner_itr).FileName(),(*inner_itr).Type(),grpName,(*inner_itr).Recursive());
 		}
 		delete res;
 	}

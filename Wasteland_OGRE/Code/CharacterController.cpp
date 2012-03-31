@@ -63,7 +63,6 @@ void CharacterController::update(float physicsTimeElapsed,OISManager* input)
 
 	//velocity = ?? * ??
 	btScalar walkVel = 2.0f * 4.0f;
-	
 
 	Ogre::Vector3 direction; Ogre::Quaternion rotation;
 	if(input->isCFGKeyPressed(FORWARD))
@@ -92,7 +91,8 @@ void CharacterController::update(float physicsTimeElapsed,OISManager* input)
 	}
 	
 	//velocity.
-	btScalar walkSpd = walkVel * physicsTimeElapsed;
+	//all times must be divided by 1000. Bullet goes by seconds, not milliseconds.
+	btScalar walkSpd = walkVel * (physicsTimeElapsed / 1000.0f);
 
 	//get direction vector.
 	direction = Utility::convert_btVector3(walkDirection);
@@ -178,10 +178,9 @@ void CharacterController::update(float physicsTimeElapsed,OISManager* input)
 	}
 
 	//some debug information i want to know
-	DebugPrint::getSingleton().printVar((void*)&cNode->_getDerivedPosition(),OGRE);
-	DebugPrint::getSingleton().printVar((void*)&cCamera->getPosition(),OGRE);
-	DebugPrint::getSingleton().printVar((void*)&cNode->getChild(0)->_getDerivedPosition(),OGRE);
-
+	//DebugPrint::getSingleton().printVar((void*)&cNode->_getDerivedPosition(),OGRE);
+	//DebugPrint::getSingleton().printVar((void*)&cCamera->getPosition(),OGRE);
+	//DebugPrint::getSingleton().printVar((void*)&cNode->getChild(0)->_getDerivedPosition(),OGRE);
 }
 
 CharacterController::~CharacterController()

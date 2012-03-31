@@ -7,6 +7,7 @@
 #include "OISManager.h"
 #include "CharacterController.h"
 #include "EWS.h"
+#include "BulletManager.h"
 
 // forward declaration, keeping the header file slim.
 struct OgreBulletPair;
@@ -24,15 +25,13 @@ public:
 	ArenaTutorial();
 
 	//! State-specific setup.
-	void Setup(OISManager* input);
+	void Setup(OISManager* Input,OgreManager* Graphics);
 	//! Runs the state.
-	int Run(OISManager* input);
+	int Run(OISManager* Input,OgreManager* Graphics);
 	//! Shutsdown and cleans up the application state.
-	void Shutdown(OISManager* input);
+	void Shutdown(OISManager* Input,OgreManager* Graphics);
 
 private:
-	bool _stateShutdown;
-
 	//! Tracks all OgreBulletPairs
 	std::vector<OgreBulletPair> _pairs;
 
@@ -51,8 +50,12 @@ private:
 	//Entity management
 	std::vector<Ogre::Entity*> _entities;
 
-	CharacterController* _controller;
-	EWSManager* _ews;
+	//CharacterController* _controller;
+	//EWSManager* _ews;
+	std::auto_ptr<CharacterController> _controller;
+	std::auto_ptr<EWSManager> _ews;
+
+	std::auto_ptr<BulletManager> _physics;
 };
 
 #endif
