@@ -13,12 +13,12 @@ StateManager::StateManager()
 	_States.insert(std::make_pair(GAME_ARENA,new ArenaTutorial()));
 }
 
-void StateManager::Setup(OISManager* input,OgreManager* graphics)
+void StateManager::Setup(OISManager* inputManager,OgreManager* graphicsManager)
 {
 	//Not sure if I need this step at the moment. We'll see.
 	//looks like I need it
-	_Input = input;
-	_Graphics = graphics;
+	_Input = inputManager;
+	_Graphics = graphicsManager;
 }
 
 void StateManager::Run()

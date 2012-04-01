@@ -73,7 +73,7 @@ void ArenaTutorial::Setup(OISManager* Input,OgreManager* Graphics)
 	_camera->setAspectRatio(4.0f/3.0f);
 
 	//let's try out the character controller
-	_controller.reset(new CharacterController(_camera,_camera->getPosition(),_physics->getWorld() ) );
+	_controller.reset(new CharacterController(_camera,_camera->getPosition(),_physics->getWorld(),Graphics ) );
 	//since we're using the character controller, should also lock the mouse.
 	//OISManager::getSingleton().setMouseLock(true);
 	Input->setMouseLock(true);

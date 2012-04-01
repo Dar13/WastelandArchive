@@ -45,23 +45,23 @@ namespace GameManager
 	}
 
 	//just a wrapper for the createObject function. Gets rid of some of the code needed in the states.
-	OgreBulletPair createObject(Ogre::SceneManager* scene,std::string& file,BulletManager* phyManager,OgreManager* graphics)
+	OgreBulletPair createObject(Ogre::SceneManager* scene,std::string& file,BulletManager* phyManager,OgreManager* graphicsManager)
 	{
 		OgreBulletPair ret;
 		object_t* obj = object(file.c_str()).release();
-		ret = createObject(scene,obj,phyManager,graphics);
+		ret = createObject(scene,obj,phyManager,graphicsManager);
 		delete obj;
 
 		return ret;
 	}
 
-	OgreBulletPair createObject(Ogre::SceneManager* scene,object_t* objectInfo,BulletManager* phyManager,OgreManager* graphics)
+	OgreBulletPair createObject(Ogre::SceneManager* scene,object_t* objectInfo,BulletManager* phyManager,OgreManager* graphicsManager)
 	{
 		//return variable
 		OgreBulletPair retVal;
 
 		//Ogre part of this arrangement.
-		Ogre::SceneNode* node = graphics->createSceneNode(scene,objectInfo,NULL);
+		Ogre::SceneNode* node = graphicsManager->createSceneNode(scene,objectInfo,NULL);
 		retVal.ogreNode = node;
 
 		btCollisionShape* shape = NULL;

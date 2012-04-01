@@ -3,10 +3,8 @@
 #include "Utility.h"
 #include "debug\print.h"
 
-//for now...
-#include "OgreManager.h"
 
-void CharacterController::create(Ogre::Camera* camera,const Ogre::Vector3& initialPosition,btDiscreteDynamicsWorld* phyWorld)
+void CharacterController::create(Ogre::Camera* camera,const Ogre::Vector3& initialPosition,btDiscreteDynamicsWorld* phyWorld,OgreManager* Graphics)
 {
 	cCamera = camera;
 	_world = phyWorld;
@@ -42,7 +40,7 @@ void CharacterController::create(Ogre::Camera* camera,const Ogre::Vector3& initi
 	cCamera->setPosition(0,0,0);
 	cNode->attachObject(cCamera);
 
-	Ogre::SceneNode* tmpNode = OgreManager::getSingleton().createSceneNode(cCamera->getSceneManager(),object("resource\\xml\\test_box.xml").release(),cNode);
+	Ogre::SceneNode* tmpNode = Graphics->createSceneNode(cCamera->getSceneManager(),object("resource\\xml\\test_box.xml").release(),cNode);
 	tmpNode->setPosition(5.0f,1.0f,0.0f);
 
 	//for some reason, this expects a positive value.
@@ -53,7 +51,7 @@ void CharacterController::create(Ogre::Camera* camera,const Ogre::Vector3& initi
 	return;
 }
 
-void CharacterController::update(float physicsTimeElapsed,OISManager* input)
+void CharacterController::update(float physicsTimeElapsed,OISManager* inputManager)
 {
 	btTransform cTransform = cGhostObject->getWorldTransform();
 	btVector3 forwardDirection = cTransform.getBasis()[0]; forwardDirection.normalize();
@@ -65,27 +63,27 @@ void CharacterController::update(float physicsTimeElapsed,OISManager* input)
 	btScalar walkVel = 2.0f * 4.0f;
 
 	Ogre::Vector3 direction; Ogre::Quaternion rotation;
-	if(input->isCFGKeyPressed(FORWARD))
+	if(inputManager->isCFGKeyPressed(FORWARD))
 	{
 		walkDirection += forwardDirection;
 	}
-	if(input->isCFGKeyPressed(BACKWARD))
+	if(inputManager->isCFGKeyPressed(BACKWARD))
 	{
 		walkDirection -= forwardDirection;
 	}
-	if(input->isCFGKeyPressed(RIGHT))
+	if(inputManager->isCFGKeyPressed(RIGHT))
 	{
 		walkDirection += strafeDirection;
 	}
-	if(input->isCFGKeyPressed(LEFT))
+	if(inputManager->isCFGKeyPressed(LEFT))
 	{
 		walkDirection -= strafeDirection;
 	}
-	if(input->isCFGKeyPressed(JUMP))
+	if(inputManager->isCFGKeyPressed(JUMP))
 	{
 		cController->jump();
 	}
-	if(input->isCFGKeyPressed(SPRINT))
+	if(inputManager->isCFGKeyPressed(SPRINT))
 	{
 		walkVel = 2.0f * 6.0f;
 	}
@@ -105,8 +103,8 @@ void CharacterController::update(float physicsTimeElapsed,OISManager* input)
 	//Mouse look
 	//**
 	int mmx,mmy;
-	mmx = input->getMouseMoveX();
-	mmy = input->getMouseMoveY();
+	mmx = inputManager->getMouseMoveX();
+	mmy = inputManager->getMouseMoveY();
 
 	//*
 	//y-axis

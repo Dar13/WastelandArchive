@@ -27,7 +27,7 @@ public:
 	~StateManager(){Shutdown();}
 
 	//! Sets up the StateManager.
-	void Setup(OISManager* input,OgreManager* graphics);
+	void Setup(OISManager* inputManager,OgreManager* graphicsManager);
 	//! Runs the StateManager, until the End state is reached.
 	void Run();
 	//! Shutsdown and cleans up the StateManager. Is called in the destructor.

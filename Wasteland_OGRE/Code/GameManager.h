@@ -44,11 +44,11 @@ namespace GameManager
 	OgreBulletPair createObject(Ogre::SceneManager* scene,
 								std::string& file,
 								BulletManager* phyManager,
-								OgreManager* graphics);
+								OgreManager* graphicsManager);
 	OgreBulletPair createObject(Ogre::SceneManager* scene,
 								object_t* objectInfo,
 								BulletManager* phyManager,
-								OgreManager* graphics);
+								OgreManager* graphicsManager);
 	/*! Creates object, generates Ogre SceneNode and Bullet rigid body.
 
 		\param node Premade SceneNode.

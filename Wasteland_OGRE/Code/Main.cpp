@@ -46,9 +46,8 @@ int main(int argc, char **argv[])
 	ois->setConfiguration(configuration(resFile).release());
 
 	//GameManager class doesn't exist anymore
-	//const std::auto_ptr<GameManager> game(new GameManager());
 	//Setup the Game manager
-	//game = new GameManager();
+	//const std::auto_ptr<GameManager> game(new GameManager());
 
 	//debugger helper
 	const std::auto_ptr<DebugPrint> realtimeDebugger(new DebugPrint());
@@ -59,7 +58,7 @@ int main(int argc, char **argv[])
 	//wtld = new StateManager();
 	wtld->Setup(ois.get(),ogre.get());
 	
-		//run the app.
+	//run the app.
 	wtld->Run();
 
 	/*
@@ -72,32 +71,6 @@ int main(int argc, char **argv[])
 	//delete interfaces for OIS and Ogre3D
 	delete ois;
 	delete ogre;
-	*/
-	/*
-	catch(std::bad_alloc &ba)
-	{
-		OutputDebugString(ba.what());
-		if(NULL != ogre)
-		{
-			delete ogre;
-		}
-		if(NULL != ois)
-		{
-			delete ois;
-		}
-		if(NULL != game)
-		{
-			delete game;
-		}
-		if(NULL != realtimeDebugger)
-		{
-			delete realtimeDebugger;
-		}
-		if(NULL != wtld)
-		{
-			delete wtld;
-		}
-	}
 	*/
 	
 

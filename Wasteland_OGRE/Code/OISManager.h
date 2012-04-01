@@ -20,7 +20,7 @@ enum CONFIG_KEY_VALUES
 	MAXVALUE
 };
 
-/*! \brief The OIS(Object Oriented Input System) Manager. Handles all input for Wasteland.
+/*! \brief The OIS(Object Oriented Input System) Manager. Handles all inputManager for Wasteland.
 
 Is entirely self-contained, has no reliance on any other Manager.
 Needs an interface to find out about specific key presses.
