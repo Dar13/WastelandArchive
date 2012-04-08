@@ -1,7 +1,9 @@
 #include "StdAfx.h"
 #include "EWS.h"
 
-#include "debug\print.h"
+#include "debug\console.h"
+#include "Utility.h"
+#include "OgreManager.h"
 
 EWSManager::EWSManager(Ogre::SceneManager* scene)
 {
@@ -41,13 +43,14 @@ void EWSManager::Setup(Ogre::SceneManager* scene)
 	_ewsEntity->setMaterial(_material);
 
 	_placed = true;
+	_pointToPlayer = false;
+
 	oldTime = 0;
 
 }
 
-void EWSManager::Update(int health,int newTime,bool isPlacing)
+void EWSManager::Update(int health,int newTime,bool isPlacing,const OgreTransform& playerTransform)
 {
-	currentTime = newTime;
 	if(!isPlacing)
 	{
 		if(_placed)
@@ -60,30 +63,38 @@ void EWSManager::Update(int health,int newTime,bool isPlacing)
 		}
 	}
 
-	if(!_placed)
+	if(_placed)
+	{
+		if(_pointToPlayer)
+		{
+			_ewsNode->lookAt(Ogre::Vector3(playerTransform.position.x,_ewsNode->getPosition().y,playerTransform.position.z),Ogre::Node::TS_WORLD);
+		}
+
+		//assumes timeElapsed is in ms
+		if((newTime - oldTime) > 500 && health != _health ) //playerInfo != _playerInfo)
+		{
+			//draw health information
+			Box(Ogre::Rect(250,health-100,300,250),Ogre::ColourValue(1.0f,0.0f,0.0f,1.0f));
+			//Circle(Ogre::Vector2(256,200),100,Ogre::ColourValue(1.0f,0.0f,0.0f,1.0f));
+
+			//draw ammo information
+			//NOT DONE YET!
+			oldTime = newTime;
+		
+		}
+		_material->setDepthWriteEnabled(false);
+		_material->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
+		_material->setDiffuse(Ogre::ColourValue(1.0f,1.0f,1.0f,1.0f));
+	}
+	else
 	{
 		return;
 	}
-	//assumes timeElapsed is in ms
-	if((newTime - oldTime) > 500 && health != _health ) //playerInfo != _playerInfo)
-	{
-		//draw health information
-		Box(Ogre::Rect(250,health-100,300,250),Ogre::ColourValue(1.0f,0.0f,0.0f,1.0f));
-		//Circle(Ogre::Vector2(256,200),100,Ogre::ColourValue(1.0f,0.0f,0.0f,1.0f));
-
-		//draw ammo information
-		//NOT DONE YET!
-		oldTime = newTime;
-		
-	}
-	_material->setDepthWriteEnabled(false);
-	_material->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
-	_material->setDiffuse(Ogre::ColourValue(1.0f,1.0f,1.0f,1.0f));
 	
 	return;
 }
 
-void EWSManager::Place(Ogre::Vector3& rayCastPosition,Ogre::Vector3& rayCastNormal)
+void EWSManager::Place(const Ogre::Vector3& rayCastPosition,const Ogre::Vector3& rayCastNormal,const OgreTransform& playerTransform)
 {
 	if(_placed && placeToggle == 2 )
 	{
@@ -97,10 +108,21 @@ void EWSManager::Place(Ogre::Vector3& rayCastPosition,Ogre::Vector3& rayCastNorm
 		if(placeToggle == 0)
 		{
 			_ewsNode->setPosition(rayCastPosition + rayCastNormal);
-			_ewsNode->lookAt(rayCastPosition + (rayCastNormal),Ogre::SceneNode::TS_WORLD);
+			if(rayCastNormal == Ogre::Vector3::UNIT_Y || rayCastNormal == Ogre::Vector3::NEGATIVE_UNIT_Y)
+			{
+				_pointToPlayer = true;
+				_ewsNode->lookAt(Ogre::Vector3(playerTransform.position.x,rayCastPosition.y + rayCastNormal.y,playerTransform.position.z),Ogre::Node::TS_WORLD);
+			}
+			else
+			{
+				_pointToPlayer = false;
+				_ewsNode->lookAt(rayCastPosition + (rayCastNormal),Ogre::SceneNode::TS_WORLD);
+			}
 			_placed = true;
 			_ewsNode->setVisible(true);
 			placeToggle = 1;
+			VirtualConsole::getSingleton().put(Utility::vector3_toStr(rayCastNormal));
+			VirtualConsole::getSingleton().put(Utility::vector3_toStr(rayCastPosition));
 		}
 	}
 }

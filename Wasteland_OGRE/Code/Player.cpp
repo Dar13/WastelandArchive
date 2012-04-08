@@ -56,7 +56,7 @@ void Player::placeEWS(EWSManager* ews,BulletManager* physics,const OgreTransform
 	rayEnd = Utility::convert_OgreVector3(dir);
 	if(physics->RaycastWorld_Closest(rayStart,rayEnd,rayPosition,rayNormal))
 	{
-		ews->Place(Utility::convert_btVector3(rayPosition),Utility::convert_btVector3(rayNormal));
+		ews->Place(Utility::convert_btVector3(rayPosition),Utility::convert_btVector3(rayNormal),transform);
 	}
 }
 

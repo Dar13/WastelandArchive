@@ -1,7 +1,12 @@
 #include "StdAfx.h"
 
+
+
 #ifndef _ENVWARNSYS_H_
 #define _ENVWARNSYS_H_
+
+//Forward Declaration
+struct OgreTransform;
 
 class EWSManager
 {
@@ -12,9 +17,9 @@ public:
 	void Setup(Ogre::SceneManager* scene);
 	//Passing in the current information needed to be represented.
 	//Would be called by the appState(maybe) or the GameManager(probably).
-	void Update(int health,int newTime,bool isPlacing);//, void* ammoInfo);
+	void Update(int health,int newTime,bool isPlacing,const OgreTransform& playerTransform);//, void* ammoInfo);
 
-	void Place(Ogre::Vector3& rayCastPosition,Ogre::Vector3& rayCastNormal);
+	void Place(const Ogre::Vector3& rayCastPosition,const Ogre::Vector3& rayCastNormal,const OgreTransform& playerTransform);
 
 protected:
 	void Fill(Ogre::ColourValue& color);
@@ -32,9 +37,13 @@ private:
 	//Ogre::PixelBox& _pixelBox;
 	Ogre::SceneNode* _ewsNode;
 	Ogre::Entity* _ewsEntity;
+
 	bool _placed;
-	int oldTime,currentTime;
 	int placeToggle;
+	bool _pointToPlayer;
+
+	int oldTime;
+	
 	//eventually make a struct to hold all this data
 	int _health;
 };

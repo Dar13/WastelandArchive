@@ -11,6 +11,9 @@ namespace Utility
 	btQuaternion convert_OgreQuaternion(const Ogre::Quaternion& q);
 	Ogre::Matrix3 convert_btMatrix3(const btMatrix3x3 &m);
 	btMatrix3x3 convert_OgreMatrix3(const Ogre::Matrix3 &m);
+
+	std::string vector3_toStr(const Ogre::Vector3& v);
+	std::string vector3_toStr(const btVector3& v);
 };
 
 #endif

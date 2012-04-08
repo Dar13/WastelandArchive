@@ -35,3 +35,15 @@ btMatrix3x3 Utility::convert_OgreMatrix3(const Ogre::Matrix3 &m)
 	mat.setRotation(Utility::convert_OgreQuaternion(quat));
 	return mat;
 }
+
+std::string Utility::vector3_toStr(const Ogre::Vector3& v)
+{
+	return Ogre::StringConverter::toString(v) + '\n';
+}
+
+std::string Utility::vector3_toStr(const btVector3& v)
+{
+	std::stringstream c;
+	c << v.x() << "," << v.y() << "," << v.z() << std::endl;
+	return c.str();
+}

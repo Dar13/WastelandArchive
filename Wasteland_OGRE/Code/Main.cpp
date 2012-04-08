@@ -18,11 +18,8 @@ int main(int argc, char **argv[])
 #endif
 
 	const std::unique_ptr<OgreManager> ogre(new OgreManager());
-	//ogre = new OgreManager();
 	if(!ogre->Setup())
 	{
-		//not needed with auto_ptr
-		//delete ogre;
 		return 1;
 	}
 
@@ -33,22 +30,16 @@ int main(int argc, char **argv[])
 	unsigned long hWnd;
 	ogre->getRenderWindow()->getCustomAttribute("WINDOW",&hWnd);
 
-	const std::unique_ptr<OISManager> ois(new OISManager(hWnd));
 	//Setup the input handler(OIS)
-	//ois = new OISManager(hWnd);
+	const std::unique_ptr<OISManager> ois(new OISManager(hWnd));
 	resFile = "resource\\xml\\config.xml";
 	ois->setConfiguration(configuration(resFile).release());
 
 	//true console debugger
 	const std::unique_ptr<VirtualConsole> console(new VirtualConsole("Debugger",0));
 
-	//GameManager class doesn't exist anymore
-	//Setup the Game manager
-	//const std::auto_ptr<GameManager> game(new GameManager());
-
 	//Set up the state manager
 	const std::unique_ptr<StateManager> wtld(new StateManager());
-	//wtld = new StateManager();
 	wtld->Setup(ois.get(),ogre.get());
 	
 	//run the app.
