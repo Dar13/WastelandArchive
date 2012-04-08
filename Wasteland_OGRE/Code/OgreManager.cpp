@@ -2,8 +2,6 @@
 
 #include "OgreManager.h"
 
-template<> OgreManager* Ogre::Singleton<OgreManager>::ms_Singleton=0;
-
 OgreManager::OgreManager()
 {
 	_Root=0;

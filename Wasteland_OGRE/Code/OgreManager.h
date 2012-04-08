@@ -6,13 +6,20 @@
 
 #include "XMLReader.h"
 
+struct OgreTransform
+{
+	Ogre::Vector3 position;
+	Ogre::Quaternion orientation;
+	Ogre::Vector3 direction;
+};
+
 /*! \brief This class manages the entirety of Ogre3D(OOP Graphics Rendering Engine).
 
 Exposes the various Ogre classes(Root,Time,RenderWindow,etc.) to the application states, and performs Ogre-specific tasks
 such as get mesh information or making a scene node.
 */
 
-class OgreManager : public Ogre::Singleton<OgreManager>,Ogre::FrameListener
+class OgreManager : public Ogre::FrameListener
 {
 public:
 	//! Initializes all pointers to NULL.

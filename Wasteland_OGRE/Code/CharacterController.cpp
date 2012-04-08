@@ -40,8 +40,8 @@ void CharacterController::create(Ogre::Camera* camera,const Ogre::Vector3& initi
 	cCamera->setPosition(0,0,0);
 	cNode->attachObject(cCamera);
 
-	Ogre::SceneNode* tmpNode = Graphics->createSceneNode(cCamera->getSceneManager(),object("resource\\xml\\test_box.xml").release(),cNode);
-	tmpNode->setPosition(5.0f,1.0f,0.0f);
+	//Ogre::SceneNode* tmpNode = Graphics->createSceneNode(cCamera->getSceneManager(),object("resource\\xml\\test_box.xml").release(),cNode);
+	//tmpNode->setPosition(5.0f,1.0f,0.0f);
 
 	//for some reason, this expects a positive value.
 	//so make the global bullet gravity its inverse.
@@ -51,7 +51,7 @@ void CharacterController::create(Ogre::Camera* camera,const Ogre::Vector3& initi
 	return;
 }
 
-void CharacterController::update(float physicsTimeElapsed,OISManager* inputManager)
+void CharacterController::update(float physicsTimeElapsed,OISManager* inputManager,OgreTransform& transform)
 {
 	btTransform cTransform = cGhostObject->getWorldTransform();
 	btVector3 forwardDirection = cTransform.getBasis()[0]; forwardDirection.normalize();
@@ -163,22 +163,21 @@ void CharacterController::update(float physicsTimeElapsed,OISManager* inputManag
 	}
 
 	cNode->setOrientation(ogreRot);
-	cNode->getChild(0)->setOrientation(ogreRot);
+	//cNode->getChild(0)->setOrientation(ogreRot);
 	cNode->rotate(zRot);
-	cNode->getChild(0)->rotate(zRot);
+	//cNode->getChild(0)->rotate(zRot);
 	//cCamera->setOrientation(ogreRot);
 	//cCamera->rotate(zRot);
 	if(extraRotate)
 	{
 		cNode->rotate(rotation);
-		cNode->getChild(0)->rotate(rotation);
+		//cNode->getChild(0)->rotate(rotation);
 		//cCamera->rotate(rotation);
 	}
 
-	//some debug information i want to know
-	//DebugPrint::getSingleton().printVar((void*)&cNode->_getDerivedPosition(),OGRE);
-	//DebugPrint::getSingleton().printVar((void*)&cCamera->getPosition(),OGRE);
-	//DebugPrint::getSingleton().printVar((void*)&cNode->getChild(0)->_getDerivedPosition(),OGRE);
+	transform.orientation = cNode->getOrientation();
+	transform.position = cCamera->getDerivedPosition();
+	transform.direction = cCamera->getDerivedDirection();
 }
 
 CharacterController::~CharacterController()

@@ -20,12 +20,6 @@ namespace GameManager
 		//Update Bullet
 		phyManager->Update(deltaTime /  1000.0f);
 
-		//if the debug printer is active, update it
-		if(DebugPrint::getSingleton().isActive())
-		{
-			DebugPrint::getSingleton().Update();
-		}
-
 		//Update Ogre
 		Ogre::WindowEventUtilities::messagePump();
 		//If an error occurred...
@@ -81,7 +75,7 @@ namespace GameManager
 				//unless otherwise told
 				if(objectInfo->collisionShape() == "TriangleMesh")
 				{
-					shape = buildTriangleCollisionShape(node);
+					shape = buildTriangleCollisionShape(node,graphicsManager);
 				}
 				else
 				{
@@ -103,7 +97,7 @@ namespace GameManager
 		return retVal;
 	}
 
-	OgreBulletPair createObject(Ogre::SceneNode* node,object_t* objectInfo,BulletManager* phyManager)
+	OgreBulletPair createObject(Ogre::SceneNode* node,object_t* objectInfo,BulletManager* phyManager,OgreManager* graphicsManager)
 	{
 		//Here's the variable that'll be passed back(by-value, not reference!).
 		OgreBulletPair retVal;
@@ -120,7 +114,7 @@ namespace GameManager
 		}
 		else
 		{
-			shape = buildTriangleCollisionShape(node);
+			shape = buildTriangleCollisionShape(node,graphicsManager);
 		}
 		btTransform init; init.setIdentity();
 		btVector3 pos;
@@ -138,7 +132,7 @@ namespace GameManager
 	//----------------------------------------
 
 	//manually builds triangle mesh collision shape.
-	btBvhTriangleMeshShape* buildTriangleCollisionShape(Ogre::SceneNode* node)
+	btBvhTriangleMeshShape* buildTriangleCollisionShape(Ogre::SceneNode* node,OgreManager* Graphics)
 	{
 		btBvhTriangleMeshShape* shape;
 		btTriangleMesh* bmesh = new btTriangleMesh();
@@ -148,7 +142,7 @@ namespace GameManager
 		Ogre::Vector3* vertices;
 		unsigned long* indices;
 
-		OgreManager::getSingleton().getMeshInformation(&mesh,vertCnt,vertices,inCnt,indices);
+		Graphics->getMeshInformation(&mesh,vertCnt,vertices,inCnt,indices);
 
 		btVector3 vert1,vert2,vert3;
 

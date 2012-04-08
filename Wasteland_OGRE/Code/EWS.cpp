@@ -1,6 +1,8 @@
 #include "StdAfx.h"
 #include "EWS.h"
 
+#include "debug\print.h"
+
 EWSManager::EWSManager(Ogre::SceneManager* scene)
 {
 	//setting up and initializing the pointers and stuff.
@@ -43,13 +45,26 @@ void EWSManager::Setup(Ogre::SceneManager* scene)
 
 }
 
-void EWSManager::Update(int health,int newTime)
+void EWSManager::Update(int health,int newTime,bool isPlacing)
 {
-	//assumes timeElapsed is in ms
+	currentTime = newTime;
+	if(!isPlacing)
+	{
+		if(_placed)
+		{
+			placeToggle = 2;
+		}
+		if(!_placed)
+		{
+			placeToggle = 0;
+		}
+	}
+
 	if(!_placed)
 	{
 		return;
 	}
+	//assumes timeElapsed is in ms
 	if((newTime - oldTime) > 500 && health != _health ) //playerInfo != _playerInfo)
 	{
 		//draw health information
@@ -64,23 +79,30 @@ void EWSManager::Update(int health,int newTime)
 	_material->setDepthWriteEnabled(false);
 	_material->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);
 	_material->setDiffuse(Ogre::ColourValue(1.0f,1.0f,1.0f,1.0f));
+	
 	return;
 }
 
 void EWSManager::Place(Ogre::Vector3& rayCastPosition,Ogre::Vector3& rayCastNormal)
 {
-	if(_placed)
+	if(_placed && placeToggle == 2 )
 	{
 		//??
 		_placed = false;
+		_ewsNode->setVisible(false);
+		placeToggle = 1;
 	}
-	else
+	if(!_placed)
 	{
-		_ewsNode->setPosition(rayCastPosition + rayCastNormal);
-		_ewsNode->lookAt(rayCastNormal*2,Ogre::SceneNode::TS_LOCAL);
-		_placed = true;
+		if(placeToggle == 0)
+		{
+			_ewsNode->setPosition(rayCastPosition + rayCastNormal);
+			_ewsNode->lookAt(rayCastPosition + (rayCastNormal),Ogre::SceneNode::TS_WORLD);
+			_placed = true;
+			_ewsNode->setVisible(true);
+			placeToggle = 1;
+		}
 	}
-	//that's it?
 }
 
 void EWSManager::Fill(Ogre::ColourValue& color)

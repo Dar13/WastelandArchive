@@ -3,6 +3,7 @@
 
 #include "OISManager.h"
 #include "OgreManager.h"
+#include "Player.h"
 
 enum ApplicationStates
 {
@@ -37,6 +38,8 @@ protected:
 
 	float _deltaTime;
 	float _oldTime;
+
+	std::unique_ptr<Player> _player;
 };
 
 #endif

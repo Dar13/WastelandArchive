@@ -4,8 +4,9 @@
 #include "Player.h"
 
 #include "OISManager.h"
+#include "Utility.h"
 
-template<> Player* Ogre::Singleton<Player>::ms_Singleton = 0;
+#include "debug\print.h"
 
 const SWeapon SWeapon::EMPTY(0,0);
 
@@ -25,6 +26,7 @@ Player::~Player()
 void Player::Setup(std::string file)
 {
 	//load list of weapon xml files
+	/*
 	list_t* wepList = list(file).release();
 	for(list_t::file_iterator itr = wepList->file().begin(); itr != wepList->file().end(); ++itr)
 	{
@@ -33,41 +35,29 @@ void Player::Setup(std::string file)
 		delete wep;
 	}
 	delete wepList;
+	*/
 }
 
-bool Player::Update()
+bool Player::Update(OISManager* input,BulletManager* physics,EWSManager* ews,const OgreTransform& transform)
 {
-	/*
-	if(!_reloadingWeapon)
+	if(input->isCFGKeyPressed(ENVWARNSYS))
 	{
-		if(OISManager::getSingleton().isMBPressed(OIS::MB_Left))
-		{
-			//shoot gun
-			_firingWeapon = true;
-		}
-		else
-		{
-			_firingWeapon = false;
-		}
-
-		if(OISManager::getSingleton().isMBPressed(OIS::MB_Right) && !_firingWeapon)
-		{
-			//zoom gun
-		}
-
-		if(OISManager::getSingleton().isCFGKeyPressed(RELOAD) && !_firingWeapon)
-		{
-			//reload gun
-			_reloadingWeapon = true;
-		}
+		placeEWS(ews,physics,transform);
 	}
-	else
-	{
-		//reload gun action.
-
-	}
-	*/
 	return true;
+}
+
+void Player::placeEWS(EWSManager* ews,BulletManager* physics,const OgreTransform& transform)
+{
+	btVector3 rayPosition,rayNormal;
+	btVector3 rayStart = Utility::convert_OgreVector3(transform.position);
+	btVector3 rayEnd;
+	Ogre::Vector3 dir = transform.position + (transform.direction * 1000.0f);
+	rayEnd = Utility::convert_OgreVector3(dir);
+	if(physics->RaycastWorld_Closest(rayStart,rayEnd,rayPosition,rayNormal))
+	{
+		ews->Place(Utility::convert_btVector3(rayPosition),Utility::convert_btVector3(rayNormal));
+	}
 }
 
 void Player::Clean(bool reuse)

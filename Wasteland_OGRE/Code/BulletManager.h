@@ -57,6 +57,9 @@ public:
 	//! Sets Debug Drawer variable. This class takes over the responsibility of cleaning it up.
 	void setDebugDrawer(CDebugDraw* drawer);
 
+	//! Returns bool if anything is hit. Position and normal are filled, start and end must be provided.
+	bool RaycastWorld_Closest(const btVector3& start, const btVector3& end, btVector3& position, btVector3& normal);
+
 private:
 
 	//Bullet pointers

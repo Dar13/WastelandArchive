@@ -52,10 +52,10 @@ private:
 
 	//CharacterController* _controller;
 	//EWSManager* _ews;
-	std::auto_ptr<CharacterController> _controller;
-	std::auto_ptr<EWSManager> _ews;
+	std::unique_ptr<CharacterController> _controller;
+	std::unique_ptr<EWSManager> _ews;
 
-	std::auto_ptr<BulletManager> _physics;
+	std::unique_ptr<BulletManager> _physics;
 };
 
 #endif

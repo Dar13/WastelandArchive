@@ -12,7 +12,7 @@ public:
 	void Setup(Ogre::SceneManager* scene);
 	//Passing in the current information needed to be represented.
 	//Would be called by the appState(maybe) or the GameManager(probably).
-	void Update(int health,int newTime);//, void* ammoInfo);
+	void Update(int health,int newTime,bool isPlacing);//, void* ammoInfo);
 
 	void Place(Ogre::Vector3& rayCastPosition,Ogre::Vector3& rayCastNormal);
 
@@ -33,7 +33,8 @@ private:
 	Ogre::SceneNode* _ewsNode;
 	Ogre::Entity* _ewsEntity;
 	bool _placed;
-	int oldTime;
+	int oldTime,currentTime;
+	int placeToggle;
 	//eventually make a struct to hold all this data
 	int _health;
 };

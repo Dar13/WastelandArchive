@@ -18,7 +18,8 @@ public:
 
 	void create(Ogre::Camera* camera,const Ogre::Vector3& initialPosition,btDiscreteDynamicsWorld* phyWorld,OgreManager* Graphics);
 
-	void update(float physicsTimeElapsed,OISManager* inputManager);
+	void update(float physicsTimeElapsed,OISManager* inputManager, OgreTransform& transform);
+
 private:
 	//prefix 'c' to denote privateness AND to differentiate from other variables.
 	//prefix '_' to denote privateness with no need to differentiate from other variables.

@@ -16,6 +16,7 @@
     <ClInclude Include="Code\Arena_Tutorial.h" />
     <ClInclude Include="Code\BulletManager.h" />
     <ClInclude Include="Code\CharacterController.h" />
+    <ClInclude Include="Code\debug\console.h" />
     <ClInclude Include="Code\debug\print.h" />
     <ClInclude Include="Code\debug_draw\DebugDraw.hpp" />
     <ClInclude Include="Code\debug_draw\DynamicLineDrawer.hpp" />
@@ -42,6 +43,7 @@
     <ClCompile Include="Code\Arena_Tutorial.cpp" />
     <ClCompile Include="Code\BulletManager.cpp" />
     <ClCompile Include="Code\CharacterController.cpp" />
+    <ClCompile Include="Code\debug\console.cpp" />
     <ClCompile Include="Code\debug\print.cpp" />
     <ClCompile Include="Code\debug_draw\DebugDraw.cpp" />
     <ClCompile Include="Code\debug_draw\DynamicLineDrawer.cpp" />

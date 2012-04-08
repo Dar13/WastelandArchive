@@ -58,7 +58,8 @@ namespace GameManager
 	*/
 	OgreBulletPair createObject(Ogre::SceneNode* node,
 								object_t* objectInfo,
-								BulletManager* phyManager);
+								BulletManager* phyManager,
+								OgreManager* graphicsManager);
 
 	/*! Tells class to use the debug drawer, to verify collisions are happening correctly.
 		
@@ -74,7 +75,7 @@ namespace GameManager
 	
 	//! Utilizes a special OgreManager function to create a triangle mesh collision shape.
 	//! \sa OgreManager::getMeshInformation()
-	btBvhTriangleMeshShape* buildTriangleCollisionShape(Ogre::SceneNode* node);
+	btBvhTriangleMeshShape* buildTriangleCollisionShape(Ogre::SceneNode* node,OgreManager* Graphics);
 };
 
 #endif

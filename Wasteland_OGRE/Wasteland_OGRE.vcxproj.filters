@@ -138,6 +138,9 @@
     <ClInclude Include="Code\Utility.h">
       <Filter>Include Files\Utility</Filter>
     </ClInclude>
+    <ClInclude Include="Code\debug\console.h">
+      <Filter>Include Files\Debug\Screen</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">
@@ -208,6 +211,9 @@
     </ClCompile>
     <ClCompile Include="Code\Utility.cpp">
       <Filter>Include Files\Utility</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\debug\console.cpp">
+      <Filter>Include Files\Debug\Screen</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

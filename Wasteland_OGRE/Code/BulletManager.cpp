@@ -7,6 +7,7 @@
 
 BulletManager::BulletManager()
 {
+	//Sets everything to NULL.
 	_World = 0;
 	_OverlapPairCache = 0;
 	_Dispatch = 0;
@@ -120,6 +121,30 @@ btCollisionShape* BulletManager::generateCollisionShape(object_t* objectInfo)
 	}
 
 	return retVal;
+}
+
+bool BulletManager::RaycastWorld_Closest(const btVector3& start,const btVector3& end, btVector3& position, btVector3& normal)
+{
+	//structure that will hold the results
+	btCollisionWorld::ClosestRayResultCallback rayResult(start,end);
+	
+	//perform the raycast, if _World is defined.
+	if(_World)
+	{
+		_World->rayTest(start,end,rayResult);
+		if(rayResult.hasHit())
+		{
+			//set the position
+			position = rayResult.m_hitPointWorld;
+			//set the normal
+			normal =rayResult.m_hitNormalWorld;
+			return true;
+		}
+	}
+
+	//is only executed when _World is set to NULL.
+	return false;
+
 }
 
 void BulletManager::Shutdown(bool reuse)

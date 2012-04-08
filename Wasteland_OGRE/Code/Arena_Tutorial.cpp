@@ -2,7 +2,8 @@
 
 #include "Arena_Tutorial.h"
 #include "GameManager.h"
-#include "debug\print.h"
+#include "debug\console.h"
+#include "Utility.h"
 
 ArenaTutorial::ArenaTutorial()
 {
@@ -30,29 +31,6 @@ void ArenaTutorial::Setup(OISManager* Input,OgreManager* Graphics)
 	_physics.reset(new BulletManager() );
 	_physics->Setup();
 	_physics->setGravity(btVector3(0.0f,-9.8f,0.0f));
-	
-	//Loading the level through the GameManager(takes care of Bullet initialization,etc)
-	/*
-	object_t* level = object("resource\\xml\\test.xml").release();
-	OgreBulletPair levelPair = GameManager::getSingleton().createObject(_scene,level);
-	delete level;
-
-	object_t* sphere = object("resource\\xml\\test_sphere.xml").release();
-	OgreBulletPair spherePair = GameManager::getSingleton().createObject(_scene,sphere);
-	delete sphere;
-
-	object_t* box = object("resource\\xml\\test_box.xml").release();
-	OgreBulletPair boxPair = GameManager::getSingleton().createObject(_scene,box);
-	delete box;
-
-	object_t* test_barrier = object("resource\\xml\\test_enem.xml").release();
-	OgreBulletPair barPair = GameManager::getSingleton().createObject(_scene,test_barrier);
-	delete test_barrier;
-	
-	_pairs.push_back(spherePair);
-	_pairs.push_back(boxPair);
-	_pairs.push_back(barPair);
-	*/
 
 	//using a list instead of hardcoded files
 	std::auto_ptr<list_t> objList = list("resource\\xml\\arena_list.xml");
@@ -67,7 +45,7 @@ void ArenaTutorial::Setup(OISManager* Input,OgreManager* Graphics)
 	_camera->setFarClipDistance(1000.0f);
 	_camera->lookAt(0,1.8f,0);
 
-	//_camera->setPolygonMode(Ogre::PM_WIREFRAME);
+	_player.reset(new Player());
 	
 	//set the camera aspect ratio
 	_camera->setAspectRatio(4.0f/3.0f);
@@ -75,11 +53,7 @@ void ArenaTutorial::Setup(OISManager* Input,OgreManager* Graphics)
 	//let's try out the character controller
 	_controller.reset(new CharacterController(_camera,_camera->getPosition(),_physics->getWorld(),Graphics ) );
 	//since we're using the character controller, should also lock the mouse.
-	//OISManager::getSingleton().setMouseLock(true);
 	Input->setMouseLock(true);
-
-	//DebugPrint::getSingleton().Setup(_scene);
-	//GameManager::getSingleton().useDebugDrawer(_scene);
 
 	//let's setup the EWS system
 	_ews.reset(new EWSManager(_scene));
@@ -88,8 +62,10 @@ void ArenaTutorial::Setup(OISManager* Input,OgreManager* Graphics)
 int ArenaTutorial::Run(OISManager* Input,OgreManager* Graphics)
 {
 	_stateShutdown=false;
-	Ogre::Node* tmp = _scene->getRootSceneNode()->getChild("nodetestSphere");
+	Ogre::SceneNode* tmpNode = (Ogre::SceneNode*)_scene->getRootSceneNode()->getChild("nodetestSphere");
 
+	OgreTransform playerTransform;
+	
 	float time;
 	//while the escape key isn't pressed and the state isn't told to shutdown.
 	while(!_stateShutdown)
@@ -101,27 +77,21 @@ int ArenaTutorial::Run(OISManager* Input,OgreManager* Graphics)
 		//setting the old time
 		_oldTime = time;
 
-		//should the state shutdown based on player input?
+		//the state shutdown based on player input(?)
 		_stateShutdown = Input->Update(true);
 
-		//testing out something
-		if(Input->isMBPressed(OIS::MB_Right))
-		{
-			
-		}
-
 		//Update the character controller
-		_controller->update(_deltaTime,Input);
+		_controller->update(_deltaTime,Input,playerTransform);
+
+		//Update Player-specific stuff
+		_player->Update(Input,_physics.get(),_ews.get(),playerTransform);
 
 		//Update the EWS system
-		_ews->Update(100,static_cast<int>(time));
+		_ews->Update(100,static_cast<int>(time),Input->isCFGKeyPressed(ENVWARNSYS));
 
 		//True indicates success, so react on if it doesn't react properly
 		if(!GameManager::UpdateManagers(Graphics,_physics.get(),_deltaTime))
 			_stateShutdown = true;
-
-		//EWS updates in GameManager::UpdateManagers()
-		//EWSManager::getSingletonPtr()->Update(50,0);
 	}
 
 	//no matter what, end the program after this state. **TESTING ONLY**
@@ -131,9 +101,6 @@ int ArenaTutorial::Run(OISManager* Input,OgreManager* Graphics)
 //clean-up of state
 void ArenaTutorial::Shutdown(OISManager* Input,OgreManager* Graphics)
 {
-	//Needs to reset first.
-	//EWSManager::getSingleton().Reset();
-
 	//undo what I set in OIS
 	Input->setMouseLock(false);
 
@@ -156,7 +123,7 @@ void ArenaTutorial::Shutdown(OISManager* Input,OgreManager* Graphics)
 	//since all pointers are auto_ptr members, then they will be deleted upon class destruction.
 
 	//Has to be cleaned after every Setup, in the same app-state.
-	DebugPrint::getSingleton().Clean();
+	//DebugPrint::getSingleton().Clean();
 
 	//Destroy the scene manager.
 	Graphics->getRoot()->destroySceneManager(_scene);
