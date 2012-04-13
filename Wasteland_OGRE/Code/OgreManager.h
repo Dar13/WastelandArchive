@@ -91,6 +91,7 @@ public:
 
 	//Some math-related functions
 	Ogre::Quaternion eulerToQuat(Ogre::Radian rX,Ogre::Radian rY,Ogre::Radian rZ);
+	bool isPointInTriangle2D(const Ogre::Vector3& pointA,const Ogre::Vector3& pointB,const Ogre::Vector3& pointC,const Ogre::Vector3& pointP);
 
 private:
 	//Hidden methods

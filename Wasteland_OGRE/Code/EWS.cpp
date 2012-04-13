@@ -107,7 +107,10 @@ void EWSManager::Place(const Ogre::Vector3& rayCastPosition,const Ogre::Vector3&
 	{
 		if(placeToggle == 0)
 		{
+			//to avoid intersection with source node
 			_ewsNode->setPosition(rayCastPosition + rayCastNormal);
+			//to avoid rotation build-up. Now the node rotates cleanly.
+			_ewsNode->resetOrientation();;
 			if(rayCastNormal == Ogre::Vector3::UNIT_Y || rayCastNormal == Ogre::Vector3::NEGATIVE_UNIT_Y)
 			{
 				_pointToPlayer = true;
@@ -116,13 +119,16 @@ void EWSManager::Place(const Ogre::Vector3& rayCastPosition,const Ogre::Vector3&
 			else
 			{
 				_pointToPlayer = false;
-				_ewsNode->lookAt(rayCastPosition + (rayCastNormal),Ogre::SceneNode::TS_WORLD);
+				_ewsNode->lookAt(rayCastNormal*2,Ogre::Node::TS_LOCAL);
 			}
 			_placed = true;
 			_ewsNode->setVisible(true);
 			placeToggle = 1;
+			VirtualConsole::getSingleton().put("---\n");
 			VirtualConsole::getSingleton().put(Utility::vector3_toStr(rayCastNormal));
 			VirtualConsole::getSingleton().put(Utility::vector3_toStr(rayCastPosition));
+			VirtualConsole::getSingleton().put(Utility::vector3_toStr(rayCastPosition + rayCastNormal));
+			VirtualConsole::getSingleton().put(Utility::vector3_toStr(playerTransform.position));
 		}
 	}
 }

@@ -423,3 +423,31 @@ Ogre::Quaternion OgreManager::eulerToQuat(Ogre::Radian rX,Ogre::Radian rY,Ogre::
 	qT = qX * qY;
 	return (qT * qZ);
 }
+
+//I really hope this works. Pain in the ass if it doesn't.
+//Returns true if pointP is within triangle ABC.
+//Takes x/z coordinates of 3D vector.
+bool OgreManager::isPointInTriangle2D(const Ogre::Vector3& pointA,const Ogre::Vector3& pointB,const Ogre::Vector3& pointC,const Ogre::Vector3& pointP)
+{
+	Ogre::Vector3 u,v,w,crossW,crossU,crossV;
+	u = pointB - pointA;
+	v = pointC - pointA;
+	w = pointP - pointA;
+	crossW = v.crossProduct(w);
+	crossU = v.crossProduct(u);
+
+	if(crossW.dotProduct(crossU) < 0)
+		return false;
+
+	crossW = u.crossProduct(w);
+	crossV = u.crossProduct(v);
+
+	if(crossW.dotProduct(crossV) < 0)
+		return false;
+
+	float denom = crossV.length();
+	float r = crossW.length() / denom;
+	float t = (u.crossProduct(w).length())/denom;
+
+	return (r <= 1 && t<=1 && (r+t) <= 1);
+}
