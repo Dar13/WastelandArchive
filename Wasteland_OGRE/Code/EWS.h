@@ -1,7 +1,5 @@
 #include "StdAfx.h"
 
-
-
 #ifndef _ENVWARNSYS_H_
 #define _ENVWARNSYS_H_
 

@@ -98,7 +98,7 @@ void EWSManager::Place(const Ogre::Vector3& rayCastPosition,const Ogre::Vector3&
 {
 	if(_placed && placeToggle == 2 )
 	{
-		//??
+		//if placed already, set to unplaced and make EWS system invisible.
 		_placed = false;
 		_ewsNode->setVisible(false);
 		placeToggle = 1;
@@ -109,6 +109,8 @@ void EWSManager::Place(const Ogre::Vector3& rayCastPosition,const Ogre::Vector3&
 		{
 			//to avoid intersection with source node
 			_ewsNode->setPosition(rayCastPosition + rayCastNormal);
+			//check to see if it's intersecting with something
+			
 			//to avoid rotation build-up. Now the node rotates cleanly.
 			_ewsNode->resetOrientation();;
 			if(rayCastNormal == Ogre::Vector3::UNIT_Y || rayCastNormal == Ogre::Vector3::NEGATIVE_UNIT_Y)
