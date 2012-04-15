@@ -312,23 +312,6 @@ class sounds_t: public ::xml_schema::type
   void
   dryfire (::std::auto_ptr< dryfire_type > p);
 
-  // altreload
-  // 
-  typedef ::xml_schema::string altreload_type;
-  typedef ::xsd::cxx::tree::traits< altreload_type, char > altreload_traits;
-
-  const altreload_type&
-  altreload () const;
-
-  altreload_type&
-  altreload ();
-
-  void
-  altreload (const altreload_type& x);
-
-  void
-  altreload (::std::auto_ptr< altreload_type > p);
-
   // altfire
   // 
   typedef ::xml_schema::string altfire_type;
@@ -346,14 +329,31 @@ class sounds_t: public ::xml_schema::type
   void
   altfire (::std::auto_ptr< altfire_type > p);
 
+  // altreload
+  // 
+  typedef ::xml_schema::string altreload_type;
+  typedef ::xsd::cxx::tree::traits< altreload_type, char > altreload_traits;
+
+  const altreload_type&
+  altreload () const;
+
+  altreload_type&
+  altreload ();
+
+  void
+  altreload (const altreload_type& x);
+
+  void
+  altreload (::std::auto_ptr< altreload_type > p);
+
   // Constructors.
   //
   sounds_t (const fire_type&,
             const reload_type&,
             const putaway_type&,
             const dryfire_type&,
-            const altreload_type&,
-            const altfire_type&);
+            const altfire_type&,
+            const altreload_type&);
 
   sounds_t (const ::xercesc::DOMElement& e,
             ::xml_schema::flags f = 0,
@@ -382,8 +382,8 @@ class sounds_t: public ::xml_schema::type
   ::xsd::cxx::tree::one< reload_type > reload_;
   ::xsd::cxx::tree::one< putaway_type > putaway_;
   ::xsd::cxx::tree::one< dryfire_type > dryfire_;
-  ::xsd::cxx::tree::one< altreload_type > altreload_;
   ::xsd::cxx::tree::one< altfire_type > altfire_;
+  ::xsd::cxx::tree::one< altreload_type > altreload_;
 };
 
 class soundFrame_t: public ::xml_schema::type
@@ -392,16 +392,19 @@ class soundFrame_t: public ::xml_schema::type
   // frame
   // 
   typedef ::xml_schema::integer frame_type;
+  typedef ::xsd::cxx::tree::sequence< frame_type > frame_sequence;
+  typedef frame_sequence::iterator frame_iterator;
+  typedef frame_sequence::const_iterator frame_const_iterator;
   typedef ::xsd::cxx::tree::traits< frame_type, char > frame_traits;
 
-  const frame_type&
+  const frame_sequence&
   frame () const;
 
-  frame_type&
+  frame_sequence&
   frame ();
 
   void
-  frame (const frame_type& x);
+  frame (const frame_sequence& s);
 
   // sound
   // 
@@ -422,8 +425,7 @@ class soundFrame_t: public ::xml_schema::type
 
   // Constructors.
   //
-  soundFrame_t (const frame_type&,
-                const sound_type&);
+  soundFrame_t (const sound_type&);
 
   soundFrame_t (const ::xercesc::DOMElement& e,
                 ::xml_schema::flags f = 0,
@@ -448,7 +450,7 @@ class soundFrame_t: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
-  ::xsd::cxx::tree::one< frame_type > frame_;
+  frame_sequence frame_;
   ::xsd::cxx::tree::one< sound_type > sound_;
 };
 

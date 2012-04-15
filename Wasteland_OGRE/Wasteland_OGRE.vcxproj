@@ -22,6 +22,7 @@
     <ClInclude Include="Code\debug_draw\DynamicLineDrawer.hpp" />
     <ClInclude Include="Code\EWS.h" />
     <ClInclude Include="Code\GameManager.h" />
+    <ClInclude Include="Code\GUIManager.h" />
     <ClInclude Include="Code\interfaces\configuration.hxx" />
     <ClInclude Include="Code\interfaces\interfaces.h" />
     <ClInclude Include="Code\interfaces\list.hxx" />
@@ -29,6 +30,7 @@
     <ClInclude Include="Code\interfaces\resource.hxx" />
     <ClInclude Include="Code\interfaces\weapon.hxx" />
     <ClInclude Include="Code\Intro.h" />
+    <ClInclude Include="Code\menu\Menu.h" />
     <ClInclude Include="Code\OgreManager.h" />
     <ClInclude Include="Code\OISManager.h" />
     <ClInclude Include="Code\Player.h" />
@@ -49,6 +51,7 @@
     <ClCompile Include="Code\debug_draw\DynamicLineDrawer.cpp" />
     <ClCompile Include="Code\EWS.cpp" />
     <ClCompile Include="Code\GameManager.cpp" />
+    <ClCompile Include="Code\GUIManager.cpp" />
     <ClCompile Include="Code\interfaces\configuration.cxx" />
     <ClCompile Include="Code\interfaces\list.cxx" />
     <ClCompile Include="Code\interfaces\object.cxx" />
@@ -56,6 +59,7 @@
     <ClCompile Include="Code\interfaces\weapon.cxx" />
     <ClCompile Include="Code\Intro.cpp" />
     <ClCompile Include="Code\Main.cpp" />
+    <ClCompile Include="Code\menu\Menu.cpp" />
     <ClCompile Include="Code\OgreManager.cpp" />
     <ClCompile Include="Code\OISManager.cpp" />
     <ClCompile Include="Code\Player.cpp" />

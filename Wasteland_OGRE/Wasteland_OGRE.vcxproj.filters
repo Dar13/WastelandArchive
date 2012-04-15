@@ -61,6 +61,12 @@
     <Filter Include="Include Files\Utility">
       <UniqueIdentifier>{a44fa1ab-4171-4d53-8eb5-900640376e76}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include Files\Game\Menu">
+      <UniqueIdentifier>{8906feaf-5e64-47fe-82ea-803228902a0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files\GUI">
+      <UniqueIdentifier>{9da7cc64-0c0f-4a72-b744-baead875d167}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\State.h">
@@ -141,6 +147,12 @@
     <ClInclude Include="Code\debug\console.h">
       <Filter>Include Files\Debug\Screen</Filter>
     </ClInclude>
+    <ClInclude Include="Code\menu\Menu.h">
+      <Filter>Include Files\Game\Menu</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\GUIManager.h">
+      <Filter>Include Files\GUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">
@@ -214,6 +226,12 @@
     </ClCompile>
     <ClCompile Include="Code\debug\console.cpp">
       <Filter>Include Files\Debug\Screen</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\menu\Menu.cpp">
+      <Filter>Include Files\Game\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\GUIManager.cpp">
+      <Filter>Include Files\GUI</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

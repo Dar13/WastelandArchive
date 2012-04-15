@@ -168,12 +168,9 @@ bool OISManager::keyPressed(const OIS::KeyEvent &evt)
 		_appShutdown=true;
 	}
 
-	//Will eventually inject input into CEGUI/Bullet/etc.
 	//injection into CEGUI...
-	/*
 	CEGUI::System::getSingleton().injectKeyDown(evt.key);
 	CEGUI::System::getSingleton().injectChar(evt.text);
-	*/
 
 	char character = evt.text;
 	std::string checkString;
@@ -233,7 +230,7 @@ bool OISManager::keyReleased(const OIS::KeyEvent &evt)
 {
 	//Will eventually inject input into CEGUI/Bullet/etc.
 	//injection into CEGUI...
-	//CEGUI::System::getSingleton().injectKeyUp(evt.key);
+	CEGUI::System::getSingleton().injectKeyUp(evt.key);
 	
 	char character = getCharFromKeyCode(evt.key);
 	std::string checkString;
@@ -291,7 +288,7 @@ bool OISManager::keyReleased(const OIS::KeyEvent &evt)
 
 bool OISManager::mouseMoved(const OIS::MouseEvent &evt)
 {
-
+	CEGUI::System::getSingletonPtr()->injectMouseMove(evt.state.X.rel,evt.state.Y.rel);
 	return true;
 }
 
@@ -312,6 +309,10 @@ bool OISManager::mousePressed(const OIS::MouseEvent &evt,OIS::MouseButtonID id)
 		//nothing.
 		break;
 	};
+
+	//injection into CEGUI
+	CEGUI::System::getSingletonPtr()->injectMouseButtonDown(static_cast<CEGUI::MouseButton>(id));
+
 	return true;
 }
 
@@ -332,6 +333,10 @@ bool OISManager::mouseReleased(const OIS::MouseEvent &evt,OIS::MouseButtonID id)
 		//nothing.
 		break;
 	};
+
+	//CEGUI injection
+	CEGUI::System::getSingletonPtr()->injectMouseButtonUp(static_cast<CEGUI::MouseButton>(id));
+
 	return true;
 }
 

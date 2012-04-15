@@ -140,30 +140,6 @@ dryfire (::std::auto_ptr< dryfire_type > x)
   this->dryfire_.set (x);
 }
 
-const sounds_t::altreload_type& sounds_t::
-altreload () const
-{
-  return this->altreload_.get ();
-}
-
-sounds_t::altreload_type& sounds_t::
-altreload ()
-{
-  return this->altreload_.get ();
-}
-
-void sounds_t::
-altreload (const altreload_type& x)
-{
-  this->altreload_.set (x);
-}
-
-void sounds_t::
-altreload (::std::auto_ptr< altreload_type > x)
-{
-  this->altreload_.set (x);
-}
-
 const sounds_t::altfire_type& sounds_t::
 altfire () const
 {
@@ -188,26 +164,50 @@ altfire (::std::auto_ptr< altfire_type > x)
   this->altfire_.set (x);
 }
 
+const sounds_t::altreload_type& sounds_t::
+altreload () const
+{
+  return this->altreload_.get ();
+}
+
+sounds_t::altreload_type& sounds_t::
+altreload ()
+{
+  return this->altreload_.get ();
+}
+
+void sounds_t::
+altreload (const altreload_type& x)
+{
+  this->altreload_.set (x);
+}
+
+void sounds_t::
+altreload (::std::auto_ptr< altreload_type > x)
+{
+  this->altreload_.set (x);
+}
+
 
 // soundFrame_t
 // 
 
-const soundFrame_t::frame_type& soundFrame_t::
+const soundFrame_t::frame_sequence& soundFrame_t::
 frame () const
 {
-  return this->frame_.get ();
+  return this->frame_;
 }
 
-soundFrame_t::frame_type& soundFrame_t::
+soundFrame_t::frame_sequence& soundFrame_t::
 frame ()
 {
-  return this->frame_.get ();
+  return this->frame_;
 }
 
 void soundFrame_t::
-frame (const frame_type& x)
+frame (const frame_sequence& s)
 {
-  this->frame_.set (x);
+  this->frame_ = s;
 }
 
 const soundFrame_t::sound_type& soundFrame_t::
@@ -509,15 +509,15 @@ sounds_t (const fire_type& fire,
           const reload_type& reload,
           const putaway_type& putaway,
           const dryfire_type& dryfire,
-          const altreload_type& altreload,
-          const altfire_type& altfire)
+          const altfire_type& altfire,
+          const altreload_type& altreload)
 : ::xml_schema::type (),
   fire_ (fire, ::xml_schema::flags (), this),
   reload_ (reload, ::xml_schema::flags (), this),
   putaway_ (putaway, ::xml_schema::flags (), this),
   dryfire_ (dryfire, ::xml_schema::flags (), this),
-  altreload_ (altreload, ::xml_schema::flags (), this),
-  altfire_ (altfire, ::xml_schema::flags (), this)
+  altfire_ (altfire, ::xml_schema::flags (), this),
+  altreload_ (altreload, ::xml_schema::flags (), this)
 {
 }
 
@@ -530,8 +530,8 @@ sounds_t (const sounds_t& x,
   reload_ (x.reload_, f, this),
   putaway_ (x.putaway_, f, this),
   dryfire_ (x.dryfire_, f, this),
-  altreload_ (x.altreload_, f, this),
-  altfire_ (x.altfire_, f, this)
+  altfire_ (x.altfire_, f, this),
+  altreload_ (x.altreload_, f, this)
 {
 }
 
@@ -544,8 +544,8 @@ sounds_t (const ::xercesc::DOMElement& e,
   reload_ (f, this),
   putaway_ (f, this),
   dryfire_ (f, this),
-  altreload_ (f, this),
-  altfire_ (f, this)
+  altfire_ (f, this),
+  altreload_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -620,20 +620,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
-    // altreload
-    //
-    if (n.name () == "altreload" && n.namespace_ ().empty ())
-    {
-      ::std::auto_ptr< altreload_type > r (
-        altreload_traits::create (i, f, this));
-
-      if (!altreload_.present ())
-      {
-        this->altreload_.set (r);
-        continue;
-      }
-    }
-
     // altfire
     //
     if (n.name () == "altfire" && n.namespace_ ().empty ())
@@ -644,6 +630,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!altfire_.present ())
       {
         this->altfire_.set (r);
+        continue;
+      }
+    }
+
+    // altreload
+    //
+    if (n.name () == "altreload" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< altreload_type > r (
+        altreload_traits::create (i, f, this));
+
+      if (!altreload_.present ())
+      {
+        this->altreload_.set (r);
         continue;
       }
     }
@@ -679,17 +679,17 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "");
   }
 
-  if (!altreload_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "altreload",
-      "");
-  }
-
   if (!altfire_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "altfire",
+      "");
+  }
+
+  if (!altreload_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "altreload",
       "");
   }
 }
@@ -710,10 +710,9 @@ sounds_t::
 //
 
 soundFrame_t::
-soundFrame_t (const frame_type& frame,
-              const sound_type& sound)
+soundFrame_t (const sound_type& sound)
 : ::xml_schema::type (),
-  frame_ (frame, ::xml_schema::flags (), this),
+  frame_ (::xml_schema::flags (), this),
   sound_ (sound, ::xml_schema::flags (), this)
 {
 }
@@ -757,11 +756,8 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "frame" && n.namespace_ ().empty ())
     {
-      if (!frame_.present ())
-      {
-        this->frame_.set (frame_traits::create (i, f, this));
-        continue;
-      }
+      this->frame_.push_back (frame_traits::create (i, f, this));
+      continue;
     }
 
     // sound
@@ -779,13 +775,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     }
 
     break;
-  }
-
-  if (!frame_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "frame",
-      "");
   }
 
   if (!sound_.present ())
