@@ -9,6 +9,7 @@
 #include "State.h"
 
 //actual states
+#include "menu\Menu.h"
 #include "ArenaALL.h"
 
 /*!
@@ -27,7 +28,7 @@ public:
 	~StateManager(){Shutdown();}
 
 	//! Sets up the StateManager.
-	void Setup(OISManager* inputManager,OgreManager* graphicsManager);
+	void Setup(OISManager* inputManager,OgreManager* graphicsManager,GUIManager* guiManager);
 	//! Runs the StateManager, until the End state is reached.
 	void Run();
 	//! Shutsdown and cleans up the StateManager. Is called in the destructor.
@@ -44,6 +45,7 @@ private:
 
 	OISManager* _Input;
 	OgreManager* _Graphics;
+	GUIManager* _Gui;
 };
 
 #endif

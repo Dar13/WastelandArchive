@@ -18,7 +18,8 @@ namespace GameManager
 		bool retVal = true;
 
 		//Update Bullet
-		phyManager->Update(deltaTime /  1000.0f);
+		if(phyManager != NULL)
+			phyManager->Update(deltaTime /  1000.0f);
 
 		//Update Ogre
 		Ogre::WindowEventUtilities::messagePump();

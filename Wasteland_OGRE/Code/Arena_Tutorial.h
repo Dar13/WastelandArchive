@@ -25,11 +25,11 @@ public:
 	ArenaTutorial();
 
 	//! State-specific setup.
-	void Setup(OISManager* Input,OgreManager* Graphics);
+	void Setup(OISManager* Input,OgreManager* Graphics,GUIManager* Gui);
 	//! Runs the state.
-	int Run(OISManager* Input,OgreManager* Graphics);
+	int Run(OISManager* Input,OgreManager* Graphics,GUIManager* Gui);
 	//! Shutsdown and cleans up the application state.
-	void Shutdown(OISManager* Input,OgreManager* Graphics);
+	void Shutdown(OISManager* Input,OgreManager* Graphics,GUIManager* Gui);
 
 private:
 	//! Tracks all OgreBulletPairs

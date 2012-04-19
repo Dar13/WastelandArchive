@@ -16,7 +16,7 @@ ArenaTutorial::ArenaTutorial()
 	_oldTime = 0;
 }
 
-void ArenaTutorial::Setup(OISManager* Input,OgreManager* Graphics)
+void ArenaTutorial::Setup(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
 {
 	_scene = Graphics->getRoot()->createSceneManager(Ogre::ST_INTERIOR,"arenaTut");
 
@@ -59,7 +59,7 @@ void ArenaTutorial::Setup(OISManager* Input,OgreManager* Graphics)
 	_ews.reset(new EWSManager(_scene));
 }
 
-int ArenaTutorial::Run(OISManager* Input,OgreManager* Graphics)
+int ArenaTutorial::Run(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
 {
 	_stateShutdown=false;
 	Ogre::SceneNode* tmpNode = (Ogre::SceneNode*)_scene->getRootSceneNode()->getChild("nodetestSphere");
@@ -99,7 +99,7 @@ int ArenaTutorial::Run(OISManager* Input,OgreManager* Graphics)
 }
 
 //clean-up of state
-void ArenaTutorial::Shutdown(OISManager* Input,OgreManager* Graphics)
+void ArenaTutorial::Shutdown(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
 {
 	//undo what I set in OIS
 	Input->setMouseLock(false);

@@ -59,7 +59,7 @@
     <ClCompile Include="Code\interfaces\weapon.cxx" />
     <ClCompile Include="Code\Intro.cpp" />
     <ClCompile Include="Code\Main.cpp" />
-    <ClCompile Include="Code\menu\Menu.cpp" />
+    <ClCompile Include="Code\menu\MainMenu.cpp" />
     <ClCompile Include="Code\OgreManager.cpp" />
     <ClCompile Include="Code\OISManager.cpp" />
     <ClCompile Include="Code\Player.cpp" />

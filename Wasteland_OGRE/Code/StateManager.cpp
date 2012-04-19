@@ -10,21 +10,23 @@ StateManager::StateManager()
 	//Make sure these pointers don't get lost!
 
 	//ToDo: Change the init to reflect the varying state classes.
+	_States.insert(std::make_pair(MENU,new MainMenu()));
 	_States.insert(std::make_pair(GAME_ARENA,new ArenaTutorial()));
 }
 
-void StateManager::Setup(OISManager* inputManager,OgreManager* graphicsManager)
+void StateManager::Setup(OISManager* inputManager,OgreManager* graphicsManager,GUIManager* guiManager)
 {
 	//Not sure if I need this step at the moment. We'll see.
 	//looks like I need it
 	_Input = inputManager;
 	_Graphics = graphicsManager;
+	_Gui = guiManager;
 }
 
 void StateManager::Run()
 {
 	//int curState=INTRO; //true start value
-	int curState=GAME_ARENA; //will really start at INTRO
+	int curState=MENU; //will really start at INTRO
 	int oldState=curState;
 
 	while(curState!=END)
@@ -32,13 +34,13 @@ void StateManager::Run()
 		if(_States[curState] != NULL)
 		{
 			//setting up the current state
-			_States[curState]->Setup(_Input,_Graphics);
+			_States[curState]->Setup(_Input,_Graphics,_Gui);
 			//saving the state, so we can do clean up later
 			oldState=curState;
 			//run the state, gets next state from run method
-			curState=_States[curState]->Run(_Input,_Graphics);
+			curState=_States[curState]->Run(_Input,_Graphics,_Gui);
 			//clean up old state(really the current state but eh)
-			_States[oldState]->Shutdown(_Input,_Graphics);
+			_States[oldState]->Shutdown(_Input,_Graphics,_Gui);
 			delete _States[oldState];
 			//make sure they know it's deleted
 			_States[oldState] = NULL;
@@ -52,7 +54,7 @@ void StateManager::Run()
 				//_States[curState] = new
 				break;
 			case MENU:
-				//_States[curState] = new
+				_States[curState] = new MainMenu();
 				break;
 			case GAME_ARENA:
 				_States[curState] = new ArenaTutorial();
