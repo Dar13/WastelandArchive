@@ -74,9 +74,6 @@ void StateManager::Run()
 			case CREDITS:
 				//_States[curState] = new Credits
 				break;
-			case END:
-
-				break;
 			};
 		}
 	}

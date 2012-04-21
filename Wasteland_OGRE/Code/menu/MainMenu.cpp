@@ -16,19 +16,29 @@ void MainMenu::Setup(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
 	if(_stateShutdown)
 		_stateShutdown = false;
 	
-	_guiSheet = Gui->getWinManager()->createWindow("DefaultWindow","main_Root");
-	Gui->addGUISheet(_guiSheet);
-
-	std::pair<std::string,CEGUI::Window*> window;
-	window.first = "main_Exit_btn";
-	window.second = Gui->getWinManager()->createWindow("SleekSpace/Button",window.first);
-	window.second->setText("CLICK ME!!");
-	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.5,0),CEGUI::UDim(.5,0)));
-	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.1,0),CEGUI::UDim(.1,0)));
-	_guiSheetChildren.insert(window);
-	_guiSheet->addChildWindow(window.second);
-	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(&MainMenu::_shutdown,this));
-
+	if(!Gui->doesGUISheetExist("main_Root"))
+	{
+		_guiSheet = Gui->getWinManager()->createWindow("DefaultWindow","main_Root");
+		Gui->addGUISheet(_guiSheet);
+		std::pair<std::string,CEGUI::Window*> window;
+		window.first = "main_Exit_btn";
+		window.second = Gui->getWinManager()->createWindow("SleekSpace/Button",window.first);
+		window.second->setText("Exit Game");
+		window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.5,0),CEGUI::UDim(.5,0)));
+		window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.1,0),CEGUI::UDim(.1,0)));
+		_guiSheetChildren.insert(window);
+		_guiSheet->addChildWindow(window.second);
+		window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(&MainMenu::_shutdown,this));
+	
+		window.first = "main_Start_btn";
+		window.second = Gui->getWinManager()->createWindow("SleekSpace/Button",window.first);
+		window.second->setText("Start Game");
+		window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.5,0),CEGUI::UDim(.4,0)));
+		window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.1,0),CEGUI::UDim(.1,0)));
+		_guiSheetChildren.insert(window);
+		_guiSheet->addChildWindow(window.second);
+		window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(&MainMenu::_start,this));
+	}
 
 	Gui->setCurrentGUISheet("main_Root");
 
@@ -48,7 +58,7 @@ int MainMenu::Run(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
 		GameManager::UpdateManagers(Graphics,NULL,_deltaTime);
 	}
 
-	return GAME_ARENA;
+	return _returnValue;
 }
 
 void MainMenu::Shutdown(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
@@ -62,6 +72,15 @@ void MainMenu::Shutdown(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
 bool MainMenu::_shutdown(const CEGUI::EventArgs& arg)
 {
 	_stateShutdown = true;
+	_returnValue = END;
+
+	return true;
+}
+
+bool MainMenu::_start(const CEGUI::EventArgs& arg)
+{
+	_stateShutdown = true;
+	_returnValue = GAME_ARENA;
 
 	return true;
 }

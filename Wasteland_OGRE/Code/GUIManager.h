@@ -16,6 +16,7 @@ public:
 
 	void setLookNFeel(const std::string& schemeFileName);
 
+	bool doesGUISheetExist(const std::string& sheetName);
 	void setCurrentGUISheet(const std::string& sheetName);
 	void addGUISheet(CEGUI::Window* guiSheet);
 	void removeGUISheet(CEGUI::Window* guiSheet);

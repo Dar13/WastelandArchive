@@ -43,9 +43,22 @@ bool GUIManager::Update(float timeElapsed_ms)
 	return true;
 }
 
+bool GUIManager::doesGUISheetExist(const std::string& sheetName)
+{
+	bool found = false;
+	for(std::vector<CEGUI::Window*>::iterator itr = _guiSheets.begin(); itr != _guiSheets.end() && found == false ; ++itr)
+	{
+		if( (*itr)->getName() == sheetName)
+		{
+			found = true;
+		}
+	}
+	return found;
+}
+
 void GUIManager::setCurrentGUISheet(const std::string& sheetName)
 {
-	bool found = true;
+	bool found = false;
 	//check for duplicate calls.
 	if(_currentGUISheet != NULL)
 	{
@@ -58,7 +71,7 @@ void GUIManager::setCurrentGUISheet(const std::string& sheetName)
 		_guiSystem->setGUISheet(0);
 	}
 	//else we're going to have to iterate through each element in the vector
-	for(std::vector<CEGUI::Window*>::iterator itr = _guiSheets.begin(); itr != _guiSheets.end(); ++itr)
+	for(std::vector<CEGUI::Window*>::iterator itr = _guiSheets.begin(); itr != _guiSheets.end() && found == false; ++itr)
 	{
 		if( (*itr)->getName() == sheetName )
 		{

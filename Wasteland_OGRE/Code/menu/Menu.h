@@ -28,8 +28,10 @@ public:
 	void Shutdown(OISManager* Input,OgreManager* Graphics,GUIManager* Gui);
 
 	bool _shutdown(const CEGUI::EventArgs&);
+	bool _start(const CEGUI::EventArgs&);
 private:
 	std::map<std::string,CEGUI::Window*> _guiSheetChildren;
+	int _returnValue; //used because there might be two different possible game states that this class exits to.
 };
 
 #endif
