@@ -27,11 +27,22 @@ public:
 
 	void Shutdown(OISManager* Input,OgreManager* Graphics,GUIManager* Gui);
 
+	void createOptionsMenu(GUIManager* Gui);
+
 	bool _shutdown(const CEGUI::EventArgs&);
 	bool _start(const CEGUI::EventArgs&);
+	bool _options(const CEGUI::EventArgs&);
 private:
 	std::map<std::string,CEGUI::Window*> _guiSheetChildren;
 	int _returnValue; //used because there might be two different possible game states that this class exits to.
+	
+	CEGUI::Window* _opt_guiSheet;
+	std::map<std::string,CEGUI::Window*> _opt_guiSheetChildren;
+	bool _goto_Options;
+
+	Ogre::SceneManager* _scene;
+	Ogre::Camera* _camera;
+	Ogre::Viewport* _view;
 };
 
 #endif
