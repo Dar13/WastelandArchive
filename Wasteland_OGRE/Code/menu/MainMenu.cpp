@@ -3,6 +3,7 @@
 #include "Menu.h"
 #include "..\debug\console.h"
 #include "..\GameManager.h"
+#include <boost\lexical_cast.hpp>
 
 MainMenu::MainMenu()
 {
@@ -35,8 +36,8 @@ void MainMenu::Setup(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
 		window.first = "main_Exit_btn";
 		window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
 		window.second->setText("Exit Game");
-		window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.5,0),CEGUI::UDim(.7,0)));
-		window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.1,0),CEGUI::UDim(.1,0)));
+		window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.425f,0),CEGUI::UDim(.7f,0)));
+		window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.15f,0),CEGUI::UDim(.1f,0)));
 		_guiSheetChildren.insert(window);
 		_guiSheet->addChildWindow(window.second);
 		window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(&MainMenu::_shutdown,this));
@@ -45,8 +46,8 @@ void MainMenu::Setup(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
 		window.first = "main_Start_btn";
 		window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
 		window.second->setText("Start Game");
-		window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.5,0),CEGUI::UDim(.3,0)));
-		window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.1,0),CEGUI::UDim(.1,0)));
+		window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.425f,0),CEGUI::UDim(.3f,0)));
+		window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.15f,0),CEGUI::UDim(.1f,0)));
 		_guiSheetChildren.insert(window);
 		_guiSheet->addChildWindow(window.second);
 		window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(&MainMenu::_start,this));
@@ -54,7 +55,7 @@ void MainMenu::Setup(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
 
 		window.first = "main_Options_btn";
 		window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
-		window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.5f,0),CEGUI::UDim(.5f,0)));
+		window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.45f,0),CEGUI::UDim(.5f,0)));
 		window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.1f,0),CEGUI::UDim(.1f,0)));
 		window.second->setText("Options");
 		window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(&MainMenu::_options,this));
@@ -70,6 +71,7 @@ void MainMenu::Setup(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
 
 int MainMenu::Run(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
 {
+	bool inOptions = false;
 	while(!_stateShutdown)
 	{
 		Input->Update(false);
@@ -80,16 +82,25 @@ int MainMenu::Run(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
 		Gui->Update(_deltaTime);
 		GameManager::UpdateManagers(Graphics,NULL,_deltaTime);
 
-		if(_goto_Options)
+		if(_goto_Options && !inOptions)
 		{
 			if(!Gui->doesGUISheetExist("options_Root"))
 			{
 				createOptionsMenu(Gui);
 			}
 			Gui->setCurrentGUISheet("options_Root");
+			CEGUI::TabControl* tControl = static_cast<CEGUI::TabControl*>(_opt_guiSheetChildren["opt_Config_tabcntrl"]);
+			tControl->setSelectedTab(1);
+			inOptions = true;
 		}
 		else
-			Gui->setCurrentGUISheet("main_Root");
+		{
+			if(_goto_Options == false && inOptions)
+			{
+				Gui->setCurrentGUISheet("main_Root");
+				inOptions = false;
+			}
+		}
 	}
 	//trying to get the screen to clear out.
 	GameManager::UpdateManagers(Graphics,NULL,_deltaTime);
@@ -126,10 +137,11 @@ void MainMenu::createOptionsMenu(GUIManager* Gui)
 	window.first = "opt_Config_tabcntrl";
 	window.second = Gui->getWinManager()->createWindow("TaharezLook/TabControl",window.first);
 	CEGUI::TabControl* tabCntrl = static_cast<CEGUI::TabControl*>(window.second);
-	tabCntrl->setTabHeight(CEGUI::UDim(0.1,0));
+	tabCntrl->setTabHeight(CEGUI::UDim(0.1f,0));
+	tabCntrl->setTabTextPadding(CEGUI::UDim(.05f,0));
 	tabCntrl->setEnabled(true);
 	tabCntrl->setSize(CEGUI::UVector2(CEGUI::UDim(1.0f,0),CEGUI::UDim(1.0f,0)));
-	tabCntrl->setPosition(CEGUI::UVector2(CEGUI::UDim(0.0,0),CEGUI::UDim(0.0,0)));
+	tabCntrl->setPosition(CEGUI::UVector2(CEGUI::UDim(0.0f,0),CEGUI::UDim(0.0f,0)));
 	tabCntrl->setAlwaysOnTop(false);
 	window.second = static_cast<CEGUI::Window*>(tabCntrl);
 	_opt_guiSheet->addChildWindow(window.second);
@@ -138,8 +150,9 @@ void MainMenu::createOptionsMenu(GUIManager* Gui)
 	//graphic options...
 	window.first = "opt_Config_Graphic_wnd";
 	window.second = Gui->getWinManager()->createWindow("DefaultWindow",window.first);
-	window.second->setText("Graphic Options");
+	window.second->setText("Graphics");
 	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(0.0f,0),CEGUI::UDim(0.0f,0)));
+	window.second->setID(1);
 	tabCntrl->addTab(window.second);
 	_opt_guiSheetChildren.insert(window);
 
@@ -147,8 +160,8 @@ void MainMenu::createOptionsMenu(GUIManager* Gui)
 	window.first = "opt_Config_Graphic_Res_txt";
 	window.second = Gui->getWinManager()->createWindow("TaharezLook/StaticText",window.first);
 	window.second->setText("Resolutions:");
-	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.0,5),CEGUI::UDim(0.05,0)));
-	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.2,0),CEGUI::UDim(.05,0)));
+	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.0f,5),CEGUI::UDim(0.05f,0)));
+	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.2f,0),CEGUI::UDim(.05f,0)));
 	_opt_guiSheetChildren["opt_Config_Graphic_wnd"]->addChildWindow(window.second);
 
 	window.first = "opt_Config_Graphic_Res_list";
@@ -160,24 +173,24 @@ void MainMenu::createOptionsMenu(GUIManager* Gui)
 	resCombobox->setPosition(CEGUI::UVector2(CEGUI::UDim(.0,5),CEGUI::UDim(.1,0)));
 	resCombobox->setSize(CEGUI::UVector2(CEGUI::UDim(.2,0),CEGUI::UDim(.2,0)));
 
-	CEGUI::ListboxTextItem* cbItem = new CEGUI::ListboxTextItem("1920x1024",1);
+	CEGUI::ListboxTextItem* cbItem = new CEGUI::ListboxTextItem("1920x1024",10);
 	cbItem->setSelectionBrushImage("TaharezLook","ComboboxSelectionBrush");
 	cbItem->setSelected(true);
 	resCombobox->addItem(cbItem);
 
-	cbItem = new CEGUI::ListboxTextItem("1600x1050",2);
+	cbItem = new CEGUI::ListboxTextItem("1600x1050",20);
 	cbItem->setSelectionBrushImage("TaharezLook","ComboboxSelectionBrush");
 	resCombobox->addItem(cbItem);
 
-	cbItem = new CEGUI::ListboxTextItem("1366x768",3);
+	cbItem = new CEGUI::ListboxTextItem("1366x768",30);
 	cbItem->setSelectionBrushImage("TaharezLook","ComboboxSelectionBrush");
 	resCombobox->addItem(cbItem);
 	
-	cbItem = new CEGUI::ListboxTextItem("1280x1024",4);
+	cbItem = new CEGUI::ListboxTextItem("1280x1024",40);
 	cbItem->setSelectionBrushImage("TaharezLook","ComboboxSelectionBrush");
 	resCombobox->addItem(cbItem);
 
-	cbItem = new CEGUI::ListboxTextItem("1024x768",5);
+	cbItem = new CEGUI::ListboxTextItem("1024x768",50);
 	cbItem->setSelectionBrushImage("TaharezLook","ComboboxSelectionBrush");
 	resCombobox->addItem(cbItem);
 
@@ -186,8 +199,111 @@ void MainMenu::createOptionsMenu(GUIManager* Gui)
 	//audio options...
 	window.first = "opt_Config_Audio_wnd";
 	window.second = Gui->getWinManager()->createWindow("DefaultWindow",window.first);
-	window.second->setText("Audio Options");
+	window.second->setText("Audio");
+	window.second->setID(2);
 	tabCntrl->addTab(window.second);
+	_opt_guiSheetChildren.insert(window);
+
+	window.first = "opt_Config_Audio_vol_wnd";
+	window.second = Gui->getWinManager()->createWindow("DefaultWindow",window.first);
+	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.5f,0),CEGUI::UDim(.5f,0)));
+	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.0f,20),CEGUI::UDim(.0f,0)));
+	_opt_guiSheetChildren["opt_Config_Audio_wnd"]->addChildWindow(window.second);
+	_opt_guiSheetChildren.insert(window);
+
+	window.first = "opt_Config_Audio_vol_txt";
+	window.second = Gui->getWinManager()->createWindow("TaharezLook/StaticText",window.first);
+	window.second->setText("Volumes");
+	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(0.0f,0),CEGUI::UDim(0.1f,0)));
+	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(1.0f,0),CEGUI::UDim(0.1f,0)));
+	_opt_guiSheetChildren["opt_Config_Audio_vol_wnd"]->addChildWindow(window.second);
+	_opt_guiSheetChildren.insert(window);
+
+	window.first = "opt_Config_Audio_vol_chr_sldr";
+	window.second = Gui->getWinManager()->createWindow("TaharezLook/Slider",window.first);
+	CEGUI::Slider* sldr = static_cast<CEGUI::Slider*>(window.second);
+	sldr->setPosition(CEGUI::UVector2(CEGUI::UDim(0.14f,0),CEGUI::UDim(0.2f,0)));
+	sldr->setSize(CEGUI::UVector2(CEGUI::UDim(0.04f,0),CEGUI::UDim(0.4f,0)));
+	sldr->setCurrentValue(0.5f);
+	window.second = static_cast<CEGUI::Slider*>(sldr);
+	_opt_guiSheetChildren["opt_Config_Audio_vol_wnd"]->addChildWindow(window.second);
+	_opt_guiSheetChildren.insert(window);
+	window.second->subscribeEvent(CEGUI::Slider::EventValueChanged,CEGUI::Event::Subscriber(&MainMenu::_valueUpdate_sliders,this));
+
+	window.first = "opt_Config_Audio_vol_chr_txt";
+	window.second = Gui->getWinManager()->createWindow("TaharezLook/StaticText",window.first);
+	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(0.05f,0),CEGUI::UDim(0.6f,0)));
+	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(0.225f,0),CEGUI::UDim(.1f,0)));
+	window.second->setText("Character Volume");
+	window.second->setFont("DejaVuSans-6");
+	_opt_guiSheetChildren["opt_Config_Audio_vol_wnd"]->addChildWindow(window.second);
+	_opt_guiSheetChildren.insert(window);
+
+	window.first = "opt_Config_Audio_vol_chr_val";
+	window.second = Gui->getWinManager()->createWindow("TaharezLook/StaticText",window.first);
+	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(0.19f,0),CEGUI::UDim(0.33f,0)));
+	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.075f,0),CEGUI::UDim(0.1f,0)));
+	window.second->setFont("DejaVuSans-6");
+	window.second->setText("50");
+	_opt_guiSheetChildren["opt_Config_Audio_vol_wnd"]->addChildWindow(window.second);
+	_opt_guiSheetChildren.insert(window);
+
+	window.first = "opt_Config_Audio_vol_msc_sldr";
+	window.second = Gui->getWinManager()->createWindow("TaharezLook/Slider",window.first);
+	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.495f,0),CEGUI::UDim(.2f,0)));
+	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.04f,0),CEGUI::UDim(.4f,0)));
+	sldr = static_cast<CEGUI::Slider*>(window.second);
+	sldr->setCurrentValue(.5f);
+	window.second = static_cast<CEGUI::Window*>(sldr);
+	_opt_guiSheetChildren["opt_Config_Audio_vol_wnd"]->addChildWindow(window.second);
+	_opt_guiSheetChildren.insert(window);
+	window.second->subscribeEvent(CEGUI::Slider::EventValueChanged,CEGUI::Event::Subscriber(&MainMenu::_valueUpdate_sliders,this));
+
+	window.first = "opt_Config_Audio_vol_msc_txt";
+	window.second = Gui->getWinManager()->createWindow("TaharezLook/StaticText",window.first);
+	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.4f,0),CEGUI::UDim(0.6f,0)));
+	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.225f,0),CEGUI::UDim(.1f,0)));
+	window.second->setText("Music Volume");
+	window.second->setFont("DejaVuSans-6");
+	_opt_guiSheetChildren["opt_Config_Audio_vol_wnd"]->addChildWindow(window.second);
+	_opt_guiSheetChildren.insert(window);
+
+	window.first = "opt_Config_Audio_vol_msc_val";
+	window.second = Gui->getWinManager()->createWindow("TaharezLook/StaticText",window.first);
+	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.55f,0),CEGUI::UDim(.33f,0)));
+	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.075f,0),CEGUI::UDim(.1f,0)));
+	window.second->setFont("DejaVuSans-6");
+	window.second->setText("50");
+	_opt_guiSheetChildren["opt_Config_Audio_vol_wnd"]->addChildWindow(window.second);
+	_opt_guiSheetChildren.insert(window);
+
+	window.first = "opt_Config_Audio_vol_sfx_sldr";
+	window.second = Gui->getWinManager()->createWindow("TaharezLook/Slider",window.first);
+	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.7925f,0),CEGUI::UDim(.2f,0)));
+	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.04f,0),CEGUI::UDim(.4f,0)));
+	sldr = static_cast<CEGUI::Slider*>(window.second);
+	sldr->setCurrentValue(.5f);
+	window.second = static_cast<CEGUI::Window*>(sldr);
+	_opt_guiSheetChildren["opt_Config_Audio_vol_wnd"]->addChildWindow(window.second);
+	_opt_guiSheetChildren.insert(window);
+	window.second->subscribeEvent(CEGUI::Slider::EventValueChanged,CEGUI::Event::Subscriber(&MainMenu::_valueUpdate_sliders,this));
+
+	window.first = "opt_Config_Audio_vol_sfx_txt";
+	window.second = Gui->getWinManager()->createWindow("TaharezLook/StaticText",window.first);
+	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.7f,0),CEGUI::UDim(0.6f,0)));
+	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.225f,0),CEGUI::UDim(.1f,0)));
+	window.second->setText("SFX Volume");
+	window.second->setFont("DejaVuSans-6");
+	_opt_guiSheetChildren["opt_Config_Audio_vol_wnd"]->addChildWindow(window.second);
+	_opt_guiSheetChildren.insert(window);
+
+	window.first = "opt_Config_Audio_vol_sfx_val";
+	window.second = Gui->getWinManager()->createWindow("TaharezLook/StaticText",window.first);
+	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.85f,0),CEGUI::UDim(.33f,0)));
+	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.075f,0),CEGUI::UDim(.1f,0)));
+	window.second->setText("50");
+	window.second->setFont("DejaVuSans-6");
+	_opt_guiSheetChildren["opt_Config_Audio_vol_wnd"]->addChildWindow(window.second);
 	_opt_guiSheetChildren.insert(window);
 
 	//option menu exit button
@@ -225,6 +341,25 @@ bool MainMenu::_start(const CEGUI::EventArgs& arg)
 {
 	_stateShutdown = true;
 	_returnValue = GAME_ARENA;
+
+	return true;
+}
+
+bool MainMenu::_valueUpdate_sliders(const CEGUI::EventArgs& arg)
+{
+	const CEGUI::WindowEventArgs& realArgs = static_cast<const CEGUI::WindowEventArgs&>(arg);
+	std::string n = realArgs.window->getName().c_str();
+	std::string v = "";
+	if(n == "opt_Config_Audio_vol_chr_sldr")
+	{
+		v = boost::lexical_cast<std::string,int>(static_cast<int>(((CEGUI::Slider*)realArgs.window)->getCurrentValue() * 100));
+		_opt_guiSheetChildren["opt_Config_Audio_vol_chr_val"]->setText(v);
+	}
+	if(n == "opt_Config_Audio_vol_msc_sldr")
+	{
+		v = boost::lexical_cast<std::string,int>(static_cast<int>(((CEGUI::Slider*)realArgs.window)->getCurrentValue() * 100));
+		_opt_guiSheetChildren["opt_Config_Audio_vol_msc_val"]->setText(v);
+	}
 
 	return true;
 }

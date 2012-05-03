@@ -34,6 +34,9 @@ void GUIManager::Setup(const std::string& cwd,Ogre::RenderTarget& window)
 	CEGUI::SchemeManager::getSingletonPtr()->create("SleekSpace/SleekSpace.scheme","CEGUI");
 	CEGUI::SchemeManager::getSingletonPtr()->create("TaharezLook.scheme","CEGUI");
 
+	//check for fonts
+	CEGUI::FontManager::getSingleton().create("DejaVuSans-6.font","CEGUI");
+
 	_guiWinManager = CEGUI::WindowManager::getSingletonPtr();
 }
 

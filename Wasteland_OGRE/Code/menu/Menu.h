@@ -32,6 +32,8 @@ public:
 	bool _shutdown(const CEGUI::EventArgs&);
 	bool _start(const CEGUI::EventArgs&);
 	bool _options(const CEGUI::EventArgs&);
+
+	bool _valueUpdate_sliders(const CEGUI::EventArgs&);
 private:
 	std::map<std::string,CEGUI::Window*> _guiSheetChildren;
 	int _returnValue; //used because there might be two different possible game states that this class exits to.
