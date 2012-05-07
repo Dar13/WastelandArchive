@@ -122,9 +122,6 @@ void ArenaTutorial::Shutdown(OISManager* Input,OgreManager* Graphics,GUIManager*
 	//cleaning up state-specific pointers.
 	//since all pointers are auto_ptr members, then they will be deleted upon class destruction.
 
-	//Has to be cleaned after every Setup, in the same app-state.
-	//DebugPrint::getSingleton().Clean();
-
 	//Destroy the scene manager.
 	Graphics->getRoot()->destroySceneManager(_scene);
 }

@@ -45,6 +45,8 @@ private:
 	Ogre::SceneManager* _scene;
 	Ogre::Camera* _camera;
 	Ogre::Viewport* _view;
+	Ogre::SceneNode* _camNode,*_cityNode;
+	Ogre::SceneNode* _lightNode;
 };
 
 #endif

@@ -23,6 +23,28 @@ void MainMenu::Setup(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
 	_camera->setAspectRatio(16.0f/9.0f);
 	_view = Graphics->getRenderWindow()->addViewport(_camera);
 	_view->setBackgroundColour(Ogre::ColourValue(0,0,0));
+
+	std::auto_ptr<list_t> objList = list("resource\\xml\\intro_list.xml");
+	for(list_t::file_const_iterator itr = objList.get()->file().begin(); itr != objList.get()->file().end(); ++itr)
+	{
+		std::string tmp = (*itr);
+		std::auto_ptr<object_t> tmpObj = object(tmp.c_str());
+		_cityNode = Graphics->createSceneNode(_scene,tmpObj.get(),NULL);
+	}
+
+	_cityNode->setFixedYawAxis(true,Ogre::Vector3::UNIT_Y);
+
+	_camNode = _cityNode->createChildSceneNode("mmCamNode");
+	_camNode->attachObject(_camera);
+	_camNode->setPosition(Ogre::Vector3(750.0f,500.0f,0.0f));
+	//_cityNode->setVisible(false,true);
+
+	Ogre::Light* menuLight = _scene->createLight("mmLight");
+	menuLight->setType(Ogre::Light::LT_POINT);
+	Graphics->setLightRange(menuLight,1000.0f);
+	menuLight->setSpecularColour(Ogre::ColourValue(0.0f,0.0f,1.0f,.5f));
+	_lightNode = _camNode->createChildSceneNode("mmLightNode");
+	_lightNode->attachObject(menuLight);
 	
 	if(!Gui->doesGUISheetExist("main_Root"))
 	{
@@ -71,6 +93,15 @@ void MainMenu::Setup(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
 
 int MainMenu::Run(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
 {
+	Ogre::Vector3 origPosition = _camNode->getPosition();
+	Ogre::Vector3 rotationPosition = _camNode->getPosition();
+	Ogre::Quaternion origOrn(Ogre::Radian(0),Ogre::Vector3::UNIT_Y);
+	Ogre::Quaternion destOrn(Ogre::Radian(Ogre::Degree(359)),Ogre::Vector3::UNIT_Y);
+	Ogre::Quaternion deltaOrn,deltaRot;
+	Ogre::Real rotProg = 0.0f;
+	Ogre::Real rotFactor = 1.0f / 360.0f;
+	bool isCamRotating = true;
+	
 	bool inOptions = false;
 	while(!_stateShutdown)
 	{
@@ -78,6 +109,30 @@ int MainMenu::Run(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
 
 		_deltaTime = Graphics->getTimer()->getMilliseconds() - _oldTime;
 		_oldTime = static_cast<float>(Graphics->getTimer()->getMilliseconds());
+		
+		//look at origin...
+		Ogre::Vector3 localY = _camNode->getOrientation() * Ogre::Vector3::UNIT_Y;
+		Ogre::Quaternion quat = localY.getRotationTo(Ogre::Vector3::UNIT_Y);
+		_camNode->rotate(quat,Ogre::Node::TS_PARENT);
+		_camNode->lookAt(Ogre::Vector3::ZERO,Ogre::Node::TS_WORLD);
+
+		//now i need to rotate about the origin...
+		if(isCamRotating)
+		{
+			rotProg += rotFactor;
+			if(rotProg > 1)
+			{
+				rotProg = rotFactor;
+			}
+			//use polar coordinates to get new position.
+			Ogre::Vector3 positionRotation;
+			positionRotation.x = 750.0f * Ogre::Math::Cos((rotProg * Ogre::Math::TWO_PI));
+			positionRotation.y = 500.0f;
+			positionRotation.z = 750.0f * Ogre::Math::Sin((rotProg * Ogre::Math::TWO_PI));
+			_camNode->setPosition(positionRotation);
+		}
+		
+		
 
 		Gui->Update(_deltaTime);
 		GameManager::UpdateManagers(Graphics,NULL,_deltaTime);
@@ -92,6 +147,7 @@ int MainMenu::Run(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
 			CEGUI::TabControl* tControl = static_cast<CEGUI::TabControl*>(_opt_guiSheetChildren["opt_Config_tabcntrl"]);
 			tControl->setSelectedTab(1);
 			inOptions = true;
+			isCamRotating = false;
 		}
 		else
 		{
@@ -99,6 +155,7 @@ int MainMenu::Run(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
 			{
 				Gui->setCurrentGUISheet("main_Root");
 				inOptions = false;
+				isCamRotating = true;
 			}
 		}
 	}
@@ -170,8 +227,8 @@ void MainMenu::createOptionsMenu(GUIManager* Gui)
 	_opt_guiSheetChildren.insert(window);
 	CEGUI::Combobox* resCombobox = static_cast<CEGUI::Combobox*>(window.second);
 	resCombobox->setReadOnly(true);
-	resCombobox->setPosition(CEGUI::UVector2(CEGUI::UDim(.0,5),CEGUI::UDim(.1,0)));
-	resCombobox->setSize(CEGUI::UVector2(CEGUI::UDim(.2,0),CEGUI::UDim(.2,0)));
+	resCombobox->setPosition(CEGUI::UVector2(CEGUI::UDim(.0f,5),CEGUI::UDim(.1f,0)));
+	resCombobox->setSize(CEGUI::UVector2(CEGUI::UDim(.2f,0),CEGUI::UDim(.2f,0)));
 
 	CEGUI::ListboxTextItem* cbItem = new CEGUI::ListboxTextItem("1920x1024",10);
 	cbItem->setSelectionBrushImage("TaharezLook","ComboboxSelectionBrush");
@@ -347,18 +404,27 @@ bool MainMenu::_start(const CEGUI::EventArgs& arg)
 
 bool MainMenu::_valueUpdate_sliders(const CEGUI::EventArgs& arg)
 {
+	//convert to a more comprehensive event argument class.
 	const CEGUI::WindowEventArgs& realArgs = static_cast<const CEGUI::WindowEventArgs&>(arg);
+	//get the name of the window that created this event.
 	std::string n = realArgs.window->getName().c_str();
+
+	//Get current value. This could get ugly if the window isn't a slider.
 	std::string v = "";
+	v = boost::lexical_cast<std::string,int>(static_cast<int>(((CEGUI::Slider*)realArgs.window)->getCurrentValue() * 100));
+	
+	//check for specific sliders and setting their corresponding value text.
 	if(n == "opt_Config_Audio_vol_chr_sldr")
 	{
-		v = boost::lexical_cast<std::string,int>(static_cast<int>(((CEGUI::Slider*)realArgs.window)->getCurrentValue() * 100));
 		_opt_guiSheetChildren["opt_Config_Audio_vol_chr_val"]->setText(v);
 	}
 	if(n == "opt_Config_Audio_vol_msc_sldr")
 	{
-		v = boost::lexical_cast<std::string,int>(static_cast<int>(((CEGUI::Slider*)realArgs.window)->getCurrentValue() * 100));
 		_opt_guiSheetChildren["opt_Config_Audio_vol_msc_val"]->setText(v);
+	}
+	if(n == "opt_Config_Audio_vol_sfx_sldr")
+	{
+		_opt_guiSheetChildren["opt_Config_Audio_vol_sfx_val"]->setText(v);
 	}
 
 	return true;

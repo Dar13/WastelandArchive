@@ -91,16 +91,18 @@ public:
 
 	//Some math-related functions
 	Ogre::Quaternion eulerToQuat(Ogre::Radian rX,Ogre::Radian rY,Ogre::Radian rZ);
-	bool isPointInTriangle2D(const Ogre::Vector3& pointA,const Ogre::Vector3& pointB,const Ogre::Vector3& pointC,const Ogre::Vector3& pointP);
 
+	bool isPointInTriangle2D(const Ogre::Vector3& pointA,const Ogre::Vector3& pointB,const Ogre::Vector3& pointC,const Ogre::Vector3& pointP);
+	
+//! Calculates the attenuation for the passed-in Ogre::Light.
+	void setLightRange(Ogre::Light* l, Ogre::Real range);
 private:
 	//Hidden methods
 	OgreManager(const OgreManager&);
 	OgreManager& operator=(const OgreManager&);
 
 	//Private helper functions
-	//! Calculates the attenuation for the passed-in Ogre::Light.
-	void setLightRange(Ogre::Light* l, Ogre::Real range);
+	
 	//! Converts a hexadecimal number into an Ogre::ColourValue.
 	Ogre::ColourValue getColorFromHex(int hexColor, float alpha = 1.0f);
 
