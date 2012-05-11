@@ -1,6 +1,8 @@
 #include "StdAfx.h"
-#include "OISManager.h"
-#include "OgreManager.h"
+
+#include "InputManager.h"
+#include "GraphicsManager.h"
+#include "SoundManager.h"
 
 #ifndef _STATE_MANAGER_H_
 #define _STATE_MANAGER_H_
@@ -28,7 +30,7 @@ public:
 	~StateManager(){Shutdown();}
 
 	//! Sets up the StateManager.
-	void Setup(OISManager* inputManager,OgreManager* graphicsManager,GUIManager* guiManager);
+	void Setup(InputManager* inputManager,GraphicsManager* graphicsManager,GUIManager* guiManager,SoundManager* soundManager);
 	//! Runs the StateManager, until the End state is reached.
 	void Run();
 	//! Shutsdown and cleans up the StateManager. Is called in the destructor.
@@ -43,9 +45,10 @@ private:
 
 	std::map<int,State*> _States;
 
-	OISManager* _Input;
-	OgreManager* _Graphics;
+	InputManager* _Input;
+	GraphicsManager* _Graphics;
 	GUIManager* _Gui;
+	SoundManager* _Sound;
 };
 
 #endif

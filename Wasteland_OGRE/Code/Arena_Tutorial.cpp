@@ -16,7 +16,7 @@ ArenaTutorial::ArenaTutorial()
 	_oldTime = 0;
 }
 
-void ArenaTutorial::Setup(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
+void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
 {
 	_scene = Graphics->getRoot()->createSceneManager(Ogre::ST_INTERIOR,"arenaTut");
 
@@ -28,7 +28,7 @@ void ArenaTutorial::Setup(OISManager* Input,OgreManager* Graphics,GUIManager* Gu
 	_rootNode = _scene->getRootSceneNode();
 
 	//physics setup
-	_physics.reset(new BulletManager() );
+	_physics.reset(new PhysicsManager() );
 	_physics->Setup();
 	_physics->setGravity(btVector3(0.0f,-9.8f,0.0f));
 
@@ -59,7 +59,7 @@ void ArenaTutorial::Setup(OISManager* Input,OgreManager* Graphics,GUIManager* Gu
 	_ews.reset(new EWSManager(_scene));
 }
 
-int ArenaTutorial::Run(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
+int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
 {
 	_stateShutdown=false;
 	Ogre::SceneNode* tmpNode = (Ogre::SceneNode*)_scene->getRootSceneNode()->getChild("nodetestSphere");
@@ -99,7 +99,7 @@ int ArenaTutorial::Run(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
 }
 
 //clean-up of state
-void ArenaTutorial::Shutdown(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
+void ArenaTutorial::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
 {
 	//undo what I set in OIS
 	Input->setMouseLock(false);

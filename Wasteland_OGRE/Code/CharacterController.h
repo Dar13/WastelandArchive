@@ -3,22 +3,22 @@
 #include "BulletDynamics\Character\btKinematicCharacterController.h"
 #include "BulletCollision\CollisionDispatch\btGhostObject.h"
 //input class
-#include "OISManager.h"
-#include "OgreManager.h"
+#include "InputManager.h"
+#include "GraphicsManager.h"
 
 class CharacterController
 {
 public:
 	CharacterController();
-	CharacterController(Ogre::Camera* camera,const Ogre::Vector3& initialPosition,btDiscreteDynamicsWorld* phyWorld,OgreManager* Graphics)
+	CharacterController(Ogre::Camera* camera,const Ogre::Vector3& initialPosition,btDiscreteDynamicsWorld* phyWorld,GraphicsManager* Graphics)
 	{
 		create(camera,initialPosition,phyWorld,Graphics);
 	}
 	~CharacterController();
 
-	void create(Ogre::Camera* camera,const Ogre::Vector3& initialPosition,btDiscreteDynamicsWorld* phyWorld,OgreManager* Graphics);
+	void create(Ogre::Camera* camera,const Ogre::Vector3& initialPosition,btDiscreteDynamicsWorld* phyWorld,GraphicsManager* Graphics);
 
-	void update(float physicsTimeElapsed,OISManager* inputManager, OgreTransform& transform);
+	void update(float physicsTimeElapsed,InputManager* inputManager, OgreTransform& transform);
 
 private:
 	//prefix 'c' to denote privateness AND to differentiate from other variables.

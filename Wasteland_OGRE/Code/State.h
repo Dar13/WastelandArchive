@@ -1,9 +1,10 @@
 #ifndef _STATE_H_
 #define _STATE_H_
 
-#include "OISManager.h"
-#include "OgreManager.h"
+#include "InputManager.h"
+#include "GraphicsManager.h"
 #include "GUIManager.h"
+#include "SoundManager.h"
 #include "Player.h"
 
 enum ApplicationStates
@@ -28,11 +29,11 @@ class State
 {
 public:
 	//! Sets up the state.
-	virtual void Setup(OISManager* Input = NULL,OgreManager* Graphics = NULL,GUIManager* Gui = NULL) = 0; 
+	virtual void Setup(InputManager* Input = NULL,GraphicsManager* Graphics = NULL,GUIManager* Gui = NULL,SoundManager* Sound = NULL) = 0; 
 	//!Runs the game logic for the state.
-	virtual int Run(OISManager* Input = NULL,OgreManager* Graphics = NULL,GUIManager* Gui = NULL) = 0; 
+	virtual int Run(InputManager* Input = NULL,GraphicsManager* Graphics = NULL,GUIManager* Gui = NULL,SoundManager* Sound = NULL) = 0; 
 	//!Cleans up the state.
-	virtual void Shutdown(OISManager* Input = NULL,OgreManager* Graphics = NULL,GUIManager* Gui = NULL) = 0; 
+	virtual void Shutdown(InputManager* Input = NULL,GraphicsManager* Graphics = NULL,GUIManager* Gui = NULL,SoundManager* Sound = NULL) = 0; 
 protected:
 	//!A boolean to tell if the state should shutdown.
 	bool _stateShutdown;

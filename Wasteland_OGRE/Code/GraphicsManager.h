@@ -19,13 +19,13 @@ Exposes the various Ogre classes(Root,Time,RenderWindow,etc.) to the application
 such as get mesh information or making a scene node.
 */
 
-class OgreManager : public Ogre::FrameListener
+class GraphicsManager : public Ogre::FrameListener
 {
 public:
 	//! Initializes all pointers to NULL.
-	OgreManager();
+	GraphicsManager();
 	//! Calls the Shutdown method, guarantees clean shutdown of Ogre.
-	~OgreManager(){Shutdown();}
+	~GraphicsManager(){Shutdown();}
 
 	//! Sets up the class to handle Ogre things.
 	bool Setup();
@@ -98,8 +98,8 @@ public:
 	void setLightRange(Ogre::Light* l, Ogre::Real range);
 private:
 	//Hidden methods
-	OgreManager(const OgreManager&);
-	OgreManager& operator=(const OgreManager&);
+	GraphicsManager(const GraphicsManager&);
+	GraphicsManager& operator=(const GraphicsManager&);
 
 	//Private helper functions
 	

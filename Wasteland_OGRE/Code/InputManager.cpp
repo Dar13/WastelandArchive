@@ -1,12 +1,12 @@
 #include "StdAfx.h"
 
-#include "OISManager.h"
+#include "InputManager.h"
 
 #include <OgreStringConverter.h>
 
 bool isControlCharacter(OIS::KeyCode keyCode);
 
-OISManager::OISManager(unsigned long windowHandle)
+InputManager::InputManager(unsigned long windowHandle)
 {
 	//init some of the member variables
 	_appShutdown=false;
@@ -56,7 +56,7 @@ OISManager::OISManager(unsigned long windowHandle)
 }
 
 //Cleaning up.
-OISManager::~OISManager()
+InputManager::~InputManager()
 {
 	if(_mouseObj)
 		_inputSystem->destroyInputObject(_mouseObj);
@@ -67,7 +67,7 @@ OISManager::~OISManager()
 	OIS::InputManager::destroyInputSystem(_inputSystem);
 }
 
-void OISManager::setCaptureWindow(int width,int height)
+void InputManager::setCaptureWindow(int width,int height)
 {
 	const OIS::MouseState &ms = _mouseObj->getMouseState();
 	ms.width=width;
@@ -77,14 +77,14 @@ void OISManager::setCaptureWindow(int width,int height)
 	mutms.Y.abs = height/2;
 }
 
-void OISManager::setMousePosition(int& x,int& y)
+void InputManager::setMousePosition(int& x,int& y)
 {
 	OIS::MouseState &m = const_cast<OIS::MouseState&>(_mouseObj->getMouseState());
 	m.X.abs = x;
 	m.Y.abs = y;
 }
 
-bool OISManager::Update(bool checkEscapeKey)
+bool InputManager::Update(bool checkEscapeKey)
 {
 	//get input
 	capture();
@@ -97,7 +97,7 @@ bool OISManager::Update(bool checkEscapeKey)
 	return false;
 }
 
-void OISManager::capture()
+void InputManager::capture()
 {
 	_mouseObj->capture();
 	_keyObj->capture();
@@ -115,33 +115,33 @@ void OISManager::capture()
 	//_mouseMoveZ = _mouseObj->getMouseState().Z.abs; doesn't work
 }
 
-bool OISManager::isCFGKeyPressed(unsigned int key)
+bool InputManager::isCFGKeyPressed(unsigned int key)
 {
 	return _keyDown[key];
 }
 
-void OISManager::setMouseLock(bool lock)
+void InputManager::setMouseLock(bool lock)
 {
 	_lockMouse = lock;
 }
 
-int OISManager::getMouseMoveX()
+int InputManager::getMouseMoveX()
 {
 	return _mouseMoveX;
 }
 
-int OISManager::getMouseMoveY()
+int InputManager::getMouseMoveY()
 {
 	return _mouseMoveY;
 }
 
-int OISManager::getMouseMoveZ()
+int InputManager::getMouseMoveZ()
 {
 	//return _mouseMoveZ;
 	return 0; // doesn't work.
 }
 
-bool OISManager::isMBPressed(OIS::MouseButtonID id)
+bool InputManager::isMBPressed(OIS::MouseButtonID id)
 {
 	switch(id)
 	{
@@ -160,7 +160,7 @@ bool OISManager::isMBPressed(OIS::MouseButtonID id)
 	}
 }
 
-bool OISManager::keyPressed(const OIS::KeyEvent &evt)
+bool InputManager::keyPressed(const OIS::KeyEvent &evt)
 {
 	//Checking for escape-key press
 	if(evt.key==OIS::KC_ESCAPE)
@@ -226,7 +226,7 @@ bool OISManager::keyPressed(const OIS::KeyEvent &evt)
 	return true;
 }
 
-bool OISManager::keyReleased(const OIS::KeyEvent &evt)
+bool InputManager::keyReleased(const OIS::KeyEvent &evt)
 {
 	//Will eventually inject input into CEGUI/Bullet/etc.
 	//injection into CEGUI...
@@ -286,13 +286,13 @@ bool OISManager::keyReleased(const OIS::KeyEvent &evt)
 	return true;
 }
 
-bool OISManager::mouseMoved(const OIS::MouseEvent &evt)
+bool InputManager::mouseMoved(const OIS::MouseEvent &evt)
 {
 	CEGUI::System::getSingletonPtr()->injectMouseMove(evt.state.X.rel,evt.state.Y.rel);
 	return true;
 }
 
-bool OISManager::mousePressed(const OIS::MouseEvent &evt,OIS::MouseButtonID id)
+bool InputManager::mousePressed(const OIS::MouseEvent &evt,OIS::MouseButtonID id)
 {
 	switch(id)
 	{
@@ -316,7 +316,7 @@ bool OISManager::mousePressed(const OIS::MouseEvent &evt,OIS::MouseButtonID id)
 	return true;
 }
 
-bool OISManager::mouseReleased(const OIS::MouseEvent &evt,OIS::MouseButtonID id)
+bool InputManager::mouseReleased(const OIS::MouseEvent &evt,OIS::MouseButtonID id)
 {
 	switch(id)
 	{
@@ -340,7 +340,7 @@ bool OISManager::mouseReleased(const OIS::MouseEvent &evt,OIS::MouseButtonID id)
 	return true;
 }
 
-void OISManager::setConfiguration(configuration_t* config)
+void InputManager::setConfiguration(configuration_t* config)
 {
 	_config = config;
 	_keyValues.clear();
@@ -377,7 +377,7 @@ void OISManager::setConfiguration(configuration_t* config)
 	}
 }
 
-char OISManager::getCharFromKeyCode(unsigned int keyCode)
+char InputManager::getCharFromKeyCode(unsigned int keyCode)
 {
 	return _KC_map[keyCode];
 }

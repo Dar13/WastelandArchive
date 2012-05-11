@@ -26,12 +26,12 @@ Is entirely self-contained, has no reliance on any other Manager.
 Needs an interface to find out about specific key presses.
 */
 
-class OISManager : OIS::MouseListener, OIS::KeyListener
+class InputManager : OIS::MouseListener, OIS::KeyListener
 {
 public:
 	//! Constructor, sets up the class members.
-	OISManager(unsigned long windowHandle);
-	~OISManager();
+	InputManager(unsigned long windowHandle);
+	~InputManager();
 
 	//! Sets the capture window for input during the application.
 	void setCaptureWindow(int width,int height);

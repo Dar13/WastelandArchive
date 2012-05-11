@@ -13,7 +13,7 @@
 namespace GameManager
 {
 
-	bool UpdateManagers(OgreManager* graphicsManager,BulletManager* phyManager,float deltaTime)
+	bool UpdateManagers(GraphicsManager* graphicsManager,PhysicsManager* phyManager,float deltaTime)
 	{
 		bool retVal = true;
 
@@ -33,14 +33,14 @@ namespace GameManager
 		return retVal;
 	}
 
-	void setDebugDrawer(Ogre::SceneManager* scene,BulletManager* phyManager)
+	void setDebugDrawer(Ogre::SceneManager* scene,PhysicsManager* phyManager)
 	{
 		CDebugDraw* draw = new CDebugDraw(scene,phyManager->getWorld());
 		phyManager->setDebugDrawer(draw);
 	}
 
 	//just a wrapper for the createObject function. Gets rid of some of the code needed in the states.
-	OgreBulletPair createObject(Ogre::SceneManager* scene,std::string& file,BulletManager* phyManager,OgreManager* graphicsManager)
+	OgreBulletPair createObject(Ogre::SceneManager* scene,std::string& file,PhysicsManager* phyManager,GraphicsManager* graphicsManager)
 	{
 		OgreBulletPair ret;
 		object_t* obj = object(file.c_str()).release();
@@ -50,7 +50,7 @@ namespace GameManager
 		return ret;
 	}
 
-	OgreBulletPair createObject(Ogre::SceneManager* scene,object_t* objectInfo,BulletManager* phyManager,OgreManager* graphicsManager)
+	OgreBulletPair createObject(Ogre::SceneManager* scene,object_t* objectInfo,PhysicsManager* phyManager,GraphicsManager* graphicsManager)
 	{
 		//return variable
 		OgreBulletPair retVal;
@@ -68,7 +68,7 @@ namespace GameManager
 			{
 				//get the collision shape.
 				shape = phyManager->generateCollisionShape(objectInfo);
-				//shape = BulletManager::getSingleton().generateCollisionShape(objectInfo);
+				//shape = PhysicsManager::getSingleton().generateCollisionShape(objectInfo);
 			}
 			else
 			{
@@ -81,7 +81,7 @@ namespace GameManager
 				else
 				{
 					shape = phyManager->generateCollisionShape(objectInfo);
-					//shape = BulletManager::getSingleton().generateCollisionShape(objectInfo);
+					//shape = PhysicsManager::getSingleton().generateCollisionShape(objectInfo);
 				}
 			}
 		
@@ -91,14 +91,14 @@ namespace GameManager
 
 			//Easy function call.
 			retVal.btBody = phyManager->addRigidBody(shape,node,objectInfo->mass(),init);
-			//retVal.btBody=BulletManager::getSingleton().addRigidBody(shape,node,objectInfo->mass(),init);
+			//retVal.btBody=PhysicsManager::getSingleton().addRigidBody(shape,node,objectInfo->mass(),init);
 		}
 
 		//return by value, not reference.
 		return retVal;
 	}
 
-	OgreBulletPair createObject(Ogre::SceneNode* node,object_t* objectInfo,BulletManager* phyManager,OgreManager* graphicsManager)
+	OgreBulletPair createObject(Ogre::SceneNode* node,object_t* objectInfo,PhysicsManager* phyManager,GraphicsManager* graphicsManager)
 	{
 		//Here's the variable that'll be passed back(by-value, not reference!).
 		OgreBulletPair retVal;
@@ -111,7 +111,7 @@ namespace GameManager
 		if(objectInfo->mass()!=0.0f)
 		{
 			shape = phyManager->generateCollisionShape(objectInfo);
-			//shape = BulletManager::getSingleton().generateCollisionShape(objectInfo);
+			//shape = PhysicsManager::getSingleton().generateCollisionShape(objectInfo);
 		}
 		else
 		{
@@ -123,7 +123,7 @@ namespace GameManager
 		pos.setY(objectInfo->positionY());
 		pos.setZ(objectInfo->positionZ());
 		retVal.btBody = phyManager->addRigidBody(shape,node,objectInfo->mass(),init);
-		//retVal.btBody = BulletManager::getSingleton().addRigidBody(shape,node,objectInfo->mass(),init);
+		//retVal.btBody = PhysicsManager::getSingleton().addRigidBody(shape,node,objectInfo->mass(),init);
 
 		return retVal;
 	}
@@ -133,7 +133,7 @@ namespace GameManager
 	//----------------------------------------
 
 	//manually builds triangle mesh collision shape.
-	btBvhTriangleMeshShape* buildTriangleCollisionShape(Ogre::SceneNode* node,OgreManager* Graphics)
+	btBvhTriangleMeshShape* buildTriangleCollisionShape(Ogre::SceneNode* node,GraphicsManager* Graphics)
 	{
 		btBvhTriangleMeshShape* shape;
 		btTriangleMesh* bmesh = new btTriangleMesh();

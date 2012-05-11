@@ -19,15 +19,6 @@
     <Filter Include="Include Files\State\Arena">
       <UniqueIdentifier>{18a5d19b-7538-44b1-9e80-ff3c48b84e96}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include Files\Bullet">
-      <UniqueIdentifier>{62a114a4-224f-48ae-9120-d7ca84e6467c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Include Files\Ogre">
-      <UniqueIdentifier>{fa8124fb-d141-40ff-b697-daef2df594d3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Include Files\OIS">
-      <UniqueIdentifier>{e59bc664-ba3a-4852-8724-e1f813ef22da}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Include Files\Game">
       <UniqueIdentifier>{3ee38239-b89f-45c8-9bc3-b832e9336bc6}</UniqueIdentifier>
     </Filter>
@@ -39,9 +30,6 @@
     </Filter>
     <Filter Include="Include Files\PCH">
       <UniqueIdentifier>{88e08e02-a526-43cc-babf-4e45daf89922}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="Include Files\Bullet\DebugDrawer">
-      <UniqueIdentifier>{ef893743-226f-49f0-8f36-2fecc532cf20}</UniqueIdentifier>
     </Filter>
     <Filter Include="Include Files\Player">
       <UniqueIdentifier>{533af87e-0ac3-412f-b7cd-4c8b879ff3c1}</UniqueIdentifier>
@@ -67,6 +55,21 @@
     <Filter Include="Include Files\GUI">
       <UniqueIdentifier>{9da7cc64-0c0f-4a72-b744-baead875d167}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include Files\Sound">
+      <UniqueIdentifier>{5e4c6cfe-1c40-4b8c-a226-b68a2c2f8e09}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files\Graphics">
+      <UniqueIdentifier>{fa8124fb-d141-40ff-b697-daef2df594d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files\Input">
+      <UniqueIdentifier>{e59bc664-ba3a-4852-8724-e1f813ef22da}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files\Physics">
+      <UniqueIdentifier>{62a114a4-224f-48ae-9120-d7ca84e6467c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files\Physics\DebugDrawer">
+      <UniqueIdentifier>{ef893743-226f-49f0-8f36-2fecc532cf20}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\State.h">
@@ -83,15 +86,6 @@
     </ClInclude>
     <ClInclude Include="Code\ArenaALL.h">
       <Filter>Include Files\State\Arena</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\BulletManager.h">
-      <Filter>Include Files\Bullet</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\OgreManager.h">
-      <Filter>Include Files\Ogre</Filter>
-    </ClInclude>
-    <ClInclude Include="Code\OISManager.h">
-      <Filter>Include Files\OIS</Filter>
     </ClInclude>
     <ClInclude Include="Code\GameManager.h">
       <Filter>Include Files\Game</Filter>
@@ -118,10 +112,10 @@
       <Filter>Include Files\XML\interfaces</Filter>
     </ClInclude>
     <ClInclude Include="Code\debug_draw\DebugDraw.hpp">
-      <Filter>Include Files\Bullet\DebugDrawer</Filter>
+      <Filter>Include Files\Physics\DebugDrawer</Filter>
     </ClInclude>
     <ClInclude Include="Code\debug_draw\DynamicLineDrawer.hpp">
-      <Filter>Include Files\Bullet\DebugDrawer</Filter>
+      <Filter>Include Files\Physics\DebugDrawer</Filter>
     </ClInclude>
     <ClInclude Include="Code\interfaces\weapon.hxx">
       <Filter>Include Files\XML\interfaces</Filter>
@@ -153,6 +147,18 @@
     <ClInclude Include="Code\GUIManager.h">
       <Filter>Include Files\GUI</Filter>
     </ClInclude>
+    <ClInclude Include="Code\SoundManager.h">
+      <Filter>Include Files\Sound</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\GraphicsManager.h">
+      <Filter>Include Files\Graphics</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\InputManager.h">
+      <Filter>Include Files\Input</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\PhysicsManager.h">
+      <Filter>Include Files\Physics</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">
@@ -166,15 +172,6 @@
     </ClCompile>
     <ClCompile Include="Code\Arena_Locker.cpp">
       <Filter>Include Files\State\Arena</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\BulletManager.cpp">
-      <Filter>Include Files\Bullet</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\OgreManager.cpp">
-      <Filter>Include Files\Ogre</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\OISManager.cpp">
-      <Filter>Include Files\OIS</Filter>
     </ClCompile>
     <ClCompile Include="Code\GameManager.cpp">
       <Filter>Include Files\Game</Filter>
@@ -198,10 +195,10 @@
       <Filter>Include Files\XML\interfaces</Filter>
     </ClCompile>
     <ClCompile Include="Code\debug_draw\DebugDraw.cpp">
-      <Filter>Include Files\Bullet\DebugDrawer</Filter>
+      <Filter>Include Files\Physics\DebugDrawer</Filter>
     </ClCompile>
     <ClCompile Include="Code\debug_draw\DynamicLineDrawer.cpp">
-      <Filter>Include Files\Bullet\DebugDrawer</Filter>
+      <Filter>Include Files\Physics\DebugDrawer</Filter>
     </ClCompile>
     <ClCompile Include="Code\interfaces\weapon.cxx">
       <Filter>Include Files\XML\interfaces</Filter>
@@ -232,6 +229,18 @@
     </ClCompile>
     <ClCompile Include="Code\menu\MainMenu.cpp">
       <Filter>Include Files\Game\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\SoundManager.cpp">
+      <Filter>Include Files\Sound</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\GraphicsManager.cpp">
+      <Filter>Include Files\Graphics</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\InputManager.cpp">
+      <Filter>Include Files\Input</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\PhysicsManager.cpp">
+      <Filter>Include Files\Physics</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

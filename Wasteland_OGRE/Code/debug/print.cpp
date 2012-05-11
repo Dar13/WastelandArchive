@@ -1,7 +1,7 @@
 #include "StdAfx.h"
 #include "print.h"
 
-#include "..\OgreManager.h"
+#include "..\GraphicsManager.h"
 
 template<> DebugPrint* Ogre::Singleton<DebugPrint>::ms_Singleton = 0;
 

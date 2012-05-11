@@ -4,7 +4,7 @@
 #include "debug\print.h"
 
 
-void CharacterController::create(Ogre::Camera* camera,const Ogre::Vector3& initialPosition,btDiscreteDynamicsWorld* phyWorld,OgreManager* Graphics)
+void CharacterController::create(Ogre::Camera* camera,const Ogre::Vector3& initialPosition,btDiscreteDynamicsWorld* phyWorld,GraphicsManager* Graphics)
 {
 	cCamera = camera;
 	_world = phyWorld;
@@ -51,7 +51,7 @@ void CharacterController::create(Ogre::Camera* camera,const Ogre::Vector3& initi
 	return;
 }
 
-void CharacterController::update(float physicsTimeElapsed,OISManager* inputManager,OgreTransform& transform)
+void CharacterController::update(float physicsTimeElapsed,InputManager* inputManager,OgreTransform& transform)
 {
 	btTransform cTransform = cGhostObject->getWorldTransform();
 	btVector3 forwardDirection = cTransform.getBasis()[0]; forwardDirection.normalize();

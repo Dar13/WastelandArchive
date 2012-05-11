@@ -4,10 +4,10 @@
 #define _ARENA_TUTORIAL_H_
 
 #include "State.h"
-#include "OISManager.h"
+#include "InputManager.h"
 #include "CharacterController.h"
 #include "EWS.h"
-#include "BulletManager.h"
+#include "PhysicsManager.h"
 
 // forward declaration, keeping the header file slim.
 struct OgreBulletPair;
@@ -25,11 +25,11 @@ public:
 	ArenaTutorial();
 
 	//! State-specific setup.
-	void Setup(OISManager* Input,OgreManager* Graphics,GUIManager* Gui);
+	void Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound);
 	//! Runs the state.
-	int Run(OISManager* Input,OgreManager* Graphics,GUIManager* Gui);
+	int Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound);
 	//! Shutsdown and cleans up the application state.
-	void Shutdown(OISManager* Input,OgreManager* Graphics,GUIManager* Gui);
+	void Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound);
 
 private:
 	//! Tracks all OgreBulletPairs
@@ -55,7 +55,11 @@ private:
 	std::unique_ptr<CharacterController> _controller;
 	std::unique_ptr<EWSManager> _ews;
 
-	std::unique_ptr<BulletManager> _physics;
+	std::unique_ptr<PhysicsManager> _physics;
+
+	//Sound stuff
+	std::vector<sSound> _sounds;
+
 };
 
 #endif

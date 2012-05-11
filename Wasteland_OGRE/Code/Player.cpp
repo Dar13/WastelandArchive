@@ -3,7 +3,7 @@
 #include "interfaces\weapon.hxx"
 #include "Player.h"
 
-#include "OISManager.h"
+#include "InputManager.h"
 #include "Utility.h"
 
 #include "debug\print.h"
@@ -34,7 +34,7 @@ void Player::Setup(std::string file)
 	*/
 }
 
-bool Player::Update(OISManager* input,BulletManager* physics,EWSManager* ews,const OgreTransform& transform)
+bool Player::Update(InputManager* input,PhysicsManager* physics,EWSManager* ews,const OgreTransform& transform)
 {
 	if(input->isCFGKeyPressed(ENVWARNSYS))
 	{
@@ -43,7 +43,7 @@ bool Player::Update(OISManager* input,BulletManager* physics,EWSManager* ews,con
 	return true;
 }
 
-void Player::placeEWS(EWSManager* ews,BulletManager* physics,const OgreTransform& transform)
+void Player::placeEWS(EWSManager* ews,PhysicsManager* physics,const OgreTransform& transform)
 {
 	btVector3 rayPosition,rayNormal;
 	btVector3 rayStart = Utility::convert_OgreVector3(transform.position);

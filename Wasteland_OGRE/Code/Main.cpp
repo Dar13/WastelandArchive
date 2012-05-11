@@ -20,7 +20,7 @@ int main(int argc, char **argv[])
 #endif
 
 	//Smart pointer holding ogre manager pointer.
-	const std::unique_ptr<OgreManager> ogre(new OgreManager());
+	const std::unique_ptr<GraphicsManager> ogre(new GraphicsManager());
 	//Setup ogre. If this fails, crash to desktop. Probably should pop-up a message box.
 	if(!ogre->Setup())
 	{
@@ -28,8 +28,9 @@ int main(int argc, char **argv[])
 		MessageBoxA(NULL,"The Object-Oriented Graphics Rendering Engine(OGRE) has failed to initialize properly.","ERROR",MB_OK);
 #else
 		//not sure what to put here.
+		//Linux is much harder to have a message box generically like Windows.
 #endif
-		return 1;
+		return 1; //error code 1
 	}
 
 	//adds all the resource groups defined by the files contained in this file.
@@ -41,9 +42,20 @@ int main(int argc, char **argv[])
 	ogre->getRenderWindow()->getCustomAttribute("WINDOW",&hWnd);
 
 	//Setup the input handler(OIS)
-	const std::unique_ptr<OISManager> ois(new OISManager(hWnd));
+	const std::unique_ptr<InputManager> ois(new InputManager(hWnd));
 	resFile = "resource\\xml\\config.xml"; //re-using string variable.
 	ois->setConfiguration(configuration(resFile).release());
+
+	const std::unique_ptr<SoundManager> sound(new SoundManager());
+	if(!sound->Setup())
+	{
+#if defined(WIN32)
+		MessageBoxA(NULL,"FMOD didn't initialize properly.","ERROR",MB_OK);
+#else
+		//other platforms?
+#endif
+		return 2; //error code 2
+	}
 
 	char buf[MAX_PATH];
 	_getcwd(buf,MAX_PATH);
@@ -55,7 +67,7 @@ int main(int argc, char **argv[])
 
 	//Set up the state manager
 	const std::unique_ptr<StateManager> wtld(new StateManager());
-	wtld->Setup(ois.get(),ogre.get(),gui.get());
+	wtld->Setup(ois.get(),ogre.get(),gui.get(),sound.get());
 	
 	//run the app.
 	wtld->Run();

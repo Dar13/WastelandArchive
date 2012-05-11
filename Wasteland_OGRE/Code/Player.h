@@ -3,9 +3,9 @@
 #include "interfaces\weapon.hxx"
 
 #include "EWS.h"
-#include "OISManager.h"
-#include "BulletManager.h"
-#include "OgreManager.h"
+#include "InputManager.h"
+#include "PhysicsManager.h"
+#include "GraphicsManager.h"
 
 #ifndef _PLAYER_H_
 #define _PLAYER_H_
@@ -17,10 +17,10 @@ public:
 	~Player();
 
 	void Setup(std::string file);
-	bool Update(OISManager* input,BulletManager* physics,EWSManager* ews,const OgreTransform& transform);
+	bool Update(InputManager* input,PhysicsManager* physics,EWSManager* ews,const OgreTransform& transform);
 	void Clean(bool reuse = false);
 
-	void placeEWS(EWSManager* ews,BulletManager* physics,const OgreTransform& transform);
+	void placeEWS(EWSManager* ews,PhysicsManager* physics,const OgreTransform& transform);
 
 private:
 	bool _firingWeapon;

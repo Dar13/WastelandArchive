@@ -4,8 +4,8 @@
 #define _MENU_H_
 
 #include "..\State.h"
-#include "..\OISManager.h"
-#include "..\OgreManager.h"
+#include "..\InputManager.h"
+#include "..\GraphicsManager.h"
 #include "..\GUIManager.h"
 #include <vector>
 
@@ -21,11 +21,11 @@ class MainMenu : public Menu
 public:
 	MainMenu();
 
-	void Setup(OISManager* Input,OgreManager* Graphics,GUIManager* Gui);
+	void Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound);
 
-	int Run(OISManager* Input,OgreManager* Graphics,GUIManager* Gui);
+	int Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound);
 
-	void Shutdown(OISManager* Input,OgreManager* Graphics,GUIManager* Gui);
+	void Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound);
 
 	void createOptionsMenu(GUIManager* Gui);
 
@@ -42,11 +42,16 @@ private:
 	std::map<std::string,CEGUI::Window*> _opt_guiSheetChildren;
 	bool _goto_Options;
 
+	//Ogre stuff
 	Ogre::SceneManager* _scene;
 	Ogre::Camera* _camera;
 	Ogre::Viewport* _view;
 	Ogre::SceneNode* _camNode,*_cityNode;
 	Ogre::SceneNode* _lightNode;
+
+	//FMOD stuff
+	std::vector<sSound> _sounds;
+	std::vector<FMOD::Channel*> _channels;
 };
 
 #endif

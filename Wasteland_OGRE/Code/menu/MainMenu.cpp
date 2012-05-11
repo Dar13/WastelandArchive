@@ -13,7 +13,7 @@ MainMenu::MainMenu()
 	_goto_Options = false;
 }
 
-void MainMenu::Setup(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
+void MainMenu::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
 {
 	if(_stateShutdown)
 		_stateShutdown = false;
@@ -88,19 +88,25 @@ void MainMenu::Setup(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
 
 	Gui->setCurrentGUISheet("main_Root");
 
+	//load and set-up music.
+	//DO NOT ADD MUSIC TO LOCAL SOUNDS VECTOR
+	sSound sound;
+	sound.name = "mainmenu_AtRest";
+	sound.type = MUSIC;
+	Sound->createSound(sound,"resource\\music\\at_rest.mp3");
+	Sound->addMusicToPlaylist(sound);
+
 	return;
 }
 
-int MainMenu::Run(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
+int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
 {
-	Ogre::Vector3 origPosition = _camNode->getPosition();
-	Ogre::Vector3 rotationPosition = _camNode->getPosition();
-	Ogre::Quaternion origOrn(Ogre::Radian(0),Ogre::Vector3::UNIT_Y);
-	Ogre::Quaternion destOrn(Ogre::Radian(Ogre::Degree(359)),Ogre::Vector3::UNIT_Y);
-	Ogre::Quaternion deltaOrn,deltaRot;
 	Ogre::Real rotProg = 0.0f;
 	Ogre::Real rotFactor = 1.0f / 360.0f;
 	bool isCamRotating = true;
+
+	//no need for separate channels right now. SoundManager takes care of music for me.
+	Sound->startMusic();
 	
 	bool inOptions = false;
 	while(!_stateShutdown)
@@ -132,7 +138,7 @@ int MainMenu::Run(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
 			_camNode->setPosition(positionRotation);
 		}
 		
-		
+		Sound->Update();
 
 		Gui->Update(_deltaTime);
 		GameManager::UpdateManagers(Graphics,NULL,_deltaTime);
@@ -165,7 +171,7 @@ int MainMenu::Run(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
 	return _returnValue;
 }
 
-void MainMenu::Shutdown(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
+void MainMenu::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
 {
 	//undo whatever is done in the setup.
 	Gui->setCurrentGUISheet("none");
@@ -178,6 +184,21 @@ void MainMenu::Shutdown(OISManager* Input,OgreManager* Graphics,GUIManager* Gui)
 	_scene->clearScene();
 
 	Graphics->getRoot()->destroySceneManager(_scene);
+
+	for(std::vector<FMOD::Channel*>::iterator itr = _channels.begin(); itr != _channels.end(); ++itr)
+	{
+		//basically kills the channel in the eyes of FMOD.
+		(*itr)->stop();
+	}
+
+	for(std::vector<sSound>::iterator itr = _sounds.begin(); itr != _sounds.end(); ++itr)
+	{
+		//need to release this memory.
+		(*itr).sound->release();
+		(*itr).sound = 0;
+	}
+
+	Sound->stopMusic(true);
 
 	return;
 }

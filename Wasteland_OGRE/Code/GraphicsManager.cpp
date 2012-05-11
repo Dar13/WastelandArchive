@@ -1,8 +1,8 @@
 #include "StdAfx.h"
 
-#include "OgreManager.h"
+#include "GraphicsManager.h"
 
-OgreManager::OgreManager()
+GraphicsManager::GraphicsManager()
 {
 	_Root=0;
 	_Window=0;
@@ -11,7 +11,7 @@ OgreManager::OgreManager()
 	_windowHandle = 0;
 }
 
-bool OgreManager::Setup()
+bool GraphicsManager::Setup()
 {
 	Ogre::LogManager* logMgr = NULL;
 	bool retVal=true;
@@ -87,7 +87,7 @@ bool OgreManager::Setup()
 	return retVal;
 }
 
-bool OgreManager::addResources(std::string& filename)
+bool GraphicsManager::addResources(std::string& filename)
 {
 	//return value
 	bool retVal=true; //honestly don't know what to check for to make this false. Catch an exception?
@@ -117,7 +117,7 @@ bool OgreManager::addResources(std::string& filename)
 	return retVal;
 }
 
-bool OgreManager::Render()
+bool GraphicsManager::Render()
 {
 	bool retVal=true;
 	try
@@ -135,7 +135,7 @@ bool OgreManager::Render()
 	return retVal;
 }
 
-void OgreManager::Shutdown()
+void GraphicsManager::Shutdown()
 {
 	clearAnimationStates();
 	_Root->shutdown();
@@ -147,7 +147,7 @@ Options list: (defined in object.xsd)
 note: most all properties are floats or strings. Only special fields get integers.
 */
 
-Ogre::SceneNode* OgreManager::createSceneNode(Ogre::SceneManager* scene, 
+Ogre::SceneNode* GraphicsManager::createSceneNode(Ogre::SceneManager* scene, 
 								 object_t* objectInfo,Ogre::SceneNode* parent)
 {
 	Ogre::SceneNode* node = NULL;
@@ -224,7 +224,7 @@ Ogre::SceneNode* OgreManager::createSceneNode(Ogre::SceneManager* scene,
 //This works, but isn't documented very well...
 //Might come back and document it later, but not right now...
 //In other words...!!!MAGIC DON'T TOUCH!!!
-void OgreManager::getMeshInformation(const Ogre::MeshPtr* const meshptr,
+void GraphicsManager::getMeshInformation(const Ogre::MeshPtr* const meshptr,
                         size_t &vertex_count,
                         Ogre::Vector3* &vertices,
                         size_t &index_count,
@@ -352,12 +352,12 @@ void OgreManager::getMeshInformation(const Ogre::MeshPtr* const meshptr,
 }
 
 //Framelistener methods and any helpers that affect them.
-void OgreManager::addAnimationState(Ogre::AnimationState* anim)
+void GraphicsManager::addAnimationState(Ogre::AnimationState* anim)
 {
 	_animations.push_back(anim);
 }
 
-void OgreManager::removeAnimationState(Ogre::AnimationState* anim)
+void GraphicsManager::removeAnimationState(Ogre::AnimationState* anim)
 {
 	for(std::vector<Ogre::AnimationState*>::iterator itr = _animations.begin(); itr != _animations.end(); ++itr)
 	{
@@ -369,12 +369,12 @@ void OgreManager::removeAnimationState(Ogre::AnimationState* anim)
 	}
 }
 
-void OgreManager::clearAnimationStates()
+void GraphicsManager::clearAnimationStates()
 {
 	_animations.clear();
 }
 
-bool OgreManager::frameStarted(const Ogre::FrameEvent& evt)
+bool GraphicsManager::frameStarted(const Ogre::FrameEvent& evt)
 {
 	//update any animations that need it.
 	for(std::vector<Ogre::AnimationState*>::iterator itr = _animations.begin(); itr != _animations.end(); ++itr)
@@ -385,23 +385,23 @@ bool OgreManager::frameStarted(const Ogre::FrameEvent& evt)
 	return true;
 }
 
-bool OgreManager::frameRenderingQueued(const Ogre::FrameEvent& evt)
+bool GraphicsManager::frameRenderingQueued(const Ogre::FrameEvent& evt)
 {
 	return true;
 }
 
-bool OgreManager::frameEnded(const Ogre::FrameEvent& evt)
+bool GraphicsManager::frameEnded(const Ogre::FrameEvent& evt)
 {
 	return true;
 }
 
-void OgreManager::setLightRange(Ogre::Light* l, Ogre::Real range)
+void GraphicsManager::setLightRange(Ogre::Light* l, Ogre::Real range)
 {
 	l->setAttenuation(range,(Ogre::Real)1.0f,(Ogre::Real)4.5f/range,75.0f/(range*range));
 	return;
 }
 
-Ogre::ColourValue OgreManager::getColorFromHex(int hexColor, float alpha)
+Ogre::ColourValue GraphicsManager::getColorFromHex(int hexColor, float alpha)
 {
 	float r,g,b,a;
 	a = 1.0f; //no transparency.
@@ -413,7 +413,7 @@ Ogre::ColourValue OgreManager::getColorFromHex(int hexColor, float alpha)
 	return Ogre::ColourValue(r,g,b,a);
 }
 
-Ogre::Quaternion OgreManager::eulerToQuat(Ogre::Radian rX,Ogre::Radian rY,Ogre::Radian rZ)
+Ogre::Quaternion GraphicsManager::eulerToQuat(Ogre::Radian rX,Ogre::Radian rY,Ogre::Radian rZ)
 {
 	Ogre::Quaternion qX,qY,qZ,qT;
 	qX.FromAngleAxis(rX,Ogre::Vector3::UNIT_X);
@@ -427,7 +427,7 @@ Ogre::Quaternion OgreManager::eulerToQuat(Ogre::Radian rX,Ogre::Radian rY,Ogre::
 //I really hope this works. Pain in the ass if it doesn't.
 //Returns true if pointP is within triangle ABC.
 //Takes x/z coordinates of 3D vector.
-bool OgreManager::isPointInTriangle2D(const Ogre::Vector3& pointA,const Ogre::Vector3& pointB,const Ogre::Vector3& pointC,const Ogre::Vector3& pointP)
+bool GraphicsManager::isPointInTriangle2D(const Ogre::Vector3& pointA,const Ogre::Vector3& pointB,const Ogre::Vector3& pointC,const Ogre::Vector3& pointP)
 {
 	Ogre::Vector3 u,v,w,crossW,crossU,crossV;
 	u = pointB - pointA;

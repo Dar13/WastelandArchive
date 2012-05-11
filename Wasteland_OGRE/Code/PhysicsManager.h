@@ -14,12 +14,12 @@
 Performs various tasks specific to Bullet Physics, is mainly self-contained.
 */
 
-class BulletManager
+class PhysicsManager
 {
 public:
 	//! Initializes all Bullet pointers to zero.
-	BulletManager();
-	~BulletManager();
+	PhysicsManager();
+	~PhysicsManager();
 
 	//! Sets up Bullet Physics.
 	void Setup();

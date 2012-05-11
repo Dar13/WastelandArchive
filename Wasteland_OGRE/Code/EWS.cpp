@@ -3,7 +3,7 @@
 
 #include "debug\console.h"
 #include "Utility.h"
-#include "OgreManager.h"
+#include "GraphicsManager.h"
 
 EWSManager::EWSManager(Ogre::SceneManager* scene)
 {

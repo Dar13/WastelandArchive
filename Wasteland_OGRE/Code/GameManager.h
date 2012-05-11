@@ -4,9 +4,9 @@
 #ifndef _GAME_MANAGER_H_
 #define _GAME_MANAGER_H_
 
-#include "OgreManager.h"
-#include "OISManager.h"
-#include "BulletManager.h"
+#include "GraphicsManager.h"
+#include "InputManager.h"
+#include "PhysicsManager.h"
 #include "XMLReader.h"
 #include "EWS.h"
 
@@ -43,12 +43,12 @@ namespace GameManager
 	*/
 	OgreBulletPair createObject(Ogre::SceneManager* scene,
 								std::string& file,
-								BulletManager* phyManager,
-								OgreManager* graphicsManager);
+								PhysicsManager* phyManager,
+								GraphicsManager* graphicsManager);
 	OgreBulletPair createObject(Ogre::SceneManager* scene,
 								object_t* objectInfo,
-								BulletManager* phyManager,
-								OgreManager* graphicsManager);
+								PhysicsManager* phyManager,
+								GraphicsManager* graphicsManager);
 	/*! Creates object, generates Ogre SceneNode and Bullet rigid body.
 
 		\param node Premade SceneNode.
@@ -58,24 +58,24 @@ namespace GameManager
 	*/
 	OgreBulletPair createObject(Ogre::SceneNode* node,
 								object_t* objectInfo,
-								BulletManager* phyManager,
-								OgreManager* graphicsManager);
+								PhysicsManager* phyManager,
+								GraphicsManager* graphicsManager);
 
 	/*! Tells class to use the debug drawer, to verify collisions are happening correctly.
 		
 		\param scene Current SceneManager for Ogre, needed to draw the stuff.
 	*/
-	void setDebugDrawer(Ogre::SceneManager* scene,BulletManager* phyManager);
+	void setDebugDrawer(Ogre::SceneManager* scene,PhysicsManager* phyManager);
 	
 	/*! Updates the individual managers.
 
 	\returns true if all managers updated properly.
 	*/
-	bool UpdateManagers(OgreManager* graphicsManager,BulletManager* phyManager,float deltaTime);
+	bool UpdateManagers(GraphicsManager* graphicsManager,PhysicsManager* phyManager,float deltaTime);
 	
-	//! Utilizes a special OgreManager function to create a triangle mesh collision shape.
-	//! \sa OgreManager::getMeshInformation()
-	btBvhTriangleMeshShape* buildTriangleCollisionShape(Ogre::SceneNode* node,OgreManager* Graphics);
+	//! Utilizes a special GraphicsManager function to create a triangle mesh collision shape.
+	//! \sa GraphicsManager::getMeshInformation()
+	btBvhTriangleMeshShape* buildTriangleCollisionShape(Ogre::SceneNode* node,GraphicsManager* Graphics);
 };
 
 #endif

@@ -14,7 +14,7 @@
     <ClInclude Include="Code\ArenaALL.h" />
     <ClInclude Include="Code\Arena_Locker.h" />
     <ClInclude Include="Code\Arena_Tutorial.h" />
-    <ClInclude Include="Code\BulletManager.h" />
+    <ClInclude Include="Code\PhysicsManager.h" />
     <ClInclude Include="Code\CharacterController.h" />
     <ClInclude Include="Code\debug\console.h" />
     <ClInclude Include="Code\debug\print.h" />
@@ -31,10 +31,11 @@
     <ClInclude Include="Code\interfaces\weapon.hxx" />
     <ClInclude Include="Code\Intro.h" />
     <ClInclude Include="Code\menu\Menu.h" />
-    <ClInclude Include="Code\OgreManager.h" />
-    <ClInclude Include="Code\OISManager.h" />
+    <ClInclude Include="Code\GraphicsManager.h" />
+    <ClInclude Include="Code\InputManager.h" />
     <ClInclude Include="Code\Player.h" />
     <ClInclude Include="Code\precompiled\StdAfx.h" />
+    <ClInclude Include="Code\SoundManager.h" />
     <ClInclude Include="Code\State.h" />
     <ClInclude Include="Code\StateManager.h" />
     <ClInclude Include="Code\Utility.h" />
@@ -43,7 +44,7 @@
   <ItemGroup>
     <ClCompile Include="Code\Arena_Locker.cpp" />
     <ClCompile Include="Code\Arena_Tutorial.cpp" />
-    <ClCompile Include="Code\BulletManager.cpp" />
+    <ClCompile Include="Code\PhysicsManager.cpp" />
     <ClCompile Include="Code\CharacterController.cpp" />
     <ClCompile Include="Code\debug\console.cpp" />
     <ClCompile Include="Code\debug\print.cpp" />
@@ -60,13 +61,14 @@
     <ClCompile Include="Code\Intro.cpp" />
     <ClCompile Include="Code\Main.cpp" />
     <ClCompile Include="Code\menu\MainMenu.cpp" />
-    <ClCompile Include="Code\OgreManager.cpp" />
-    <ClCompile Include="Code\OISManager.cpp" />
+    <ClCompile Include="Code\GraphicsManager.cpp" />
+    <ClCompile Include="Code\InputManager.cpp" />
     <ClCompile Include="Code\Player.cpp" />
     <ClCompile Include="Code\precompiled\StdAfx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <AdditionalOptions Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">/Zm200 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
+    <ClCompile Include="Code\SoundManager.cpp" />
     <ClCompile Include="Code\StateManager.cpp" />
     <ClCompile Include="Code\Utility.cpp" />
     <ClCompile Include="Code\XMLReader.cpp" />
@@ -133,7 +135,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>xerces-c_3D.lib;OgreMain_d.lib;OIS_d.lib;dxguid.lib;dinput8.lib;CEGUIBase_d.lib;CEGUIOgreRenderer_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>fmodex_vc.lib;xerces-c_3D.lib;OgreMain_d.lib;OIS_d.lib;dxguid.lib;dinput8.lib;CEGUIBase_d.lib;CEGUIOgreRenderer_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(OutDir)\$(TargetFileName)" "$(OGRE_HOME)\Bin\$(Configuration)"</Command>

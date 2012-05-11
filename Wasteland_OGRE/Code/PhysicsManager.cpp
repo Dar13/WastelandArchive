@@ -1,11 +1,11 @@
 #include "StdAfx.h"
-#include "BulletManager.h"
+#include "PhysicsManager.h"
 
 //====================
 // Bullet Manager
 //====================
 
-BulletManager::BulletManager()
+PhysicsManager::PhysicsManager()
 {
 	//Sets everything to NULL.
 	_World = 0;
@@ -17,14 +17,14 @@ BulletManager::BulletManager()
 	_debugDrawer = 0;
 }
 
-BulletManager::~BulletManager()
+PhysicsManager::~PhysicsManager()
 {
 	Shutdown(false);
 
 	delete _debugDrawer;
 }
 
-void BulletManager::Setup()
+void PhysicsManager::Setup()
 {
 	_Config = new btDefaultCollisionConfiguration();
 	_Dispatch = new btCollisionDispatcher(_Config);
@@ -33,12 +33,12 @@ void BulletManager::Setup()
 	_World = new btDiscreteDynamicsWorld(_Dispatch,_OverlapPairCache,_Solver,_Config);
 }
 
-void BulletManager::setDebugDrawer(CDebugDraw* drawer)
+void PhysicsManager::setDebugDrawer(CDebugDraw* drawer)
 {
 	_debugDrawer = drawer;
 }
 
-btRigidBody* BulletManager::addRigidBody(btCollisionShape* shape,Ogre::SceneNode* node,btScalar &mass,btTransform &initTransform)
+btRigidBody* PhysicsManager::addRigidBody(btCollisionShape* shape,Ogre::SceneNode* node,btScalar &mass,btTransform &initTransform)
 {
 	_Shapes.push_back(shape);
 
@@ -57,14 +57,14 @@ btRigidBody* BulletManager::addRigidBody(btCollisionShape* shape,Ogre::SceneNode
 	return body;
 }
 
-void BulletManager::setGravity(btVector3 &gravity)
+void PhysicsManager::setGravity(btVector3 &gravity)
 {
 	_Gravity = gravity;
 	_World->setGravity(_Gravity);
 }
 
 //deltaTime will be how many seconds have passed(hopefully less than 1).
-void BulletManager::Update(float deltaTime)
+void PhysicsManager::Update(float deltaTime)
 {
 	int subSteps = 0;
 	if(deltaTime < (0.03333333333f))
@@ -86,7 +86,7 @@ void BulletManager::Update(float deltaTime)
 	}
 }
 
-btCollisionShape* BulletManager::generateCollisionShape(object_t* objectInfo)
+btCollisionShape* PhysicsManager::generateCollisionShape(object_t* objectInfo)
 {
 	btCollisionShape* retVal = NULL;
 	std::string type = objectInfo->collisionShape();
@@ -123,7 +123,7 @@ btCollisionShape* BulletManager::generateCollisionShape(object_t* objectInfo)
 	return retVal;
 }
 
-bool BulletManager::RaycastWorld_Closest(const btVector3& start,const btVector3& end, btVector3& position, btVector3& normal)
+bool PhysicsManager::RaycastWorld_Closest(const btVector3& start,const btVector3& end, btVector3& position, btVector3& normal)
 {
 	//structure that will hold the results
 	btCollisionWorld::ClosestRayResultCallback rayResult(start,end);
@@ -147,7 +147,7 @@ bool BulletManager::RaycastWorld_Closest(const btVector3& start,const btVector3&
 
 }
 
-void BulletManager::Shutdown(bool reuse)
+void PhysicsManager::Shutdown(bool reuse)
 {
 	//Deletes all rigid bodies and collision shapes, basically cleans out the class.
 	//rigid bodies

@@ -14,13 +14,14 @@ StateManager::StateManager()
 	_States.insert(std::make_pair(GAME_ARENA,new ArenaTutorial()));
 }
 
-void StateManager::Setup(OISManager* inputManager,OgreManager* graphicsManager,GUIManager* guiManager)
+void StateManager::Setup(InputManager* inputManager,GraphicsManager* graphicsManager,GUIManager* guiManager,SoundManager* soundManager)
 {
 	//Not sure if I need this step at the moment. We'll see.
 	//looks like I need it
 	_Input = inputManager;
 	_Graphics = graphicsManager;
 	_Gui = guiManager;
+	_Sound = soundManager;
 }
 
 void StateManager::Run()
@@ -34,13 +35,13 @@ void StateManager::Run()
 		if(_States[curState] != NULL)
 		{
 			//setting up the current state
-			_States[curState]->Setup(_Input,_Graphics,_Gui);
+			_States[curState]->Setup(_Input,_Graphics,_Gui,_Sound);
 			//saving the state, so we can do clean up later
 			oldState=curState;
 			//run the state, gets next state from run method
-			curState=_States[curState]->Run(_Input,_Graphics,_Gui);
+			curState=_States[curState]->Run(_Input,_Graphics,_Gui,_Sound);
 			//clean up old state(really the current state but eh)
-			_States[oldState]->Shutdown(_Input,_Graphics,_Gui);
+			_States[oldState]->Shutdown(_Input,_Graphics,_Gui,_Sound);
 			delete _States[oldState];
 			//make sure they know it's deleted
 			_States[oldState] = NULL;
