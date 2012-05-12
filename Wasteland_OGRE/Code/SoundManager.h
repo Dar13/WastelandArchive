@@ -58,7 +58,8 @@ private:
 	FMOD::System* _system;
 	FMOD_RESULT _errResult;
 
-	std::queue<FMOD::Sound*> _musicPlayList;
+	std::vector<FMOD::Sound*> _musicPlayList;
+	std::vector<FMOD::Sound*>::iterator _musicItr;
 	FMOD::Channel* _musicChannel;
 
 	int _sfxVolume;

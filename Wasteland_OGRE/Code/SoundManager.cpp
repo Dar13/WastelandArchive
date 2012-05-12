@@ -43,21 +43,26 @@ bool SoundManager::Update()
 	//somehow get the new configuration settings.
 
 	//update the music stuff.
-	bool p = true;
-	_musicChannel->isPlaying(&p);
-	if(p == false)
+	unsigned int position;
+	unsigned int length;
+	_musicChannel->getPosition(&position,FMOD_TIMEUNIT_MS);
+	_musicPlayList.front()->getLength(&length,FMOD_TIMEUNIT_MS);
+	if((length - position) <= 100)
 	{
 		_musicChannel->stop();
 		sSound tmp;
 		tmp.name = "menuMusic";
-		tmp.sound = _musicPlayList.front();
+		if( (_musicItr + 1) == _musicPlayList.end())
+		{
+			_musicItr = _musicPlayList.begin();
+		}
+		else
+		{
+			++_musicItr;
+		}
+		tmp.sound = (*_musicItr);
 		tmp.type = MUSIC;
 		_musicChannel = playSound(tmp);
-		if(_musicPlayList.size() > 2)
-		{
-			_musicPlayList.front()->release();
-			_musicPlayList.pop();
-		}
 	}
 	
 	return ret;
@@ -143,11 +148,12 @@ void SoundManager::startMusic()
 {
 	if(_musicPlayList.empty() == false)
 	{
+		_musicItr = _musicPlayList.begin();
 		sSound music;
 		music.is3D = false;
 		music.isLooping = false;
 		music.name = "menuMusic";
-		music.sound = _musicPlayList.front();
+		music.sound = (*_musicItr);
 		music.type = MUSIC;
 		_musicChannel = playSound(music);
 	}
@@ -155,7 +161,7 @@ void SoundManager::startMusic()
 
 void SoundManager::addMusicToPlaylist(const sSound& sound)
 {
-	_musicPlayList.push(sound.sound);
+	_musicPlayList.push_back(sound.sound);
 }
 
 void SoundManager::stopMusic(bool clearAllMusic)
@@ -168,17 +174,17 @@ void SoundManager::stopMusic(bool clearAllMusic)
 
 	if(clearAllMusic)
 	{
-		int size = _musicPlayList.size();
-		for(int i = 0; i < size; i++)
+		for(_musicItr = _musicPlayList.begin(); _musicItr != _musicPlayList.end(); ++_musicItr)
 		{
-			FMOD::Sound* sTmp = _musicPlayList.front();
+			FMOD::Sound* sTmp = (*_musicItr);
 			_errResult = sTmp->release();
 			if(_errResult != FMOD_OK)
 			{
 				_reportError();
 			}
-			_musicPlayList.pop();
 		}
+		_musicPlayList.clear();
+		_musicItr = _musicPlayList.begin();
 	}
 }
 

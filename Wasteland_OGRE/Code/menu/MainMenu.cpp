@@ -91,6 +91,11 @@ void MainMenu::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 	//load and set-up music.
 	//DO NOT ADD MUSIC TO LOCAL SOUNDS VECTOR
 	sSound sound;
+	sound.name="mainmenu_Unpromised";
+	sound.type=MUSIC;
+	Sound->createSound(sound,"resource\\music\\unpromised.mp3");
+	Sound->addMusicToPlaylist(sound);
+
 	sound.name = "mainmenu_AtRest";
 	sound.type = MUSIC;
 	Sound->createSound(sound,"resource\\music\\at_rest.mp3");
