@@ -20,7 +20,7 @@ struct OgreBulletPair
 
 /*! \brief The Manager class of all the managers. The final abstraction layer.
 
-This class is where all the different Managers
+This namespace is where all the different Managers
 (Ogre,Bullet,OIS,Sound,etc.)will interact in order to 
 perform certain tasks(example: building a btBvhTriangleMeshShape
 from an Ogre::Mesh. This is the abstraction upon which the
@@ -30,7 +30,6 @@ Will handle certain gameplay-specific managers(EWS and player) from
 beginning to end of the game(from 'new' to 'delete'). Keeps from crowding
 Main.cpp
 */
-
 
 namespace GameManager
 {

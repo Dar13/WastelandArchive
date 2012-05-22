@@ -43,6 +43,8 @@ public:
 
 	FMOD::Channel* playSound(const sSound& sound);
 
+	void updateChannels(std::vector<FMOD::Channel*>* channelVector);
+
 	void destroySound(sSound& sound);
 
 	//Music functions

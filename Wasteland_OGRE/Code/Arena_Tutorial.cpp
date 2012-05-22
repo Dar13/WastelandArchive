@@ -4,6 +4,7 @@
 #include "GameManager.h"
 #include "debug\console.h"
 #include "Utility.h"
+#include <boost\lexical_cast.hpp>
 
 ArenaTutorial::ArenaTutorial()
 {
@@ -48,7 +49,8 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	_player.reset(new Player());
 	
 	//set the camera aspect ratio
-	_camera->setAspectRatio(4.0f/3.0f);
+	_camera->setAspectRatio(16.0f/9.0f);
+	_camera->setPolygonMode(Ogre::PM_WIREFRAME);
 
 	//let's try out the character controller
 	_controller.reset(new CharacterController(_camera,_camera->getPosition(),_physics->getWorld(),Graphics ) );
@@ -57,6 +59,42 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 
 	//let's setup the EWS system
 	_ews.reset(new EWSManager(_scene));
+
+	//attempt to make a door out of a hinge constraint in bullet.
+	//get the last ogrebulletpair
+	OgreBulletPair hinge1 = _pairs.at(_pairs.size()-2);
+	OgreBulletPair level = _pairs.at(1);
+	hinge1.btBody->setActivationState(DISABLE_DEACTIVATION);
+	btHingeConstraint* hingeDoor;
+	hingeDoor = new btHingeConstraint(*level.btBody,*hinge1.btBody,btVector3(20.5f,5.0f,-5.0f),btVector3(0.0f,0.0f,-5.0f),btVector3(0,1,0),btVector3(0,1,0));
+	_physics->getWorld()->addConstraint(hingeDoor,true);
+	hingeDoor->setLimit(-0.1f,SIMD_PI / 2);
+	_constraints.push_back(hingeDoor);
+
+	/*
+	btHinge2Constraint* hinge;
+	//hinge = _physics->createHingeConstraint(level.btBody,hinge1.btBody,btVector3(20.0f,5.0f,-5.0f),btVector3(-5.0f,0.0f,.25f),btVector3(0,1,0),btVector3(0,1,0));
+	hinge = new btHinge2Constraint(*level.btBody,*hinge1.btBody,btVector3(20,5,-5),btVector3(0,1,0),btVector3(1,0,0));
+	_physics->getWorld()->addConstraint(hinge,true);
+	_constraints.push_back(hinge);
+	*/
+
+	/*
+	btSliderConstraint* door;
+	btTransform frameA;
+	frameA = btTransform::getIdentity();
+	frameA.setOrigin(btVector3(20.0f,5.0f,-5.0f));
+	btTransform frameB;
+	frameB = btTransform::getIdentity();
+	frameA.setOrigin(btVector3(20.0f,5.0f,-5.0f));
+	door = new btSliderConstraint(*level.btBody,*hinge1.btBody,frameA,frameB,true);
+	_constraints.push_back(door);
+	_physics->getWorld()->addConstraint(door,true);
+	*/
+	
+	//hinge1.btBody->setGravity(btVector3(0.0f,0.0f,0.0f));
+
+	_physics->setDebugDrawer(new CDebugDraw(_scene,_physics->getWorld()));
 }
 
 int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
@@ -65,6 +103,9 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 	Ogre::SceneNode* tmpNode = (Ogre::SceneNode*)_scene->getRootSceneNode()->getChild("nodetestSphere");
 
 	OgreTransform playerTransform;
+
+	btHingeConstraint* hinge = static_cast<btHingeConstraint*>(_constraints[0]);
+	btRigidBody* hingeBody = _pairs.at(_pairs.size()-2).btBody;
 	
 	float time;
 	//while the escape key isn't pressed and the state isn't told to shutdown.
@@ -80,6 +121,12 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 		//the state shutdown based on player input(?)
 		_stateShutdown = Input->Update(true);
 
+		if(Input->isMBPressed(OIS::MB_Left))
+		{
+			//hingeBody->applyTorqueImpulse(btVector3(0.0f,500.0f,0.0f));
+			hinge->enableAngularMotor(true,3.0f,5.0f);
+		}
+
 		//Update the character controller
 		_controller->update(_deltaTime,Input,playerTransform);
 
@@ -92,6 +139,9 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 		//True indicates success, so react on if it doesn't react properly
 		if(!GameManager::UpdateManagers(Graphics,_physics.get(),_deltaTime))
 			_stateShutdown = true;
+
+		//static_cast<btHingeConstraint*>(_constraints[0])->setMotorTarget(Ogre::Math::TWO_PI,Ogre::Math::PI/360.0f);
+		VirtualConsole::getSingleton().put(boost::lexical_cast<std::string,btScalar>(hinge->getHingeAngle())+'\n');
 	}
 
 	//no matter what, end the program after this state. **TESTING ONLY**
@@ -118,6 +168,8 @@ void ArenaTutorial::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIMa
 	//Clear the vectors
 	_nodes.clear();
 	_entities.clear();
+
+	_constraints.clear();
 
 	//cleaning up state-specific pointers.
 	//since all pointers are auto_ptr members, then they will be deleted upon class destruction.

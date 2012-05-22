@@ -5,6 +5,7 @@
 
 namespace Utility
 {
+
 	Ogre::Vector3 convert_btVector3(const btVector3& v);
 	btVector3 convert_OgreVector3(const Ogre::Vector3& v);
 	Ogre::Quaternion convert_btQuaternion(const btQuaternion& q);

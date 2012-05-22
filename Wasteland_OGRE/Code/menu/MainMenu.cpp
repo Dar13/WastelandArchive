@@ -91,14 +91,14 @@ void MainMenu::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 	//load and set-up music.
 	//DO NOT ADD MUSIC TO LOCAL SOUNDS VECTOR
 	sSound sound;
-	sound.name="mainmenu_Unpromised";
-	sound.type=MUSIC;
-	Sound->createSound(sound,"resource\\music\\unpromised.mp3");
-	Sound->addMusicToPlaylist(sound);
-
 	sound.name = "mainmenu_AtRest";
 	sound.type = MUSIC;
 	Sound->createSound(sound,"resource\\music\\at_rest.mp3");
+	Sound->addMusicToPlaylist(sound);
+
+	sound.name="mainmenu_Unpromised";
+	sound.type=MUSIC;
+	Sound->createSound(sound,"resource\\music\\unpromised.mp3");
 	Sound->addMusicToPlaylist(sound);
 
 	return;
@@ -107,7 +107,8 @@ void MainMenu::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
 {
 	Ogre::Real rotProg = 0.0f;
-	Ogre::Real rotFactor = 1.0f / 360.0f;
+	//one rotation every minute
+	Ogre::Real rotFactor = 1.0f / 3600.0f;
 	bool isCamRotating = true;
 
 	//no need for separate channels right now. SoundManager takes care of music for me.
@@ -159,6 +160,7 @@ int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,
 			tControl->setSelectedTab(1);
 			inOptions = true;
 			isCamRotating = false;
+			_cityNode->setVisible(false,true);
 		}
 		else
 		{
@@ -167,6 +169,7 @@ int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,
 				Gui->setCurrentGUISheet("main_Root");
 				inOptions = false;
 				isCamRotating = true;
+				_cityNode->setVisible(true,true);
 			}
 		}
 	}

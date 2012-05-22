@@ -6,6 +6,7 @@
 
 #include <BulletDynamics\Character\btKinematicCharacterController.h>
 #include <BulletCollision\CollisionDispatch\btGhostObject.h>
+#include <btBulletDynamicsCommon.h>
 
 #include "BulletDebugDraw\DebugDraw.hpp"
 
@@ -48,6 +49,22 @@ public:
 		\param initTrans The initial position/rotation of the rigid body in the simulation.
 	*/
 	btRigidBody* addRigidBody(btCollisionShape* shape,Ogre::SceneNode* node, btScalar &mass, btTransform &initTransform);
+
+	btPoint2PointConstraint* createBallSocketConstraint(btRigidBody* bodyA,const btVector3& pivotA,bool disableCollisions = false);
+	btPoint2PointConstraint* createBallSocketConstraint(btRigidBody* bodyA, btRigidBody* bodyB, 
+														const btVector3& pivotA,const btVector3& pivotB,
+														bool disableCollisions = false);
+
+	btHingeConstraint* createHingeConstraint(btRigidBody* bodyA, const btTransform& frameA, 
+											 bool referenceFrameA = false);
+	btHingeConstraint* createHingeConstraint(btRigidBody* bodyA, const btVector3& pivotA, 
+											 btVector3& axisA, bool referenceFrameA = false);
+	btHingeConstraint* createHingeConstraint(btRigidBody* bodyA, btRigidBody* bodyB, 
+											 const btVector3& pivotA, const btVector3& pivotB, 
+											 btVector3& axisA, btVector3& axisB, bool referenceFrameA = false);
+	btHingeConstraint* createHingeConstraint(btRigidBody* bodyA, btRigidBody* bodyB, 
+											 const btTransform& frameA, const btTransform& frameB, 
+											 bool referenceFrameA = false);
 
 	btCollisionShape* generateCollisionShape(object_t* objectInfo);
 	

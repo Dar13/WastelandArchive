@@ -14,6 +14,7 @@
     <ClInclude Include="Code\ArenaALL.h" />
     <ClInclude Include="Code\Arena_Locker.h" />
     <ClInclude Include="Code\Arena_Tutorial.h" />
+    <ClInclude Include="Code\LevelData.h" />
     <ClInclude Include="Code\PhysicsManager.h" />
     <ClInclude Include="Code\CharacterController.h" />
     <ClInclude Include="Code\debug\console.h" />
@@ -44,6 +45,7 @@
   <ItemGroup>
     <ClCompile Include="Code\Arena_Locker.cpp" />
     <ClCompile Include="Code\Arena_Tutorial.cpp" />
+    <ClCompile Include="Code\LevelData.cpp" />
     <ClCompile Include="Code\PhysicsManager.cpp" />
     <ClCompile Include="Code\CharacterController.cpp" />
     <ClCompile Include="Code\debug\console.cpp" />

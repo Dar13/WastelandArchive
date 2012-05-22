@@ -57,6 +57,52 @@ btRigidBody* PhysicsManager::addRigidBody(btCollisionShape* shape,Ogre::SceneNod
 	return body;
 }
 
+btPoint2PointConstraint* PhysicsManager::createBallSocketConstraint(btRigidBody* bodyA,const btVector3& pivotA,bool disableCollisions)
+{
+	btPoint2PointConstraint* p2p = new btPoint2PointConstraint(*bodyA,pivotA);
+	_World->addConstraint(p2p,disableCollisions);
+	return p2p;
+}
+
+btPoint2PointConstraint* PhysicsManager::createBallSocketConstraint(btRigidBody* bodyA,btRigidBody* bodyB,const btVector3& pivotA,const btVector3& pivotB,bool disableCollisions)
+{
+	btPoint2PointConstraint* p2p = new btPoint2PointConstraint(*bodyA,*bodyB,pivotA,pivotB);
+	_World->addConstraint(p2p,disableCollisions);
+	return p2p;
+}
+
+btHingeConstraint* PhysicsManager::createHingeConstraint(btRigidBody* bodyA, const btTransform& frameA, bool referenceFrameA)
+{
+	btHingeConstraint* hinge = new btHingeConstraint(*bodyA,frameA,referenceFrameA);
+	_World->addConstraint(hinge,false);
+	return hinge;
+}
+
+btHingeConstraint* PhysicsManager::createHingeConstraint(btRigidBody* bodyA, const btVector3& pivotA, btVector3& axisA, bool referenceFrameA)
+{
+	btHingeConstraint* hinge = new btHingeConstraint(*bodyA,pivotA,axisA,referenceFrameA);
+	_World->addConstraint(hinge,true);
+	return hinge;
+}
+
+btHingeConstraint* PhysicsManager::createHingeConstraint(btRigidBody* bodyA, btRigidBody* bodyB, 
+														 const btVector3& pivotA, const btVector3& pivotB, 
+														 btVector3& axisA, btVector3& axisB, bool referenceFrameA)
+{
+	btHingeConstraint* hinge = new btHingeConstraint(*bodyA,*bodyB,pivotA,pivotB,axisA,axisB,referenceFrameA);
+	_World->addConstraint(hinge,true);
+	return hinge;
+}
+
+btHingeConstraint* PhysicsManager::createHingeConstraint(btRigidBody* bodyA, btRigidBody* bodyB, 
+														 const btTransform& frameA, const btTransform& frameB, 
+														 bool referenceFrameA)
+{
+	btHingeConstraint* hinge = new btHingeConstraint(*bodyA,*bodyB,frameA,frameB,referenceFrameA);
+	_World->addConstraint(hinge,false);
+	return hinge;
+}
+
 void PhysicsManager::setGravity(btVector3 &gravity)
 {
 	_Gravity = gravity;
@@ -116,7 +162,7 @@ btCollisionShape* PhysicsManager::generateCollisionShape(object_t* objectInfo)
 	if(type == "Custom")
 	{
 		//denotes previously serialized shape, need to load it in.
-		//implementation is for another day however.
+		//implementation is for another day.
 		retVal = NULL;
 	}
 
@@ -149,9 +195,19 @@ bool PhysicsManager::RaycastWorld_Closest(const btVector3& start,const btVector3
 
 void PhysicsManager::Shutdown(bool reuse)
 {
+	
+	int i;
+	//constraints
+	for(i = _World->getNumConstraints() - 1; i>= 0; --i)
+	{
+		btTypedConstraint* con = _World->getConstraint(i);
+		_World->removeConstraint(con);
+		delete con;
+	}
+
 	//Deletes all rigid bodies and collision shapes, basically cleans out the class.
 	//rigid bodies
-	for(int i=_World->getNumCollisionObjects()-1; i>=0; --i)
+	for(i=_World->getNumCollisionObjects()-1; i>=0; --i)
 	{
 		btCollisionObject* obj = _World->getCollisionObjectArray()[i];
 		btRigidBody* body = btRigidBody::upcast(obj);
@@ -174,6 +230,7 @@ void PhysicsManager::Shutdown(bool reuse)
 		delete shape;
 	}
 	_Shapes.clear(); //cleans up the vector.
+	
 
 	if(!reuse)
 	{

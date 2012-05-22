@@ -138,6 +138,11 @@ FMOD::Channel* SoundManager::playSound(const sSound& sound)
 	return channel;
 }
 
+void SoundManager::updateChannels(std::vector<FMOD::Channel*>* channelVector)
+{
+	//?
+}
+
 void SoundManager::destroySound(sSound& sound)
 {
 	sound.sound->release();

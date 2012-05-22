@@ -70,6 +70,9 @@
     <Filter Include="Include Files\Physics\DebugDrawer">
       <UniqueIdentifier>{ef893743-226f-49f0-8f36-2fecc532cf20}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include Files\Game\LevelData">
+      <UniqueIdentifier>{45fe6d82-e06c-48fe-871c-da18fdbebb28}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\State.h">
@@ -159,6 +162,9 @@
     <ClInclude Include="Code\PhysicsManager.h">
       <Filter>Include Files\Physics</Filter>
     </ClInclude>
+    <ClInclude Include="Code\LevelData.h">
+      <Filter>Include Files\Game\LevelData</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">
@@ -241,6 +247,9 @@
     </ClCompile>
     <ClCompile Include="Code\PhysicsManager.cpp">
       <Filter>Include Files\Physics</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\LevelData.cpp">
+      <Filter>Include Files\Game\LevelData</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

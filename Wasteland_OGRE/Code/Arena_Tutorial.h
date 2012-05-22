@@ -8,6 +8,7 @@
 #include "CharacterController.h"
 #include "EWS.h"
 #include "PhysicsManager.h"
+#include "LevelData.h"
 
 // forward declaration, keeping the header file slim.
 struct OgreBulletPair;
@@ -56,10 +57,15 @@ private:
 	std::unique_ptr<EWSManager> _ews;
 
 	std::unique_ptr<PhysicsManager> _physics;
+	std::vector<btTypedConstraint*> _constraints;
 
 	//Sound stuff
 	std::vector<sSound> _sounds;
+	std::vector<FMOD::Channel*> _channels;
 
+
+	//TriggerZone
+	std::vector<std::unique_ptr<LevelData::TriggerZone>> _triggers;
 };
 
 #endif

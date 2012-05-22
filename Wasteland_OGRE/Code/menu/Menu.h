@@ -48,6 +48,8 @@ private:
 	Ogre::Viewport* _view;
 	Ogre::SceneNode* _camNode,*_cityNode;
 	Ogre::SceneNode* _lightNode;
+	//! test light
+	Ogre::SceneNode* _testLight;
 
 	//FMOD stuff
 	std::vector<sSound> _sounds;
