@@ -64,7 +64,8 @@ private:
 	std::vector<FMOD::Channel*> _channels;
 
 
-	//TriggerZone
+	//TriggerZone Management
+	void _updateTriggers(OgreTransform& playerTransform,int currentTime);
 	std::vector<std::unique_ptr<LevelData::TriggerZone>> _triggers;
 };
 

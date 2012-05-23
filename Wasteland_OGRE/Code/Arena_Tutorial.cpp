@@ -41,16 +41,19 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 		_pairs.push_back(GameManager::createObject(_scene,tmp,_physics.get(),Graphics));
 	}
 
+	//camera setup
 	_camera->setPosition(Ogre::Vector3(-1,1.9f,0));
 	_camera->setNearClipDistance(.001f);
 	_camera->setFarClipDistance(1000.0f);
 	_camera->lookAt(0,1.8f,0);
 
+	//player setup
 	_player.reset(new Player());
 	
 	//set the camera aspect ratio
 	_camera->setAspectRatio(16.0f/9.0f);
-	_camera->setPolygonMode(Ogre::PM_WIREFRAME);
+	//wireframe
+	//_camera->setPolygonMode(Ogre::PM_WIREFRAME);
 
 	//let's try out the character controller
 	_controller.reset(new CharacterController(_camera,_camera->getPosition(),_physics->getWorld(),Graphics ) );
@@ -71,30 +74,8 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	hingeDoor->setLimit(-0.1f,SIMD_PI / 2);
 	_constraints.push_back(hingeDoor);
 
-	/*
-	btHinge2Constraint* hinge;
-	//hinge = _physics->createHingeConstraint(level.btBody,hinge1.btBody,btVector3(20.0f,5.0f,-5.0f),btVector3(-5.0f,0.0f,.25f),btVector3(0,1,0),btVector3(0,1,0));
-	hinge = new btHinge2Constraint(*level.btBody,*hinge1.btBody,btVector3(20,5,-5),btVector3(0,1,0),btVector3(1,0,0));
-	_physics->getWorld()->addConstraint(hinge,true);
-	_constraints.push_back(hinge);
-	*/
-
-	/*
-	btSliderConstraint* door;
-	btTransform frameA;
-	frameA = btTransform::getIdentity();
-	frameA.setOrigin(btVector3(20.0f,5.0f,-5.0f));
-	btTransform frameB;
-	frameB = btTransform::getIdentity();
-	frameA.setOrigin(btVector3(20.0f,5.0f,-5.0f));
-	door = new btSliderConstraint(*level.btBody,*hinge1.btBody,frameA,frameB,true);
-	_constraints.push_back(door);
-	_physics->getWorld()->addConstraint(door,true);
-	*/
-	
-	//hinge1.btBody->setGravity(btVector3(0.0f,0.0f,0.0f));
-
-	_physics->setDebugDrawer(new CDebugDraw(_scene,_physics->getWorld()));
+	//physics debug drawer.
+	//_physics->setDebugDrawer(new CDebugDraw(_scene,_physics->getWorld()));
 }
 
 int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
@@ -140,12 +121,33 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 		if(!GameManager::UpdateManagers(Graphics,_physics.get(),_deltaTime))
 			_stateShutdown = true;
 
-		//static_cast<btHingeConstraint*>(_constraints[0])->setMotorTarget(Ogre::Math::TWO_PI,Ogre::Math::PI/360.0f);
-		VirtualConsole::getSingleton().put(boost::lexical_cast<std::string,btScalar>(hinge->getHingeAngle())+'\n');
+		_updateTriggers(playerTransform,time);
 	}
 
 	//no matter what, end the program after this state. **TESTING ONLY**
 	return END;
+}
+
+void ArenaTutorial::_updateTriggers(OgreTransform& playerTransform,int currentTime)
+{
+	for(std::vector<std::unique_ptr<LevelData::TriggerZone>>::iterator itr = _triggers.begin(); itr != _triggers.end(); ++itr)
+	{
+		int t = (*itr)->getType();
+		if(t == LevelData::PLAYER)
+		{
+			static_cast<LevelData::PlayerTrigger*>(itr->get())->update(playerTransform);
+		}
+
+		if(t == LevelData::ENTITY)
+		{
+			static_cast<LevelData::EntityTrigger*>(itr->get())->update();
+		}
+
+		if(t == LevelData::TIME)
+		{
+			static_cast<LevelData::TimeTrigger*>(itr->get())->update(currentTime);
+		}
+	}
 }
 
 //clean-up of state
