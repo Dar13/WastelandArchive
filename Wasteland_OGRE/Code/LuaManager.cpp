@@ -11,6 +11,8 @@ LuaManager::LuaManager()
 
 }
 
+lua_State* LuaManager::getLuaState() { return luaState;}
+
 void LuaManager::Setup(std::string luaListFileName)
 {
 	luaState = lua_open();
@@ -32,6 +34,23 @@ void LuaManager::Setup(std::string luaListFileName)
 void LuaManager::registerFunction(std::string funcName,luaFunction funcPtr)
 {
 	lua_register(luaState,funcName.c_str(),funcPtr);
+}
+
+void LuaManager::addEntity(const std::string& name,LevelData::BaseEntity* entity)
+{
+	std::pair<std::string,LevelData::BaseEntity*> p;
+
+	p.first = name;
+	p.second = entity;
+
+	_entities.insert(p);
+
+	return;
+}
+
+void LuaManager::activateEntity(const std::string& name,bool value)
+{
+
 }
 
 LuaManager::~LuaManager()

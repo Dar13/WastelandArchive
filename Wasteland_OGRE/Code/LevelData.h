@@ -3,47 +3,64 @@
 #ifndef _LEVELDATA_H_
 #define _LEVELDATA_H_
 
-//forward declarations.
-struct OgreTransform;
-class GraphicsManager;
-class PhysicsManager;
-class btHingeConstraint;
-struct OgreBulletPair;
+#include "GameManager.h"
 
 //System to hold data for current level such as triggerzones and light positions.
 namespace LevelData
 {
+	enum ENTITY_TYPE
+	{
+		NONE = 0,
+		LIGHT,
+		TRIGGERZONE,
+		DOOR,
+	};
+	//Base entity class, allows some pretty cool things further on
+	class BaseEntity
+	{
+	public:
+		void setType(int entType);
+		int getType();
+
+		void setName(const std::string& name);
+		std::string getName();
+
+		void setScriptFunction(const std::string& scriptFunc);
+		std::string getScriptFunction();
+
+		void activate(bool active);
+	protected:
+		int _type;
+		bool _activated;
+		std::string _name;
+		std::string _scriptName;
+	};
+
 	//TRIGGER ZONE STRUCTS/CLASSES/STRUCTS/FUNCTIONS
 	enum TRIGGER_TYPE
 	{
-		NONE = 0,
-		PLAYER,
+		PLAYER = 1,
 		ENTITY,
 		TIME,
-		TO_BE_ADDED_LATER
 	};
-	class TriggerZone
+	class TriggerZone : public BaseEntity
 	{
 	public:
 		TriggerZone();
 		TriggerZone(const Ogre::AxisAlignedBox& zoneBoundaries,TRIGGER_TYPE triggerType);//,(callback code));
 
 		void setBoundaries(const Ogre::AxisAlignedBox& zoneBoundaries);
-		void setType(TRIGGER_TYPE type);
-		int getType();
+		void setTriggerType(TRIGGER_TYPE type);
+		int getTriggerType();
 
-		//void setCallback(...);
+		void setScriptName(const std::string& script);
 
 	protected:
 		Ogre::AxisAlignedBox  _boundaries;
 
 		bool _triggered;
 		bool _triggerInZone;
-		TRIGGER_TYPE _triggerType;
-
-		//lua interface, probably a callback to a lua function.
-		//callback, whatever.
-		//std::string _luaFunc;
+		int _triggerType;
 	};
 
 	class PlayerTrigger : public TriggerZone
@@ -73,8 +90,6 @@ namespace LevelData
 	{
 	public:
 		void setTimeGoal(int milliSecs,int startingTime);
-		
-		void activate(bool activate);
 
 		void update(int time_ms);
 
@@ -82,39 +97,68 @@ namespace LevelData
 	private:
 		int _startTime;
 		int _goalTime;
-
-		bool _activated;
+		bool _timeActivated;
 	};
 
 	//LIGHT STRUCTS/CLASSES/ENUMS/FUNCTIONS/etc
 	//no use creating new wrapper class, Ogre::Light does same thing
-	struct LightData
+	class LightData : public BaseEntity
 	{
-		int type;
-		float range;
-		Ogre::ColourValue diffColour;
-		Ogre::ColourValue specColour;
+	public:
+		void setLightType(int type);
+		int getLightType();
+
+		void setRange(float range);
+		float getRange();
+
+		void setDiffuseColour(const Ogre::ColourValue& diffuseColour);
+		Ogre::ColourValue getDiffuseColour();
+
+		void setSpecularColour(const Ogre::ColourValue& specularColour);
+		Ogre::ColourValue getSpecularColour();
+	protected:
+		int _lightType;
+		float _range;
+		Ogre::ColourValue _diffColour;
+		Ogre::ColourValue _specColour;
 	};
 
-	struct SpotLightData : public LightData
+	class SpotLightData : public LightData
 	{
-		float innerAngle,outerAngle;
+	public:
+		void setAngles(float innerAngle,float outerAngle);
+
+		void setDirection(const Ogre::Vector3& direction);
+		Ogre::Vector3 getDirection();
+
+		void setPosition(const Ogre::Vector3& position);
+		Ogre::Vector3 getPosition();
+	private:
+		float _innerAngle,_outerAngle;
+		Ogre::Vector3 _direction;
+		Ogre::Vector3 _position;
+	};
+
+	class DirectionalLightData : public LightData
+	{
+	public:
+		void setDirection(const Ogre::Vector3& direction);
+		Ogre::Vector3 getDirection();
+	private:
 		Ogre::Vector3 direction;
-		Ogre::Vector3 position;
 	};
 
-	struct DirectionalLightData : public LightData
+	class PointLightData : public LightData
 	{
-		Ogre::Vector3 direction;
-	};
-
-	struct PointLightData : public LightData
-	{
+	public:
+		void setPosition(const Ogre::Vector3& position);
+		Ogre::Vector3 getPosition();
+	private:
 		Ogre::Vector3 position;
 	};
 
 	//DOORS STRUCTS/CLASSES/ENUMS/FUNCTIONS/etc
-	class DoorData
+	class DoorData : public BaseEntity
 	{
 	public:
 		DoorData();
@@ -122,8 +166,6 @@ namespace LevelData
 		void createDoor(GraphicsManager* g,PhysicsManager* p);
 
 		void update();
-
-		void activate(bool active = false);
 
 		void setName(const std::string& name);
 		std::string getName();
@@ -149,10 +191,7 @@ namespace LevelData
 		float getMaxAngle();
 
 	private:
-		bool _activated;
-
 		std::string _name;
-		std::string _scriptName;
 		std::string _objectFile;
 		
 		Ogre::Vector3 _position;
