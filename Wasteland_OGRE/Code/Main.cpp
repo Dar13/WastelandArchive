@@ -8,8 +8,7 @@
 #include "StateManager.h"
 #include "debug\print.h"
 #include "debug\console.h"
-
-#include "LevelData.h"
+//#include "LevelData.h"
 
 #include <OgreWindowEventUtilities.h>
 

@@ -73,6 +73,9 @@
     <Filter Include="Include Files\Game\LevelData">
       <UniqueIdentifier>{45fe6d82-e06c-48fe-871c-da18fdbebb28}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include Files\Lua">
+      <UniqueIdentifier>{7701751a-9a5f-4b52-aeee-bb90c3a87dbb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\State.h">
@@ -165,6 +168,9 @@
     <ClInclude Include="Code\LevelData.h">
       <Filter>Include Files\Game\LevelData</Filter>
     </ClInclude>
+    <ClInclude Include="Code\LuaManager.h">
+      <Filter>Include Files\Lua</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">
@@ -250,6 +256,9 @@
     </ClCompile>
     <ClCompile Include="Code\LevelData.cpp">
       <Filter>Include Files\Game\LevelData</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\LuaManager.cpp">
+      <Filter>Include Files\Lua</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
