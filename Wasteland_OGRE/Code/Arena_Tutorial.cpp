@@ -171,6 +171,7 @@ void ArenaTutorial::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIMa
 	_nodes.clear();
 	_entities.clear();
 
+	//I'm clearing them due to physicsManager clean-up.
 	_constraints.clear();
 
 	//cleaning up state-specific pointers.

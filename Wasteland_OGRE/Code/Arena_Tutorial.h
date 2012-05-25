@@ -67,6 +67,11 @@ private:
 	//TriggerZone Management
 	void _updateTriggers(OgreTransform& playerTransform,int currentTime);
 	std::vector<std::unique_ptr<LevelData::TriggerZone>> _triggers;
+
+	//Doors management
+	void _setupDoors(OgreBulletPair& mainLevel,Ogre::SceneManager* scene);
+	void _updateDoors();
+	std::vector<std::unique_ptr<LevelData::DoorData>> _doors;
 };
 
 #endif

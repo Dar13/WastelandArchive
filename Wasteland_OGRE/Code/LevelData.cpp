@@ -2,6 +2,7 @@
 
 #include "LevelData.h"
 #include "LuaManager.h"
+#include "Utility.h"
 
 #include <boost\lexical_cast.hpp>
 
@@ -262,9 +263,91 @@ namespace LevelData
 
 	}
 	
-	void DoorData::createDoor(GraphicsManager* g,PhysicsManager* p)
+	void DoorData::createDoor(Ogre::SceneManager* scene,GraphicsManager* g,PhysicsManager* p,OgreBulletPair* staticLevel)
 	{
 		//create door from internal data.
+		object_t* o = object(_objectFile).get();
+		_door = GameManager::createObject(scene,o,p,g);
+
+		//just need to update the position
+		btTransform old = _door.btBody->getWorldTransform();
+		btTransform trans = old;
+		btVector3 pos = Utility::convert_OgreVector3(_position);
+		trans.setOrigin(pos);
+		_door.btBody->setWorldTransform(trans);
+
+		//assumes levelPair is valid pointer
+		_door.btBody->setActivationState(DISABLE_DEACTIVATION);
+
+		Ogre::AxisAlignedBox box = _door.ogreNode->getAttachedObject(0)->getBoundingBox();
+		btVector3 doorConnection,axis,connectionPoint;
+		axis = Utility::convert_OgreVector3(_axis);
+		connectionPoint = Utility::convert_OgreVector3(_connectionPoint);
+		Ogre::Matrix4 toWorld = staticLevel->ogreNode->_getFullTransform();
+		//need to know where the door is pointing
+		if(_direction == Ogre::Vector3::UNIT_Z || _direction == Ogre::Vector3::NEGATIVE_UNIT_Z)
+		{
+			//facing either z-positive or z-negative
+			//shouldn't matter, but let's keep that in mind.
+			//means deltaX should be longer than deltaZ(if I set up the .ent file correctly anyways).
+			//getting deltaZ
+			float dZ = box.getMaximum().z - box.getMinimum().z;
+
+			//get points on side of box(x-axis)
+			Ogre::Vector3 pSide,nSide;
+			pSide = box.getMaximum();
+			pSide.y = 0.0f;
+			pSide.z = dZ/2;
+
+			nSide = box.getMinimum();
+			nSide.y = 0.0f;
+			nSide.z = dZ/2;
+
+			//compare distance of nSide/pSide to connectionPoint, after nSide and pSide are in staticLevel coordinate space
+			pSide = toWorld * pSide;
+			nSide = toWorld * nSide;
+			if(pSide.squaredDistance(_connectionPoint) > nSide.squaredDistance(_connectionPoint))
+			{
+				doorConnection.setX(box.getMinimum().x);
+				doorConnection.setY(0.0f);
+				doorConnection.setZ(dZ/2);
+			}
+			else
+			{
+				doorConnection.setX(box.getMaximum().x);
+				doorConnection.setY(0.0f);
+				doorConnection.setZ(dZ/2);
+			}
+		}
+		if(_direction == Ogre::Vector3::UNIT_X || _direction == Ogre::Vector3::NEGATIVE_UNIT_X)
+		{
+			//facing either x-positive or x-negative
+			//get deltaX
+			float dX = box.getMaximum().x - box.getMinimum().x;
+
+			Ogre::Vector3 pSide,nSide;
+			pSide = box.getMaximum();
+			pSide.x = dX/2;
+			pSide.y = 0.0f;
+
+			nSide = box.getMinimum();
+			nSide.x = dX/2;
+			nSide.y = 0.0f;
+
+			nSide = toWorld * nSide;
+			pSide = toWorld * pSide;
+			if(pSide.squaredDistance(_connectionPoint) > nSide.squaredDistance(_connectionPoint))
+			{
+				//nSide wins
+				doorConnection.setX(dX/2);
+				doorConnection.setY(0.0f);
+				doorConnection.
+			}
+		}
+
+		_hinge = new btHingeConstraint(*(staticLevel->btBody),*_door.btBody,connectionPoint,doorConnection,axis,axis);
+		_hinge->setLimit(_minAngle,_maxAngle);
+		p->getWorld()->addConstraint(_hinge,true);
 	}
 
 	/*

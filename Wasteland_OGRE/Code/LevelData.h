@@ -145,7 +145,7 @@ namespace LevelData
 		void setDirection(const Ogre::Vector3& direction);
 		Ogre::Vector3 getDirection();
 	private:
-		Ogre::Vector3 direction;
+		Ogre::Vector3 _direction;
 	};
 
 	class PointLightData : public LightData
@@ -154,7 +154,7 @@ namespace LevelData
 		void setPosition(const Ogre::Vector3& position);
 		Ogre::Vector3 getPosition();
 	private:
-		Ogre::Vector3 position;
+		Ogre::Vector3 _position;
 	};
 
 	//DOORS STRUCTS/CLASSES/ENUMS/FUNCTIONS/etc
@@ -163,7 +163,7 @@ namespace LevelData
 	public:
 		DoorData();
 
-		void createDoor(GraphicsManager* g,PhysicsManager* p);
+		void createDoor(Ogre::SceneManager* scene,GraphicsManager* g,PhysicsManager* p,OgreBulletPair* staticLevel);
 
 		void update();
 
