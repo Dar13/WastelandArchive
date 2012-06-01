@@ -63,13 +63,17 @@ private:
 	std::vector<sSound> _sounds;
 	std::vector<FMOD::Channel*> _channels;
 
+	//Lights management
+	void _setupLights(GraphicsManager* g, Ogre::SceneManager* scene);
+	void _updateLights();
+	std::vector<std::unique_ptr<LevelData::LightData>> _lights;
 
 	//TriggerZone Management
 	void _updateTriggers(OgreTransform& playerTransform,int currentTime);
 	std::vector<std::unique_ptr<LevelData::TriggerZone>> _triggers;
 
 	//Doors management
-	void _setupDoors(OgreBulletPair& mainLevel,Ogre::SceneManager* scene);
+	void _setupDoors(OgreBulletPair& mainLevel,Ogre::SceneManager* scene,PhysicsManager* p,GraphicsManager* g);
 	void _updateDoors();
 	std::vector<std::unique_ptr<LevelData::DoorData>> _doors;
 };

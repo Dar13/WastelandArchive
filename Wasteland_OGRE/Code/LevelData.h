@@ -19,6 +19,8 @@ namespace LevelData
 	class BaseEntity
 	{
 	public:
+		BaseEntity(bool active,int type) { _activated = active; _type = type;}
+
 		void setType(int entType);
 		int getType();
 
@@ -46,14 +48,17 @@ namespace LevelData
 	class TriggerZone : public BaseEntity
 	{
 	public:
-		TriggerZone();
-		TriggerZone(const Ogre::AxisAlignedBox& zoneBoundaries,TRIGGER_TYPE triggerType);//,(callback code));
+		TriggerZone() : BaseEntity(false,TRIGGERZONE)
+		{
+			_triggered = false;
+			_triggerType = 0;
+			_triggerInZone = false;
+			_boundaries = Ogre::AxisAlignedBox::BOX_NULL;
+		}
 
 		void setBoundaries(const Ogre::AxisAlignedBox& zoneBoundaries);
 		void setTriggerType(TRIGGER_TYPE type);
 		int getTriggerType();
-
-		void setScriptName(const std::string& script);
 
 	protected:
 		Ogre::AxisAlignedBox  _boundaries;
@@ -89,14 +94,14 @@ namespace LevelData
 	class TimeTrigger : public TriggerZone
 	{
 	public:
-		void setTimeGoal(int milliSecs,int startingTime);
+		void setTimeDelay(int milliSecs);
 
 		void update(int time_ms);
 
 		bool check(int time_ms);
 	private:
-		int _startTime;
 		int _goalTime;
+		int _timeDelay;
 		bool _timeActivated;
 	};
 
@@ -105,6 +110,10 @@ namespace LevelData
 	class LightData : public BaseEntity
 	{
 	public:
+		LightData() : BaseEntity(false,LIGHT),_light(0) {}
+		
+		void update();
+
 		void setLightType(int type);
 		int getLightType();
 
@@ -117,6 +126,8 @@ namespace LevelData
 		void setSpecularColour(const Ogre::ColourValue& specularColour);
 		Ogre::ColourValue getSpecularColour();
 	protected:
+		Ogre::Light* _light;
+
 		int _lightType;
 		float _range;
 		Ogre::ColourValue _diffColour;
@@ -126,6 +137,8 @@ namespace LevelData
 	class SpotLightData : public LightData
 	{
 	public:
+		void createLight(Ogre::SceneManager* scene,GraphicsManager* g);
+
 		void setAngles(float innerAngle,float outerAngle);
 
 		void setDirection(const Ogre::Vector3& direction);
@@ -142,6 +155,8 @@ namespace LevelData
 	class DirectionalLightData : public LightData
 	{
 	public:
+		void createLight(Ogre::SceneManager* scene,GraphicsManager* g);
+
 		void setDirection(const Ogre::Vector3& direction);
 		Ogre::Vector3 getDirection();
 	private:
@@ -151,6 +166,8 @@ namespace LevelData
 	class PointLightData : public LightData
 	{
 	public:
+		void createLight(Ogre::SceneManager* scene,GraphicsManager* g);
+
 		void setPosition(const Ogre::Vector3& position);
 		Ogre::Vector3 getPosition();
 	private:
@@ -161,14 +178,11 @@ namespace LevelData
 	class DoorData : public BaseEntity
 	{
 	public:
-		DoorData();
+		DoorData() : BaseEntity(false,DOOR),_hinge(nullptr) {}
 
 		void createDoor(Ogre::SceneManager* scene,GraphicsManager* g,PhysicsManager* p,OgreBulletPair* staticLevel);
 
 		void update();
-
-		void setName(const std::string& name);
-		std::string getName();
 
 		void setScriptName(const std::string& scriptName);
 		std::string getScriptName();
@@ -184,6 +198,9 @@ namespace LevelData
 		void setDirection(const Ogre::Vector3& direction);
 		Ogre::Vector3 getDirection();
 
+		void setConnectionPoint(const Ogre::Vector3& connection);
+		Ogre::Vector3 getConnectionPoint();
+
 		void setMinAngle(float angle);
 		float getMinAngle();
 
@@ -191,7 +208,6 @@ namespace LevelData
 		float getMaxAngle();
 
 	private:
-		std::string _name;
 		std::string _objectFile;
 		
 		Ogre::Vector3 _position;

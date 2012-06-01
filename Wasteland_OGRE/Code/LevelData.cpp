@@ -37,22 +37,6 @@ namespace LevelData
 	//============================
 	//TriggerZone, base of all other triggers
 	//============================
-	TriggerZone::TriggerZone()
-	{
-		_triggered = false;
-		_triggerType = 0;
-		_triggerInZone = false;
-		_boundaries = Ogre::AxisAlignedBox::BOX_NULL;
-	}
-	TriggerZone::TriggerZone(const Ogre::AxisAlignedBox& zoneBoundaries,TRIGGER_TYPE triggerType)
-	{
-		setBoundaries(zoneBoundaries);
-		setType(triggerType);
-		_triggered = false;
-		_triggerType = NONE;
-		_triggerInZone = false;
-		_boundaries = Ogre::AxisAlignedBox::BOX_NULL;
-	}
 
 	void TriggerZone::setBoundaries(const Ogre::AxisAlignedBox& zoneBoundaries)
 	{
@@ -64,12 +48,6 @@ namespace LevelData
 		_triggerType = type;
 	}
 	int TriggerZone::getTriggerType(){ return _triggerType; }
-
-	void TriggerZone::setScriptName(const std::string& script)
-	{
-		_scriptName = script;
-	}
-	
 
 	//============================
 	//Player Trigger, derived from TriggerZone
@@ -83,9 +61,13 @@ namespace LevelData
 			LuaManager::getSingleton().callFunction(_scriptName);
 			//This function must handle lua return values
 
+			//most scripts called by this type of triggerzone are activation scripts.
+			//no need for return values
+
 			_activated = false; //function is only called once upon activation
 
-			_triggerInZone = true;
+			if(_triggered)
+				_triggerInZone = true;
 		}
 		else
 		{
@@ -128,6 +110,10 @@ namespace LevelData
 			//call the callback
 			LuaManager::getSingleton().callFunction(_scriptName);
 			//handle return values from lua
+
+			//most scripts will be activating other entities.
+			//No need for return values in that case.
+
 			_triggerInZone = true;
 			_activated = false; //activation will only run the function once
 		}
@@ -155,9 +141,9 @@ namespace LevelData
 	//===============================
 	//TimeTrigger, derived from TriggerZone
 	//===============================
-	void TimeTrigger::setTimeGoal(int milliSecs,int startingTime)
+	void TimeTrigger::setTimeDelay(int milliSecs)
 	{
-		_goalTime = _startTime + milliSecs;
+		_timeDelay = milliSecs;
 	}
 
 	void TimeTrigger::update(int time_ms)
@@ -171,7 +157,14 @@ namespace LevelData
 			_triggered = false;
 		}
 
-		if(_triggered || _activated)
+		if(_activated && !_timeActivated)
+		{
+			_timeActivated = true;
+			_goalTime = time_ms + _timeDelay;
+			_activated = false;
+		}
+
+		if(_triggered)
 		{
 			//call the callback
 			LuaManager::getSingleton().callFunction(_scriptName);
@@ -182,7 +175,6 @@ namespace LevelData
 			_triggered = false;
 			_timeActivated = false;
 			_goalTime = 0;
-			_startTime = 0;
 		}
 	}
 
@@ -201,9 +193,72 @@ namespace LevelData
 	//===========================================
 	//Light class, handles all light aspects
 	//===========================================
+	void LightData::update()
+	{
+		if(_activated)
+		{
+			//should be three return values.
+			/*
+			boolean for visible
+			3 integers for diffuse color
+			3 integers for specular color
+			*/
+			LuaManager::getSingleton().callFunction(0,7);
+
+			int d1,d2,d3;
+			int s1,s2,s3;
+			bool vis;
+			lua_State* L = LuaManager::getSingleton().getLuaState();
+
+			if(lua_isnumber(L,1))
+			{
+				vis = (lua_toboolean(L,1) != 0);
+			}
+			if(lua_isnumber(L,2))
+			{
+				d1 = lua_tointeger(L,2);
+			}
+			if(lua_isnumber(L,3))
+			{
+				d2 = lua_tointeger(L,3);
+			}
+			if(lua_isnumber(L,4))
+			{
+				d3 = lua_tointeger(L,4);
+			}
+			if(lua_isnumber(L,5))
+			{
+				s1 = lua_tointeger(L,5);
+			}
+			if(lua_isnumber(L,6))
+			{
+				s2 = lua_tointeger(L,6);
+			}
+			if(lua_isnumber(L,7))
+			{
+				s3 = lua_tointeger(L,7);
+			}
+
+			_diffColour.r = d1 / 255.0f;
+			_diffColour.g = d2 / 255.0f;
+			_diffColour.b = d3 / 255.0f;
+			_specColour.r = s1 / 255.0f;
+			_specColour.g = s2 / 255.0f;
+			_specColour.b = s3 / 255.0f;
+
+			_light->setVisible(vis);
+			_light->setDiffuseColour(_diffColour);
+			_light->setSpecularColour(_specColour);
+
+		}
+	}
 	void LightData::setLightType(int type)
 	{
 		_lightType = type;
+		if(_light != nullptr)
+		{
+			_light->setType(static_cast<Ogre::Light::LightTypes>(type));
+		}
 	}
 	int LightData::getLightType() { return _lightType; }
 
@@ -216,58 +271,124 @@ namespace LevelData
 	void LightData::setDiffuseColour(const Ogre::ColourValue& diffuseColour)
 	{
 		_diffColour = diffuseColour;
+		if(_light != nullptr)
+		{
+			_light->setDiffuseColour(_diffColour);
+		}
 	}
 	Ogre::ColourValue LightData::getDiffuseColour() { return _diffColour; }
 
 	void LightData::setSpecularColour(const Ogre::ColourValue& specularColour)
 	{
 		_specColour = specularColour;
+		if(_light != nullptr)
+		{
+			_light->setSpecularColour(_specColour);
+		}
 	}
 	Ogre::ColourValue LightData::getSpecularColour() { return _specColour; }
+
+	//Spotlight start
+	void SpotLightData::createLight(Ogre::SceneManager* scene,GraphicsManager* g)
+	{
+		_light = scene->createLight(_name);
+		_light->setType(static_cast<Ogre::Light::LightTypes>(_lightType));
+
+		_light->setDirection(_direction);
+		_light->setDiffuseColour(_diffColour);
+		_light->setSpecularColour(_specColour);
+		_light->setSpotlightInnerAngle(Ogre::Radian(_innerAngle));
+		_light->setSpotlightOuterAngle(Ogre::Radian(_outerAngle));
+		g->setLightRange(_light,_range);
+	}
 
 	void SpotLightData::setAngles(float innerAngle,float outerAngle)
 	{
 		_innerAngle = innerAngle;
 		_outerAngle = outerAngle;
+		if(_light != nullptr)
+		{
+			_light->setSpotlightInnerAngle(Ogre::Radian(innerAngle));
+			_light->setSpotlightOuterAngle(Ogre::Radian(outerAngle));
+		}
 	}
 
 	void SpotLightData::setDirection(const Ogre::Vector3& direction)
 	{
 		_direction = direction;
+		if(_light != nullptr)
+		{
+			_light->setDirection(_direction);
+		}
 	}
 	Ogre::Vector3 SpotLightData::getDirection() { return _direction;}
 
 	void SpotLightData::setPosition(const Ogre::Vector3& position)
 	{
 		_position = position;
+		if(_light != nullptr)
+		{
+			_light->setPosition(_position);
+		}
 	}
 	Ogre::Vector3 SpotLightData::getPosition() { return _position;}
+
+	//directional start
+
+	void DirectionalLightData::createLight(Ogre::SceneManager* scene,GraphicsManager* g)
+	{
+		_light = scene->createLight(_name);
+		_light->setType(static_cast<Ogre::Light::LightTypes>(_lightType));
+		
+		_light->setDirection(_direction);
+		_light->setDiffuseColour(_diffColour);
+		_light->setSpecularColour(_specColour);
+		g->setLightRange(_light,_range);
+	}
 
 	void DirectionalLightData::setDirection(const Ogre::Vector3& direction)
 	{
 		_direction = direction;
+		if(_light != nullptr)
+		{
+			_light->setDirection(_direction);
+		}
 	}
 	Ogre::Vector3 DirectionalLightData::getDirection() { return _direction; }
+
+	//point start
+
+	void PointLightData::createLight(Ogre::SceneManager* scene,GraphicsManager* g)
+	{
+		_light = scene->createLight(_name);
+		_light->setType(static_cast<Ogre::Light::LightTypes>(_lightType));
+
+		_light->setPosition(_position);
+		
+		_light->setDiffuseColour(_diffColour);
+		_light->setSpecularColour(_specColour);
+		
+		g->setLightRange(_light,_range);
+	}
 
 	void PointLightData::setPosition(const Ogre::Vector3& position)
 	{
 		_position = position;
+		if(_light != nullptr)
+		{
+			_light->setPosition(_position);
+		}
 	}
 	Ogre::Vector3 PointLightData::getPosition() { return _position; }
 
 	//======================================
 	//Door class, controls all the inner workings of doors.
 	//======================================
-	DoorData::DoorData()
-	{
-
-	}
 	
 	void DoorData::createDoor(Ogre::SceneManager* scene,GraphicsManager* g,PhysicsManager* p,OgreBulletPair* staticLevel)
 	{
 		//create door from internal data.
-		object_t* o = object(_objectFile).get();
-		_door = GameManager::createObject(scene,o,p,g);
+		_door = GameManager::createObject(scene,_objectFile,p,g);
 
 		//just need to update the position
 		btTransform old = _door.btBody->getWorldTransform();
@@ -308,6 +429,7 @@ namespace LevelData
 			nSide = toWorld * nSide;
 			if(pSide.squaredDistance(_connectionPoint) > nSide.squaredDistance(_connectionPoint))
 			{
+				//nSide wins
 				doorConnection.setX(box.getMinimum().x);
 				doorConnection.setY(0.0f);
 				doorConnection.setZ(dZ/2);
@@ -341,7 +463,13 @@ namespace LevelData
 				//nSide wins
 				doorConnection.setX(dX/2);
 				doorConnection.setY(0.0f);
-				doorConnection.
+				doorConnection.setZ(box.getMinimum().z);
+			}
+			else
+			{
+				doorConnection.setX(dX/2);
+				doorConnection.setY(0.0f);
+				doorConnection.setZ(box.getMaximum().z);
 			}
 		}
 
@@ -357,6 +485,17 @@ namespace LevelData
 	float for motor top impulse(if motor is activated, mandatory)
 	string for entity activation(optional, return "NULL" for no change)
 	string for new lua script function(optional, return "NULL" for no change)
+	*/
+	/*
+	example lua function
+	function foo()
+		local bMotor = 1
+		local fMotorTop = 3.0
+		local fMotorInc = 5.0
+		local newEnt = "NULL"
+		local newScript = "NULL"
+		return bMotor,fMotorTop,fMotorInc,newEnt,newScript
+	end
 	*/
 	void DoorData::update()
 	{
@@ -376,15 +515,15 @@ namespace LevelData
 				//all necessary arguments are there
 				if(lua_isnumber(L,1))
 				{
-					motor = lua_toboolean(L,1);
+					motor = (lua_toboolean(L,1) != 0);
 				}
 				if(lua_isnumber(L,2))
 				{
-					motorTop = lua_tonumber(L,2);
+					motorTop = static_cast<float>(lua_tonumber(L,2));
 				}
 				if(lua_isnumber(L,3))
 				{
-					motorInc = lua_tonumber(L,3);
+					motorInc = static_cast<float>(lua_tonumber(L,3));
 				}
 				if(argNum == 5)
 				{
@@ -415,16 +554,10 @@ namespace LevelData
 			}
 			if(motor)
 			{
-
+				_hinge->enableAngularMotor(true,motorTop,motorInc);
 			}
 		}
 	}
-
-	void DoorData::setName(const std::string& name)
-	{
-		_name = name;
-	}
-	std::string DoorData::getName(){ return _name;}
 
 	void DoorData::setScriptName(const std::string& scriptName)
 	{
@@ -455,6 +588,12 @@ namespace LevelData
 		_axis = axis;
 	}
 	Ogre::Vector3 DoorData::getAxis() { return _axis;}
+
+	void DoorData::setConnectionPoint(const Ogre::Vector3& connection)
+	{
+		_connectionPoint = connection;
+	}
+	Ogre::Vector3 DoorData::getConnectionPoint() { return _connectionPoint; }
 
 	void DoorData::setMinAngle(float angle)
 	{
@@ -519,15 +658,15 @@ namespace LevelData
 				if(dataType == "Position")
 				{	
 					values = data.substr(data.find(':')+1,data.find(';'));
-					int x,y,z;
+					float x,y,z;
 					int first = values.find(',');
 					int second = values.find(',',first + 1);
 					substr = values.substr(0,values.find_first_of(','));
-					x = boost::lexical_cast<int,std::string>(substr);
+					x = boost::lexical_cast<float,std::string>(substr);
 					substr = values.substr(first+1,second - (first + 1));
-					y = boost::lexical_cast<int,std::string>(substr);
+					y = boost::lexical_cast<float,std::string>(substr);
 					substr = values.substr(second+1,values.find(';') - (second+1));
-					z = boost::lexical_cast<int,std::string>(substr);
+					z = boost::lexical_cast<float,std::string>(substr);
 					center.x = static_cast<Ogre::Real>(x);
 					center.y = static_cast<Ogre::Real>(y);
 					center.z = static_cast<Ogre::Real>(z);
@@ -535,15 +674,15 @@ namespace LevelData
 				if(dataType == "ZoneScale")
 				{
 					values = data.substr(data.find(':')+1,data.find(';'));
-					int x,y,z;
+					float x,y,z;
 					int first = values.find(',');
 					int second = values.find(',',first + 1);
 					substr = values.substr(0,values.find_first_of(','));
-					x = boost::lexical_cast<int,std::string>(substr);
+					x = boost::lexical_cast<float,std::string>(substr);
 					substr = values.substr(first+1,second - (first + 1));
-					y = boost::lexical_cast<int,std::string>(substr);
+					y = boost::lexical_cast<float,std::string>(substr);
 					substr = values.substr(second+1,values.find(';') - (second+1));
-					z = boost::lexical_cast<int,std::string>(substr);
+					z = boost::lexical_cast<float,std::string>(substr);
 					//build offsets for triggerzone boundaries
 					cornersOffset.x = static_cast<Ogre::Real>(x / 2);
 					cornersOffset.y = static_cast<Ogre::Real>(y / 2);
@@ -575,7 +714,9 @@ namespace LevelData
 			{
 				PlayerTrigger* playerTrig = new PlayerTrigger();
 				playerTrig->setBoundaries(Ogre::AxisAlignedBox(center - cornersOffset,center + cornersOffset));
-				playerTrig->setType(PLAYER);
+				playerTrig->setTriggerType(PLAYER);
+				playerTrig->setScriptFunction(callback);
+				playerTrig->activate(false);
 				//add to the vector
 				tZone.reset(playerTrig);
 			}
@@ -585,7 +726,9 @@ namespace LevelData
 				EntityTrigger* entTrig = new EntityTrigger();
 				entTrig->setBoundaries(Ogre::AxisAlignedBox(center - cornersOffset,center + cornersOffset));
 				entTrig->setTriggerTarget(target);
-				entTrig->setType(ENTITY);
+				entTrig->setScriptFunction(callback);
+				entTrig->setTriggerType(ENTITY);
+				entTrig->activate(false);
 				tZone.reset(entTrig);
 			}
 
@@ -593,8 +736,9 @@ namespace LevelData
 			{
 				TimeTrigger* timeTrig = new TimeTrigger();
 				timeTrig->setBoundaries(Ogre::AxisAlignedBox(center - cornersOffset,center + cornersOffset));
-				timeTrig->setTimeGoal(timeDelay,0);
-				timeTrig->setType(TIME);
+				timeTrig->setTimeDelay(timeDelay);
+				timeTrig->setTriggerType(TIME);
+				timeTrig->setScriptFunction(callback);
 				timeTrig->activate(false);
 				tZone.reset(timeTrig);
 			}
@@ -746,7 +890,7 @@ namespace LevelData
 				sLight->setDiffuseColour(diffColour);
 				sLight->setSpecularColour(specColour);
 				sLight->setAngles(innerAng,outerAng);
-				sLight->setRange(range);
+				sLight->setRange(static_cast<float>(range));
 				sLight->setPosition(center);
 				lData.reset(sLight);
 			}
@@ -757,7 +901,7 @@ namespace LevelData
 				pLight->setLightType(Ogre::Light::LT_POINT);
 				pLight->setDiffuseColour(diffColour);
 				pLight->setSpecularColour(specColour);
-				pLight->setRange(range);
+				pLight->setRange(static_cast<float>(range));
 				lData.reset(pLight);
 			}
 
@@ -807,7 +951,7 @@ namespace LevelData
 			{
 				//get the type of the object first(if applicable)
 				type = data.substr(0,data.find(';'));
-				if(type.find("Doors") != type.npos)
+				if(type.find("Door") != type.npos)
 				{
 					//data being read-in is a door
 					//get door type, but there aren't any door types
@@ -822,7 +966,10 @@ namespace LevelData
 				dataType = data.substr(0,data.find(':'));
 				if(dataType == "Position")
 				{	
-					values = data.substr(data.find(':')+1,data.find(';'));
+					values = data.substr(data.find(':')+1,data.find(';') - (data.find(':')+1));
+					values = Ogre::StringUtil::replaceAll(values,","," ");
+					position = Ogre::StringConverter::parseVector3(values);
+					/*
 					float x,y,z;
 					int first = values.find(',');
 					int second = values.find(',',first + 1);
@@ -835,10 +982,14 @@ namespace LevelData
 					position.x = static_cast<Ogre::Real>(x);
 					position.y = static_cast<Ogre::Real>(y);
 					position.z = static_cast<Ogre::Real>(z);
+					*/
 				}
 				if(dataType == "Direction")
 				{
-					values = data.substr(data.find(':')+1,data.find(';'));
+					values = data.substr(data.find(':')+1,data.find(';') - (data.find(':')+1));
+					values = Ogre::StringUtil::replaceAll(values,","," ");
+					direction = Ogre::StringConverter::parseVector3(values);
+					/*
 					float x,y,z;
 					int first = values.find(',');
 					int second = values.find(',',first + 1);
@@ -852,6 +1003,7 @@ namespace LevelData
 					direction.x = x;
 					direction.y = y;
 					direction.z = z;
+					*/
 				}
 				if(dataType == "MinAngle")
 				{
@@ -859,7 +1011,7 @@ namespace LevelData
 				}
 				if(dataType == "MaxAngle")
 				{
-					maxAng = boost::lexical_cast<float,std::string>(data.substr(data.find(':')+1,data.find(';') - data.find(':')));
+					maxAng = boost::lexical_cast<float,std::string>(data.substr(data.find(':')+1,data.find(';') - (data.find(':')+1)));
 				}
 				if(dataType == "Name")
 				{
@@ -879,7 +1031,10 @@ namespace LevelData
 				}
 				if(dataType == "Axis")
 				{
-					values = data.substr(data.find(':')+1,data.find(';'));
+					values = data.substr(data.find(':')+1,data.find(';') - (data.find(':')+1));
+					values = Ogre::StringUtil::replaceAll(values,","," ");
+					axis = Ogre::StringConverter::parseVector3(values);
+					/*
 					float x,y,z;
 					int first = values.find(',');
 					int second = values.find(',',first + 1);
@@ -892,11 +1047,15 @@ namespace LevelData
 					axis.x = x;
 					axis.y = y;
 					axis.z = z;
+					*/
 				}
 
 				if(dataType == "DoorConnectionPoint")
 				{
-					values = data.substr(data.find(':')+1,data.find(';'));
+					values = data.substr(data.find(':')+1,data.find(';') - (data.find(':')+1));
+					values = Ogre::StringUtil::replaceAll(values,","," ");
+					connectionPoint = Ogre::StringConverter::parseVector3(values);
+					/*
 					float x,y,z;
 					int first = values.find(',');
 					int second = values.find(',',first + 1);
@@ -909,6 +1068,7 @@ namespace LevelData
 					connectionPoint.x = x;
 					connectionPoint.y = y;
 					connectionPoint.z = z;
+					*/
 				}
 
 				if(data == "};")
@@ -921,11 +1081,12 @@ namespace LevelData
 
 			if(finishedObject)
 			{	
-				std::unique_ptr<DoorData> dData;
+				std::unique_ptr<DoorData> dData(new DoorData());
 				dData->setPosition(position);
 				dData->setDirection(direction);
 				dData->setAxis(axis);
 				dData->setObjectFile(doorFileName);
+				dData->setConnectionPoint(connectionPoint);
 				dData->setMaxAngle(maxAng);
 				dData->setMinAngle(minAng);
 				dData->setName(name);

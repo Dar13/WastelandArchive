@@ -8,7 +8,7 @@
 #include "StateManager.h"
 #include "debug\print.h"
 #include "debug\console.h"
-//#include "LevelData.h"
+#include "LuaManager.h"
 
 #include <OgreWindowEventUtilities.h>
 
@@ -35,7 +35,7 @@ int main(int argc, char **argv[])
 	}
 
 	//adds all the resource groups defined by the files contained in this file.
-	std::string resFile = "resource\\xml\\resource_list.xml";
+	std::string resFile = "resource\\xml\\lists\\resource_list.xml";
 	ogre->addResources(resFile);
 
 	//gets the window handle from ogre.
@@ -65,6 +65,10 @@ int main(int argc, char **argv[])
 
 	//true console debugger
 	const std::unique_ptr<VirtualConsole> console(new VirtualConsole("Debugger",0));
+
+	//setup lua manager
+	const std::unique_ptr<LuaManager> lua(new LuaManager());
+	lua->Setup("resource\\xml\\lists\\lua_list.xml");
 
 	//Set up the state manager
 	const std::unique_ptr<StateManager> wtld(new StateManager());

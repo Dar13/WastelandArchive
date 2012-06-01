@@ -26,6 +26,9 @@ void LuaManager::Setup(std::string luaListFileName)
 		luaL_dofile(luaState,(*itr).c_str());
 	}
 
+	//register lua-accessible functions
+	registerFunction("activate",activate);
+
 	return;
 }
 
@@ -35,6 +38,32 @@ void LuaManager::registerFunction(std::string funcName,luaFunction funcPtr)
 {
 	lua_register(luaState,funcName.c_str(),funcPtr);
 }
+
+void LuaManager::callFunction(const std::string& funcName)
+{
+	lua_getglobal(luaState,funcName.c_str());
+	
+	lua_call(luaState,0,0);
+}
+
+void LuaManager::callFunction(const std::string& funcName,int expectedNumReturn)
+{
+	lua_getglobal(luaState,funcName.c_str());
+
+	lua_call(luaState,0,expectedNumReturn);
+}
+
+//Grouped functions ->
+void LuaManager::prepFunction(const std::string& funcName)
+{
+	lua_getglobal(luaState,funcName.c_str());
+}
+
+void LuaManager::callFunction(int paramNum,int retNum)
+{
+	lua_call(luaState,paramNum,retNum);
+}
+//<- Grouped functions
 
 void LuaManager::addEntity(const std::string& name,LevelData::BaseEntity* entity)
 {
@@ -50,7 +79,7 @@ void LuaManager::addEntity(const std::string& name,LevelData::BaseEntity* entity
 
 void LuaManager::activateEntity(const std::string& name,bool value)
 {
-
+	_entities[name]->activate(value);
 }
 
 LuaManager::~LuaManager()

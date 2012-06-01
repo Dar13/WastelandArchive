@@ -24,7 +24,7 @@ void MainMenu::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 	_view = Graphics->getRenderWindow()->addViewport(_camera);
 	_view->setBackgroundColour(Ogre::ColourValue(0,0,0));
 
-	std::auto_ptr<list_t> objList = list("resource\\xml\\intro_list.xml");
+	std::auto_ptr<list_t> objList = list("resource\\xml\\lists\\intro_list.xml");
 	for(list_t::file_const_iterator itr = objList.get()->file().begin(); itr != objList.get()->file().end(); ++itr)
 	{
 		std::string tmp = (*itr);

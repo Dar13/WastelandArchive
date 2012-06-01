@@ -40,10 +40,18 @@ public:
 
 	void registerFunction(std::string funcName,luaFunction funcPtr);
 
-	//Calls the function, but calling code must handle return values
-	void callFunction(std::string funcName);
+	//Calls the function, but calling code must handle parameters and return values
+	//no return values
+	void callFunction(const std::string& funcName);
+	void callFunction(const std::string& funcName,int expectedNumReturn);
+
+	//If prepFunction is called, then callFunction must be called afterwards.
+	//All prepFunction does is allow the calling code to push parameters onto the stack for the lua function
+	void prepFunction(const std::string& funcName);
+	void callFunction(int paramNum,int retNum);
 
 	void addEntity(const std::string& name,LevelData::BaseEntity* entity);
+	void purgeEntities();
 
 	void activateEntity(const std::string& name, bool value);
 
@@ -73,24 +81,14 @@ static int activate(lua_State* lua)
 
 	if(argNum == 2)
 	{
-		//this function requires at least one string
+		//assume correct argument order
 		if(lua_isstring(lua,1))
 		{
 			entName = lua_tostring(lua,1);
-			if(lua_isnumber(lua,2))
-			{
-				value = lua_toboolean(lua,2);
-			}
-			else
-			{
-				//defaults to true if string is given.
-				value = true;
-			}
 		}
-		else
+		if(lua_isnumber(lua,2))
 		{
-			entName = "";
-			value = false;
+			value = (lua_toboolean(lua,2) != 0);
 		}
 	}
 
