@@ -8,11 +8,12 @@ template<> LuaManager* Ogre::Singleton<LuaManager>::ms_Singleton = 0;
 
 LuaManager::LuaManager()
 {
-
+	luaState = nullptr;
 }
 
 lua_State* LuaManager::getLuaState() { return luaState;}
 
+//Forces explicit setup.
 void LuaManager::Setup(std::string luaListFileName)
 {
 	luaState = lua_open();
@@ -54,6 +55,8 @@ void LuaManager::callFunction(const std::string& funcName,int expectedNumReturn)
 }
 
 //Grouped functions ->
+//Allows for calling code(from states or something else) to push parameters to stack.
+//Useful for AI and global scripts.
 void LuaManager::prepFunction(const std::string& funcName)
 {
 	lua_getglobal(luaState,funcName.c_str());

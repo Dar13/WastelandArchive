@@ -367,6 +367,14 @@ void GraphicsManager::removeAnimationState(Ogre::AnimationState* anim)
 			itr = _animations.end();
 		}
 	}
+	//alternate?
+	/*
+	auto itr = std::find(_animations.begin(),_animations.end(),anim);
+	if(itr != _animations.end())
+	{
+		_animations.erase(itr);
+	}
+	*/
 }
 
 void GraphicsManager::clearAnimationStates()

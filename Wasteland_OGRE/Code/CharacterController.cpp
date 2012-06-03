@@ -7,7 +7,7 @@
 void CharacterController::create(Ogre::Camera* camera,const Ogre::Vector3& initialPosition,btDiscreteDynamicsWorld* phyWorld,GraphicsManager* Graphics)
 {
 	cCamera = camera;
-	_world = phyWorld;
+	_world = phyWorld; //saves having to pass in PhyManager pointers
 
 	btTransform initial;
 	initial.setIdentity();
@@ -35,7 +35,9 @@ void CharacterController::create(Ogre::Camera* camera,const Ogre::Vector3& initi
 	phyWorld->addAction(cController);
 
 	cNode = cCamera->getSceneManager()->getRootSceneNode()->createChildSceneNode("characterController");
-	cNode->setPosition(cCamera->getPosition());
+	//NO! Gets rid of bullet physics initial positioning.
+	//cNode->setPosition(cCamera->getPosition());
+	cNode->setPosition(initialPosition); //NOT TESTED
 	cNode->setOrientation(cCamera->getOrientation());
 	cCamera->setPosition(0,0,0);
 	cNode->attachObject(cCamera);
@@ -45,6 +47,7 @@ void CharacterController::create(Ogre::Camera* camera,const Ogre::Vector3& initi
 
 	//for some reason, this expects a positive value.
 	//so make the global bullet gravity its inverse.
+	//Confusing, eh?
 	cController->setGravity(-phyWorld->getGravity().y());
 	cController->setJumpSpeed(btScalar(6.0f));
 
@@ -59,7 +62,7 @@ void CharacterController::update(float physicsTimeElapsed,InputManager* inputMan
 	btVector3 strafeDirection = cTransform.getBasis()[2]; strafeDirection.normalize();
 	btVector3 walkDirection; walkDirection.setZero();
 
-	//velocity = ?? * ??
+	//velocity = meters per second * kilometers per hour
 	btScalar walkVel = 2.0f * 4.0f;
 
 	Ogre::Vector3 direction; Ogre::Quaternion rotation;
@@ -89,13 +92,14 @@ void CharacterController::update(float physicsTimeElapsed,InputManager* inputMan
 	}
 	
 	//velocity.
-	//all times must be divided by 1000. Bullet goes by seconds, not milliseconds.
+	//Bullet goes by seconds, not milliseconds.
 	btScalar walkSpd = walkVel * (physicsTimeElapsed / 1000.0f);
 
 	//get direction vector.
 	direction = Utility::convert_btVector3(walkDirection);
 	rotation = cNode->getOrientation();
 	rotation.z = 0.0f;
+	//direction is normalized(should be). NOT FINISHED.
 	direction = rotation * (rotation * direction);
 	walkDirection = Utility::convert_OgreVector3(direction);
 
@@ -112,7 +116,7 @@ void CharacterController::update(float physicsTimeElapsed,InputManager* inputMan
 	//current rotation matrix
 	btMatrix3x3 yorn = cTransform.getBasis();
 	//multiply rotation by quaternion representing rotation increment around y-axis.
-	//it's a bit too sensitive. 0.007
+	//0.007 is a bit sensitive.
 	yorn *= btMatrix3x3(btQuaternion(btVector3(0,1,0),(-mmx * 0.01f)));
 	//set rotation of collision detector
 	cGhostObject->getWorldTransform().setBasis(yorn);
@@ -124,7 +128,7 @@ void CharacterController::update(float physicsTimeElapsed,InputManager* inputMan
 	rotation = Ogre::Quaternion::ZERO;
 	//angle increment based on mouse movement.
 	Ogre::Radian angle;
-	//was 0.007
+	//was 0.007, too sensitive. Scaled it back some.
 	angle = (-mmy) * 0.01f;
 
 	//generate quaternion from mouse move angle and z-axis unit vector
@@ -140,6 +144,7 @@ void CharacterController::update(float physicsTimeElapsed,InputManager* inputMan
 
 	cNode->setPosition(ogrePos);
 	Ogre::Quaternion zRot = cNode->getOrientation();
+	//getting rid of x and y axis rotation.
 	zRot.x = 0;
 	zRot.y = 0;
 
@@ -156,6 +161,7 @@ void CharacterController::update(float physicsTimeElapsed,InputManager* inputMan
 		extraRotate = false;
 	}
 	//restricts looking down.
+	//needs to be adjusted. NOT FINISHED
 	ogrePos = Ogre::Vector3(0,0,0) + cNode->_getDerivedPosition();
 	if(cCamera->isVisible(ogrePos) && (angle.valueRadians() < 0))
 	{

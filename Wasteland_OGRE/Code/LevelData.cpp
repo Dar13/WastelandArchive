@@ -252,6 +252,10 @@ namespace LevelData
 
 		}
 	}
+
+	//Almost all properties are able to be changed after light creation.
+	//Exceptions: range
+
 	void LightData::setLightType(int type)
 	{
 		_lightType = type;
@@ -406,6 +410,7 @@ namespace LevelData
 		connectionPoint = Utility::convert_OgreVector3(_connectionPoint);
 		Ogre::Matrix4 toWorld = staticLevel->ogreNode->_getFullTransform();
 		//need to know where the door is pointing
+		//Works, but have only tried a couple of scenarios.
 		if(_direction == Ogre::Vector3::UNIT_Z || _direction == Ogre::Vector3::NEGATIVE_UNIT_Z)
 		{
 			//facing either z-positive or z-negative
@@ -473,6 +478,9 @@ namespace LevelData
 			}
 		}
 
+		//NOT TESTED
+		//p->createHingeConstraint(staticLevel->btBody,_door.btBody,connectionPoint,doorConnection,axis,axis);
+		//TESTED
 		_hinge = new btHingeConstraint(*(staticLevel->btBody),*_door.btBody,connectionPoint,doorConnection,axis,axis);
 		_hinge->setLimit(_minAngle,_maxAngle);
 		p->getWorld()->addConstraint(_hinge,true);
@@ -559,6 +567,11 @@ namespace LevelData
 		}
 	}
 
+	//only some physics properties are changeable after hinge creation.
+	//The list: rotation axis and angle limits.
+	
+	//NOTE: All other properties MUST be set before hinge creation(DoorData::CreateDoor).
+
 	void DoorData::setScriptName(const std::string& scriptName)
 	{
 		_scriptName = scriptName;
@@ -586,6 +599,10 @@ namespace LevelData
 	void DoorData::setAxis(const Ogre::Vector3& axis)
 	{
 		_axis = axis;
+		if(_hinge)
+		{
+			_hinge->setAxis(Utility::convert_OgreVector3(axis));
+		}
 	}
 	Ogre::Vector3 DoorData::getAxis() { return _axis;}
 
@@ -598,12 +615,20 @@ namespace LevelData
 	void DoorData::setMinAngle(float angle)
 	{
 		_minAngle = angle;
+		if(_hinge)
+		{
+			_hinge->setLimit(_minAngle,_maxAngle);
+		}
 	}
 	float DoorData::getMinAngle() { return _minAngle;}
 
 	void DoorData::setMaxAngle(float angle)
 	{
 		_maxAngle = angle;
+		if(_hinge)
+		{
+			_hinge->setLimit(_minAngle,_maxAngle);
+		}
 	}
 	float DoorData::getMaxAngle() { return _maxAngle;}
 
@@ -626,7 +651,7 @@ namespace LevelData
 
 		//corners for boundaries = center (+/-) cornersOffset
 		Ogre::Vector3 center,cornersOffset;
-		std::string callback;
+		std::string script;
 		std::string target;
 		int timeDelay;
 
@@ -698,7 +723,7 @@ namespace LevelData
 				}
 				if(dataType == "Callback")
 				{
-					callback = data.substr(data.find(':')+1,data.find(';') - data.find(':'));
+					script = data.substr(data.find(':')+1,data.find(';') - data.find(':'));
 				}
 
 				if(data == "};")
@@ -715,7 +740,7 @@ namespace LevelData
 				PlayerTrigger* playerTrig = new PlayerTrigger();
 				playerTrig->setBoundaries(Ogre::AxisAlignedBox(center - cornersOffset,center + cornersOffset));
 				playerTrig->setTriggerType(PLAYER);
-				playerTrig->setScriptFunction(callback);
+				playerTrig->setScriptFunction(script);
 				playerTrig->activate(false);
 				//add to the vector
 				tZone.reset(playerTrig);
@@ -726,7 +751,7 @@ namespace LevelData
 				EntityTrigger* entTrig = new EntityTrigger();
 				entTrig->setBoundaries(Ogre::AxisAlignedBox(center - cornersOffset,center + cornersOffset));
 				entTrig->setTriggerTarget(target);
-				entTrig->setScriptFunction(callback);
+				entTrig->setScriptFunction(script);
 				entTrig->setTriggerType(ENTITY);
 				entTrig->activate(false);
 				tZone.reset(entTrig);
@@ -738,7 +763,7 @@ namespace LevelData
 				timeTrig->setBoundaries(Ogre::AxisAlignedBox(center - cornersOffset,center + cornersOffset));
 				timeTrig->setTimeDelay(timeDelay);
 				timeTrig->setTriggerType(TIME);
-				timeTrig->setScriptFunction(callback);
+				timeTrig->setScriptFunction(script);
 				timeTrig->activate(false);
 				tZone.reset(timeTrig);
 			}
@@ -760,8 +785,7 @@ namespace LevelData
 		std::string dataType;
 		std::string values;
 
-		//corners for boundaries = center (+/-) cornersOffset
-		Ogre::Vector3 center,direction;
+		Ogre::Vector3 position,direction;
 		int range;
 		Ogre::ColourValue diffColour;
 		Ogre::ColourValue specColour;
@@ -804,9 +828,9 @@ namespace LevelData
 					y = boost::lexical_cast<float,std::string>(substr);
 					substr = values.substr(second+1,values.find(';') - (second+1));
 					z = boost::lexical_cast<float ,std::string>(substr);
-					center.x = static_cast<Ogre::Real>(x);
-					center.y = static_cast<Ogre::Real>(y);
-					center.z = static_cast<Ogre::Real>(z);
+					position.x = static_cast<Ogre::Real>(x);
+					position.y = static_cast<Ogre::Real>(y);
+					position.z = static_cast<Ogre::Real>(z);
 				}
 				if(dataType == "Direction")
 				{
@@ -891,7 +915,7 @@ namespace LevelData
 				sLight->setSpecularColour(specColour);
 				sLight->setAngles(innerAng,outerAng);
 				sLight->setRange(static_cast<float>(range));
-				sLight->setPosition(center);
+				sLight->setPosition(position);
 				lData.reset(sLight);
 			}
 
@@ -902,6 +926,7 @@ namespace LevelData
 				pLight->setDiffuseColour(diffColour);
 				pLight->setSpecularColour(specColour);
 				pLight->setRange(static_cast<float>(range));
+				pLight->setPosition(position);
 				lData.reset(pLight);
 			}
 
