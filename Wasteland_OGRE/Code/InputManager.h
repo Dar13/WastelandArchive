@@ -1,6 +1,8 @@
 #include "StdAfx.h"
 #include "interfaces\interfaces.h"
 
+#include <OIS.h>
+
 #ifndef _OIS_MANAGER_H_
 #define _OIS_MANAGER_H_
 

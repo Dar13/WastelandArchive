@@ -2,6 +2,9 @@
 
 #include "InputManager.h"
 
+#include <CEGUI.h>
+#include <RendererModules\Ogre\CEGUIOgreRenderer.h>
+
 #include <OgreStringConverter.h>
 
 bool isControlCharacter(OIS::KeyCode keyCode);
@@ -288,7 +291,7 @@ bool InputManager::keyReleased(const OIS::KeyEvent &evt)
 
 bool InputManager::mouseMoved(const OIS::MouseEvent &evt)
 {
-	CEGUI::System::getSingletonPtr()->injectMouseMove(evt.state.X.rel,evt.state.Y.rel);
+	CEGUI::System::getSingletonPtr()->injectMouseMove(static_cast<float>(evt.state.X.rel),static_cast<float>(evt.state.Y.rel));
 	return true;
 }
 

@@ -4,6 +4,8 @@
 #define DEBUG_DRAW_HPP
 
 #include "DynamicLineDrawer.hpp"
+#include <LinearMath\btIDebugDraw.h>
+#include <BulletDynamics\Dynamics\btDiscreteDynamicsWorld.h>
 
 /** Implements the bullet debug draw interface for drawing with ogre.
 	\ingroup Misc

@@ -4,8 +4,6 @@
 #ifndef _OGRE_MANAGER_H_
 #define _OGRE_MANAGER_H_
 
-#include "XMLReader.h"
-
 struct OgreTransform
 {
 	Ogre::Vector3 position;

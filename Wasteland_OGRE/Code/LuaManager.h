@@ -43,6 +43,7 @@ public:
 	//Calls the function, but calling code must handle parameters and return values
 	//no return values
 	void callFunction(const std::string& funcName);
+	//return values
 	void callFunction(const std::string& funcName,int expectedNumReturn);
 
 	//If prepFunction is called, then callFunction must be called afterwards.

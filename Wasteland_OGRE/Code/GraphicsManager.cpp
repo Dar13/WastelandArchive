@@ -76,6 +76,7 @@ bool GraphicsManager::Setup()
 	}
 	catch(std::bad_alloc &ba)
 	{
+		OutputDebugString(ba.what());
 		if(logMgr != NULL)
 		{
 			delete logMgr;

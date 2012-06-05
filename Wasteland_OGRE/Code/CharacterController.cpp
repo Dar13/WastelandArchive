@@ -3,7 +3,6 @@
 #include "Utility.h"
 #include "debug\print.h"
 
-
 void CharacterController::create(Ogre::Camera* camera,const Ogre::Vector3& initialPosition,btDiscreteDynamicsWorld* phyWorld,GraphicsManager* Graphics)
 {
 	cCamera = camera;

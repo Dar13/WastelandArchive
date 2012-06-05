@@ -7,7 +7,7 @@
 #include "GraphicsManager.h"
 #include "InputManager.h"
 #include "PhysicsManager.h"
-#include "XMLReader.h"
+//#include "XMLReader.h"
 #include "EWS.h"
 
 /*! \brief Allows convenient returns of both Bullet rigid bodies and Ogre SceneNodes.

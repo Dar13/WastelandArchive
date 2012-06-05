@@ -1,5 +1,6 @@
 #include "StdAfx.h"
 //additional physics classes
+#include <btBulletDynamicsCommon.h>
 #include "BulletDynamics\Character\btKinematicCharacterController.h"
 #include "BulletCollision\CollisionDispatch\btGhostObject.h"
 //input class

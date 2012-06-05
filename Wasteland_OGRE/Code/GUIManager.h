@@ -1,5 +1,8 @@
 #include "StdAfx.h"
 
+#include <CEGUI.h>
+#include <RendererModules\Ogre\CEGUIOgreRenderer.h>
+
 #ifndef _GUIMANAGER_H_
 #define _GUIMANAGER_H_
 

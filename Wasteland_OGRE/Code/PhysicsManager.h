@@ -7,6 +7,7 @@
 #include <BulletDynamics\Character\btKinematicCharacterController.h>
 #include <BulletCollision\CollisionDispatch\btGhostObject.h>
 #include <btBulletDynamicsCommon.h>
+#include <btBulletCollisionCommon.h>
 
 #include "BulletDebugDraw\DebugDraw.hpp"
 
