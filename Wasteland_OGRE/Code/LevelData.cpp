@@ -510,9 +510,9 @@ namespace LevelData
 		//check for activation and act upon it
 		if(_activated)
 		{
-			LuaManager::getSingleton().callFunction(_scriptName);
+			LuaManager::getSingleton().callFunction(_scriptName,5);
 			//handle lua return values
-			bool motor;
+			bool motor = false;
 			float motorTop;
 			float motorInc;
 			std::string ent,nScript;
@@ -523,6 +523,7 @@ namespace LevelData
 				//all necessary arguments are there
 				if(lua_isnumber(L,1))
 				{
+					int test = lua_toboolean(L,1);
 					motor = (lua_toboolean(L,1) != 0);
 				}
 				if(lua_isnumber(L,2))
@@ -552,18 +553,20 @@ namespace LevelData
 			}
 
 			//act on return values
-			if(nScript != "NULL")
+			if(nScript != "NULL" && nScript != "" && nScript != "nil" && nScript != "null")
 			{
 				_scriptName = nScript;
 			}
-			if(ent != "NULL")
+			if(ent != "NULL" && ent != "" && ent != "nil" && ent != "null")
 			{
 				LuaManager::getSingleton().activateEntity(ent,true);
 			}
 			if(motor)
 			{
 				_hinge->enableAngularMotor(true,motorTop,motorInc);
+				_activated = false;
 			}
+			
 		}
 	}
 
@@ -715,7 +718,7 @@ namespace LevelData
 				}
 				if(dataType == "TargetName")
 				{
-					target = data.substr(data.find(':')+1,data.find(';'));
+					target = data.substr(data.find(':')+1,data.find(';') - (data.find(':') +1));
 				}
 				if(dataType == "TimeDelay")
 				{
@@ -723,7 +726,7 @@ namespace LevelData
 				}
 				if(dataType == "Callback")
 				{
-					script = data.substr(data.find(':')+1,data.find(';') - data.find(':'));
+					script = data.substr(data.find(':')+1,data.find(';') - (data.find(':') +1));
 				}
 
 				if(data == "};")

@@ -44,10 +44,11 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	}
 
 	//camera setup
-	_camera->setPosition(Ogre::Vector3(-30,1.9f,0));
+	//_camera->setPosition(Ogre::Vector3(30,1.9f,0));
+	_camera->setPosition(Ogre::Vector3(0.0f,1.9f,0.0f));
 	_camera->setNearClipDistance(.001f);
 	_camera->setFarClipDistance(1000.0f);
-	_camera->lookAt(0,1.8f,0);
+	_camera->lookAt(0,1.9f,0);
 
 	//player setup
 	_player.reset(new Player());
@@ -55,10 +56,10 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	//set the camera aspect ratio
 	_camera->setAspectRatio(16.0f/9.0f);
 	//wireframe
-	_camera->setPolygonMode(Ogre::PM_WIREFRAME);
+	//_camera->setPolygonMode(Ogre::PM_WIREFRAME);
 
 	//let's try out the character controller
-	_controller.reset(new CharacterController(_camera,_camera->getPosition(),_physics->getWorld(),Graphics ) );
+	_controller.reset(new CharacterController(_camera,Ogre::Vector3(70.0f,1.9f,0.0f),_physics->getWorld(),Graphics ) );
 	//since we're using the character controller, should also lock the mouse.
 	Input->setMouseLock(true);
 

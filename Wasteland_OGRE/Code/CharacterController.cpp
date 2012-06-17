@@ -56,9 +56,12 @@ void CharacterController::create(Ogre::Camera* camera,const Ogre::Vector3& initi
 void CharacterController::update(float physicsTimeElapsed,InputManager* inputManager,OgreTransform& transform)
 {
 	btTransform cTransform = cGhostObject->getWorldTransform();
-	btVector3 forwardDirection = cTransform.getBasis()[0]; forwardDirection.normalize();
+	/*btVector3 forwardDirection = cTransform.getBasis()[0]; forwardDirection.normalize();
 	btVector3 upDirection = cTransform.getBasis()[1]; upDirection.normalize();
-	btVector3 strafeDirection = cTransform.getBasis()[2]; strafeDirection.normalize();
+	btVector3 strafeDirection = cTransform.getBasis()[2]; strafeDirection.normalize();*/
+	btVector3 forwardDirection = cTransform.getBasis()[2]; forwardDirection.normalize();
+	btVector3 upDirection = cTransform.getBasis()[1]; upDirection.normalize();
+	btVector3 strafeDirection = cTransform.getBasis()[0]; strafeDirection.normalize();
 	btVector3 walkDirection; walkDirection.setZero();
 
 	//velocity = meters per second * kilometers per hour
@@ -67,11 +70,11 @@ void CharacterController::update(float physicsTimeElapsed,InputManager* inputMan
 	Ogre::Vector3 direction; Ogre::Quaternion rotation;
 	if(inputManager->isCFGKeyPressed(FORWARD))
 	{
-		walkDirection += forwardDirection;
+		walkDirection -= forwardDirection;
 	}
 	if(inputManager->isCFGKeyPressed(BACKWARD))
 	{
-		walkDirection -= forwardDirection;
+		walkDirection += forwardDirection;
 	}
 	if(inputManager->isCFGKeyPressed(RIGHT))
 	{
@@ -130,8 +133,9 @@ void CharacterController::update(float physicsTimeElapsed,InputManager* inputMan
 	//was 0.007, too sensitive. Scaled it back some.
 	angle = (-mmy) * 0.01f;
 
-	//generate quaternion from mouse move angle and z-axis unit vector
-	rotation.FromAngleAxis(angle,Ogre::Vector3::UNIT_Z);
+	//generate quaternion from mouse move angle and x-axis unit vector
+	//rotation.FromAngleAxis(angle,Ogre::Vector3::UNIT_Z);
+	rotation.FromAngleAxis(angle,Ogre::Vector3::UNIT_X);
 
 	//Actual movement and stuff
 	cController->setWalkDirection(walkDirection * walkSpd);
@@ -144,8 +148,9 @@ void CharacterController::update(float physicsTimeElapsed,InputManager* inputMan
 	cNode->setPosition(ogrePos);
 	Ogre::Quaternion zRot = cNode->getOrientation();
 	//getting rid of x and y axis rotation.
-	zRot.x = 0;
+	//zRot.x = 0;
 	zRot.y = 0;
+	zRot.z = 0;
 
 	//**
 	//Look restrictions
@@ -157,14 +162,14 @@ void CharacterController::update(float physicsTimeElapsed,InputManager* inputMan
 	ogrePos = Ogre::Vector3(0,5,0) + cNode->_getDerivedPosition();
 	if(cCamera->isVisible(ogrePos) && (angle.valueRadians() > 0))
 	{
-		extraRotate = false;
+	//	extraRotate = false;
 	}
 	//restricts looking down.
 	//needs to be adjusted. NOT FINISHED
 	ogrePos = Ogre::Vector3(0,0,0) + cNode->_getDerivedPosition();
 	if(cCamera->isVisible(ogrePos) && (angle.valueRadians() < 0))
 	{
-		extraRotate = false;
+	//	extraRotate = false;
 	}
 
 	cNode->setOrientation(ogreRot);
