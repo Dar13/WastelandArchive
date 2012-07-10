@@ -5,27 +5,21 @@
 #include <string>
 #include <assert.h>
 #include <cstdio>
+#include <io.h>
+#include <fcntl.h>
 
 #ifndef _CONSOLE_H_
 #define _CONSOLE_H_
 
-typedef unsigned long ulong;
-class VirtualConsole : public Ogre::Singleton<VirtualConsole>
+class Console : public Ogre::Singleton<Console>
 {
-	HANDLE near_end, //Our end of the pipe, where we'll write.
-		far_end, //The other end.
-		process; //The client.
 public:
-	bool good;
-	VirtualConsole(const std::string &name,ulong color);
-	~VirtualConsole();
-	void put(const char *str,size_t size=0);
-	void put(const std::string &str){
-		this->put(str.c_str(),str.size());
-	}
+	Console(const std::string& name);
+
+	//get handle,etc etc
+
 private:
-	VirtualConsole(const VirtualConsole&);
-	VirtualConsole& operator= (VirtualConsole&);
+
 };
 
 #endif

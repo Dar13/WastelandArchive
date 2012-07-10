@@ -40,7 +40,9 @@ int main(int argc, char **argv[])
 
 	//gets the window handle from ogre.
 	unsigned long hWnd;
+	HWND realhWnd;
 	ogre->getRenderWindow()->getCustomAttribute("WINDOW",&hWnd);
+	ogre->getRenderWindow()->getCustomAttribute("WINDOW",&realhWnd);
 
 	//Setup the input handler(OIS)
 	const std::unique_ptr<InputManager> ois(new InputManager(hWnd));
@@ -64,7 +66,13 @@ int main(int argc, char **argv[])
 	const std::unique_ptr<GUIManager> gui(new GUIManager(resFile,*ogre->getRenderWindow()));
 
 	//true console debugger
-	const std::unique_ptr<VirtualConsole> console(new VirtualConsole("Debugger",0));
+	//const std::unique_ptr<VirtualConsole> console(new VirtualConsole("Debugger",0));
+
+#if defined(__WIN32__) || defined(WIN32) || defined(_WINDOWS)
+	std::unique_ptr<Console> consoleTest(new Console("TEST CONSOLE"));
+	std::cout << "test" << std::endl;
+
+#endif
 
 	//setup lua manager
 	const std::unique_ptr<LuaManager> lua(new LuaManager());

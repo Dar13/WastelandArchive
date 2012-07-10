@@ -42,7 +42,8 @@ void EWSManager::Setup(Ogre::SceneManager* scene)
 	_ewsNode->setPosition(0.0f,2.0f,0.0f);
 	_ewsEntity->setMaterial(_material);
 
-	_placed = true;
+	//_placed = true;
+	_placed = false;
 	_pointToPlayer = false;
 
 	oldTime = 0;
@@ -108,7 +109,16 @@ void EWSManager::Place(const Ogre::Vector3& rayCastPosition,const Ogre::Vector3&
 		if(placeToggle == 0)
 		{
 			//to avoid intersection with source node
-			_ewsNode->setPosition(rayCastPosition + rayCastNormal);
+			if(rayCastNormal != Ogre::Vector3::NEGATIVE_UNIT_Y)
+			{
+				_ewsNode->setPosition(rayCastPosition + rayCastNormal);
+			}
+			else
+			{
+				Ogre::Vector3 v = rayCastNormal;
+				v.y--;
+				_ewsNode->setPosition(rayCastPosition + v);
+			}
 			//check to see if it's intersecting with something
 			
 			//to avoid rotation build-up. Now the node rotates cleanly.
@@ -116,7 +126,18 @@ void EWSManager::Place(const Ogre::Vector3& rayCastPosition,const Ogre::Vector3&
 			if(rayCastNormal == Ogre::Vector3::UNIT_Y || rayCastNormal == Ogre::Vector3::NEGATIVE_UNIT_Y)
 			{
 				_pointToPlayer = true;
-				_ewsNode->lookAt(Ogre::Vector3(playerTransform.position.x,rayCastPosition.y + rayCastNormal.y,playerTransform.position.z),Ogre::Node::TS_WORLD);
+				if(rayCastNormal == Ogre::Vector3::NEGATIVE_UNIT_Y)
+				{
+					_ewsNode->lookAt(Ogre::Vector3(playerTransform.position.x,
+												   rayCastPosition.y + rayCastNormal.y - 1,
+												   playerTransform.position.z),
+									 Ogre::Node::TS_WORLD);
+				}
+				else
+					_ewsNode->lookAt(Ogre::Vector3(playerTransform.position.x,
+												   rayCastPosition.y + rayCastNormal.y,
+												   playerTransform.position.z),
+									 Ogre::Node::TS_WORLD);
 			}
 			else
 			{
@@ -126,11 +147,11 @@ void EWSManager::Place(const Ogre::Vector3& rayCastPosition,const Ogre::Vector3&
 			_placed = true;
 			_ewsNode->setVisible(true);
 			placeToggle = 1;
-			VirtualConsole::getSingleton().put("---\n");
+			/*VirtualConsole::getSingleton().put("---\n");
 			VirtualConsole::getSingleton().put(Utility::vector3_toStr(rayCastNormal));
 			VirtualConsole::getSingleton().put(Utility::vector3_toStr(rayCastPosition));
 			VirtualConsole::getSingleton().put(Utility::vector3_toStr(rayCastPosition + rayCastNormal));
-			VirtualConsole::getSingleton().put(Utility::vector3_toStr(playerTransform.position));
+			VirtualConsole::getSingleton().put(Utility::vector3_toStr(playerTransform.position));*/
 		}
 	}
 }

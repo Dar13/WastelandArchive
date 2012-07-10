@@ -11,6 +11,15 @@ MainMenu::MainMenu()
 	_deltaTime = 0;
 	_oldTime = 0;
 	_goto_Options = false;
+	_scene = nullptr;
+	_camera = nullptr;
+	_view = nullptr;
+	_returnValue = ApplicationStates::END;
+	_opt_guiSheet = nullptr;
+	_camNode = nullptr;
+	_cityNode = nullptr;
+	_lightNode = nullptr;
+	_testLight = nullptr;
 }
 
 void MainMenu::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)

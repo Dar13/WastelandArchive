@@ -29,6 +29,10 @@ InputManager::InputManager(unsigned long windowHandle)
 	_mouseObj->setEventCallback(this); //this class is a mouseListener
 	_keyObj->setEventCallback(this); //this class is a keyboardListener
 
+	_mouseRB = false;
+	_mouseMB = false;
+	_mouseLB = false;
+
 	//set up the keycode stuff
 	_KC_map[OIS::KC_A] = 'a';
 	_KC_map[OIS::KC_B] = 'b';

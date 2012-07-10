@@ -5,6 +5,37 @@
 #include "Utility.h"
 
 #include <boost\lexical_cast.hpp>
+#include <boost\tokenizer.hpp>
+
+typedef boost::token_iterator_generator<boost::char_separator<char>>::type TknItr_Str;
+
+TknItr_Str getTknItrStart(const std::string& str,boost::char_separator<char> &sep)
+{
+	return boost::make_token_iterator<std::string>(str.begin(),str.end(),sep);
+}
+
+TknItr_Str getTknItrEnd(const std::string& str,boost::char_separator<char> &sep)
+{
+	return boost::make_token_iterator<std::string>(str.end(),str.end(),sep);
+}
+
+void getVector3FromTknItr(Ogre::Vector3& vector,TknItr_Str start,TknItr_Str end)
+{
+	int i = 0;
+	for(auto itr = start; itr != end && i < 3; ++itr,++i)
+	{
+		try
+		{
+			vector[i] = boost::lexical_cast<Ogre::Real,std::string>(*itr);
+		}
+		catch(boost::bad_lexical_cast& e)
+		{
+			//these errors are way too common to ignore.
+			OutputDebugStringA(e.what());
+			vector[i] = static_cast<Ogre::Real>(0.0f);
+		}
+	}
+}
 
 namespace LevelData
 {
@@ -423,11 +454,14 @@ namespace LevelData
 			Ogre::Vector3 pSide,nSide;
 			pSide = box.getMaximum();
 			pSide.y = 0.0f;
-			pSide.z = dZ/2;
+			pSide.z = 0.0f;
+			//dZ/2 gives the corner
+			//pSide.z = dZ/2;
 
 			nSide = box.getMinimum();
 			nSide.y = 0.0f;
-			nSide.z = dZ/2;
+			nSide.z = 0.0f;
+			//nSide.z = dZ/2;
 
 			//compare distance of nSide/pSide to connectionPoint, after nSide and pSide are in staticLevel coordinate space
 			pSide = toWorld * pSide;
@@ -437,13 +471,15 @@ namespace LevelData
 				//nSide wins
 				doorConnection.setX(box.getMinimum().x);
 				doorConnection.setY(0.0f);
-				doorConnection.setZ(dZ/2);
+				doorConnection.setZ(0.0f);
+				//doorConnection.setZ(dZ/2);
 			}
 			else
 			{
 				doorConnection.setX(box.getMaximum().x);
 				doorConnection.setY(0.0f);
-				doorConnection.setZ(dZ/2);
+				doorConnection.setZ(0.0f);
+				//doorConnection.setZ(dZ/2);
 			}
 		}
 		if(_direction == Ogre::Vector3::UNIT_X || _direction == Ogre::Vector3::NEGATIVE_UNIT_X)
@@ -454,25 +490,32 @@ namespace LevelData
 
 			Ogre::Vector3 pSide,nSide;
 			pSide = box.getMaximum();
-			pSide.x = dX/2;
+			pSide.x = 0.0f;
+			//gets the corner, not the middle
+			//pSide.x = dX/2;
 			pSide.y = 0.0f;
 
 			nSide = box.getMinimum();
-			nSide.x = dX/2;
+			nSide.x = 0.0f;
+			//gets the corner, not the middle
+			//nSide.x = dX/2;
 			nSide.y = 0.0f;
 
+			//transform the coordinates to world coordinates from the local space
 			nSide = toWorld * nSide;
 			pSide = toWorld * pSide;
 			if(pSide.squaredDistance(_connectionPoint) > nSide.squaredDistance(_connectionPoint))
 			{
 				//nSide wins
-				doorConnection.setX(dX/2);
+				doorConnection.setX(0.0f);
+				//doorConnection.setX(dX/2);
 				doorConnection.setY(0.0f);
 				doorConnection.setZ(box.getMinimum().z);
 			}
 			else
 			{
-				doorConnection.setX(dX/2);
+				doorConnection.setX(0.0f);
+				//doorConnection.setX(dX/2);
 				doorConnection.setY(0.0f);
 				doorConnection.setZ(box.getMaximum().z);
 			}
@@ -656,123 +699,107 @@ namespace LevelData
 		Ogre::Vector3 center,cornersOffset;
 		std::string script;
 		std::string target;
+		std::string name;
 		int timeDelay;
 
 		bool startObject = false;
 		bool finishedObject = false;
 
-		//go through the file and load data into containers.
+		boost::char_separator<char> fieldSeparator(":;");
+		boost::char_separator<char> dataSeparator(",");
+
 		while(!dataFile.eof() && dataFile.good() && dataFile.is_open())
 		{
 			std::getline(dataFile,data);
 
-			if(!startObject)
+			if(data == "")
 			{
-				//get the type of the object first(if applicable)
-				type = data.substr(0,data.find(';'));
-				if(type.find("TriggerZone") != type.npos)
+				break;
+			}
+
+			if(!startObject && !finishedObject)
+			{
+				TknItr_Str fieldS = getTknItrStart(data,fieldSeparator);
+				TknItr_Str fieldE = getTknItrEnd(data,fieldSeparator);
+				if(boost::next(fieldS) == fieldE && (*fieldS).find("TriggerZone") != std::string::npos)
 				{
-					//data being read-in is a triggerzone
-					//get triggerzone type
-					type = type.substr(0,type.find('_'));
+					type = data.substr(0,data.find("_"));
 					startObject = true;
 				}
 			}
 
 			if(startObject)
 			{
-				//determine what type of data this is.
-				dataType = data.substr(0,data.find(':'));
-				if(dataType == "Position")
-				{	
-					values = data.substr(data.find(':')+1,data.find(';'));
-					float x,y,z;
-					int first = values.find(',');
-					int second = values.find(',',first + 1);
-					substr = values.substr(0,values.find_first_of(','));
-					x = boost::lexical_cast<float,std::string>(substr);
-					substr = values.substr(first+1,second - (first + 1));
-					y = boost::lexical_cast<float,std::string>(substr);
-					substr = values.substr(second+1,values.find(';') - (second+1));
-					z = boost::lexical_cast<float,std::string>(substr);
-					center.x = static_cast<Ogre::Real>(x);
-					center.y = static_cast<Ogre::Real>(y);
-					center.z = static_cast<Ogre::Real>(z);
-				}
-				if(dataType == "ZoneScale")
+				TknItr_Str fieldS = getTknItrStart(data,fieldSeparator);
+				TknItr_Str fieldE = getTknItrEnd(data,fieldSeparator);
+				if( *fieldS == "Position" )
 				{
-					values = data.substr(data.find(':')+1,data.find(';'));
-					float x,y,z;
-					int first = values.find(',');
-					int second = values.find(',',first + 1);
-					substr = values.substr(0,values.find_first_of(','));
-					x = boost::lexical_cast<float,std::string>(substr);
-					substr = values.substr(first+1,second - (first + 1));
-					y = boost::lexical_cast<float,std::string>(substr);
-					substr = values.substr(second+1,values.find(';') - (second+1));
-					z = boost::lexical_cast<float,std::string>(substr);
-					//build offsets for triggerzone boundaries
-					cornersOffset.x = static_cast<Ogre::Real>(x / 2);
-					cornersOffset.y = static_cast<Ogre::Real>(y / 2);
-					cornersOffset.z = static_cast<Ogre::Real>(z / 2);
+					values = *(boost::next(fieldS));
+					TknItr_Str dataS = getTknItrStart(values,dataSeparator);
+					TknItr_Str dataE = getTknItrEnd(values,dataSeparator);
+					getVector3FromTknItr(center,dataS,dataE);
 				}
-				if(dataType == "TargetName")
+				if( *fieldS == "ZoneScale" )
 				{
-					target = data.substr(data.find(':')+1,data.find(';') - (data.find(':') +1));
+					values = *(boost::next(fieldS));
+					TknItr_Str dataS = getTknItrStart(values,dataSeparator);
+					TknItr_Str dataE = getTknItrEnd(values,dataSeparator);
+					getVector3FromTknItr(cornersOffset,dataS,dataE);
 				}
-				if(dataType == "TimeDelay")
+				if( *fieldS == "TargetName" )
 				{
-					timeDelay = boost::lexical_cast<int,std::string>(data.substr(data.find(':')+1,data.find(';') - (data.find(':')+1)));
+					target = *boost::next(fieldS);
 				}
-				if(dataType == "Callback")
+				if( *fieldS == "TimeDelay" )
 				{
-					script = data.substr(data.find(':')+1,data.find(';') - (data.find(':') +1));
+					timeDelay = boost::lexical_cast<int,std::string>(*boost::next(fieldS));
 				}
-
-				if(data == "};")
+				if( *fieldS == "Callback" )
 				{
-					//marks end of triggerzone data.
+					script = *boost::next(fieldS);
+				}
+				if( *fieldS == "}")
+				{
 					startObject = false;
 					finishedObject = true;
 				}
 			}
 
-			std::unique_ptr<TriggerZone> tZone;
-			if(type == "plr" && finishedObject)
-			{
-				PlayerTrigger* playerTrig = new PlayerTrigger();
-				playerTrig->setBoundaries(Ogre::AxisAlignedBox(center - cornersOffset,center + cornersOffset));
-				playerTrig->setTriggerType(PLAYER);
-				playerTrig->setScriptFunction(script);
-				playerTrig->activate(false);
-				//add to the vector
-				tZone.reset(playerTrig);
-			}
-
-			if(type == "ent" && finishedObject)
-			{
-				EntityTrigger* entTrig = new EntityTrigger();
-				entTrig->setBoundaries(Ogre::AxisAlignedBox(center - cornersOffset,center + cornersOffset));
-				entTrig->setTriggerTarget(target);
-				entTrig->setScriptFunction(script);
-				entTrig->setTriggerType(ENTITY);
-				entTrig->activate(false);
-				tZone.reset(entTrig);
-			}
-
-			if(type == "time" && finishedObject)
-			{
-				TimeTrigger* timeTrig = new TimeTrigger();
-				timeTrig->setBoundaries(Ogre::AxisAlignedBox(center - cornersOffset,center + cornersOffset));
-				timeTrig->setTimeDelay(timeDelay);
-				timeTrig->setTriggerType(TIME);
-				timeTrig->setScriptFunction(script);
-				timeTrig->activate(false);
-				tZone.reset(timeTrig);
-			}
-
 			if(finishedObject)
 			{
+				std::unique_ptr<TriggerZone> tZone;
+				if(type == "plr")
+				{
+					PlayerTrigger* playerTrig = new PlayerTrigger();
+					playerTrig->setBoundaries(Ogre::AxisAlignedBox(center - cornersOffset,center + cornersOffset));
+					playerTrig->setTriggerType(PLAYER);
+					playerTrig->setScriptFunction(script);
+					playerTrig->activate(false);
+					tZone.reset(playerTrig);
+				}
+
+				if(type == "ent")
+				{
+					EntityTrigger* entTrig = new EntityTrigger();
+					entTrig->setBoundaries(Ogre::AxisAlignedBox(center - cornersOffset,center + cornersOffset));
+					entTrig->setTriggerTarget(target);
+					entTrig->setScriptFunction(script);
+					entTrig->setTriggerType(ENTITY);
+					entTrig->activate(false);
+					tZone.reset(entTrig);
+				}
+
+				if(type == "time")
+				{
+					TimeTrigger* timeTrig = new TimeTrigger();
+					timeTrig->setBoundaries(Ogre::AxisAlignedBox(center - cornersOffset,center + cornersOffset));
+					timeTrig->setTimeDelay(timeDelay);
+					timeTrig->setTriggerType(TIME);
+					timeTrig->setScriptFunction(script);
+					timeTrig->activate(false);
+					tZone.reset(timeTrig);
+				}
+
 				triggers->push_back(std::move(tZone));
 				finishedObject = false;
 			}
@@ -797,154 +824,122 @@ namespace LevelData
 		bool startObject = false;
 		bool finishedObject = false;
 
-		//go through the file and load data into containers.
+		boost::char_separator<char> fieldSeparator(":;");
+		boost::char_separator<char> dataSeparator(",");
+
 		while(!dataFile.eof() && dataFile.good() && dataFile.is_open())
 		{
 			std::getline(dataFile,data);
+			
+			if(data == "") { break; }
 
-			if(!startObject)
+			if(!startObject && !finishedObject)
 			{
-				//get the type of the object first(if applicable)
-				type = data.substr(0,data.find(';'));
-				if(type.find("Light") != type.npos)
+				TknItr_Str fieldS = getTknItrStart(data,fieldSeparator);
+				TknItr_Str fieldE = getTknItrEnd(data,fieldSeparator);
+				if(boost::next(fieldS) == fieldE && (*fieldS).find("Light") != std::string::npos)
 				{
-					//data being read-in is a triggerzone
-					//get triggerzone type
-					type = type.substr(0,type.find('_'));
+					type = data.substr(0,data.find("_"));
 					startObject = true;
 				}
 			}
 
 			if(startObject)
 			{
-				//determine what type of data this is.
-				dataType = data.substr(0,data.find(':'));
-				if(dataType == "Position")
-				{	
-					values = data.substr(data.find(':')+1,data.find(';'));
-					float x,y,z;
-					int first = values.find(',');
-					int second = values.find(',',first + 1);
-					substr = values.substr(0,values.find_first_of(','));
-					x = boost::lexical_cast<float,std::string>(substr);
-					substr = values.substr(first+1,second - (first + 1));
-					y = boost::lexical_cast<float,std::string>(substr);
-					substr = values.substr(second+1,values.find(';') - (second+1));
-					z = boost::lexical_cast<float ,std::string>(substr);
-					position.x = static_cast<Ogre::Real>(x);
-					position.y = static_cast<Ogre::Real>(y);
-					position.z = static_cast<Ogre::Real>(z);
-				}
-				if(dataType == "Direction")
+				TknItr_Str fieldS = getTknItrStart(data,fieldSeparator);
+				TknItr_Str fieldE = getTknItrEnd(data,fieldSeparator);
+				if( *fieldS == "Position" )
 				{
-					values = data.substr(data.find(':')+1,data.find(';'));
-					float x,y,z;
-					int first = values.find(',');
-					int second = values.find(',',first + 1);
-					substr = values.substr(0,values.find_first_of(','));
-					x = boost::lexical_cast<float,std::string>(substr);
-					substr = values.substr(first+1,second - (first + 1));
-					y = boost::lexical_cast<float,std::string>(substr);
-					substr = values.substr(second+1,values.find(';') - (second+1));
-					z = boost::lexical_cast<float,std::string>(substr);
-					//build offsets for triggerzone boundaries
-					direction.x = x;
-					direction.y = y;
-					direction.z = z;
+					values = *boost::next(fieldS);
+					TknItr_Str dataS = getTknItrStart(values,dataSeparator);
+					TknItr_Str dataE = getTknItrEnd(values,dataSeparator);
+					getVector3FromTknItr(position,dataS,dataE);
 				}
-				if(dataType == "InnerAng")
+				if( *fieldS == "Direction" )
 				{
-					innerAng = boost::lexical_cast<float,std::string>(data.substr(data.find(':')+1,data.find(';') - (data.find(':')+1)));
+					values = *boost::next(fieldS);
+					TknItr_Str dataS = getTknItrStart(values,dataSeparator);
+					TknItr_Str dataE = getTknItrStart(values,dataSeparator);
+					getVector3FromTknItr(direction,dataS,dataE);
 				}
-				if(dataType == "OuterAng")
+				if( *fieldS == "InnerAng" )
 				{
-					outerAng = boost::lexical_cast<float,std::string>(data.substr(data.find(':')+1,data.find(';') - data.find(':')));
+					innerAng = boost::lexical_cast<float,std::string>(*boost::next(fieldS));
 				}
-				if(dataType == "Range")
+				if( *fieldS == "OuterAng" )
 				{
-					range = boost::lexical_cast<int,std::string>(data.substr(data.find(':')+1,data.find(';') - (data.find(':')+1)));
+					outerAng = boost::lexical_cast<float,std::string>(*boost::next(fieldS));
 				}
-				if(dataType == "Color")
+				if( *fieldS == "Range" )
 				{
-					values = data.substr(data.find(':')+1,data.find(';'));
-					float r,b,g;
-					int first = values.find(',');
-					int second = values.find(',',first + 1);
-					substr = values.substr(0,values.find_first_of(','));
-					r = boost::lexical_cast<float,std::string>(substr);
-					substr = values.substr(first+1,second - (first + 1));
-					g = boost::lexical_cast<float,std::string>(substr);
-					substr = values.substr(second+1,values.find(';') - (second+1));
-					b = boost::lexical_cast<float,std::string>(substr);
-					//diffuse colour value
-					diffColour.r = r;
-					diffColour.g = g;
-					diffColour.b = b;
+					range = boost::lexical_cast<int,std::string>(*boost::next(fieldS));
 				}
-
-				if(dataType == "SpecColor")
+				if( *fieldS == "Color" )
 				{
-					values = data.substr(data.find(':')+1,data.find(';'));
-					float r,b,g;
-					int first = values.find(',');
-					int second = values.find(',',first + 1);
-					substr = values.substr(0,values.find_first_of(','));
-					r = boost::lexical_cast<float,std::string>(substr);
-					substr = values.substr(first+1,second - (first + 1));
-					g = boost::lexical_cast<float,std::string>(substr);
-					substr = values.substr(second+1,values.find(';') - (second+1));
-					b = boost::lexical_cast<float,std::string>(substr);
-					//build specular colour value
-					specColour.r = r;
-					specColour.g = g;
-					specColour.b = b;
+					values = *boost::next(fieldS);
+					TknItr_Str dataS = getTknItrStart(values,dataSeparator);
+					TknItr_Str dataE = getTknItrEnd(values,dataSeparator);
+					Ogre::Vector3 t;
+					getVector3FromTknItr(t,dataS,dataE);
+					diffColour.r = t.x;
+					diffColour.g = t.y;
+					diffColour.b = t.z;
 				}
-
-				if(data == "};")
+				if( *fieldS == "SpecColor" )
 				{
-					//marks end of light data
-					startObject = false;
+					values = *boost::next(fieldS);
+					TknItr_Str dataS = getTknItrStart(values,dataSeparator);
+					TknItr_Str dataE = getTknItrEnd(values,dataSeparator);
+					Ogre::Vector3 t;
+					getVector3FromTknItr(t,dataS,dataE);
+					specColour.r = t.x;
+					specColour.g = t.y;
+					specColour.b = t.z;
+				}
+				if( *fieldS == "}" )
+				{
 					finishedObject = true;
+					startObject = false;
 				}
-			}
-
-			std::unique_ptr<LightData> lData;
-			if(type == "spot" && finishedObject)
-			{
-				SpotLightData* sLight = new SpotLightData();
-				sLight->setLightType(Ogre::Light::LT_SPOTLIGHT);
-				sLight->setDirection(direction);
-				sLight->setDiffuseColour(diffColour);
-				sLight->setSpecularColour(specColour);
-				sLight->setAngles(innerAng,outerAng);
-				sLight->setRange(static_cast<float>(range));
-				sLight->setPosition(position);
-				lData.reset(sLight);
-			}
-
-			if(type == "point" && finishedObject)
-			{
-				PointLightData* pLight = new PointLightData();
-				pLight->setLightType(Ogre::Light::LT_POINT);
-				pLight->setDiffuseColour(diffColour);
-				pLight->setSpecularColour(specColour);
-				pLight->setRange(static_cast<float>(range));
-				pLight->setPosition(position);
-				lData.reset(pLight);
-			}
-
-			if(type == "directional" && finishedObject)
-			{
-				DirectionalLightData* dLight = new DirectionalLightData();
-				dLight->setLightType(Ogre::Light::LT_DIRECTIONAL);
-				dLight->setDirection(direction);
-				dLight->setDiffuseColour(diffColour);
-				dLight->setSpecularColour(specColour);
-				lData.reset(dLight);
 			}
 
 			if(finishedObject)
 			{
+				std::unique_ptr<LightData> lData;
+				if(type == "spot" && finishedObject)
+				{
+					SpotLightData* sLight = new SpotLightData();
+					sLight->setLightType(Ogre::Light::LT_SPOTLIGHT);
+					sLight->setDirection(direction);
+					sLight->setDiffuseColour(diffColour);
+					sLight->setSpecularColour(specColour);
+					sLight->setAngles(innerAng,outerAng);
+					sLight->setRange(static_cast<float>(range));
+					sLight->setPosition(position);
+					lData.reset(sLight);
+				}
+
+				if(type == "point" && finishedObject)
+				{
+					PointLightData* pLight = new PointLightData();
+					pLight->setLightType(Ogre::Light::LT_POINT);
+					pLight->setDiffuseColour(diffColour);
+					pLight->setSpecularColour(specColour);
+					pLight->setRange(static_cast<float>(range));
+					pLight->setPosition(position);
+					lData.reset(pLight);
+				}
+
+				if(type == "directional" && finishedObject)
+				{
+					DirectionalLightData* dLight = new DirectionalLightData();
+					dLight->setLightType(Ogre::Light::LT_DIRECTIONAL);
+					dLight->setDirection(direction);
+					dLight->setDiffuseColour(diffColour);
+					dLight->setSpecularColour(specColour);
+					lData.reset(dLight);
+				}
+
 				lData->setType(LIGHT);
 				lights->push_back(std::move(lData));
 				finishedObject = false;

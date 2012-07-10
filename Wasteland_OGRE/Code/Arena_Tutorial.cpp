@@ -66,8 +66,6 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	//let's setup the EWS system
 	_ews.reset(new EWSManager(_scene));
 
-	//std::string value = "20,0,5";
-
 	LevelData::LevelParser parser;
 	parser.setFile("resource\\models\\mapscapeTEST\\zonedoor_scriptTest.ent");
 	parser.parseDoors(&_doors);
@@ -77,19 +75,6 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	_setupLights(Graphics,_scene);
 	OgreBulletPair level = _pairs.at(1);
 	_setupDoors(level,_scene,_physics.get(),Graphics);
-
-	//attempt to make a door out of a hinge constraint in bullet.
-	//get the last ogrebulletpair
-	/*
-	OgreBulletPair hinge1 = _pairs.at(_pairs.size()-2);
-	
-	hinge1.btBody->setActivationState(DISABLE_DEACTIVATION);
-	btHingeConstraint* hingeDoor;
-	hingeDoor = new btHingeConstraint(*level.btBody,*hinge1.btBody,btVector3(20.5f,5.0f,-5.0f),btVector3(0.0f,0.0f,-5.0f),btVector3(0,1,0),btVector3(0,1,0));
-	_physics->getWorld()->addConstraint(hingeDoor,true);
-	hingeDoor->setLimit(-0.1f,SIMD_PI / 2);
-	_constraints.push_back(hingeDoor);
-	*/
 
 	//physics debug drawer.
 	//_physics->setDebugDrawer(new CDebugDraw(_scene,_physics->getWorld()));
@@ -113,6 +98,19 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 		//setting the old time
 		_oldTime = time;
 
+		//quick debugging tool
+		if(Input->isMBPressed(OIS::MB_Right))
+		{
+			if(_camera->getPolygonMode() == Ogre::PM_WIREFRAME)
+			{
+				_camera->setPolygonMode(Ogre::PM_SOLID);
+			}
+			else
+			{
+				_camera->setPolygonMode(Ogre::PM_WIREFRAME);
+			}
+		}
+
 		//the state shutdown based on player input(?)
 		_stateShutdown = Input->Update(true);
 
@@ -127,7 +125,10 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 
 		//True indicates success, so react on if it doesn't react properly
 		if(!GameManager::UpdateManagers(Graphics,_physics.get(),_deltaTime))
+		{
+			//shuts down appstate
 			_stateShutdown = true;
+		}
 
 		_updateLights();
 		_updateTriggers(playerTransform,static_cast<int>(time));
@@ -163,7 +164,7 @@ void ArenaTutorial::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIMa
 	_constraints.clear();
 
 	//cleaning up state-specific pointers.
-	//since all pointers are auto_ptr members, then they will be deleted upon class destruction.
+	//since all pointers are std::unique_ptr members, then they will be deleted upon class destruction.
 
 	//Destroy the scene manager.
 	Graphics->getRoot()->destroySceneManager(_scene);

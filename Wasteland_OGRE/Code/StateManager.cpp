@@ -12,6 +12,11 @@ StateManager::StateManager()
 	//ToDo: Change the init to reflect the varying state classes.
 	_States.insert(std::make_pair(MENU,new MainMenu()));
 	_States.insert(std::make_pair(GAME_ARENA,new ArenaTutorial()));
+
+	_Input = nullptr;
+	_Graphics = nullptr;
+	_Gui = nullptr;
+	_Sound = nullptr;
 }
 
 void StateManager::Setup(InputManager* inputManager,GraphicsManager* graphicsManager,GUIManager* guiManager,SoundManager* soundManager)

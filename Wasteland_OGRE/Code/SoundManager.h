@@ -19,7 +19,7 @@ enum SOUND_TYPE
 class SoundStruct
 {
 public:
-	SoundStruct(){sound = 0; is3D = false; isLooping = false;}
+	SoundStruct(){sound = 0; is3D = false; isLooping = false; type = MUSIC;}
 	FMOD::Sound* sound;
 	std::string name;
 	SOUND_TYPE type;
