@@ -5,5 +5,6 @@
 #include "list.hxx"
 #include "resource.hxx"
 #include "object.hxx"
+#include "weapon.hxx"
 
 #endif

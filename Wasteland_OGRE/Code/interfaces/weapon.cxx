@@ -257,6 +257,92 @@ soundframe (const soundframe_sequence& s)
 }
 
 
+// animationFrame_t
+// 
+
+const animationFrame_t::animationName_type& animationFrame_t::
+animationName () const
+{
+  return this->animationName_.get ();
+}
+
+animationFrame_t::animationName_type& animationFrame_t::
+animationName ()
+{
+  return this->animationName_.get ();
+}
+
+void animationFrame_t::
+animationName (const animationName_type& x)
+{
+  this->animationName_.set (x);
+}
+
+void animationFrame_t::
+animationName (::std::auto_ptr< animationName_type > x)
+{
+  this->animationName_.set (x);
+}
+
+const animationFrame_t::begin_type& animationFrame_t::
+begin () const
+{
+  return this->begin_.get ();
+}
+
+animationFrame_t::begin_type& animationFrame_t::
+begin ()
+{
+  return this->begin_.get ();
+}
+
+void animationFrame_t::
+begin (const begin_type& x)
+{
+  this->begin_.set (x);
+}
+
+const animationFrame_t::end_type& animationFrame_t::
+end () const
+{
+  return this->end_.get ();
+}
+
+animationFrame_t::end_type& animationFrame_t::
+end ()
+{
+  return this->end_.get ();
+}
+
+void animationFrame_t::
+end (const end_type& x)
+{
+  this->end_.set (x);
+}
+
+
+// animationFrames_t
+// 
+
+const animationFrames_t::animationframe_sequence& animationFrames_t::
+animationframe () const
+{
+  return this->animationframe_;
+}
+
+animationFrames_t::animationframe_sequence& animationFrames_t::
+animationframe ()
+{
+  return this->animationframe_;
+}
+
+void animationFrames_t::
+animationframe (const animationframe_sequence& s)
+{
+  this->animationframe_ = s;
+}
+
+
 // gameplay_t
 // 
 
@@ -402,6 +488,30 @@ type (::std::auto_ptr< type_type > x)
   this->type_.set (x);
 }
 
+const weapon_t::model_type& weapon_t::
+model () const
+{
+  return this->model_.get ();
+}
+
+weapon_t::model_type& weapon_t::
+model ()
+{
+  return this->model_.get ();
+}
+
+void weapon_t::
+model (const model_type& x)
+{
+  this->model_.set (x);
+}
+
+void weapon_t::
+model (::std::auto_ptr< model_type > x)
+{
+  this->model_.set (x);
+}
+
 const weapon_t::materialFile_type& weapon_t::
 materialFile () const
 {
@@ -472,6 +582,30 @@ void weapon_t::
 soundFrames (::std::auto_ptr< soundFrames_type > x)
 {
   this->soundFrames_.set (x);
+}
+
+const weapon_t::animationFrames_type& weapon_t::
+animationFrames () const
+{
+  return this->animationFrames_.get ();
+}
+
+weapon_t::animationFrames_type& weapon_t::
+animationFrames ()
+{
+  return this->animationFrames_.get ();
+}
+
+void weapon_t::
+animationFrames (const animationFrames_type& x)
+{
+  this->animationFrames_.set (x);
+}
+
+void weapon_t::
+animationFrames (::std::auto_ptr< animationFrames_type > x)
+{
+  this->animationFrames_.set (x);
 }
 
 const weapon_t::gameplay_type& weapon_t::
@@ -867,6 +1001,200 @@ soundFrames_t::
 {
 }
 
+// animationFrame_t
+//
+
+animationFrame_t::
+animationFrame_t (const animationName_type& animationName,
+                  const begin_type& begin,
+                  const end_type& end)
+: ::xml_schema::type (),
+  animationName_ (animationName, ::xml_schema::flags (), this),
+  begin_ (begin, ::xml_schema::flags (), this),
+  end_ (end, ::xml_schema::flags (), this)
+{
+}
+
+animationFrame_t::
+animationFrame_t (const animationFrame_t& x,
+                  ::xml_schema::flags f,
+                  ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  animationName_ (x.animationName_, f, this),
+  begin_ (x.begin_, f, this),
+  end_ (x.end_, f, this)
+{
+}
+
+animationFrame_t::
+animationFrame_t (const ::xercesc::DOMElement& e,
+                  ::xml_schema::flags f,
+                  ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  animationName_ (f, this),
+  begin_ (f, this),
+  end_ (f, this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false);
+    this->parse (p, f);
+  }
+}
+
+void animationFrame_t::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_elements (); p.next_element ())
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // animationName
+    //
+    if (n.name () == "animationName" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< animationName_type > r (
+        animationName_traits::create (i, f, this));
+
+      if (!animationName_.present ())
+      {
+        this->animationName_.set (r);
+        continue;
+      }
+    }
+
+    // begin
+    //
+    if (n.name () == "begin" && n.namespace_ ().empty ())
+    {
+      if (!begin_.present ())
+      {
+        this->begin_.set (begin_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    // end
+    //
+    if (n.name () == "end" && n.namespace_ ().empty ())
+    {
+      if (!end_.present ())
+      {
+        this->end_.set (end_traits::create (i, f, this));
+        continue;
+      }
+    }
+
+    break;
+  }
+
+  if (!animationName_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "animationName",
+      "");
+  }
+
+  if (!begin_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "begin",
+      "");
+  }
+
+  if (!end_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "end",
+      "");
+  }
+}
+
+animationFrame_t* animationFrame_t::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class animationFrame_t (*this, f, c);
+}
+
+animationFrame_t::
+~animationFrame_t ()
+{
+}
+
+// animationFrames_t
+//
+
+animationFrames_t::
+animationFrames_t ()
+: ::xml_schema::type (),
+  animationframe_ (::xml_schema::flags (), this)
+{
+}
+
+animationFrames_t::
+animationFrames_t (const animationFrames_t& x,
+                   ::xml_schema::flags f,
+                   ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  animationframe_ (x.animationframe_, f, this)
+{
+}
+
+animationFrames_t::
+animationFrames_t (const ::xercesc::DOMElement& e,
+                   ::xml_schema::flags f,
+                   ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  animationframe_ (f, this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false);
+    this->parse (p, f);
+  }
+}
+
+void animationFrames_t::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_elements (); p.next_element ())
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // animationframe
+    //
+    if (n.name () == "animationframe" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< animationframe_type > r (
+        animationframe_traits::create (i, f, this));
+
+      this->animationframe_.push_back (r);
+      continue;
+    }
+
+    break;
+  }
+}
+
+animationFrames_t* animationFrames_t::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class animationFrames_t (*this, f, c);
+}
+
+animationFrames_t::
+~animationFrames_t ()
+{
+}
+
 // gameplay_t
 //
 
@@ -1038,16 +1366,20 @@ gameplay_t::
 weapon_t::
 weapon_t (const name_type& name,
           const type_type& type,
+          const model_type& model,
           const materialFile_type& materialFile,
           const sounds_type& sounds,
           const soundFrames_type& soundFrames,
+          const animationFrames_type& animationFrames,
           const gameplay_type& gameplay)
 : ::xml_schema::type (),
   name_ (name, ::xml_schema::flags (), this),
   type_ (type, ::xml_schema::flags (), this),
+  model_ (model, ::xml_schema::flags (), this),
   materialFile_ (materialFile, ::xml_schema::flags (), this),
   sounds_ (sounds, ::xml_schema::flags (), this),
   soundFrames_ (soundFrames, ::xml_schema::flags (), this),
+  animationFrames_ (animationFrames, ::xml_schema::flags (), this),
   gameplay_ (gameplay, ::xml_schema::flags (), this)
 {
 }
@@ -1055,16 +1387,20 @@ weapon_t (const name_type& name,
 weapon_t::
 weapon_t (const name_type& name,
           const type_type& type,
+          const model_type& model,
           const materialFile_type& materialFile,
           ::std::auto_ptr< sounds_type >& sounds,
           ::std::auto_ptr< soundFrames_type >& soundFrames,
+          ::std::auto_ptr< animationFrames_type >& animationFrames,
           ::std::auto_ptr< gameplay_type >& gameplay)
 : ::xml_schema::type (),
   name_ (name, ::xml_schema::flags (), this),
   type_ (type, ::xml_schema::flags (), this),
+  model_ (model, ::xml_schema::flags (), this),
   materialFile_ (materialFile, ::xml_schema::flags (), this),
   sounds_ (sounds, ::xml_schema::flags (), this),
   soundFrames_ (soundFrames, ::xml_schema::flags (), this),
+  animationFrames_ (animationFrames, ::xml_schema::flags (), this),
   gameplay_ (gameplay, ::xml_schema::flags (), this)
 {
 }
@@ -1076,9 +1412,11 @@ weapon_t (const weapon_t& x,
 : ::xml_schema::type (x, f, c),
   name_ (x.name_, f, this),
   type_ (x.type_, f, this),
+  model_ (x.model_, f, this),
   materialFile_ (x.materialFile_, f, this),
   sounds_ (x.sounds_, f, this),
   soundFrames_ (x.soundFrames_, f, this),
+  animationFrames_ (x.animationFrames_, f, this),
   gameplay_ (x.gameplay_, f, this)
 {
 }
@@ -1090,9 +1428,11 @@ weapon_t (const ::xercesc::DOMElement& e,
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
   name_ (f, this),
   type_ (f, this),
+  model_ (f, this),
   materialFile_ (f, this),
   sounds_ (f, this),
   soundFrames_ (f, this),
+  animationFrames_ (f, this),
   gameplay_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
@@ -1140,6 +1480,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // model
+    //
+    if (n.name () == "model" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< model_type > r (
+        model_traits::create (i, f, this));
+
+      if (!model_.present ())
+      {
+        this->model_.set (r);
+        continue;
+      }
+    }
+
     // materialFile
     //
     if (n.name () == "materialFile" && n.namespace_ ().empty ())
@@ -1182,6 +1536,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       }
     }
 
+    // animationFrames
+    //
+    if (n.name () == "animationFrames" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< animationFrames_type > r (
+        animationFrames_traits::create (i, f, this));
+
+      if (!animationFrames_.present ())
+      {
+        this->animationFrames_.set (r);
+        continue;
+      }
+    }
+
     // gameplay
     //
     if (n.name () == "gameplay" && n.namespace_ ().empty ())
@@ -1213,6 +1581,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       "");
   }
 
+  if (!model_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "model",
+      "");
+  }
+
   if (!materialFile_.present ())
   {
     throw ::xsd::cxx::tree::expected_element< char > (
@@ -1231,6 +1606,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "soundFrames",
+      "");
+  }
+
+  if (!animationFrames_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "animationFrames",
       "");
   }
 

@@ -225,6 +225,8 @@ namespace xml_schema
 class sounds_t;
 class soundFrame_t;
 class soundFrames_t;
+class animationFrame_t;
+class animationFrames_t;
 class gameplay_t;
 class weapon_t;
 
@@ -504,6 +506,138 @@ class soundFrames_t: public ::xml_schema::type
   soundframe_sequence soundframe_;
 };
 
+class animationFrame_t: public ::xml_schema::type
+{
+  public:
+  // animationName
+  // 
+  typedef ::xml_schema::string animationName_type;
+  typedef ::xsd::cxx::tree::traits< animationName_type, char > animationName_traits;
+
+  const animationName_type&
+  animationName () const;
+
+  animationName_type&
+  animationName ();
+
+  void
+  animationName (const animationName_type& x);
+
+  void
+  animationName (::std::auto_ptr< animationName_type > p);
+
+  // begin
+  // 
+  typedef ::xml_schema::integer begin_type;
+  typedef ::xsd::cxx::tree::traits< begin_type, char > begin_traits;
+
+  const begin_type&
+  begin () const;
+
+  begin_type&
+  begin ();
+
+  void
+  begin (const begin_type& x);
+
+  // end
+  // 
+  typedef ::xml_schema::integer end_type;
+  typedef ::xsd::cxx::tree::traits< end_type, char > end_traits;
+
+  const end_type&
+  end () const;
+
+  end_type&
+  end ();
+
+  void
+  end (const end_type& x);
+
+  // Constructors.
+  //
+  animationFrame_t (const animationName_type&,
+                    const begin_type&,
+                    const end_type&);
+
+  animationFrame_t (const ::xercesc::DOMElement& e,
+                    ::xml_schema::flags f = 0,
+                    ::xml_schema::container* c = 0);
+
+  animationFrame_t (const animationFrame_t& x,
+                    ::xml_schema::flags f = 0,
+                    ::xml_schema::container* c = 0);
+
+  virtual animationFrame_t*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  virtual 
+  ~animationFrame_t ();
+
+  // Implementation.
+  //
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  ::xsd::cxx::tree::one< animationName_type > animationName_;
+  ::xsd::cxx::tree::one< begin_type > begin_;
+  ::xsd::cxx::tree::one< end_type > end_;
+};
+
+class animationFrames_t: public ::xml_schema::type
+{
+  public:
+  // animationframe
+  // 
+  typedef ::animationFrame_t animationframe_type;
+  typedef ::xsd::cxx::tree::sequence< animationframe_type > animationframe_sequence;
+  typedef animationframe_sequence::iterator animationframe_iterator;
+  typedef animationframe_sequence::const_iterator animationframe_const_iterator;
+  typedef ::xsd::cxx::tree::traits< animationframe_type, char > animationframe_traits;
+
+  const animationframe_sequence&
+  animationframe () const;
+
+  animationframe_sequence&
+  animationframe ();
+
+  void
+  animationframe (const animationframe_sequence& s);
+
+  // Constructors.
+  //
+  animationFrames_t ();
+
+  animationFrames_t (const ::xercesc::DOMElement& e,
+                     ::xml_schema::flags f = 0,
+                     ::xml_schema::container* c = 0);
+
+  animationFrames_t (const animationFrames_t& x,
+                     ::xml_schema::flags f = 0,
+                     ::xml_schema::container* c = 0);
+
+  virtual animationFrames_t*
+  _clone (::xml_schema::flags f = 0,
+          ::xml_schema::container* c = 0) const;
+
+  virtual 
+  ~animationFrames_t ();
+
+  // Implementation.
+  //
+  protected:
+  void
+  parse (::xsd::cxx::xml::dom::parser< char >&,
+         ::xml_schema::flags);
+
+  protected:
+  animationframe_sequence animationframe_;
+};
+
 class gameplay_t: public ::xml_schema::type
 {
   public:
@@ -652,6 +786,23 @@ class weapon_t: public ::xml_schema::type
   void
   type (::std::auto_ptr< type_type > p);
 
+  // model
+  // 
+  typedef ::xml_schema::string model_type;
+  typedef ::xsd::cxx::tree::traits< model_type, char > model_traits;
+
+  const model_type&
+  model () const;
+
+  model_type&
+  model ();
+
+  void
+  model (const model_type& x);
+
+  void
+  model (::std::auto_ptr< model_type > p);
+
   // materialFile
   // 
   typedef ::xml_schema::string materialFile_type;
@@ -703,6 +854,23 @@ class weapon_t: public ::xml_schema::type
   void
   soundFrames (::std::auto_ptr< soundFrames_type > p);
 
+  // animationFrames
+  // 
+  typedef ::animationFrames_t animationFrames_type;
+  typedef ::xsd::cxx::tree::traits< animationFrames_type, char > animationFrames_traits;
+
+  const animationFrames_type&
+  animationFrames () const;
+
+  animationFrames_type&
+  animationFrames ();
+
+  void
+  animationFrames (const animationFrames_type& x);
+
+  void
+  animationFrames (::std::auto_ptr< animationFrames_type > p);
+
   // gameplay
   // 
   typedef ::gameplay_t gameplay_type;
@@ -724,16 +892,20 @@ class weapon_t: public ::xml_schema::type
   //
   weapon_t (const name_type&,
             const type_type&,
+            const model_type&,
             const materialFile_type&,
             const sounds_type&,
             const soundFrames_type&,
+            const animationFrames_type&,
             const gameplay_type&);
 
   weapon_t (const name_type&,
             const type_type&,
+            const model_type&,
             const materialFile_type&,
             ::std::auto_ptr< sounds_type >&,
             ::std::auto_ptr< soundFrames_type >&,
+            ::std::auto_ptr< animationFrames_type >&,
             ::std::auto_ptr< gameplay_type >&);
 
   weapon_t (const ::xercesc::DOMElement& e,
@@ -761,9 +933,11 @@ class weapon_t: public ::xml_schema::type
   protected:
   ::xsd::cxx::tree::one< name_type > name_;
   ::xsd::cxx::tree::one< type_type > type_;
+  ::xsd::cxx::tree::one< model_type > model_;
   ::xsd::cxx::tree::one< materialFile_type > materialFile_;
   ::xsd::cxx::tree::one< sounds_type > sounds_;
   ::xsd::cxx::tree::one< soundFrames_type > soundFrames_;
+  ::xsd::cxx::tree::one< animationFrames_type > animationFrames_;
   ::xsd::cxx::tree::one< gameplay_type > gameplay_;
 };
 

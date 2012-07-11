@@ -222,6 +222,30 @@ Ogre::SceneNode* GraphicsManager::createSceneNode(Ogre::SceneManager* scene,
 	return node;
 }
 
+Ogre::SceneNode* GraphicsManager::createSceneNode(Ogre::SceneManager* scene,weapon_t* objectInfo,Ogre::SceneNode* parent)
+{
+	Ogre::SceneNode* node = NULL;
+
+	Ogre::Vector3 pos = Ogre::Vector3::ZERO;
+	pos.y = 1.5f;
+
+	if(parent == NULL)
+	{
+		node = scene->getRootSceneNode()->createChildSceneNode("node" + objectInfo->name(),pos);
+	}
+	else
+	{
+		node = parent->createChildSceneNode("node" + objectInfo->name(),pos);
+	}
+
+	//only used for weapons(look at the parameter types, dummy)
+	Ogre::Entity* ent = scene->createEntity("ent" + objectInfo->name(),objectInfo->model(),"Models");
+	ent->setCastShadows(true);
+	node->attachObject(ent);
+
+	return node;
+}
+
 //This works, but isn't documented very well...
 //Might come back and document it later, but not right now...
 //In other words...!!!MAGIC DON'T TOUCH!!!

@@ -23,7 +23,7 @@ struct OgreBulletPair
 struct EquippableObject
 {
 	Ogre::SceneNode* node;
-	baseEquippable equip;
+	std::unique_ptr<baseEquippable> equip;
 };
 
 /*! \brief The Manager class of all the managers. The final abstraction layer.
