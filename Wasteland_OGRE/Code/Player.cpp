@@ -8,7 +8,70 @@
 
 #include "debug\print.h"
 
+cGunData::cGunData(GUN_TYPE type,GUN_NAME name,int magazineSize,int numMags)
+{
+	_type = type;
+	_name = name;
+	_magazineSize = magazineSize;
 
+	_ammoNotInMag = (numMags * _magazineSize) - _magazineSize;
+	_currentMagazineAmmo = _magazineSize;
+
+	_reloadNeeded = false;
+}
+
+void cGunData::fire()
+{
+	_currentMagazineAmmo--;
+	if(_currentMagazineAmmo == 0)
+	{
+		_reloadNeeded = true;
+	}
+}
+
+void cGunData::reload()
+{
+	if(_reloadNeeded)
+	{
+		//empty magazine, full reload
+		_ammoNotInMag -= _magazineSize;
+		_currentMagazineAmmo = _magazineSize;
+	}
+	else
+	{
+		//not a full reload
+		_ammoNotInMag -= (_magazineSize - _currentMagazineAmmo);
+		_currentMagazineAmmo += (_magazineSize - _currentMagazineAmmo);
+	}
+
+	_reloadNeeded = false;
+}
+
+int cGunData::getGunType()
+{
+	return _type;
+}
+
+int cGunData::getGunName()
+{
+	return _name;
+}
+
+//!Might be inaccurate.
+int cGunData::getNumofMags()
+{
+	return (_ammoNotInMag + _currentMagazineAmmo) / _magazineSize;
+}
+
+int cGunData::getMagAmmo()
+{
+	return _currentMagazineAmmo;
+}
+
+bool cGunData::isReloadNeeded()
+{
+	return _reloadNeeded;
+}
 
 Player::Player()
 {

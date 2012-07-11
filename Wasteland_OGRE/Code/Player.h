@@ -30,11 +30,20 @@ enum GUN_NAME
 class cGunData
 {
 public:
-	cGunData(GUN_TYPE type,GUN_NAME name,int magazineSize,int tAmmo);
+	cGunData(GUN_TYPE type,GUN_NAME name,int magazineSize,int numMags);
 
-	void fireGun(); //fires one round
+	void fire(); //fires one round
+	void reload();
 
 	void setMagazineSize(const int& magSize);
+
+	int getGunType();
+	int getGunName();
+
+	int getNumofMags();
+	int getMagAmmo();
+
+	bool isReloadNeeded();
 
 private:
 	//Gun description
@@ -42,8 +51,10 @@ private:
 	GUN_NAME _name;
 	int _magazineSize; //shouldn't be changed except in constructor
 
-	int _totalAmmo;
+	int _ammoNotInMag;
 	int _currentMagazineAmmo;
+
+	bool _reloadNeeded;
 };
 
 class Player
