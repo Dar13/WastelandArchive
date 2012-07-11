@@ -27,10 +27,25 @@ enum GUN_NAME
 	G36C
 };
 
-class cGunData
+class baseEquippable
+{
+public:
+	void setEquipped(const bool isequipped) { _isEquipped = isequipped; }
+	void setWeapon(const bool isweapon) { _isWeapon = isweapon; }
+
+	bool getEquipped() const { return _isEquipped; }
+	bool getIsWeapon() const { return _isWeapon; }
+protected:
+	bool _isEquipped;
+	bool _isWeapon;
+	
+};
+
+class cGunData : public baseEquippable
 {
 public:
 	cGunData(GUN_TYPE type,GUN_NAME name,int magazineSize,int numMags);
+	cGunData(const baseEquippable& base,GUN_TYPE type,GUN_NAME name, int magazineSize,int numMags);
 
 	void fire(); //fires one round
 	void reload();

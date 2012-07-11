@@ -7,8 +7,8 @@
 #include "GraphicsManager.h"
 #include "InputManager.h"
 #include "PhysicsManager.h"
-//#include "XMLReader.h"
 #include "EWS.h"
+#include "Player.h"
 
 /*! \brief Allows convenient returns of both Bullet rigid bodies and Ogre SceneNodes.
 */
@@ -16,6 +16,14 @@ struct OgreBulletPair
 {
 	Ogre::SceneNode* ogreNode;
 	btRigidBody* btBody;
+};
+
+/*! \brief Return structure for weapons and equipable items
+*/
+struct EquippableObject
+{
+	Ogre::SceneNode* node;
+	baseEquippable equip;
 };
 
 /*! \brief The Manager class of all the managers. The final abstraction layer.
@@ -59,6 +67,10 @@ namespace GameManager
 								object_t* objectInfo,
 								PhysicsManager* phyManager,
 								GraphicsManager* graphicsManager);
+
+	EquippableObject createEquippable(Ogre::SceneManager* scene,
+									  object_t* objectInfo,
+									  GraphicsManager* graphicsManager);
 
 	/*! Tells class to use the debug drawer, to verify collisions are happening correctly.
 		

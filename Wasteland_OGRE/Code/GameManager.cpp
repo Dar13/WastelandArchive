@@ -128,9 +128,72 @@ namespace GameManager
 		return retVal;
 	}
 
+	EquippableObject createEquippable(Ogre::SceneNode* scene,
+									  const std::string& file,
+									  GraphicsManager* graphicsManager,
+									  bool isWeapon = true)
+	{
+		EquippableObject retVal;
+		baseEquippable b;
+		b.setEquipped(false);
+		if(isWeapon)
+		{
+			weapon_t* wep = weapon(file.c_str()).release();
+			b.setWeapon(true);
+			GUN_TYPE typ;
+			retVal.equip.reset(new cGunData(b,
+											_correspondGunType(wep->type()),
+											_correspondGunName(wep->name()),
+											wep->gameplay().reloadQty(),4)
+							                );
+			
+
+		}
+
+	}
+
 	//----------------------------------------
 	//Private, utility functions start here..
 	//----------------------------------------
+
+	GUN_TYPE _correspondGunType(const std::string& typ)
+	{
+		if(typ == "PISTOL")
+		{
+			return GUN_TYPE::PISTOL;
+		}
+		if(typ == "ASSAULT")
+		{
+			return GUN_TYPE::ASSAULT;
+		}
+		if(typ == "SMG")
+		{
+			return GUN_TYPE::SMG;
+		}
+		if(typ == "HEAVY")
+		{
+			return GUN_TYPE::HEAVY;
+		}
+		if(typ == "SHOTGUN")
+		{
+			return GUN_TYPE::SHOTGUN;
+		}
+
+		return GUN_TYPE::NONE;
+	}
+
+	GUN_NAME _correspondGunName(const std::string& name)
+	{
+		if(name == "M9SE")
+		{
+			return GUN_NAME::M9;
+		}
+		if(name == "G36C")
+		{
+			return GUN_NAME::G36C;
+		}
+		return GUN_NAME::NONE;
+	}
 
 	//manually builds triangle mesh collision shape.
 	btBvhTriangleMeshShape* buildTriangleCollisionShape(Ogre::SceneNode* node,GraphicsManager* Graphics)

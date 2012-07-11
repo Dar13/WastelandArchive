@@ -18,6 +18,16 @@ cGunData::cGunData(GUN_TYPE type,GUN_NAME name,int magazineSize,int numMags)
 	_currentMagazineAmmo = _magazineSize;
 
 	_reloadNeeded = false;
+
+	_isWeapon = true;
+	_isEquipped = false;
+}
+
+cGunData::cGunData(const baseEquippable& base,GUN_TYPE type,GUN_NAME name,int magazineSize,int numMags)
+{
+	_isWeapon = base.getIsWeapon();
+	_isEquipped = base.getEquipped();
+	cGunData(type,name,magazineSize,numMags);
 }
 
 void cGunData::fire()

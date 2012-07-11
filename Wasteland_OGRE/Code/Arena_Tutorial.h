@@ -51,8 +51,7 @@ private:
 	//Entity management
 	std::vector<Ogre::Entity*> _entities;
 
-	//CharacterController* _controller;
-	//EWSManager* _ews;
+	//EWS and character controller variables
 	std::unique_ptr<CharacterController> _controller;
 	std::unique_ptr<EWSManager> _ews;
 
