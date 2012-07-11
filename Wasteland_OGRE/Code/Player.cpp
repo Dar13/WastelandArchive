@@ -6,6 +6,8 @@
 #include "InputManager.h"
 #include "Utility.h"
 
+#include "GameManager.h"
+
 #include "debug\print.h"
 
 cGunData::cGunData(GUN_TYPE type,GUN_NAME name,int magazineSize,int numMags)
@@ -21,6 +23,9 @@ cGunData::cGunData(GUN_TYPE type,GUN_NAME name,int magazineSize,int numMags)
 
 	_isWeapon = true;
 	_isEquipped = false;
+
+	_fireAnimEnded = false;
+	_reloadAnimEnded = false;
 }
 
 cGunData::cGunData(const baseEquippable& base,GUN_TYPE type,GUN_NAME name,int magazineSize,int numMags)
@@ -32,10 +37,15 @@ cGunData::cGunData(const baseEquippable& base,GUN_TYPE type,GUN_NAME name,int ma
 
 void cGunData::fire()
 {
-	_currentMagazineAmmo--;
-	if(_currentMagazineAmmo == 0)
+	if(_currentMagazineAmmo == 0 && _fireAnimEnded)
 	{
-		_reloadNeeded = true;
+		//don't even bother shooting, there's no point.
+		reload();
+		return;
+	}
+	else
+	{
+		_currentMagazineAmmo--;
 	}
 }
 
@@ -55,6 +65,24 @@ void cGunData::reload()
 	}
 
 	_reloadNeeded = false;
+}
+
+bool cGunData::frameStarted(const Ogre::FrameEvent& evt)
+{
+
+	return true;
+}
+
+bool cGunData::frameRenderingQueued(const Ogre::FrameEvent& evt)
+{
+
+	return true;
+}
+
+bool cGunData::frameEnded(const Ogre::FrameEvent& evt)
+{
+
+	return true;
 }
 
 int cGunData::getGunType()
@@ -81,6 +109,66 @@ int cGunData::getMagAmmo()
 bool cGunData::isReloadNeeded()
 {
 	return _reloadNeeded;
+}
+
+void cGunData::setSoundFrames(weapon_t* Weapon)
+{
+	for(auto itr = Weapon->soundFrames().soundframe().begin();
+		itr != Weapon->soundFrames().soundframe().end();
+		++itr)
+	{
+		sSoundFrame soundF;
+		for(auto _itr = (*itr).frame().begin();
+			_itr != (*itr).frame().end();
+			++itr)
+		{
+			soundF.frames.push_back(static_cast<int>(*_itr));
+		}
+
+		bool found = false;
+		if( itr->sound() == "FIRE")
+		{
+			found = true;
+			soundF.gunSound = FIRE;
+		}
+		if( itr->sound() == "DRYFIRE")
+		{
+			found = true;
+			soundF.gunSound = DRYFIRE;
+		}
+		if( itr->sound() == "RELOAD")
+		{
+			found = true;
+			soundF.gunSound = RELOAD;
+		}
+		if( itr->sound() == "PUTAWAY")
+		{
+			found = true;
+			soundF.gunSound = PUTAWAY;
+		}
+		if(itr->sound() == "ALTRELOAD")
+		{
+			found = true;
+			soundF.gunSound = ALTRELOAD;
+		}
+		if(itr->sound() == "ALTFIRE")
+		{
+			found = true;
+			soundF.gunSound = ALTFIRE;
+		}
+		if(!found)
+		{
+			soundF.gunSound = NO_SOUND;
+		}
+
+		_soundFrames.push_back(soundF);
+	}
+}
+
+void cGunData::setAnimationFrames(Ogre::Entity* entity)
+{
+	Ogre::AnimationStateSet* set = entity->getAllAnimationStates();
+	_currentAnimation = set->getAnimationState("idle");
 }
 
 Player::Player()
@@ -115,6 +203,26 @@ bool Player::Update(InputManager* input,PhysicsManager* physics,EWSManager* ews,
 	{
 		placeEWS(ews,physics,transform);
 	}
+
+	if(input->isMBPressed(OIS::MB_Left))
+	{
+		//shoot gun
+		if(_currentEquippable->equip->getIsWeapon())
+		{
+			cGunData* gun = static_cast<cGunData*>(_currentEquippable->equip.get());
+			gun->fire();
+		}
+	}
+
+	if(input->isCFGKeyPressed(CONFIG_KEY_VALUES::RELOAD))
+	{
+		if(_currentEquippable->equip->getIsWeapon())
+		{
+			cGunData* gun = static_cast<cGunData*>(_currentEquippable->equip.get());
+			gun->reload();
+		}
+	}
+
 	return true;
 }
 

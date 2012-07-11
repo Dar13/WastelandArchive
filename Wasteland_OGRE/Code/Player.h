@@ -12,7 +12,7 @@
 
 enum GUN_TYPE
 {
-	NONE = 0,
+	NO_TYPE = 0,
 	PISTOL,
 	ASSAULT,
 	SMG,
@@ -22,9 +22,41 @@ enum GUN_TYPE
 
 enum GUN_NAME
 {
-	NONE = 0,
+	NO_NAME = 0,
 	M9,
 	G36C
+};
+
+enum GUN_ANIM
+{
+	NO_ANIM = 0,
+	SELECT,
+	IDLE,
+	MOVE,
+	RELOAD,
+	STARTFIRE,
+	ENDFIRE,
+	AUTOFIRE,
+	FIRE
+};
+
+enum GUN_SOUND
+{
+	NO_SOUND = 0,
+	FIRE,
+	RELOAD,
+	PUTAWAY,
+	DRYFIRE,
+	ALTRELOAD,
+	ALTFIRE
+};
+
+struct EquippableObject;
+
+struct sSoundFrame
+{
+	GUN_SOUND gunSound;
+	std::vector<int> frames;
 };
 
 class baseEquippable
@@ -41,7 +73,7 @@ protected:
 	
 };
 
-class cGunData : public baseEquippable
+class cGunData : public baseEquippable,Ogre::FrameListener
 {
 public:
 	cGunData(GUN_TYPE type,GUN_NAME name,int magazineSize,int numMags);
@@ -60,6 +92,14 @@ public:
 
 	bool isReloadNeeded();
 
+	void setAnimationFrames(Ogre::Entity* entity);
+
+	void setSoundFrames(weapon_t* Weapon);
+
+	bool frameStarted(const Ogre::FrameEvent& evt);
+	bool frameRenderingQueued(const Ogre::FrameEvent& evt);
+	bool frameEnded(const Ogre::FrameEvent& evt);
+
 private:
 	//Gun description
 	GUN_TYPE _type;
@@ -69,7 +109,14 @@ private:
 	int _ammoNotInMag;
 	int _currentMagazineAmmo;
 
+	bool _fireAnimEnded;
+	bool _reloadAnimEnded;
+
 	bool _reloadNeeded;
+
+	std::vector<sSoundFrame> _soundFrames;
+	Ogre::AnimationStateSet* _animationSet;
+	Ogre::AnimationState* _currentAnimation;
 };
 
 class Player
@@ -92,7 +139,8 @@ private:
 
 	int _health;
 
-
+	std::vector<EquippableObject>::iterator _currentEquippable;
+	std::vector<EquippableObject> _equippables;
 };
 
 #endif

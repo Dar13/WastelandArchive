@@ -12,6 +12,8 @@
 
 namespace GameManager
 {
+	GUN_TYPE _correspondGunType(const std::string& typ);
+	GUN_NAME _correspondGunName(const std::string& name);
 
 	bool UpdateManagers(GraphicsManager* graphicsManager,PhysicsManager* phyManager,float deltaTime)
 	{
@@ -128,7 +130,7 @@ namespace GameManager
 		return retVal;
 	}
 
-	EquippableObject createEquippable(Ogre::SceneNode* scene,
+	EquippableObject createEquippable(Ogre::SceneManager* scene,
 									  const std::string& file,
 									  GraphicsManager* graphicsManager,
 									  bool isWeapon = true)
@@ -140,16 +142,21 @@ namespace GameManager
 		{
 			weapon_t* wep = weapon(file.c_str()).release();
 			b.setWeapon(true);
-			GUN_TYPE typ;
 			retVal.equip.reset(new cGunData(b,
 											_correspondGunType(wep->type()),
 											_correspondGunName(wep->name()),
-											wep->gameplay().reloadQty(),4)
+											static_cast<int>(wep->gameplay().reloadQty()),4)
 							                );
-			
-
+			retVal.node = graphicsManager->createSceneNode(scene,wep,nullptr);
+			static_cast<cGunData*>(retVal.equip.get())->setSoundFrames(wep);
+			delete wep;
+		}
+		else
+		{
+			//fill this in later.
 		}
 
+		return retVal;
 	}
 
 	//----------------------------------------
@@ -160,39 +167,39 @@ namespace GameManager
 	{
 		if(typ == "PISTOL")
 		{
-			return GUN_TYPE::PISTOL;
+			return PISTOL;
 		}
 		if(typ == "ASSAULT")
 		{
-			return GUN_TYPE::ASSAULT;
+			return ASSAULT;
 		}
 		if(typ == "SMG")
 		{
-			return GUN_TYPE::SMG;
+			return SMG;
 		}
 		if(typ == "HEAVY")
 		{
-			return GUN_TYPE::HEAVY;
+			return HEAVY;
 		}
 		if(typ == "SHOTGUN")
 		{
-			return GUN_TYPE::SHOTGUN;
+			return SHOTGUN;
 		}
 
-		return GUN_TYPE::NONE;
+		return NO_TYPE;
 	}
 
 	GUN_NAME _correspondGunName(const std::string& name)
 	{
 		if(name == "M9SE")
 		{
-			return GUN_NAME::M9;
+			return M9;
 		}
 		if(name == "G36C")
 		{
-			return GUN_NAME::G36C;
+			return G36C;
 		}
-		return GUN_NAME::NONE;
+		return NO_NAME;
 	}
 
 	//manually builds triangle mesh collision shape.

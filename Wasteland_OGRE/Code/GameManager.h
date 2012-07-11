@@ -22,6 +22,8 @@ struct OgreBulletPair
 */
 struct EquippableObject
 {
+	EquippableObject() : node(NULL) { equip.reset(NULL); }
+	EquippableObject(const EquippableObject&) {}
 	Ogre::SceneNode* node;
 	std::unique_ptr<baseEquippable> equip;
 };

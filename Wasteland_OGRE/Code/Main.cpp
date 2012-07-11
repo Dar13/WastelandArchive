@@ -1,5 +1,7 @@
 #include "StdAfx.h"
 
+#include <vld.h>
+
 #include <new>
 
 #include <direct.h>
