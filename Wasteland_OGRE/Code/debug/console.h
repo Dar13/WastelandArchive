@@ -17,7 +17,9 @@ public:
 	Console(const std::string& name);
 
 	//get handle,etc etc
-
+	HWND getHandle();
+	
+	void positionConsole(int top,int left);
 private:
 
 };

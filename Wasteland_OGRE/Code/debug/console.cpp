@@ -46,3 +46,13 @@ Console::Console(const std::string& name)
 	// point to console as well
 	std::ios::sync_with_stdio();
 }
+
+HWND Console::getHandle()
+{
+	return GetConsoleWindow();
+}
+
+void Console::positionConsole(int top,int left)
+{
+	MoveWindow(getHandle(),left,top,600,400,FALSE);
+}
