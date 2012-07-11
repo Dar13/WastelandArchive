@@ -76,9 +76,7 @@ void EWSManager::Update(int health,int newTime,bool isPlacing,const OgreTransfor
 		if((newTime - oldTime) > 500 && health != _health ) //playerInfo != _playerInfo)
 		{
 			//draw health information
-			//Box(Ogre::Rect(250,health-100,300,250),Ogre::ColourValue(1.0f,0.0f,0.0f,1.0f));
 			Box(Ogre::Rect(100,health + 100,150,400),Ogre::ColourValue(0.0f,.5f,0.0f,1.0f));
-			//Circle(Ogre::Vector2(256,200),100,Ogre::ColourValue(1.0f,0.0f,0.0f,1.0f));
 
 			//draw ammo information
 			//NOT DONE YET!
