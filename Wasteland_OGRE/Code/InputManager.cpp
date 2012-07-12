@@ -72,6 +72,8 @@ InputManager::~InputManager()
 		_inputSystem->destroyInputObject(_keyObj);
 
 	OIS::InputManager::destroyInputSystem(_inputSystem);
+
+	delete _config;
 }
 
 void InputManager::setCaptureWindow(int width,int height)

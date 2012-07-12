@@ -14,8 +14,6 @@
 
 int getAnimID(const std::string& name);
 
-struct EquippableObject;
-
 struct sSoundFrame
 {
 	int gunSound;
@@ -35,6 +33,14 @@ protected:
 	bool _isEquipped;
 	bool _isWeapon;
 	
+};
+
+/*! \brief Return structure for weapons and equipable items
+*/
+struct EquippableObject
+{
+	Ogre::SceneNode* node;
+	baseEquippable* equip;
 };
 
 class cGunData : public baseEquippable, public Ogre::FrameListener
@@ -135,7 +141,7 @@ public:
 	Player();
 	~Player();
 	
-	void Setup(const std::string& file);
+	void Setup(const std::string& file,Ogre::SceneNode* equipNode);
 	bool Update(InputManager* input,PhysicsManager* physics,EWSManager* ews,const OgreTransform& transform);
 	void Clean(bool reuse = false);
 
@@ -157,7 +163,7 @@ private:
 
 	Ogre::SceneNode* _equipNode;
 
-	std::vector<EquippableObject>::iterator _currentEquippable;
+	int _curEquippable;
 	std::vector<EquippableObject> _equippables;
 };
 

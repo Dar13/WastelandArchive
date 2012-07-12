@@ -69,25 +69,28 @@ void MainMenu::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 		window.second->setText("Exit Game");
 		window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.425f,0),CEGUI::UDim(.7f,0)));
 		window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.15f,0),CEGUI::UDim(.1f,0)));
-		_guiSheetChildren.insert(window);
-		_guiSheet->addChildWindow(window.second);
+		window.second->setDestroyedByParent(true);
 		window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(&MainMenu::_shutdown,this));
 		window.second->setAlwaysOnTop(true);
+		_guiSheetChildren.insert(window);
+		_guiSheet->addChildWindow(window.second);
 	
 		window.first = "main_Start_btn";
 		window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
 		window.second->setText("Start Game");
 		window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.425f,0),CEGUI::UDim(.3f,0)));
 		window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.15f,0),CEGUI::UDim(.1f,0)));
-		_guiSheetChildren.insert(window);
-		_guiSheet->addChildWindow(window.second);
+		window.second->setDestroyedByParent(true);
 		window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(&MainMenu::_start,this));
 		window.second->setAlwaysOnTop(true);
+		_guiSheetChildren.insert(window);
+		_guiSheet->addChildWindow(window.second);
 
 		window.first = "main_Options_btn";
 		window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
 		window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.45f,0),CEGUI::UDim(.5f,0)));
 		window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.1f,0),CEGUI::UDim(.1f,0)));
+		window.second->setDestroyedByParent(true);
 		window.second->setText("Options");
 		window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(&MainMenu::_options,this));
 		window.second->setAlwaysOnTop(true);
@@ -192,6 +195,8 @@ void MainMenu::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIManager
 {
 	//undo whatever is done in the setup.
 	Gui->setCurrentGUISheet("none");
+	Gui->getWinManager()->destroyWindow(_guiSheet);
+	Gui->getWinManager()->destroyWindow(_opt_guiSheet);
 	CEGUI::MouseCursor::getSingleton().hide();
 
 	Graphics->getRenderWindow()->removeAllViewports();
@@ -217,6 +222,9 @@ void MainMenu::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIManager
 
 	Sound->stopMusic(true);
 
+	_guiSheetChildren.clear();
+	_opt_guiSheetChildren.clear();
+
 	return;
 }
 
@@ -239,6 +247,7 @@ void MainMenu::createOptionsMenu(GUIManager* Gui)
 	tabCntrl->setPosition(CEGUI::UVector2(CEGUI::UDim(0.0f,0),CEGUI::UDim(0.0f,0)));
 	tabCntrl->setAlwaysOnTop(false);
 	window.second = static_cast<CEGUI::Window*>(tabCntrl);
+	window.second->setDestroyedByParent(true);
 	_opt_guiSheet->addChildWindow(window.second);
 	_opt_guiSheetChildren.insert(window);
 
@@ -248,6 +257,7 @@ void MainMenu::createOptionsMenu(GUIManager* Gui)
 	window.second->setText("Graphics");
 	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(0.0f,0),CEGUI::UDim(0.0f,0)));
 	window.second->setID(1);
+	window.second->setDestroyedByParent(true);
 	tabCntrl->addTab(window.second);
 	_opt_guiSheetChildren.insert(window);
 
@@ -257,10 +267,12 @@ void MainMenu::createOptionsMenu(GUIManager* Gui)
 	window.second->setText("Resolutions:");
 	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.0f,5),CEGUI::UDim(0.05f,0)));
 	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.2f,0),CEGUI::UDim(.05f,0)));
+	window.second->setDestroyedByParent(true);
 	_opt_guiSheetChildren["opt_Config_Graphic_wnd"]->addChildWindow(window.second);
 
 	window.first = "opt_Config_Graphic_Res_list";
 	window.second = Gui->getWinManager()->createWindow("TaharezLook/Combobox",window.first);
+	window.second->setDestroyedByParent(true);
 	_opt_guiSheetChildren["opt_Config_Graphic_wnd"]->addChildWindow(window.second);
 	_opt_guiSheetChildren.insert(window);
 	CEGUI::Combobox* resCombobox = static_cast<CEGUI::Combobox*>(window.second);
@@ -271,22 +283,27 @@ void MainMenu::createOptionsMenu(GUIManager* Gui)
 	CEGUI::ListboxTextItem* cbItem = new CEGUI::ListboxTextItem("1920x1024",10);
 	cbItem->setSelectionBrushImage("TaharezLook","ComboboxSelectionBrush");
 	cbItem->setSelected(true);
+	cbItem->setAutoDeleted(true);
 	resCombobox->addItem(cbItem);
 
 	cbItem = new CEGUI::ListboxTextItem("1600x1050",20);
 	cbItem->setSelectionBrushImage("TaharezLook","ComboboxSelectionBrush");
+	cbItem->setAutoDeleted(true);
 	resCombobox->addItem(cbItem);
 
 	cbItem = new CEGUI::ListboxTextItem("1366x768",30);
 	cbItem->setSelectionBrushImage("TaharezLook","ComboboxSelectionBrush");
+	cbItem->setAutoDeleted(true);
 	resCombobox->addItem(cbItem);
 	
 	cbItem = new CEGUI::ListboxTextItem("1280x1024",40);
 	cbItem->setSelectionBrushImage("TaharezLook","ComboboxSelectionBrush");
+	cbItem->setAutoDeleted(true);
 	resCombobox->addItem(cbItem);
 
 	cbItem = new CEGUI::ListboxTextItem("1024x768",50);
 	cbItem->setSelectionBrushImage("TaharezLook","ComboboxSelectionBrush");
+	cbItem->setAutoDeleted(true);
 	resCombobox->addItem(cbItem);
 
 	//other graphics options...
@@ -296,6 +313,7 @@ void MainMenu::createOptionsMenu(GUIManager* Gui)
 	window.second = Gui->getWinManager()->createWindow("DefaultWindow",window.first);
 	window.second->setText("Audio");
 	window.second->setID(2);
+	window.second->setDestroyedByParent(true);
 	tabCntrl->addTab(window.second);
 	_opt_guiSheetChildren.insert(window);
 
@@ -303,6 +321,7 @@ void MainMenu::createOptionsMenu(GUIManager* Gui)
 	window.second = Gui->getWinManager()->createWindow("DefaultWindow",window.first);
 	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.5f,0),CEGUI::UDim(.5f,0)));
 	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.0f,20),CEGUI::UDim(.0f,0)));
+	window.second->setDestroyedByParent(true);
 	_opt_guiSheetChildren["opt_Config_Audio_wnd"]->addChildWindow(window.second);
 	_opt_guiSheetChildren.insert(window);
 
@@ -311,6 +330,7 @@ void MainMenu::createOptionsMenu(GUIManager* Gui)
 	window.second->setText("Volumes");
 	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(0.0f,0),CEGUI::UDim(0.1f,0)));
 	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(1.0f,0),CEGUI::UDim(0.1f,0)));
+	window.second->setDestroyedByParent(true);
 	_opt_guiSheetChildren["opt_Config_Audio_vol_wnd"]->addChildWindow(window.second);
 	_opt_guiSheetChildren.insert(window);
 
@@ -321,6 +341,7 @@ void MainMenu::createOptionsMenu(GUIManager* Gui)
 	sldr->setSize(CEGUI::UVector2(CEGUI::UDim(0.04f,0),CEGUI::UDim(0.4f,0)));
 	sldr->setCurrentValue(0.5f);
 	window.second = static_cast<CEGUI::Slider*>(sldr);
+	window.second->setDestroyedByParent(true);
 	_opt_guiSheetChildren["opt_Config_Audio_vol_wnd"]->addChildWindow(window.second);
 	_opt_guiSheetChildren.insert(window);
 	window.second->subscribeEvent(CEGUI::Slider::EventValueChanged,CEGUI::Event::Subscriber(&MainMenu::_valueUpdate_sliders,this));
@@ -331,6 +352,7 @@ void MainMenu::createOptionsMenu(GUIManager* Gui)
 	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(0.225f,0),CEGUI::UDim(.1f,0)));
 	window.second->setText("Character Volume");
 	window.second->setFont("DejaVuSans-6");
+	window.second->setDestroyedByParent(true);
 	_opt_guiSheetChildren["opt_Config_Audio_vol_wnd"]->addChildWindow(window.second);
 	_opt_guiSheetChildren.insert(window);
 
@@ -340,6 +362,7 @@ void MainMenu::createOptionsMenu(GUIManager* Gui)
 	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.075f,0),CEGUI::UDim(0.1f,0)));
 	window.second->setFont("DejaVuSans-6");
 	window.second->setText("50");
+	window.second->setDestroyedByParent(true);
 	_opt_guiSheetChildren["opt_Config_Audio_vol_wnd"]->addChildWindow(window.second);
 	_opt_guiSheetChildren.insert(window);
 
@@ -350,6 +373,7 @@ void MainMenu::createOptionsMenu(GUIManager* Gui)
 	sldr = static_cast<CEGUI::Slider*>(window.second);
 	sldr->setCurrentValue(.5f);
 	window.second = static_cast<CEGUI::Window*>(sldr);
+	window.second->setDestroyedByParent(true);
 	_opt_guiSheetChildren["opt_Config_Audio_vol_wnd"]->addChildWindow(window.second);
 	_opt_guiSheetChildren.insert(window);
 	window.second->subscribeEvent(CEGUI::Slider::EventValueChanged,CEGUI::Event::Subscriber(&MainMenu::_valueUpdate_sliders,this));
@@ -360,6 +384,7 @@ void MainMenu::createOptionsMenu(GUIManager* Gui)
 	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.225f,0),CEGUI::UDim(.1f,0)));
 	window.second->setText("Music Volume");
 	window.second->setFont("DejaVuSans-6");
+	window.second->setDestroyedByParent(true);
 	_opt_guiSheetChildren["opt_Config_Audio_vol_wnd"]->addChildWindow(window.second);
 	_opt_guiSheetChildren.insert(window);
 
@@ -369,6 +394,7 @@ void MainMenu::createOptionsMenu(GUIManager* Gui)
 	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.075f,0),CEGUI::UDim(.1f,0)));
 	window.second->setFont("DejaVuSans-6");
 	window.second->setText("50");
+	window.second->setDestroyedByParent(true);
 	_opt_guiSheetChildren["opt_Config_Audio_vol_wnd"]->addChildWindow(window.second);
 	_opt_guiSheetChildren.insert(window);
 
@@ -379,6 +405,7 @@ void MainMenu::createOptionsMenu(GUIManager* Gui)
 	sldr = static_cast<CEGUI::Slider*>(window.second);
 	sldr->setCurrentValue(.5f);
 	window.second = static_cast<CEGUI::Window*>(sldr);
+	window.second->setDestroyedByParent(true);
 	_opt_guiSheetChildren["opt_Config_Audio_vol_wnd"]->addChildWindow(window.second);
 	_opt_guiSheetChildren.insert(window);
 	window.second->subscribeEvent(CEGUI::Slider::EventValueChanged,CEGUI::Event::Subscriber(&MainMenu::_valueUpdate_sliders,this));
@@ -389,6 +416,7 @@ void MainMenu::createOptionsMenu(GUIManager* Gui)
 	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.225f,0),CEGUI::UDim(.1f,0)));
 	window.second->setText("SFX Volume");
 	window.second->setFont("DejaVuSans-6");
+	window.second->setDestroyedByParent(true);
 	_opt_guiSheetChildren["opt_Config_Audio_vol_wnd"]->addChildWindow(window.second);
 	_opt_guiSheetChildren.insert(window);
 
@@ -398,6 +426,7 @@ void MainMenu::createOptionsMenu(GUIManager* Gui)
 	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.075f,0),CEGUI::UDim(.1f,0)));
 	window.second->setText("50");
 	window.second->setFont("DejaVuSans-6");
+	window.second->setDestroyedByParent(true);
 	_opt_guiSheetChildren["opt_Config_Audio_vol_wnd"]->addChildWindow(window.second);
 	_opt_guiSheetChildren.insert(window);
 
@@ -408,6 +437,7 @@ void MainMenu::createOptionsMenu(GUIManager* Gui)
 	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(0.2f,0),CEGUI::UDim(0.1f,0)));
 	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(0.8f,0),CEGUI::UDim(0.9f,0)));
 	window.second->setAlwaysOnTop(true);
+	window.second->setDestroyedByParent(true);
 	_opt_guiSheet->addChildWindow(window.second);
 	_opt_guiSheetChildren.insert(window);
 	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(&MainMenu::_options,this));

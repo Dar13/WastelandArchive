@@ -161,7 +161,7 @@ void cGunData::setSoundFrames(weapon_t* Weapon)
 		sSoundFrame soundF;
 		for(auto _itr = (*itr).frame().begin();
 			_itr != (*itr).frame().end();
-			++itr)
+			++_itr)
 		{
 			soundF.frames.push_back(static_cast<int>(*_itr));
 		}
@@ -204,12 +204,14 @@ void cGunData::setSoundFrames(weapon_t* Weapon)
 
 		_soundFrames.push_back(soundF);
 	}
+	std::cout << "Soundframes set." << std::endl;
 }
 
 void cGunData::setAnimationFrames(Ogre::Entity* entity)
 {
 	_animBlender.setEntity(entity);
 	_animBlender.init("idle",true);
+	std::cout << "AnimationFrames set." << std::endl;
 }
 
 Player::Player()
@@ -222,15 +224,31 @@ Player::Player()
 
 Player::~Player()
 {
-	//nothing yet
+	//clean up equippables
+	for(auto itr = _equippables.begin(); itr != _equippables.end(); ++itr)
+	{
+		if(itr->equip->getIsWeapon())
+		{
+			delete static_cast<cGunData*>(itr->equip);
+		}
+		else
+		{
+			delete itr->equip;
+		}
+	}
 }
 
-void Player::Setup(const std::string& file)
+void Player::Setup(const std::string& file,Ogre::SceneNode* equipNode)
 {
-	if(_equippables.size() == 1)
+	if(equipNode != nullptr)
+	{
+		_equipNode = equipNode;
+	}
+
+	if(_equippables.size() == 1 && _equipNode != nullptr)
 	{
 		//equip the one weapon/thing
-		equipObject(*_currentEquippable);
+		equipObject(_equippables[_curEquippable]);
 	}
 }
 
@@ -244,18 +262,18 @@ bool Player::Update(InputManager* input,PhysicsManager* physics,EWSManager* ews,
 	if(input->isMBPressed(OIS::MB_Left))
 	{
 		//shoot gun
-		if(_currentEquippable->equip->getIsWeapon())
+		if(_equippables[_curEquippable].equip->getIsWeapon())
 		{
-			cGunData* gun = static_cast<cGunData*>(_currentEquippable->equip.get());
+			cGunData* gun = static_cast<cGunData*>(_equippables[_curEquippable].equip);
 			gun->fire();
 		}
 	}
 
 	if(input->isCFGKeyPressed(InputManager::RELOAD))
 	{
-		if(_currentEquippable->equip->getIsWeapon())
+		if(_equippables[_curEquippable].equip->getIsWeapon())
 		{
-			cGunData* gun = static_cast<cGunData*>(_currentEquippable->equip.get());
+			cGunData* gun = static_cast<cGunData*>(_equippables[_curEquippable].equip);
 			gun->reload();
 		}
 	}
@@ -281,12 +299,14 @@ void Player::equipObject(const EquippableObject& obj)
 	obj.node->getParentSceneNode()->removeChild(obj.node);
 	_equipNode->addChild(obj.node);
 	obj.node->setPosition(1.0f,.25f,-.5f);
+	std::cout << "Weapon equipped." << std::endl;
 }
 
 void Player::addEquippableObject(const EquippableObject& object)
 {
 	_equippables.push_back(object);
-	_currentEquippable = _equippables.begin(); //there's only one...
+	_curEquippable = 0; //there's only one...
+	std::cout << "Weapon added to equippables." << std::endl;
 }
 
 void Player::Clean(bool reuse)

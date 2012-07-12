@@ -142,13 +142,13 @@ namespace GameManager
 		{
 			weapon_t* wep = weapon(file.c_str()).release();
 			b.setWeapon(true);
-			retVal.equip.reset(new cGunData(b,
-											_correspondGunType(wep->type()),
-											_correspondGunName(wep->name()),
-											static_cast<int>(wep->gameplay().reloadQty()),4)
-							                );
+			retVal.equip = new cGunData(b,
+										_correspondGunType(wep->type()),
+										_correspondGunName(wep->name()),
+										static_cast<int>(wep->gameplay().reloadQty()),4);
 			retVal.node = graphicsManager->createSceneNode(scene,wep,nullptr);
-			static_cast<cGunData*>(retVal.equip.get())->setSoundFrames(wep);
+			static_cast<cGunData*>(retVal.equip)->setSoundFrames(wep);
+			static_cast<cGunData*>(retVal.equip)->setAnimationFrames(static_cast<Ogre::Entity*>(retVal.node->getAttachedObject(0)));
 			delete wep;
 		}
 		else

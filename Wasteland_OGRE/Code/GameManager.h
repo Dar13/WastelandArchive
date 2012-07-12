@@ -18,15 +18,7 @@ struct OgreBulletPair
 	btRigidBody* btBody;
 };
 
-/*! \brief Return structure for weapons and equipable items
-*/
-struct EquippableObject
-{
-	EquippableObject() : node(NULL) { equip.reset(NULL); }
-	EquippableObject(const EquippableObject&) {}
-	Ogre::SceneNode* node;
-	std::unique_ptr<baseEquippable> equip;
-};
+
 
 /*! \brief The Manager class of all the managers. The final abstraction layer.
 

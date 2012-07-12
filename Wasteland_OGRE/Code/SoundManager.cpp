@@ -203,5 +203,5 @@ void _fadeTransition()
 inline void SoundManager::_reportError()
 {
 	std::string s = FMOD_ErrorString(_errResult);
-	//VirtualConsole::getSingletonPtr()->put("FMOD Error!\n" + s);
+	std::cout << "FMOD Error!" << std::endl << s << std::endl;
 }

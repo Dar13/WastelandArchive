@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 
-#include <vld.h>
+//#include <vld.h>
 
 #include <new>
 

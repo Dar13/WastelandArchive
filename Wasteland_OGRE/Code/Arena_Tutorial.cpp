@@ -72,15 +72,20 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	parser.parseLights(&_lights);
 	parser.parseTriggers(&_triggers);
 
+	std::cout << "Parser finished" << std::endl;
+
 	_setupLights(Graphics,_scene);
 	OgreBulletPair level = _pairs.at(1);
 	_setupDoors(level,_scene,_physics.get(),Graphics);
 
+	std::cout << "Level elements setup" << std::endl;
+
 	//testing out the M9SE
-	EquippableObject equipObj = GameManager::createEquippable(_scene,"resource\\xml\\weapon_m9se.xml",Graphics);
+	EquippableObject equipObj = GameManager::createEquippable(_scene,"resource\\xml\\weapon_m9se.xml",Graphics,true);
 	_player->addEquippableObject(equipObj);
-	_player->Setup("TEST");
-	_player->setEquipNode(_controller->getNode());
+	_player->Setup("TEST",_controller->getNode());
+	
+	std::cout << "Player setup" << std::endl;
 
 	//physics debug drawer.
 	//_physics->setDebugDrawer(new CDebugDraw(_scene,_physics->getWorld()));
@@ -170,10 +175,18 @@ void ArenaTutorial::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIMa
 	_constraints.clear();
 
 	//cleaning up state-specific pointers.
+	for(auto itr = _channels.begin(); itr != _channels.end(); ++itr) { (*itr)->stop(); }
+	for(auto itr = _sounds.begin(); itr != _sounds.end(); ++itr) { (*itr).sound->release(); }
+	_channels.clear();
+	_sounds.clear();
 	//since all pointers are std::unique_ptr members, then they will be deleted upon class destruction.
 
 	//Destroy the scene manager.
 	Graphics->getRoot()->destroySceneManager(_scene);
+
+	_lights.clear();
+	_triggers.clear();
+	_doors.clear();
 }
 
 void ArenaTutorial::_setupLights(GraphicsManager* g, Ogre::SceneManager* scene)
