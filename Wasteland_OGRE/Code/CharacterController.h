@@ -21,6 +21,8 @@ public:
 
 	void update(float physicsTimeElapsed,InputManager* inputManager, OgreTransform& transform);
 
+	Ogre::SceneNode* getNode() { return cNode; }
+
 private:
 	//prefix 'c' to denote privateness AND to differentiate from other variables.
 	//prefix '_' to denote privateness with no need to differentiate from other variables.

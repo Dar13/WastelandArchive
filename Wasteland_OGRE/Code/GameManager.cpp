@@ -133,7 +133,7 @@ namespace GameManager
 	EquippableObject createEquippable(Ogre::SceneManager* scene,
 									  const std::string& file,
 									  GraphicsManager* graphicsManager,
-									  bool isWeapon = true)
+									  bool isWeapon)
 	{
 		EquippableObject retVal;
 		baseEquippable b;

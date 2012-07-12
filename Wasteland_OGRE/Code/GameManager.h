@@ -71,8 +71,9 @@ namespace GameManager
 								GraphicsManager* graphicsManager);
 
 	EquippableObject createEquippable(Ogre::SceneManager* scene,
-									  object_t* objectInfo,
-									  GraphicsManager* graphicsManager);
+									  const std::string& file,
+									  GraphicsManager* graphicsManager,
+									  bool isWeapon = true);
 
 	/*! Tells class to use the debug drawer, to verify collisions are happening correctly.
 		

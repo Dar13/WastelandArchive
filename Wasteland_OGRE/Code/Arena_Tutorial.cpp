@@ -76,6 +76,12 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	OgreBulletPair level = _pairs.at(1);
 	_setupDoors(level,_scene,_physics.get(),Graphics);
 
+	//testing out the M9SE
+	EquippableObject equipObj = GameManager::createEquippable(_scene,"resource\\xml\\weapon_m9se.xml",Graphics);
+	_player->addEquippableObject(equipObj);
+	_player->Setup("TEST");
+	_player->setEquipNode(_controller->getNode());
+
 	//physics debug drawer.
 	//_physics->setDebugDrawer(new CDebugDraw(_scene,_physics->getWorld()));
 }

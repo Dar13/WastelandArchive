@@ -135,19 +135,27 @@ public:
 	Player();
 	~Player();
 	
-	void Setup(std::string file);
+	void Setup(const std::string& file);
 	bool Update(InputManager* input,PhysicsManager* physics,EWSManager* ews,const OgreTransform& transform);
 	void Clean(bool reuse = false);
 
 	void placeEWS(EWSManager* ews,PhysicsManager* physics,const OgreTransform& transform);
 
+	void addEquippableObject(const EquippableObject& object);
+
+	void equipObject(const EquippableObject& obj);
+
 	int getHealth();
+
+	void setEquipNode(Ogre::SceneNode* node) { _equipNode = node; }
 
 private:
 	bool _firingWeapon;
 	bool _reloadingWeapon;
 
 	int _health;
+
+	Ogre::SceneNode* _equipNode;
 
 	std::vector<EquippableObject>::iterator _currentEquippable;
 	std::vector<EquippableObject> _equippables;

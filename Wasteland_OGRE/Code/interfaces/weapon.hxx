@@ -591,22 +591,22 @@ class animationFrame_t: public ::xml_schema::type
 class animationFrames_t: public ::xml_schema::type
 {
   public:
-  // animationframe
+  // animationFrame
   // 
-  typedef ::animationFrame_t animationframe_type;
-  typedef ::xsd::cxx::tree::sequence< animationframe_type > animationframe_sequence;
-  typedef animationframe_sequence::iterator animationframe_iterator;
-  typedef animationframe_sequence::const_iterator animationframe_const_iterator;
-  typedef ::xsd::cxx::tree::traits< animationframe_type, char > animationframe_traits;
+  typedef ::animationFrame_t animationFrame_type;
+  typedef ::xsd::cxx::tree::sequence< animationFrame_type > animationFrame_sequence;
+  typedef animationFrame_sequence::iterator animationFrame_iterator;
+  typedef animationFrame_sequence::const_iterator animationFrame_const_iterator;
+  typedef ::xsd::cxx::tree::traits< animationFrame_type, char > animationFrame_traits;
 
-  const animationframe_sequence&
-  animationframe () const;
+  const animationFrame_sequence&
+  animationFrame () const;
 
-  animationframe_sequence&
-  animationframe ();
+  animationFrame_sequence&
+  animationFrame ();
 
   void
-  animationframe (const animationframe_sequence& s);
+  animationFrame (const animationFrame_sequence& s);
 
   // Constructors.
   //
@@ -635,7 +635,7 @@ class animationFrames_t: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
-  animationframe_sequence animationframe_;
+  animationFrame_sequence animationFrame_;
 };
 
 class gameplay_t: public ::xml_schema::type

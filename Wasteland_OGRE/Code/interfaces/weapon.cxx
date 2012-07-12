@@ -324,22 +324,22 @@ end (const end_type& x)
 // animationFrames_t
 // 
 
-const animationFrames_t::animationframe_sequence& animationFrames_t::
-animationframe () const
+const animationFrames_t::animationFrame_sequence& animationFrames_t::
+animationFrame () const
 {
-  return this->animationframe_;
+  return this->animationFrame_;
 }
 
-animationFrames_t::animationframe_sequence& animationFrames_t::
-animationframe ()
+animationFrames_t::animationFrame_sequence& animationFrames_t::
+animationFrame ()
 {
-  return this->animationframe_;
+  return this->animationFrame_;
 }
 
 void animationFrames_t::
-animationframe (const animationframe_sequence& s)
+animationFrame (const animationFrame_sequence& s)
 {
-  this->animationframe_ = s;
+  this->animationFrame_ = s;
 }
 
 
@@ -1131,7 +1131,7 @@ animationFrame_t::
 animationFrames_t::
 animationFrames_t ()
 : ::xml_schema::type (),
-  animationframe_ (::xml_schema::flags (), this)
+  animationFrame_ (::xml_schema::flags (), this)
 {
 }
 
@@ -1140,7 +1140,7 @@ animationFrames_t (const animationFrames_t& x,
                    ::xml_schema::flags f,
                    ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
-  animationframe_ (x.animationframe_, f, this)
+  animationFrame_ (x.animationFrame_, f, this)
 {
 }
 
@@ -1149,7 +1149,7 @@ animationFrames_t (const ::xercesc::DOMElement& e,
                    ::xml_schema::flags f,
                    ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
-  animationframe_ (f, this)
+  animationFrame_ (f, this)
 {
   if ((f & ::xml_schema::flags::base) == 0)
   {
@@ -1168,14 +1168,14 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
 
-    // animationframe
+    // animationFrame
     //
-    if (n.name () == "animationframe" && n.namespace_ ().empty ())
+    if (n.name () == "animationFrame" && n.namespace_ ().empty ())
     {
-      ::std::auto_ptr< animationframe_type > r (
-        animationframe_traits::create (i, f, this));
+      ::std::auto_ptr< animationFrame_type > r (
+        animationFrame_traits::create (i, f, this));
 
-      this->animationframe_.push_back (r);
+      this->animationFrame_.push_back (r);
       continue;
     }
 

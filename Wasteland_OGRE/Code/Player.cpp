@@ -216,6 +216,8 @@ Player::Player()
 {
 	_firingWeapon = false;
 	_reloadingWeapon = false;
+
+	_health = 100;
 }
 
 Player::~Player()
@@ -223,19 +225,13 @@ Player::~Player()
 	//nothing yet
 }
 
-void Player::Setup(std::string file)
+void Player::Setup(const std::string& file)
 {
-	//load list of weapon xml files
-	/*
-	list_t* wepList = list(file).release();
-	for(list_t::file_iterator itr = wepList->file().begin(); itr != wepList->file().end(); ++itr)
+	if(_equippables.size() == 1)
 	{
-		weapon_t* wep = weapon(*itr).release();
-		
-		delete wep;
+		//equip the one weapon/thing
+		equipObject(*_currentEquippable);
 	}
-	delete wepList;
-	*/
 }
 
 bool Player::Update(InputManager* input,PhysicsManager* physics,EWSManager* ews,const OgreTransform& transform)
@@ -278,6 +274,19 @@ void Player::placeEWS(EWSManager* ews,PhysicsManager* physics,const OgreTransfor
 	{
 		ews->Place(Utility::convert_btVector3(rayPosition),Utility::convert_btVector3(rayNormal),transform);
 	}
+}
+
+void Player::equipObject(const EquippableObject& obj)
+{
+	obj.node->getParentSceneNode()->removeChild(obj.node);
+	_equipNode->addChild(obj.node);
+	obj.node->setPosition(1.0f,.25f,-.5f);
+}
+
+void Player::addEquippableObject(const EquippableObject& object)
+{
+	_equippables.push_back(object);
+	_currentEquippable = _equippables.begin(); //there's only one...
 }
 
 void Player::Clean(bool reuse)
