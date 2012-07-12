@@ -11,6 +11,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Code\AnimationBlender.h" />
     <ClInclude Include="Code\ArenaALL.h" />
     <ClInclude Include="Code\Arena_Locker.h" />
     <ClInclude Include="Code\Arena_Tutorial.h" />
@@ -44,6 +45,7 @@
     <ClInclude Include="Code\XMLReader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Code\AnimationBlender.cpp" />
     <ClCompile Include="Code\Arena_Locker.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
     </ClCompile>

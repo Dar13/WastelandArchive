@@ -7,18 +7,7 @@
 #include "SoundManager.h"
 #include "Player.h"
 
-enum ApplicationStates
-{
-	INTRO = 0,
-	MENU,
-	GAME_ARENA,
-	GAME_LOCKER,
-	GAME_LOBBY,
-	GAME_OFFICE,
-	GAME_ROOF,
-	CREDITS,
-	END
-};
+
 
 /*!
 \brief An abstract class that sets the framework for the states the application will go through.
@@ -28,6 +17,18 @@ enum ApplicationStates
 class State
 {
 public:
+	enum ApplicationStates
+	{
+		INTRO = 0,
+		MENU,
+		GAME_ARENA,
+		GAME_LOCKER,
+		GAME_LOBBY,
+		GAME_OFFICE,
+		GAME_ROOF,
+		CREDITS,
+		END
+	};
 	//! Sets up the state.
 	virtual void Setup(InputManager* Input = NULL,GraphicsManager* Graphics = NULL,GUIManager* Gui = NULL,SoundManager* Sound = NULL) = 0; 
 	//!Runs the game logic for the state.

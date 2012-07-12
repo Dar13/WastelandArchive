@@ -14,7 +14,7 @@ MainMenu::MainMenu()
 	_scene = nullptr;
 	_camera = nullptr;
 	_view = nullptr;
-	_returnValue = ApplicationStates::END;
+	_returnValue = State::END;
 	_opt_guiSheet = nullptr;
 	_camNode = nullptr;
 	_cityNode = nullptr;

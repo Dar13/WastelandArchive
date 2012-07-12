@@ -7,61 +7,25 @@
 #include "PhysicsManager.h"
 #include "GraphicsManager.h"
 
+#include "AnimationBlender.h"
+
 #ifndef _PLAYER_H_
 #define _PLAYER_H_
 
-enum GUN_TYPE
-{
-	NO_TYPE = 0,
-	PISTOL,
-	ASSAULT,
-	SMG,
-	SHOTGUN,
-	HEAVY
-};
-
-enum GUN_NAME
-{
-	NO_NAME = 0,
-	M9,
-	G36C
-};
-
-enum GUN_ANIM
-{
-	NO_ANIM = 0,
-	SELECT,
-	IDLE,
-	MOVE,
-	RELOAD,
-	STARTFIRE,
-	ENDFIRE,
-	AUTOFIRE,
-	FIRE
-};
-
-enum GUN_SOUND
-{
-	NO_SOUND = 0,
-	FIRE,
-	RELOAD,
-	PUTAWAY,
-	DRYFIRE,
-	ALTRELOAD,
-	ALTFIRE
-};
+int getAnimID(const std::string& name);
 
 struct EquippableObject;
 
 struct sSoundFrame
 {
-	GUN_SOUND gunSound;
+	int gunSound;
 	std::vector<int> frames;
 };
 
 class baseEquippable
 {
 public:
+	~baseEquippable() {};
 	void setEquipped(const bool isequipped) { _isEquipped = isequipped; }
 	void setWeapon(const bool isweapon) { _isWeapon = isweapon; }
 
@@ -73,9 +37,51 @@ protected:
 	
 };
 
-class cGunData : public baseEquippable,Ogre::FrameListener
+class cGunData : public baseEquippable, public Ogre::FrameListener
 {
 public:
+	enum GUN_TYPE
+	{
+		NO_TYPE = 0,
+		PISTOL,
+		ASSAULT,
+		SMG,
+		SHOTGUN,
+		HEAVY
+	};
+
+	enum GUN_NAME
+	{
+		NO_NAME = 0,
+		M9,
+		G36C
+	};
+
+	enum GUN_ANIM
+	{
+		NO_ANIM = 0,
+		ANIM_SELECT,
+		ANIM_IDLE,
+		ANIM_MOVE,
+		ANIM_RELOAD,
+		ANIM_STARTFIRE,
+		ANIM_ENDFIRE,
+		ANIM_AUTOFIRE,
+		ANIM_FIRE,
+		ANIM_PUTAWAY
+	};
+
+	enum GUN_SOUND
+	{
+		NO_SOUND = 0,
+		SND_FIRE,
+		SND_RELOAD,
+		SND_PUTAWAY,
+		SND_DRYFIRE,
+		SND_ALTRELOAD,
+		SND_ALTFIRE
+	};
+
 	cGunData(GUN_TYPE type,GUN_NAME name,int magazineSize,int numMags);
 	cGunData(const baseEquippable& base,GUN_TYPE type,GUN_NAME name, int magazineSize,int numMags);
 
@@ -110,13 +116,17 @@ private:
 	int _currentMagazineAmmo;
 
 	bool _fireAnimEnded;
+	bool _fireAnimStarted;
 	bool _reloadAnimEnded;
+	bool _reloadAnimStarted;
+
+	bool _firing,_reloading,_moving;
 
 	bool _reloadNeeded;
 
 	std::vector<sSoundFrame> _soundFrames;
-	Ogre::AnimationStateSet* _animationSet;
-	Ogre::AnimationState* _currentAnimation;
+	AnimationBlender _animBlender;
+	
 };
 
 class Player
@@ -124,7 +134,7 @@ class Player
 public:
 	Player();
 	~Player();
-
+	
 	void Setup(std::string file);
 	bool Update(InputManager* input,PhysicsManager* physics,EWSManager* ews,const OgreTransform& transform);
 	void Clean(bool reuse = false);

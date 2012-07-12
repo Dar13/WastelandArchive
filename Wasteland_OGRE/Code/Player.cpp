@@ -32,20 +32,30 @@ cGunData::cGunData(const baseEquippable& base,GUN_TYPE type,GUN_NAME name,int ma
 {
 	_isWeapon = base.getIsWeapon();
 	_isEquipped = base.getEquipped();
-	cGunData(type,name,magazineSize,numMags);
+	
+	_type = type;
+	_name = name;
+	_magazineSize = magazineSize;
+
+	_ammoNotInMag = (numMags * _magazineSize) - _magazineSize;
+	_currentMagazineAmmo = _magazineSize;
+
+	_reloadNeeded = false;
+
+	_fireAnimEnded = false;
+	_reloadAnimEnded = false;
 }
 
 void cGunData::fire()
 {
-	if(_currentMagazineAmmo == 0 && _fireAnimEnded)
+	if(_reloadNeeded)
 	{
-		//don't even bother shooting, there's no point.
 		reload();
-		return;
 	}
 	else
 	{
 		_currentMagazineAmmo--;
+		_firing = true;
 	}
 }
 
@@ -56,12 +66,14 @@ void cGunData::reload()
 		//empty magazine, full reload
 		_ammoNotInMag -= _magazineSize;
 		_currentMagazineAmmo = _magazineSize;
+		_reloading = true;
 	}
 	else
 	{
 		//not a full reload
 		_ammoNotInMag -= (_magazineSize - _currentMagazineAmmo);
 		_currentMagazineAmmo += (_magazineSize - _currentMagazineAmmo);
+		_reloading = true;
 	}
 
 	_reloadNeeded = false;
@@ -69,6 +81,35 @@ void cGunData::reload()
 
 bool cGunData::frameStarted(const Ogre::FrameEvent& evt)
 {
+	_animBlender.addTime(evt.timeSinceLastFrame);
+
+	//update animation blender
+	int playingAnim = getAnimID(_animBlender.getSource()->getAnimationName());
+	if(_firing)
+	{
+		if(playingAnim != cGunData::ANIM_RELOAD || playingAnim != cGunData::ANIM_SELECT)
+		{
+			_animBlender.blend("startfire",AnimationBlender::BlendWhileAnimating,1.0,false);
+		}
+		if(playingAnim == cGunData::ANIM_STARTFIRE && _animBlender.getTarget() == nullptr)
+		{
+			_animBlender.blend("endfire",AnimationBlender::BlendWhileAnimating,1.0,false);
+		}
+		if(playingAnim == cGunData::ANIM_ENDFIRE && _animBlender.getTarget() == nullptr)
+		{
+			_firing = false;
+		}
+	}
+
+	if(_reloading)
+	{
+
+	}
+
+	if(!_reloading && !_firing && !_moving)
+	{
+		_animBlender.blend("idle",AnimationBlender::BlendWhileAnimating,1.0,true);
+	}
 
 	return true;
 }
@@ -129,32 +170,32 @@ void cGunData::setSoundFrames(weapon_t* Weapon)
 		if( itr->sound() == "FIRE")
 		{
 			found = true;
-			soundF.gunSound = FIRE;
+			soundF.gunSound = SND_FIRE;
 		}
 		if( itr->sound() == "DRYFIRE")
 		{
 			found = true;
-			soundF.gunSound = DRYFIRE;
+			soundF.gunSound = SND_DRYFIRE;
 		}
 		if( itr->sound() == "RELOAD")
 		{
 			found = true;
-			soundF.gunSound = RELOAD;
+			soundF.gunSound = SND_RELOAD;
 		}
 		if( itr->sound() == "PUTAWAY")
 		{
 			found = true;
-			soundF.gunSound = PUTAWAY;
+			soundF.gunSound = SND_PUTAWAY;
 		}
 		if(itr->sound() == "ALTRELOAD")
 		{
 			found = true;
-			soundF.gunSound = ALTRELOAD;
+			soundF.gunSound = SND_ALTRELOAD;
 		}
 		if(itr->sound() == "ALTFIRE")
 		{
 			found = true;
-			soundF.gunSound = ALTFIRE;
+			soundF.gunSound = SND_ALTFIRE;
 		}
 		if(!found)
 		{
@@ -167,8 +208,8 @@ void cGunData::setSoundFrames(weapon_t* Weapon)
 
 void cGunData::setAnimationFrames(Ogre::Entity* entity)
 {
-	Ogre::AnimationStateSet* set = entity->getAllAnimationStates();
-	_currentAnimation = set->getAnimationState("idle");
+	_animBlender.setEntity(entity);
+	_animBlender.init("idle",true);
 }
 
 Player::Player()
@@ -199,7 +240,7 @@ void Player::Setup(std::string file)
 
 bool Player::Update(InputManager* input,PhysicsManager* physics,EWSManager* ews,const OgreTransform& transform)
 {
-	if(input->isCFGKeyPressed(ENVWARNSYS))
+	if(input->isCFGKeyPressed(InputManager::ENVWARNSYS))
 	{
 		placeEWS(ews,physics,transform);
 	}
@@ -214,7 +255,7 @@ bool Player::Update(InputManager* input,PhysicsManager* physics,EWSManager* ews,
 		}
 	}
 
-	if(input->isCFGKeyPressed(CONFIG_KEY_VALUES::RELOAD))
+	if(input->isCFGKeyPressed(InputManager::RELOAD))
 	{
 		if(_currentEquippable->equip->getIsWeapon())
 		{
@@ -242,4 +283,51 @@ void Player::placeEWS(EWSManager* ews,PhysicsManager* physics,const OgreTransfor
 void Player::Clean(bool reuse)
 {
 	return;
+}
+
+//-------------------------------------
+
+int getAnimID(const std::string& name)
+{
+	if(name == "idle")
+	{
+		return cGunData::ANIM_IDLE;
+	}
+
+	if(name == "startfire")
+	{
+		return cGunData::ANIM_STARTFIRE;
+	}
+
+	if(name == "endfire")
+	{
+		return cGunData::ANIM_MOVE;
+	}
+
+	if(name == "move")
+	{
+		return cGunData::ANIM_MOVE;
+	}
+
+	if(name == "autofire")
+	{
+		return cGunData::ANIM_AUTOFIRE;
+	}
+
+	if(name == "reload")
+	{
+		return cGunData::ANIM_RELOAD;
+	}
+
+	if(name == "select")
+	{
+		return cGunData::ANIM_SELECT;
+	}
+
+	if(name == "putaway")
+	{
+		return cGunData::ANIM_PUTAWAY;
+	}
+
+	return cGunData::NO_ANIM;
 }

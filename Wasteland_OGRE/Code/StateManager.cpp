@@ -10,8 +10,14 @@ StateManager::StateManager()
 	//Make sure these pointers don't get lost!
 
 	//ToDo: Change the init to reflect the varying state classes.
-	_States.insert(std::make_pair(MENU,new MainMenu()));
-	_States.insert(std::make_pair(GAME_ARENA,new ArenaTutorial()));
+	_States[State::INTRO] = nullptr;
+	_States[State::MENU] = new MainMenu();
+	_States[State::GAME_ARENA] = new ArenaTutorial();
+	_States[State::GAME_LOCKER] = nullptr;
+	_States[State::GAME_LOBBY] = nullptr;
+	_States[State::GAME_OFFICE] = nullptr;
+	_States[State::GAME_ROOF] = nullptr;
+	_States[State::CREDITS] = nullptr;
 
 	_Input = nullptr;
 	_Graphics = nullptr;
@@ -32,10 +38,10 @@ void StateManager::Setup(InputManager* inputManager,GraphicsManager* graphicsMan
 void StateManager::Run()
 {
 	//int curState=INTRO; //true start value
-	int curState=MENU; //will really start at INTRO
+	int curState=State::MENU; //will really start at INTRO
 	int oldState=curState;
 
-	while(curState!=END)
+	while(curState!=State::END)
 	{
 		if(_States[curState] != NULL)
 		{
@@ -56,28 +62,28 @@ void StateManager::Run()
 			//remake state
 			switch(curState)
 			{
-			case INTRO:
+			case State::INTRO:
 				//_States[curState] = new
 				break;
-			case MENU:
+			case State::MENU:
 				_States[curState] = new MainMenu();
 				break;
-			case GAME_ARENA:
+			case State::GAME_ARENA:
 				_States[curState] = new ArenaTutorial();
 				break;
-			case GAME_LOCKER:
+			case State::GAME_LOCKER:
 				//_States[curState] = new ArenaLocker();
 				break;
-			case GAME_LOBBY:
+			case State::GAME_LOBBY:
 				//_States[curState] = new Lobby();
 				break;
-			case GAME_OFFICE:
+			case State::GAME_OFFICE:
 				//_States[curState] = new Office();
 				break;
-			case GAME_ROOF:
+			case State::GAME_ROOF:
 				//_States[curState] = new Roof();
 				break;
-			case CREDITS:
+			case State::CREDITS:
 				//_States[curState] = new Credits
 				break;
 			};
@@ -91,7 +97,7 @@ void StateManager::Shutdown()
 {
 	//need to delete all the states.
 	//This may or may not work. We'll see.
-	for(int i=MENU; i<=END; i++)
+	for(int i=State::INTRO; i<=State::END; i++)
 	{
 		State* t = _States[i];
 		delete t;

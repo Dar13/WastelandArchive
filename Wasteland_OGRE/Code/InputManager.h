@@ -6,21 +6,7 @@
 #ifndef _OIS_MANAGER_H_
 #define _OIS_MANAGER_H_
 
-enum CONFIG_KEY_VALUES
-{
-	FORWARD = 0,
-	BACKWARD,
-	RIGHT,
-	LEFT,
-	JUMP,
-	SPRINT,
-	USE,
-	ENVWARNSYS,
-	RELOAD,
-	WEAPON1,
-	WEAPON2,
-	MAXVALUE
-};
+
 
 /*! \brief The OIS(Object Oriented Input System) Manager. Handles all inputManager for Wasteland.
 
@@ -31,6 +17,21 @@ Needs an interface to find out about specific key presses.
 class InputManager : OIS::MouseListener, OIS::KeyListener
 {
 public:
+	enum CONFIG_KEY_VALUES
+	{
+		FORWARD = 0,
+		BACKWARD,
+		RIGHT,
+		LEFT,
+		JUMP,
+		SPRINT,
+		USE,
+		ENVWARNSYS,
+		RELOAD,
+		WEAPON1,
+		WEAPON2,
+		MAXVALUE
+	};
 	//! Constructor, sets up the class members.
 	InputManager(unsigned long windowHandle);
 	~InputManager();

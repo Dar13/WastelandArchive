@@ -12,8 +12,8 @@
 
 namespace GameManager
 {
-	GUN_TYPE _correspondGunType(const std::string& typ);
-	GUN_NAME _correspondGunName(const std::string& name);
+	cGunData::GUN_TYPE _correspondGunType(const std::string& typ);
+	cGunData::GUN_NAME _correspondGunName(const std::string& name);
 
 	bool UpdateManagers(GraphicsManager* graphicsManager,PhysicsManager* phyManager,float deltaTime)
 	{
@@ -163,43 +163,43 @@ namespace GameManager
 	//Private, utility functions start here..
 	//----------------------------------------
 
-	GUN_TYPE _correspondGunType(const std::string& typ)
+	cGunData::GUN_TYPE _correspondGunType(const std::string& typ)
 	{
 		if(typ == "PISTOL")
 		{
-			return PISTOL;
+			return cGunData::PISTOL;
 		}
 		if(typ == "ASSAULT")
 		{
-			return ASSAULT;
+			return cGunData::ASSAULT;
 		}
 		if(typ == "SMG")
 		{
-			return SMG;
+			return cGunData::SMG;
 		}
 		if(typ == "HEAVY")
 		{
-			return HEAVY;
+			return cGunData::HEAVY;
 		}
 		if(typ == "SHOTGUN")
 		{
-			return SHOTGUN;
+			return cGunData::SHOTGUN;
 		}
 
-		return NO_TYPE;
+		return cGunData::NO_TYPE;
 	}
 
-	GUN_NAME _correspondGunName(const std::string& name)
+	cGunData::GUN_NAME _correspondGunName(const std::string& name)
 	{
 		if(name == "M9SE")
 		{
-			return M9;
+			return cGunData::M9;
 		}
 		if(name == "G36C")
 		{
-			return G36C;
+			return cGunData::G36C;
 		}
-		return NO_NAME;
+		return cGunData::NO_NAME;
 	}
 
 	//manually builds triangle mesh collision shape.

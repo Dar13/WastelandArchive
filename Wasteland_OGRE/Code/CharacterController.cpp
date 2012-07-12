@@ -68,27 +68,27 @@ void CharacterController::update(float physicsTimeElapsed,InputManager* inputMan
 	btScalar walkVel = 2.0f * 4.0f;
 
 	Ogre::Vector3 direction; Ogre::Quaternion rotation;
-	if(inputManager->isCFGKeyPressed(FORWARD))
+	if(inputManager->isCFGKeyPressed(InputManager::FORWARD))
 	{
 		walkDirection -= forwardDirection;
 	}
-	if(inputManager->isCFGKeyPressed(BACKWARD))
+	if(inputManager->isCFGKeyPressed(InputManager::BACKWARD))
 	{
 		walkDirection += forwardDirection;
 	}
-	if(inputManager->isCFGKeyPressed(RIGHT))
+	if(inputManager->isCFGKeyPressed(InputManager::RIGHT))
 	{
 		walkDirection += strafeDirection;
 	}
-	if(inputManager->isCFGKeyPressed(LEFT))
+	if(inputManager->isCFGKeyPressed(InputManager::LEFT))
 	{
 		walkDirection -= strafeDirection;
 	}
-	if(inputManager->isCFGKeyPressed(JUMP))
+	if(inputManager->isCFGKeyPressed(InputManager::JUMP))
 	{
 		cController->jump();
 	}
-	if(inputManager->isCFGKeyPressed(SPRINT))
+	if(inputManager->isCFGKeyPressed(InputManager::SPRINT))
 	{
 		walkVel = 2.0f * 6.0f;
 	}

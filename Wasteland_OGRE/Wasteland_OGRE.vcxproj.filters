@@ -76,6 +76,9 @@
     <Filter Include="Include Files\Lua">
       <UniqueIdentifier>{7701751a-9a5f-4b52-aeee-bb90c3a87dbb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include Files\Graphics\Animation">
+      <UniqueIdentifier>{17da058d-0dc1-4d6b-b489-9980f1ae2cbf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\State.h">
@@ -171,6 +174,9 @@
     <ClInclude Include="Code\LuaManager.h">
       <Filter>Include Files\Lua</Filter>
     </ClInclude>
+    <ClInclude Include="Code\AnimationBlender.h">
+      <Filter>Include Files\Graphics\Animation</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">
@@ -259,6 +265,9 @@
     </ClCompile>
     <ClCompile Include="Code\LuaManager.cpp">
       <Filter>Include Files\Lua</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\AnimationBlender.cpp">
+      <Filter>Include Files\Graphics\Animation</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
