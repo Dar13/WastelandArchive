@@ -93,6 +93,8 @@ public:
 
 	void fire(); //fires one round
 	void reload();
+	void setMoving(bool moving) { _moving = moving; }
+	bool isMoving() { return _moving; }
 
 	void setMagazineSize(const int& magSize);
 	void setDamagePerBullet(const int& damage) { _damagePerBullet = damage; }
@@ -109,7 +111,6 @@ public:
 	bool isReloadNeeded();
 
 	void setAnimationFrames(Ogre::Entity* entity);
-
 	void setSoundFrames(weapon_t* Weapon);
 
 	bool frameStarted(const Ogre::FrameEvent& evt);
@@ -164,6 +165,7 @@ public:
 	void setEquipNode(Ogre::SceneNode* node) { _equipNode = node; }
 
 private:
+	
 	bool _firingWeapon;
 	bool _reloadingWeapon;
 

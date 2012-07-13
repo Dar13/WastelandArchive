@@ -26,6 +26,10 @@ cGunData::cGunData(GUN_TYPE type,GUN_NAME name,int magazineSize,int numMags)
 
 	_fireAnimEnded = false;
 	_reloadAnimEnded = false;
+
+	_moving = false;
+	_firing = false;
+	_reloading = false;
 }
 
 cGunData::cGunData(const baseEquippable& base,GUN_TYPE type,GUN_NAME name,int magazineSize,int numMags)
@@ -44,6 +48,10 @@ cGunData::cGunData(const baseEquippable& base,GUN_TYPE type,GUN_NAME name,int ma
 
 	_fireAnimEnded = false;
 	_reloadAnimEnded = false;
+
+	_moving = false;
+	_firing = false;
+	_reloading = false;
 }
 
 void cGunData::fire()
@@ -83,6 +91,17 @@ bool cGunData::frameStarted(const Ogre::FrameEvent& evt)
 {
 	_animBlender.addTime(evt.timeSinceLastFrame);
 
+	int sourceAnim = getAnimID(_animBlender.getSource()->getAnimationName());
+	int targetAnim;
+	if(_animBlender.getTarget() != nullptr)
+	{
+		targetAnim = getAnimID(_animBlender.getTarget()->getAnimationName());
+	}
+	else
+	{
+		targetAnim = cGunData::NO_ANIM;
+	}
+
 	//update animation blender
 	int playingAnim = getAnimID(_animBlender.getSource()->getAnimationName());
 	if(_firing)
@@ -106,9 +125,43 @@ bool cGunData::frameStarted(const Ogre::FrameEvent& evt)
 
 	}
 
+	if(_moving && !_firing && !_reloading)
+	{
+		if(sourceAnim != cGunData::ANIM_MOVE)
+		{
+			if(targetAnim != cGunData::NO_ANIM)
+			{
+				_animBlender.blend("move",AnimationBlender::BlendSwitch,.2f,true);
+				//std::cout << sourceAnim << " : " << cGunData::ANIM_MOVE << std::endl;
+			}
+			
+			if(targetAnim != cGunData::ANIM_MOVE)
+			{
+				_animBlender.blend("move",AnimationBlender::BlendSwitch,.2f,true);
+			}
+		}
+		std::cout << "Moving" << std::endl;
+	}
+
 	if(!_reloading && !_firing && !_moving)
 	{
-		//_animBlender.blend("idle",AnimationBlender::BlendWhileAnimating,1.0,true);
+		if(sourceAnim != cGunData::ANIM_IDLE)
+		{
+			if(targetAnim != cGunData::NO_ANIM)
+			{
+				_animBlender.blend("idle",AnimationBlender::BlendWhileAnimating,.2f,true);
+			}
+
+			if(targetAnim != cGunData::ANIM_IDLE)
+			{
+				_animBlender.blend("idle",AnimationBlender::BlendWhileAnimating,.2f,true);
+			}
+		}
+	}
+
+	if(!_animBlender.complete)
+	{
+		//std::cout << _animBlender.getProgress() << std::endl;
 	}
 
 	return true;
@@ -267,22 +320,36 @@ bool Player::Update(InputManager* input,PhysicsManager* physics,EWSManager* ews,
 		placeEWS(ews,physics,transform);
 	}
 
-	if(input->isMBPressed(OIS::MB_Left))
+	cGunData* gun = nullptr;
+
+	if(_equippables[_curEquippable].equip->getIsWeapon())
 	{
-		//shoot gun
-		if(_equippables[_curEquippable].equip->getIsWeapon())
-		{
-			cGunData* gun = static_cast<cGunData*>(_equippables[_curEquippable].equip);
-			gun->fire();
-		}
+		gun = static_cast<cGunData*>(_equippables[_curEquippable].equip);
 	}
 
-	if(input->isCFGKeyPressed(InputManager::RELOAD))
+	if(gun != nullptr)
 	{
-		if(_equippables[_curEquippable].equip->getIsWeapon())
+		if(input->isMBPressed(OIS::MB_Left))
 		{
-			cGunData* gun = static_cast<cGunData*>(_equippables[_curEquippable].equip);
+			//shoot gun
+			gun->fire();
+		}
+
+		if(input->isCFGKeyPressed(InputManager::RELOAD))
+		{
 			gun->reload();
+		}
+
+		if(input->isCFGKeyPressed(InputManager::FORWARD))
+		{
+			gun->setMoving(true);
+		}
+		else
+		{
+			if(gun->isMoving())
+			{
+				gun->setMoving(false);
+			}
 		}
 	}
 
