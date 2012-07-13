@@ -89,11 +89,11 @@ bool cGunData::frameStarted(const Ogre::FrameEvent& evt)
 	{
 		if(playingAnim != cGunData::ANIM_RELOAD || playingAnim != cGunData::ANIM_SELECT)
 		{
-			_animBlender.blend("startfire",AnimationBlender::BlendWhileAnimating,1.0,false);
+			//_animBlender.blend("startfire",AnimationBlender::BlendWhileAnimating,1.0,false);
 		}
 		if(playingAnim == cGunData::ANIM_STARTFIRE && _animBlender.getTarget() == nullptr)
 		{
-			_animBlender.blend("endfire",AnimationBlender::BlendWhileAnimating,1.0,false);
+			//_animBlender.blend("endfire",AnimationBlender::BlendWhileAnimating,1.0,false);
 		}
 		if(playingAnim == cGunData::ANIM_ENDFIRE && _animBlender.getTarget() == nullptr)
 		{
@@ -108,7 +108,7 @@ bool cGunData::frameStarted(const Ogre::FrameEvent& evt)
 
 	if(!_reloading && !_firing && !_moving)
 	{
-		_animBlender.blend("idle",AnimationBlender::BlendWhileAnimating,1.0,true);
+		//_animBlender.blend("idle",AnimationBlender::BlendWhileAnimating,1.0,true);
 	}
 
 	return true;
@@ -238,7 +238,7 @@ Player::~Player()
 	}
 }
 
-void Player::Setup(const std::string& file,Ogre::SceneNode* equipNode)
+void Player::Setup(const std::string& file,GraphicsManager* graphics,Ogre::SceneNode* equipNode)
 {
 	if(equipNode != nullptr)
 	{
@@ -249,6 +249,14 @@ void Player::Setup(const std::string& file,Ogre::SceneNode* equipNode)
 	{
 		//equip the one weapon/thing
 		equipObject(_equippables[_curEquippable]);
+	}
+
+	for(auto itr = _equippables.begin(); itr != _equippables.end(); ++itr)
+	{
+		if(itr->equip->getIsWeapon())
+		{
+			graphics->getRoot()->addFrameListener(static_cast<cGunData*>(itr->equip));
+		}
 	}
 }
 

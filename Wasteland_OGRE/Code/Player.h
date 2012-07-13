@@ -95,6 +95,10 @@ public:
 	void reload();
 
 	void setMagazineSize(const int& magSize);
+	void setDamagePerBullet(const int& damage) { _damagePerBullet = damage; }
+	void setAccuracyRadius(const int& accuracy) { _accuracyRadius = accuracy; }
+	void setEffectiveRange(const int& range) { _effectiveRange = range; }
+	void setFireRate(const int& firerate) { _fireRate = firerate; }
 
 	int getGunType();
 	int getGunName();
@@ -117,6 +121,10 @@ private:
 	GUN_TYPE _type;
 	GUN_NAME _name;
 	int _magazineSize; //shouldn't be changed except in constructor
+	int _damagePerBullet;
+	int _accuracyRadius;
+	int _effectiveRange;
+	int _fireRate;
 
 	int _ammoNotInMag;
 	int _currentMagazineAmmo;
@@ -141,7 +149,7 @@ public:
 	Player();
 	~Player();
 	
-	void Setup(const std::string& file,Ogre::SceneNode* equipNode);
+	void Setup(const std::string& file,GraphicsManager* graphics,Ogre::SceneNode* equipNode);
 	bool Update(InputManager* input,PhysicsManager* physics,EWSManager* ews,const OgreTransform& transform);
 	void Clean(bool reuse = false);
 

@@ -147,6 +147,10 @@ namespace GameManager
 										_correspondGunName(wep->name()),
 										static_cast<int>(wep->gameplay().reloadQty()),4);
 			retVal.node = graphicsManager->createSceneNode(scene,wep,nullptr);
+			static_cast<cGunData*>(retVal.equip)->setAccuracyRadius(static_cast<int>(wep->gameplay().accuracy()));
+			static_cast<cGunData*>(retVal.equip)->setDamagePerBullet(static_cast<int>(wep->gameplay().damage()));
+			static_cast<cGunData*>(retVal.equip)->setEffectiveRange(static_cast<int>(wep->gameplay().range()));
+			static_cast<cGunData*>(retVal.equip)->setFireRate(static_cast<int>(wep->gameplay().firerate()));
 			static_cast<cGunData*>(retVal.equip)->setSoundFrames(wep);
 			static_cast<cGunData*>(retVal.equip)->setAnimationFrames(static_cast<Ogre::Entity*>(retVal.node->getAttachedObject(0)));
 			delete wep;
