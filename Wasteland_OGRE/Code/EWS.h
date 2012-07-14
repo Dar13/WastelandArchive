@@ -1,5 +1,7 @@
 #include "StdAfx.h"
 
+#include "Utility.h"
+
 #ifndef _ENVWARNSYS_H_
 #define _ENVWARNSYS_H_
 
@@ -15,7 +17,7 @@ public:
 	void Setup(Ogre::SceneManager* scene);
 	//Passing in the current information needed to be represented.
 	//Would be called by the appState(maybe) or the GameManager(probably).
-	void Update(int health,int newTime,bool isPlacing,const OgreTransform& playerTransform);//, void* ammoInfo);
+	void Update(int newTime,bool isPlacing,const sPlayerData& playerData,const OgreTransform& playerTransform);//, void* ammoInfo);
 
 	void Place(const Ogre::Vector3& rayCastPosition,const Ogre::Vector3& rayCastNormal,const OgreTransform& playerTransform);
 
@@ -43,7 +45,7 @@ private:
 	int oldTime;
 	
 	//eventually make a struct to hold all this data
-	int _health;
+	sPlayerData _playerData;
 };
 
 #endif

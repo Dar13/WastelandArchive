@@ -9,6 +9,8 @@
 
 #include "AnimationBlender.h"
 
+#include "Utility.h"
+
 #ifndef _PLAYER_H_
 #define _PLAYER_H_
 
@@ -42,14 +44,6 @@ struct EquippableObject
 {
 	Ogre::SceneNode* node;
 	baseEquippable* equip;
-};
-
-struct sPlayerData
-{
-	int health;
-	int ammoNotInMag;
-	int ammoInMag;
-	//other information...
 };
 
 class cGunData : public baseEquippable, public Ogre::FrameListener
@@ -114,7 +108,7 @@ public:
 	int getGunType() { return _type; }
 	int getGunName() { return _name; }
 
-	int getNumofMags() { return _ammoNotInMag / _magazineSize; }
+	int getNumOfMags() { return _ammoNotInMag / _magazineSize; }
 	int getMagAmmo() { return _currentMagazineAmmo; }
 
 	bool isReloadNeeded() { return _reloadNeeded; }

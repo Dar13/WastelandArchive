@@ -132,7 +132,10 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 		_player->Update(Input,_physics.get(),_ews.get(),playerTransform);
 
 		//Update the EWS system
-		_ews->Update(100,static_cast<int>(time),Input->isCFGKeyPressed(InputManager::ENVWARNSYS),playerTransform);
+		_ews->Update(static_cast<int>(time),
+					 Input->isCFGKeyPressed(InputManager::ENVWARNSYS),
+					 _player->getPlayerData(),
+					 playerTransform);
 
 		//True indicates success, so react on if it doesn't react properly
 		if(!GameManager::UpdateManagers(Graphics,_physics.get(),_deltaTime))

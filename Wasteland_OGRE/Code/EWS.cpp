@@ -5,6 +5,8 @@
 #include "Utility.h"
 #include "GraphicsManager.h"
 
+#include "Player.h"
+
 EWSManager::EWSManager(Ogre::SceneManager* scene)
 {
 	//setting up and initializing the pointers and stuff.
@@ -51,7 +53,7 @@ void EWSManager::Setup(Ogre::SceneManager* scene)
 
 }
 
-void EWSManager::Update(int health,int newTime,bool isPlacing,const OgreTransform& playerTransform)
+void EWSManager::Update(int newTime,bool isPlacing,const sPlayerData& playerData,const OgreTransform& playerTransform)
 {
 	if(!isPlacing)
 	{
@@ -73,15 +75,29 @@ void EWSManager::Update(int health,int newTime,bool isPlacing,const OgreTransfor
 		}
 
 		//assumes timeElapsed is in ms
-		if((newTime - oldTime) > 500 && health != _health ) //playerInfo != _playerInfo)
+		if((newTime - oldTime) > 500 && _playerData != playerData ) //playerInfo != _playerInfo)
 		{
 			//draw health information
-			Box(Ogre::Rect(100,health + 100,150,400),Ogre::ColourValue(0.0f,.5f,0.0f,1.0f));
+			Box(Ogre::Rect(100,playerData.health + 100,150,400),Ogre::ColourValue(0.0f,.5f,0.0f,1.0f));
 
 			//draw ammo information
-			//NOT DONE YET!
+			if(playerData.ammoInMag < 0)
+			{
+				//ammo not applicable. Draw image accordingly.
+			}
+			else
+			{
+				//ammo is applicable. Draw accordingly
+				//ammo in magazine
+				Box(Ogre::Rect(300,playerData.ammoInMag + 100,350,400),Ogre::ColourValue(.6f,.01f,.01f,1.0f));
+				//number of mags left
+				//write number on texture
+				//integrate this function:
+				//http://www.ogre3d.org/tikiwiki/tiki-index.php?page=HowTo%3A+Write+text+on+texture
+			}
+
 			oldTime = newTime;
-		
+			_playerData = playerData;
 		}
 		_material->setDepthWriteEnabled(false);
 		_material->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);

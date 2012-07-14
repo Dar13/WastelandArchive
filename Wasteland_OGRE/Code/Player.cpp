@@ -343,6 +343,21 @@ void Player::addEquippableObject(const EquippableObject& object)
 	std::cout << "Weapon added to equippables." << std::endl;
 }
 
+sPlayerData Player::getPlayerData()
+{
+	if(_equippables[_curEquippable].equip->getIsWeapon())
+	{
+		return sPlayerData(_health,
+						   static_cast<cGunData*>(_equippables[_curEquippable].equip)->getMagAmmo(),
+						   static_cast<cGunData*>(_equippables[_curEquippable].equip)->getNumOfMags());
+	}
+	else
+	{
+		//-1 denotes ammo is not applicable
+		return sPlayerData(_health,-1,-1);
+	}
+}
+
 void Player::Clean(bool reuse)
 {
 	return;
