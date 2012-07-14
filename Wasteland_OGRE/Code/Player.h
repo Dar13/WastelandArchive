@@ -13,6 +13,7 @@
 #define _PLAYER_H_
 
 int getAnimID(const std::string& name);
+int getSoundID(const std::string& sound);
 
 struct sSoundFrame
 {
@@ -41,6 +42,14 @@ struct EquippableObject
 {
 	Ogre::SceneNode* node;
 	baseEquippable* equip;
+};
+
+struct sPlayerData
+{
+	int health;
+	int ammoNotInMag;
+	int ammoInMag;
+	//other information...
 };
 
 class cGunData : public baseEquippable, public Ogre::FrameListener
@@ -102,13 +111,13 @@ public:
 	void setEffectiveRange(const int& range) { _effectiveRange = range; }
 	void setFireRate(const int& firerate) { _fireRate = firerate; }
 
-	int getGunType();
-	int getGunName();
+	int getGunType() { return _type; }
+	int getGunName() { return _name; }
 
-	int getNumofMags();
-	int getMagAmmo();
+	int getNumofMags() { return _ammoNotInMag / _magazineSize; }
+	int getMagAmmo() { return _currentMagazineAmmo; }
 
-	bool isReloadNeeded();
+	bool isReloadNeeded() { return _reloadNeeded; }
 
 	void setAnimationFrames(Ogre::Entity* entity);
 	void setSoundFrames(weapon_t* Weapon);
@@ -130,10 +139,7 @@ private:
 	int _ammoNotInMag;
 	int _currentMagazineAmmo;
 
-	bool _fireAnimEnded;
-	bool _fireAnimStarted;
-	bool _reloadAnimEnded;
-	bool _reloadAnimStarted;
+	int _playingAnim;
 
 	bool _firing,_reloading,_moving;
 
@@ -161,6 +167,8 @@ public:
 	void equipObject(const EquippableObject& obj);
 
 	int getHealth();
+	
+	sPlayerData getPlayerData();
 
 	void setEquipNode(Ogre::SceneNode* node) { _equipNode = node; }
 

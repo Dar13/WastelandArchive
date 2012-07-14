@@ -70,7 +70,7 @@ void AnimationBlender::blend( const std::string &animation, BlendingTransition t
 				} 
 				mTarget = newTarget;
 				mTarget->setEnabled(true);
-				mTarget->setWeight( 1.0 - mTimeleft / mDuration );
+				mTarget->setWeight( 1.0f - mTimeleft / mDuration );
 				mTarget->setTimePosition(0);
 			}
 		}
@@ -109,7 +109,7 @@ void AnimationBlender::addTime( Ogre::Real time )
 			{
 				// still blending, advance weights
 				mSource->setWeight(mTimeleft / mDuration);
-				mTarget->setWeight(1.0 - mTimeleft / mDuration);
+				mTarget->setWeight(1.0f - mTimeleft / mDuration);
 				if(mTransition == AnimationBlender::BlendWhileAnimating)
 					mTarget->addTime(time);
 			}

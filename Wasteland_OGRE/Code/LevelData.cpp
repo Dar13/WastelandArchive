@@ -816,10 +816,10 @@ namespace LevelData
 		std::string values;
 
 		Ogre::Vector3 position,direction;
-		int range;
+		int range = 0;
 		Ogre::ColourValue diffColour;
 		Ogre::ColourValue specColour;
-		float innerAng,outerAng;
+		float innerAng = 0.0f,outerAng = 0.0f;
 
 		bool startObject = false;
 		bool finishedObject = false;
