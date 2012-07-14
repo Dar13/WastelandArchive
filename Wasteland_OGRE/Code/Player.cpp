@@ -50,6 +50,8 @@ cGunData::cGunData(const baseEquippable& base,GUN_TYPE type,GUN_NAME name,int ma
 	_moving = false;
 	_firing = false;
 	_reloading = false;
+	_mouseHeld = false;
+	_firingOverride = false;
 }
 
 void cGunData::fire()
@@ -60,8 +62,22 @@ void cGunData::fire()
 	}
 	else
 	{
-		_currentMagazineAmmo--;
-		_firing = true;
+		if(!_firing)
+		{
+			_firing = true;
+			_mouseHeld = false;
+			_currentMagazineAmmo--;
+		}
+		else
+		{
+			_mouseHeld = true;
+			if(_fireRate > 1 && _fireRateCount >= _fireRate)
+			{
+				_fireRateCount = 0;
+				_currentMagazineAmmo--;
+			}
+		}
+
 		if(_currentMagazineAmmo == 0)
 		{
 			_reloadNeeded = true;
@@ -106,6 +122,67 @@ bool cGunData::frameStarted(const Ogre::FrameEvent& evt)
 		targetAnim = cGunData::NO_ANIM;
 	}
 
+	if(_firing && !_reloading)
+	{
+		if(_fireRate > 1)
+		{
+			//auto weapons, burst weapons
+		}
+		else
+		{
+			//single-fire weapons
+			//left mouse button is clicked, but not held yet
+			if(!_mouseHeld)
+			{
+				if(sourceAnim != cGunData::ANIM_FIRE)
+				{
+					if(targetAnim != cGunData::NO_ANIM || targetAnim != cGunData::ANIM_FIRE)
+					{
+						_animBlender.blend("fire",AnimationBlender::BlendSwitch,.2f,false);
+					}
+				}
+				else
+				{
+					_firingOverride = true;
+				}
+				/*
+				std::cout << "Mouse isn't held" << std::endl;
+				//now do the animation stuff
+				if(sourceAnim != cGunData::ANIM_STARTFIRE)
+				{
+					if(targetAnim != cGunData::NO_ANIM)
+					{
+						_animBlender.blend("startfire",AnimationBlender::BlendSwitch,.2f,false);
+					}
+
+					if(targetAnim != cGunData::ANIM_STARTFIRE)
+					{
+						_animBlender.blend("startfire",AnimationBlender::BlendSwitch,.2f,false);
+						std::cout << "Startfire should be started" << std::endl;
+					}
+				}
+				*/
+			}
+			else
+			{
+				/*
+				//mouse is held, next couple of frames are done.
+				//now to finish the animation.
+				if(sourceAnim == cGunData::ANIM_STARTFIRE)
+				{
+					_animBlender.blend("endfire",AnimationBlender::BlendSwitch,.2f,false);
+					std::cout << "Endfire should be started : " << _animBlender.complete << std::endl;
+				}
+
+				if(sourceAnim == cGunData::ANIM_ENDFIRE)
+				{
+					_firing = false;
+				}
+				*/
+			}
+		}
+	}
+
 	//Doesn't matter if the player is moving or not. Only if he's firing the weapon.
 	if(_reloading && !_firing)
 	{
@@ -136,7 +213,7 @@ bool cGunData::frameStarted(const Ogre::FrameEvent& evt)
 	}
 
 	//for moving animation.
-	if(_moving && !_firing && !_reloading)
+	if(_moving && (!_firing || _firingOverride) && !_reloading)
 	{
 		if(sourceAnim != cGunData::ANIM_MOVE)
 		{
@@ -154,7 +231,7 @@ bool cGunData::frameStarted(const Ogre::FrameEvent& evt)
 	}
 
 	//nothing else is going on, go to idle
-	if(!_reloading && !_firing && !_moving)
+	if(!_reloading && (!_firing || _firingOverride) && !_moving)
 	{
 		if(sourceAnim != cGunData::ANIM_IDLE)
 		{
@@ -284,14 +361,16 @@ bool Player::Update(InputManager* input,PhysicsManager* physics,EWSManager* ews,
 		gun = static_cast<cGunData*>(_equippables[_curEquippable].equip);
 	}
 
-	
-
 	if(gun != nullptr)
 	{	
 		if(input->isMBPressed(OIS::MB_Left))
 		{
 			//shoot gun
 			gun->fire();
+		}
+		else
+		{
+			gun->setFiring(false);
 		}
 
 		if(input->isCFGKeyPressed(InputManager::RELOAD))

@@ -14,7 +14,7 @@ struct sPlayerData
 	int ammoNotInMag;
 	int ammoInMag;
 	//other information...
-
+	//needed to overload this for some reason.
 	bool operator!=(const sPlayerData& data) const
 	{
 		if(health != data.health) { return true; }

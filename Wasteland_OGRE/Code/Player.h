@@ -98,6 +98,8 @@ public:
 	void reload();
 	void setMoving(bool moving) { _moving = moving; }
 	bool isMoving() { return _moving; }
+	void setFiring(bool firing) { _firing = firing; if(!firing){_firingOverride = false;} }
+	bool isFiring() { return _firing; }
 
 	void setMagazineSize(const int& magSize);
 	void setDamagePerBullet(const int& damage) { _damagePerBullet = damage; }
@@ -129,6 +131,7 @@ private:
 	int _accuracyRadius;
 	int _effectiveRange;
 	int _fireRate;
+	int _fireRateCount;
 
 	int _ammoNotInMag;
 	int _currentMagazineAmmo;
@@ -136,6 +139,7 @@ private:
 	int _playingAnim;
 
 	bool _firing,_reloading,_moving;
+	bool _mouseHeld,_firingOverride;
 
 	bool _reloadNeeded;
 
