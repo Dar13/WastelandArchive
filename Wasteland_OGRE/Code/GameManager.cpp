@@ -133,6 +133,7 @@ namespace GameManager
 	EquippableObject createEquippable(Ogre::SceneManager* scene,
 									  const std::string& file,
 									  GraphicsManager* graphicsManager,
+									  SoundManager* soundManager,
 									  bool isWeapon)
 	{
 		EquippableObject retVal;
@@ -151,7 +152,7 @@ namespace GameManager
 			static_cast<cGunData*>(retVal.equip)->setDamagePerBullet(static_cast<int>(wep->gameplay().damage()));
 			static_cast<cGunData*>(retVal.equip)->setEffectiveRange(static_cast<int>(wep->gameplay().range()));
 			static_cast<cGunData*>(retVal.equip)->setFireRate(static_cast<int>(wep->gameplay().firerate()));
-			static_cast<cGunData*>(retVal.equip)->setSoundFrames(wep);
+			static_cast<cGunData*>(retVal.equip)->setSoundFrames(wep,soundManager);
 			static_cast<cGunData*>(retVal.equip)->setAnimationFrames(static_cast<Ogre::Entity*>(retVal.node->getAttachedObject(0)));
 			delete wep;
 		}

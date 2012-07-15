@@ -96,8 +96,7 @@ void EWSManager::Update(int newTime,bool isPlacing,const sPlayerData& playerData
 				float magAmmoPcnt = static_cast<float>(_playerData.ammoInMag) / static_cast<float>(_playerData.magSize);
 				float height = magAmmoPcnt * 300;
 				Box(Ogre::Rect(300,400 - (height / 2),350,400),Ogre::ColourValue(.6f,.01f,.01f,1.0f));
-				std::cout << magAmmoPcnt << " : " << height << std::endl;
-				//std::cout << _playerData.ammoInMag << " : " << _playerData.magSize << std::endl;
+				
 				//number of mags left
 				//write number on texture
 				//integrate this function:

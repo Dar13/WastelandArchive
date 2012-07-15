@@ -245,10 +245,19 @@ bool cGunData::frameStarted(const Ogre::FrameEvent& evt)
 	{
 		//for debug statements and such.
 	}
-
+	
 	//for some of the other functions in the class.
 	_playingAnim = getAnimID(_animBlender.getSource()->getAnimationName());
-
+	
+	//going to put sound here.
+	//Seems easier for me to do.
+	int sndID = getCorrespondSoundID(_playingAnim);
+	float animRelPos = _animBlender.getSource()->getTimePosition() / _animBlender.getSource()->getLength();
+	if( abs(_sounds[sndID].soundInfo.relativePosition - animRelPos) < 0.01f )
+	{
+		_soundChannel = _soundMgr->playSound(_sounds[sndID].sound);
+	}
+	
 	return true;
 }
 
@@ -264,19 +273,66 @@ bool cGunData::frameEnded(const Ogre::FrameEvent& evt)
 	return true;
 }
 
-void cGunData::setSoundFrames(weapon_t* Weapon)
+void cGunData::setSoundFrames(weapon_t* Weapon,SoundManager* Sound)
 {
 	for(auto itr = Weapon->soundFrames().soundframe().begin();
 		itr != Weapon->soundFrames().soundframe().end();
 		++itr)
 	{
 		sSoundFrame soundF;
-
-		soundF.frame = (*itr).frame();
-
 		soundF.gunSound = getSoundID(itr->sound());
+		soundF.frame = static_cast<int>((*itr).frame());
 
-		_soundFrames.push_back(soundF);
+		for(auto _itr = Weapon->animationFrames().animationFrame().begin();
+			_itr != Weapon->animationFrames().animationFrame().end();
+			++_itr)
+		{
+			int id = getAnimID((*_itr).animationName());
+			if(correspondAnimSoundID(id,soundF.gunSound))
+			{
+				int animLen = static_cast<int>((*_itr).end() - (*_itr).begin());
+				int relPos = soundF.frame - static_cast<int>((*_itr).begin());
+				soundF.relativePosition = static_cast<float>(relPos) / static_cast<float>(animLen);
+			}
+		}
+		//_soundFrames.push_back(soundF);
+
+		sGunSound sg;
+		sg.soundInfo = soundF;
+
+		sSound s;
+		s.is3D = true;
+		s.isLooping = false;
+		s.name = itr->sound();
+		s.type = SFX;
+
+		std::string fileName;
+		switch(soundF.gunSound)
+		{
+		case SND_FIRE:
+			fileName = Weapon->sounds().fire();
+			break;
+		case SND_RELOAD:
+			fileName = Weapon->sounds().reload();
+			break;
+		case SND_PUTAWAY:
+			fileName = Weapon->sounds().putaway();
+			break;
+		case SND_DRYFIRE:
+			fileName = Weapon->sounds().dryfire();
+			break;
+		case SND_ALTRELOAD:
+			fileName = Weapon->sounds().altreload();
+			break;
+		case SND_ALTFIRE:
+			fileName = Weapon->sounds().altfire();
+			break;
+		}
+
+		Sound->createSound(s,fileName);
+
+		sg.sound = s;
+		_sounds[soundF.gunSound] = sg;
 	}
 	std::cout << "Soundframes set for " << Weapon->name() << std::endl;
 }
@@ -286,6 +342,16 @@ void cGunData::setAnimationFrames(Ogre::Entity* entity)
 	_animBlender.setEntity(entity);
 	_animBlender.init("idle",true);
 	std::cout << "AnimationFrames set for " << entity->getName() << std::endl;
+}
+
+cGunData::~cGunData()
+{
+	for(auto itr = _sounds.begin(); itr != _sounds.end(); ++itr)
+	{
+		(*itr).second.sound.sound->release();
+	}
+
+	_soundChannel->stop();
 }
 
 //---------------------------------------------------------------------------------------
@@ -523,6 +589,51 @@ int getSoundID(const std::string& sound)
 	if(sound == "PUTAWAY")
 	{
 		return cGunData::SND_PUTAWAY;
+	}
+
+	return cGunData::NO_SOUND;
+}
+
+bool correspondAnimSoundID(int animID,int soundID)
+{
+	if(animID == cGunData::ANIM_FIRE || animID == cGunData::ANIM_STARTFIRE && soundID == cGunData::SND_FIRE)
+	{
+		return true;
+	}
+
+	if(animID == cGunData::ANIM_RELOAD && soundID == cGunData::SND_RELOAD)
+	{
+		return true;
+	}
+
+	if((animID == cGunData::ANIM_PUTAWAY || animID == cGunData::ANIM_SELECT) && soundID == cGunData::SND_PUTAWAY)
+	{
+		return true;
+	}
+
+	return false;
+}
+
+int getCorrespondSoundID(int animID)
+{
+	switch(animID)
+	{
+	case cGunData::ANIM_STARTFIRE:
+	case cGunData::ANIM_AUTOFIRE:
+	case cGunData::ANIM_FIRE:
+		return cGunData::SND_FIRE;
+		break;
+	case cGunData::ANIM_PUTAWAY:
+	case cGunData::ANIM_SELECT:
+		return cGunData::SND_PUTAWAY;
+		break;
+	case cGunData::ANIM_RELOAD:
+		return cGunData::SND_RELOAD;
+		break;
+	//have to add support for dryfire and stuff later on.
+	default:
+		return cGunData::NO_SOUND;
+		break;
 	}
 
 	return cGunData::NO_SOUND;

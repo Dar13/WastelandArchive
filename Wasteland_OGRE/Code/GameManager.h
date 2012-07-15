@@ -9,18 +9,9 @@
 #include "PhysicsManager.h"
 #include "EWS.h"
 #include "Player.h"
+#include "Utility.h"
 
-/*! \brief Allows convenient returns of both Bullet rigid bodies and Ogre SceneNodes.
-*/
-struct OgreBulletPair
-{
-	Ogre::SceneNode* ogreNode;
-	btRigidBody* btBody;
-};
-
-
-
-/*! \brief The Manager class of all the managers. The final abstraction layer.
+/*! \brief The Manager namespace of all the managers. The final abstraction layer.
 
 This namespace is where all the different Managers
 (Ogre,Bullet,OIS,Sound,etc.)will interact in order to 
@@ -65,6 +56,7 @@ namespace GameManager
 	EquippableObject createEquippable(Ogre::SceneManager* scene,
 									  const std::string& file,
 									  GraphicsManager* graphicsManager,
+									  SoundManager* soundManager,
 									  bool isWeapon = true);
 
 	/*! Tells class to use the debug drawer, to verify collisions are happening correctly.

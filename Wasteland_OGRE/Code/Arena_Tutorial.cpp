@@ -81,7 +81,7 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	std::cout << "Level elements setup" << std::endl;
 
 	//testing out the M9SE
-	EquippableObject equipObj = GameManager::createEquippable(_scene,"resource\\xml\\weapon_m9se.xml",Graphics,true);
+	EquippableObject equipObj = GameManager::createEquippable(_scene,"resource\\xml\\weapon_m9se.xml",Graphics,Sound,true);
 	_player->addEquippableObject(equipObj);
 	_player->Setup("TEST",Graphics,_controller->getNode());
 	

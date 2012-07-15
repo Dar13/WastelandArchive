@@ -26,6 +26,14 @@ struct sPlayerData
 	}
 };
 
+/*! \brief Allows convenient returns of both Bullet rigid bodies and Ogre SceneNodes.
+*/
+struct OgreBulletPair
+{
+	Ogre::SceneNode* ogreNode;
+	btRigidBody* btBody;
+};
+
 namespace Utility
 {
 

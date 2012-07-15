@@ -2,22 +2,23 @@
 
 #include "interfaces\weapon.hxx"
 
-#include "EWS.h"
 #include "InputManager.h"
 #include "PhysicsManager.h"
 #include "GraphicsManager.h"
-
-#include "AnimationBlender.h"
-
 #include "SoundManager.h"
 
+#include "EWS.h"
+
 #include "Utility.h"
+#include "AnimationBlender.h"
 
 #ifndef _PLAYER_H_
 #define _PLAYER_H_
 
 int getAnimID(const std::string& name);
 int getSoundID(const std::string& sound);
+bool correspondAnimSoundID(int animID,int soundID);
+int getCorrespondSoundID(int animID);
 bool isAnimAlmostEnded(Ogre::AnimationState* anim);
 
 struct sSoundFrame
@@ -25,6 +26,12 @@ struct sSoundFrame
 	int gunSound;
 	int frame;
 	float relativePosition; //relative position to animation.
+};
+
+struct sGunSound
+{
+	sSoundFrame soundInfo;
+	sSound sound;
 };
 
 class baseEquippable
@@ -113,6 +120,7 @@ public:
 		\param numMags Number of starting magazines
 	*/
 	cGunData(const baseEquippable& base,GUN_TYPE type,GUN_NAME name, int magazineSize,int numMags);
+	~cGunData();
 
 	//! Allows outside classes to fire the gun that this class represents
 	void fire();
@@ -156,7 +164,7 @@ public:
 	//! Utility function, called to help set-up the gun.
 	void setAnimationFrames(Ogre::Entity* entity);
 	//! Utility function, called to help set-up the gun.
-	void setSoundFrames(weapon_t* Weapon);
+	void setSoundFrames(weapon_t* Weapon,SoundManager* Sound);
 
 	//! Interface for frameListener. Contains most of animation logic.
 	bool frameStarted(const Ogre::FrameEvent& evt);
@@ -186,7 +194,10 @@ private:
 
 	bool _reloadNeeded;
 
-	std::vector<sSoundFrame> _soundFrames;
+	SoundManager* _soundMgr; // required.
+	std::map<int,sGunSound> _sounds;
+	FMOD::Channel* _soundChannel;
+	//std::vector<sSoundFrame> _soundFrames;
 	
 	AnimationBlender _animBlender;
 	
@@ -231,6 +242,8 @@ private:
 	bool _reloadingWeapon;
 
 	int _health;
+
+	SoundManager* _soundMgr;
 
 	Ogre::SceneNode* _equipNode;
 
