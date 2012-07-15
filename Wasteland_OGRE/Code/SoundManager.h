@@ -27,6 +27,9 @@ public:
 	bool isLooping;
 };
 
+//Forward declaration of class.
+class configuration_t;
+
 //whoopsie
 typedef SoundStruct sSound;
 
@@ -35,7 +38,7 @@ class SoundManager
 public:
 	~SoundManager(){Shutdown();}
 	bool Setup();
-	bool Update();
+	bool Update(configuration_t* currentConfiguration);
 	void Shutdown();
 
 	//Sound functions
@@ -54,7 +57,7 @@ public:
 	void stopMusic(bool clearAllMusic = false);
 
 private:
-	void _fadeTransition();
+	//void _fadeTransition();
 	void _reportError();
 
 	FMOD::System* _system;
@@ -64,9 +67,9 @@ private:
 	std::vector<FMOD::Sound*>::iterator _musicItr;
 	FMOD::Channel* _musicChannel;
 
-	int _sfxVolume;
-	int _mscVolume;
-	int _charVolume;
+	float _sfxVolume;
+	float _mscVolume;
+	float _charVolume;
 };
 
 #endif

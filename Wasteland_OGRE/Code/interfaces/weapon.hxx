@@ -394,19 +394,16 @@ class soundFrame_t: public ::xml_schema::type
   // frame
   // 
   typedef ::xml_schema::integer frame_type;
-  typedef ::xsd::cxx::tree::sequence< frame_type > frame_sequence;
-  typedef frame_sequence::iterator frame_iterator;
-  typedef frame_sequence::const_iterator frame_const_iterator;
   typedef ::xsd::cxx::tree::traits< frame_type, char > frame_traits;
 
-  const frame_sequence&
+  const frame_type&
   frame () const;
 
-  frame_sequence&
+  frame_type&
   frame ();
 
   void
-  frame (const frame_sequence& s);
+  frame (const frame_type& x);
 
   // sound
   // 
@@ -427,7 +424,8 @@ class soundFrame_t: public ::xml_schema::type
 
   // Constructors.
   //
-  soundFrame_t (const sound_type&);
+  soundFrame_t (const frame_type&,
+                const sound_type&);
 
   soundFrame_t (const ::xercesc::DOMElement& e,
                 ::xml_schema::flags f = 0,
@@ -452,7 +450,7 @@ class soundFrame_t: public ::xml_schema::type
          ::xml_schema::flags);
 
   protected:
-  frame_sequence frame_;
+  ::xsd::cxx::tree::one< frame_type > frame_;
   ::xsd::cxx::tree::one< sound_type > sound_;
 };
 

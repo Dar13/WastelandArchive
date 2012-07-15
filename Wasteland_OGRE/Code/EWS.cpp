@@ -77,6 +77,10 @@ void EWSManager::Update(int newTime,bool isPlacing,const sPlayerData& playerData
 		//assumes timeElapsed is in ms
 		if((newTime - oldTime) > 500 && _playerData != playerData ) //playerInfo != _playerInfo)
 		{
+			_playerData = playerData;
+			//redraw the background.
+			Box(Ogre::Rect(15,15,497,497),Ogre::ColourValue(189.0f/255.0f,189.0f/255.0f,189.0f/255.0f,0.5f));
+
 			//draw health information
 			Box(Ogre::Rect(100,playerData.health + 100,150,400),Ogre::ColourValue(0.0f,.5f,0.0f,1.0f));
 
@@ -89,7 +93,11 @@ void EWSManager::Update(int newTime,bool isPlacing,const sPlayerData& playerData
 			{
 				//ammo is applicable. Draw accordingly
 				//ammo in magazine
-				Box(Ogre::Rect(300,playerData.ammoInMag + 100,350,400),Ogre::ColourValue(.6f,.01f,.01f,1.0f));
+				float magAmmoPcnt = static_cast<float>(_playerData.ammoInMag) / static_cast<float>(_playerData.magSize);
+				float height = magAmmoPcnt * 300;
+				Box(Ogre::Rect(300,400 - (height / 2),350,400),Ogre::ColourValue(.6f,.01f,.01f,1.0f));
+				std::cout << magAmmoPcnt << " : " << height << std::endl;
+				//std::cout << _playerData.ammoInMag << " : " << _playerData.magSize << std::endl;
 				//number of mags left
 				//write number on texture
 				//integrate this function:
@@ -97,7 +105,6 @@ void EWSManager::Update(int newTime,bool isPlacing,const sPlayerData& playerData
 			}
 
 			oldTime = newTime;
-			_playerData = playerData;
 		}
 		_material->setDepthWriteEnabled(false);
 		_material->setSceneBlending(Ogre::SBT_TRANSPARENT_ALPHA);

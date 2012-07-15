@@ -7,11 +7,12 @@
 */
 struct sPlayerData
 {
-	sPlayerData() : health(0),ammoNotInMag(0),ammoInMag(0) {}
-	sPlayerData(int Health,int ammoMag,int ammoNotMag) 
-		: health(Health),ammoNotInMag(ammoNotMag),ammoInMag(ammoMag) {}
+	sPlayerData() : health(0),ammoNotInMag(0),ammoInMag(0),magSize(0) {}
+	sPlayerData(int Health,int ammoMag,int ammoNotMag,int magSz) 
+		: health(Health),ammoNotInMag(ammoNotMag),ammoInMag(ammoMag),magSize(magSz) {}
 	int health;
 	int ammoNotInMag;
+	int magSize;
 	int ammoInMag;
 	//other information...
 	//needed to overload this for some reason.

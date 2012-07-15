@@ -192,22 +192,22 @@ altreload (::std::auto_ptr< altreload_type > x)
 // soundFrame_t
 // 
 
-const soundFrame_t::frame_sequence& soundFrame_t::
+const soundFrame_t::frame_type& soundFrame_t::
 frame () const
 {
-  return this->frame_;
+  return this->frame_.get ();
 }
 
-soundFrame_t::frame_sequence& soundFrame_t::
+soundFrame_t::frame_type& soundFrame_t::
 frame ()
 {
-  return this->frame_;
+  return this->frame_.get ();
 }
 
 void soundFrame_t::
-frame (const frame_sequence& s)
+frame (const frame_type& x)
 {
-  this->frame_ = s;
+  this->frame_.set (x);
 }
 
 const soundFrame_t::sound_type& soundFrame_t::
@@ -844,9 +844,10 @@ sounds_t::
 //
 
 soundFrame_t::
-soundFrame_t (const sound_type& sound)
+soundFrame_t (const frame_type& frame,
+              const sound_type& sound)
 : ::xml_schema::type (),
-  frame_ (::xml_schema::flags (), this),
+  frame_ (frame, ::xml_schema::flags (), this),
   sound_ (sound, ::xml_schema::flags (), this)
 {
 }
@@ -890,8 +891,11 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     //
     if (n.name () == "frame" && n.namespace_ ().empty ())
     {
-      this->frame_.push_back (frame_traits::create (i, f, this));
-      continue;
+      if (!frame_.present ())
+      {
+        this->frame_.set (frame_traits::create (i, f, this));
+        continue;
+      }
     }
 
     // sound
@@ -909,6 +913,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     }
 
     break;
+  }
+
+  if (!frame_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "frame",
+      "");
   }
 
   if (!sound_.present ())

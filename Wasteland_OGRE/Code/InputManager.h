@@ -76,6 +76,8 @@ public:
 
 	//! Sets configuration.
 	void setConfiguration(configuration_t* config);
+	//! Gets configuration.
+	configuration_t* getConfiguration() { return _config; }
 
 	//! Returns true if the Escape key is pressed.
 	bool escapePressed(){return _appShutdown;}

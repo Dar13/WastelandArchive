@@ -3,6 +3,7 @@
 #include "SoundManager.h"
 #include <fmod_errors.h>
 #include "debug\console.h"
+#include "interfaces\configuration.hxx"
 
 bool SoundManager::Setup()
 {
@@ -12,6 +13,7 @@ bool SoundManager::Setup()
 	std::string resStr;
 	if(res != FMOD_OK)
 	{
+		_errResult = res;
 		_reportError();
 		success = false;
 		return success;
@@ -20,6 +22,7 @@ bool SoundManager::Setup()
 	res = _system->init(500,FMOD_INIT_NORMAL | FMOD_INIT_3D_RIGHTHANDED, 0);
 	if(res != FMOD_OK)
 	{
+		_errResult = res;
 		_reportError();
 		success = false;
 		return success;
@@ -28,7 +31,7 @@ bool SoundManager::Setup()
 	return success;
 }
 
-bool SoundManager::Update()
+bool SoundManager::Update(configuration_t* currentConfiguration)
 {
 	bool ret = true;
 
@@ -36,16 +39,20 @@ bool SoundManager::Update()
 	if(_errResult != FMOD_OK)
 	{
 		std::string s = FMOD_ErrorString(_errResult);
-		//VirtualConsole::getSingletonPtr()->put("FMOD Error!\n" + s);
+		std::cout << "FMOD error! : " << s << std::endl;
 		ret = false;
 	}
 
 	//somehow get the new configuration settings.
+	_charVolume = static_cast<float>(currentConfiguration->volume().character()) / 100.0f;
+	_mscVolume = static_cast<float>(currentConfiguration->volume().music()) / 100.0f;
+	_sfxVolume = static_cast<float>(currentConfiguration->volume().soundfx()) / 100.0f;
 
 	//update the music stuff.
 	unsigned int position;
 	unsigned int length;
 	_musicChannel->getPosition(&position,FMOD_TIMEUNIT_MS);
+	_musicChannel->setVolume( _mscVolume );
 	_musicPlayList.front()->getLength(&length,FMOD_TIMEUNIT_MS);
 	if((length - position) <= 100)
 	{
@@ -98,7 +105,7 @@ void SoundManager::createSound(sSound& sound,const std::string& fileName)
 	switch(sound.type)
 	{
 	case SFX:
-		_errResult = _system->createSound(fileName.c_str(),mode | FMOD_SOFTWARE,0,&nSound);
+		_errResult = _system->createSound(fileName.c_str(),mode | FMOD_SOFTWARE | FMOD_VIRTUAL_PLAYFROMSTART,0,&nSound);
 		if(_errResult != FMOD_OK)
 		{
 			_reportError();
@@ -113,7 +120,7 @@ void SoundManager::createSound(sSound& sound,const std::string& fileName)
 		}
 		break;
 	case CHARACTER:
-		_errResult = _system->createSound(fileName.c_str(),mode | FMOD_SOFTWARE,0,&nSound);
+		_errResult = _system->createSound(fileName.c_str(),mode | FMOD_SOFTWARE | FMOD_VIRTUAL_PLAYFROMSTART,0,&nSound);
 		if(_errResult != FMOD_OK)
 		{
 			_reportError();
@@ -121,9 +128,7 @@ void SoundManager::createSound(sSound& sound,const std::string& fileName)
 		break;
 	}
 	sound.sound = nSound;
-
-	//set channel volume based on configuration values stored in class.
-
+	return;
 }
 
 FMOD::Channel* SoundManager::playSound(const sSound& sound)
@@ -135,12 +140,29 @@ FMOD::Channel* SoundManager::playSound(const sSound& sound)
 		_reportError();
 	}
 
+	switch(sound.type)
+	{
+	case SFX:
+		channel->setVolume(_sfxVolume);
+		break;
+	case MUSIC:
+		channel->setVolume(_mscVolume);
+		break;
+	case CHARACTER:
+		channel->setVolume(_charVolume);
+		break;
+	}
+
 	return channel;
 }
 
 void SoundManager::updateChannels(std::vector<FMOD::Channel*>* channelVector)
 {
-	//?
+	for(auto itr = channelVector->begin(); itr != channelVector->end(); ++itr)
+	{
+		bool playing = false;
+		(*itr)->isPlaying(&playing);
+	}
 }
 
 void SoundManager::destroySound(sSound& sound)

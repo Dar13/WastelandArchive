@@ -90,8 +90,24 @@ void cGunData::reload()
 	if(_reloadNeeded)
 	{
 		//empty magazine, full reload
-		_ammoNotInMag -= _magazineSize;
-		_currentMagazineAmmo = _magazineSize;
+		if(_ammoNotInMag < _magazineSize && _ammoNotInMag > 0)
+		{
+			int tmp = _magazineSize - _ammoNotInMag;
+			_ammoNotInMag -= tmp;
+			_currentMagazineAmmo = tmp;
+		}
+		else if(_ammoNotInMag <= 0)
+		{
+			//can't reload, nothing to reload it with
+			_reloading = false;
+			return;
+		}
+		else
+		{
+			_ammoNotInMag -= _magazineSize;
+			_currentMagazineAmmo = _magazineSize;
+		}
+		
 		_reloading = true;
 	}
 	else
@@ -138,47 +154,14 @@ bool cGunData::frameStarted(const Ogre::FrameEvent& evt)
 				{
 					if(targetAnim != cGunData::NO_ANIM || targetAnim != cGunData::ANIM_FIRE)
 					{
-						_animBlender.blend("fire",AnimationBlender::BlendSwitch,.2f,false);
+						_animBlender.blend("fire",AnimationBlender::BlendWhileAnimating,.2f,false);
 					}
 				}
 				else
 				{
+					//not even sure this is necessary
 					_firingOverride = true;
 				}
-				/*
-				std::cout << "Mouse isn't held" << std::endl;
-				//now do the animation stuff
-				if(sourceAnim != cGunData::ANIM_STARTFIRE)
-				{
-					if(targetAnim != cGunData::NO_ANIM)
-					{
-						_animBlender.blend("startfire",AnimationBlender::BlendSwitch,.2f,false);
-					}
-
-					if(targetAnim != cGunData::ANIM_STARTFIRE)
-					{
-						_animBlender.blend("startfire",AnimationBlender::BlendSwitch,.2f,false);
-						std::cout << "Startfire should be started" << std::endl;
-					}
-				}
-				*/
-			}
-			else
-			{
-				/*
-				//mouse is held, next couple of frames are done.
-				//now to finish the animation.
-				if(sourceAnim == cGunData::ANIM_STARTFIRE)
-				{
-					_animBlender.blend("endfire",AnimationBlender::BlendSwitch,.2f,false);
-					std::cout << "Endfire should be started : " << _animBlender.complete << std::endl;
-				}
-
-				if(sourceAnim == cGunData::ANIM_ENDFIRE)
-				{
-					_firing = false;
-				}
-				*/
 			}
 		}
 	}
@@ -193,14 +176,12 @@ bool cGunData::frameStarted(const Ogre::FrameEvent& evt)
 			if(targetAnim != cGunData::NO_ANIM)
 			{
 				_animBlender.blend("reload",AnimationBlender::BlendSwitch,.2f,false);
-				std::cout << "Reload deactivated" << std::endl;
 			}
 
 			//if the blend isn't quite done
 			if(targetAnim != cGunData::ANIM_RELOAD)
 			{
 				_animBlender.blend("reload",AnimationBlender::BlendSwitch,.2f,false);
-				std::cout << "Reload deactivated" << std::endl;
 			}
 		}
 		else
@@ -212,9 +193,19 @@ bool cGunData::frameStarted(const Ogre::FrameEvent& evt)
 		}
 	}
 
-	//for moving animation.
-	if(_moving && (!_firing || _firingOverride) && !_reloading)
+	bool hasEntered = false;
+	//Need a small delay in some cases when switching from firing animation to moving.
+	if(_moving && sourceAnim == cGunData::ANIM_FIRE && !isAnimAlmostEnded(_animBlender.getSource()))
 	{
+		_moving = false;
+		std::cout << "Should be set to false" << std::endl;
+		hasEntered = true;
+	}
+
+	//for moving animation.
+	if(_moving && !_firing && !_reloading)
+	{
+		if(hasEntered) { std::cout << "WTF" << std::endl; }
 		if(sourceAnim != cGunData::ANIM_MOVE)
 		{
 			if(targetAnim != cGunData::NO_ANIM)
@@ -227,12 +218,12 @@ bool cGunData::frameStarted(const Ogre::FrameEvent& evt)
 				_animBlender.blend("move",AnimationBlender::BlendSwitch,.2f,true);
 			}
 		}
-		std::cout << "Moving" << std::endl;
 	}
 
 	//nothing else is going on, go to idle
 	if(!_reloading && (!_firing || _firingOverride) && !_moving)
 	{
+		if(hasEntered) { std::cout << "SHIT" << std::endl; }
 		if(sourceAnim != cGunData::ANIM_IDLE)
 		{
 			if(targetAnim != cGunData::NO_ANIM)
@@ -280,12 +271,8 @@ void cGunData::setSoundFrames(weapon_t* Weapon)
 		++itr)
 	{
 		sSoundFrame soundF;
-		for(auto _itr = (*itr).frame().begin();
-			_itr != (*itr).frame().end();
-			++_itr)
-		{
-			soundF.frames.push_back(static_cast<int>(*_itr));
-		}
+
+		soundF.frame = (*itr).frame();
 
 		soundF.gunSound = getSoundID(itr->sound());
 
@@ -300,6 +287,8 @@ void cGunData::setAnimationFrames(Ogre::Entity* entity)
 	_animBlender.init("idle",true);
 	std::cout << "AnimationFrames set for " << entity->getName() << std::endl;
 }
+
+//---------------------------------------------------------------------------------------
 
 Player::Player()
 {
@@ -428,12 +417,13 @@ sPlayerData Player::getPlayerData()
 	{
 		return sPlayerData(_health,
 						   static_cast<cGunData*>(_equippables[_curEquippable].equip)->getMagAmmo(),
-						   static_cast<cGunData*>(_equippables[_curEquippable].equip)->getNumOfMags());
+						   static_cast<cGunData*>(_equippables[_curEquippable].equip)->getNumOfMags(),
+						   static_cast<cGunData*>(_equippables[_curEquippable].equip)->getMagazineSize());
 	}
 	else
 	{
 		//-1 denotes ammo is not applicable
-		return sPlayerData(_health,-1,-1);
+		return sPlayerData(_health,-1,-1,-1);
 	}
 }
 
@@ -443,6 +433,20 @@ void Player::Clean(bool reuse)
 }
 
 //-------------------------------------
+
+bool isAnimAlmostEnded(Ogre::AnimationState* anim)
+{
+	Ogre::Real len = anim->getLength(),pos = anim->getTimePosition();
+
+	if( (pos / len) > .9 )
+	{
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
 
 int getAnimID(const std::string& name)
 {
@@ -454,6 +458,11 @@ int getAnimID(const std::string& name)
 	if(name == "startfire")
 	{
 		return cGunData::ANIM_STARTFIRE;
+	}
+
+	if(name == "fire")
+	{
+		return cGunData::ANIM_FIRE;
 	}
 
 	if(name == "endfire")

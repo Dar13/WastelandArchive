@@ -156,7 +156,7 @@ int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,
 			_camNode->setPosition(positionRotation);
 		}
 		
-		Sound->Update();
+		Sound->Update(Input->getConfiguration());
 
 		Gui->Update(_deltaTime);
 		GameManager::UpdateManagers(Graphics,NULL,_deltaTime);
