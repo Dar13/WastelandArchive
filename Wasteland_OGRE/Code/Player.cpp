@@ -155,6 +155,9 @@ bool cGunData::frameStarted(const Ogre::FrameEvent& evt)
 					if(targetAnim != cGunData::NO_ANIM || targetAnim != cGunData::ANIM_FIRE)
 					{
 						_animBlender.blend("fire",AnimationBlender::BlendWhileAnimating,.2f,false);
+						_soundChannel->stop();
+						_soundChannel = _soundMgr->playSound(_sounds[SND_FIRE].sound);
+						std::cout << "fire" << std::endl;
 					}
 				}
 				else
@@ -220,6 +223,8 @@ bool cGunData::frameStarted(const Ogre::FrameEvent& evt)
 		}
 	}
 
+	std::cout << _animBlender.getSource()->getAnimationName() << std::endl;
+
 	//nothing else is going on, go to idle
 	if(!_reloading && (!_firing || _firingOverride) && !_moving)
 	{
@@ -228,11 +233,11 @@ bool cGunData::frameStarted(const Ogre::FrameEvent& evt)
 		{
 			if(targetAnim != cGunData::NO_ANIM)
 			{
-				_animBlender.blend("idle",AnimationBlender::BlendWhileAnimating,.2f,true);
+				_animBlender.blend("idle",AnimationBlender::BlendSwitch,.2f,true);
 			}
 			else if(targetAnim != cGunData::ANIM_IDLE)
 			{
-				_animBlender.blend("idle",AnimationBlender::BlendWhileAnimating,.2f,true);
+				_animBlender.blend("idle",AnimationBlender::BlendSwitch,.2f,true);
 			}
 			else
 			{
@@ -253,9 +258,22 @@ bool cGunData::frameStarted(const Ogre::FrameEvent& evt)
 	//Seems easier for me to do.
 	int sndID = getCorrespondSoundID(_playingAnim);
 	float animRelPos = _animBlender.getSource()->getTimePosition() / _animBlender.getSource()->getLength();
-	if( abs(_sounds[sndID].soundInfo.relativePosition - animRelPos) < 0.01f )
+	bool check = false;
+	_soundChannel->isPlaying(&check);
+	if(!check) { _soundPlayed = false; }
+
+	if( abs(_sounds[sndID].soundInfo.relativePosition - animRelPos) < 0.075f && 
+		_sounds[sndID].soundInfo.relativePosition != 0)
 	{
-		_soundChannel = _soundMgr->playSound(_sounds[sndID].sound);
+		std::cout << "SndRelPos:" << _sounds[sndID].soundInfo.relativePosition;
+		std::cout << " AnimRelPos: " << animRelPos << std::endl;
+		if(_sounds[sndID].sound.sound != nullptr && !_soundPlayed)
+		{
+				std::cout << "Sound is played" << std::endl;
+				_soundChannel->stop();
+				_soundChannel = _soundMgr->playSound(_sounds[sndID].sound);
+				_soundPlayed = true;
+		}
 	}
 	
 	return true;
@@ -275,6 +293,7 @@ bool cGunData::frameEnded(const Ogre::FrameEvent& evt)
 
 void cGunData::setSoundFrames(weapon_t* Weapon,SoundManager* Sound)
 {
+	_soundMgr = Sound;
 	for(auto itr = Weapon->soundFrames().soundframe().begin();
 		itr != Weapon->soundFrames().soundframe().end();
 		++itr)
@@ -295,7 +314,6 @@ void cGunData::setSoundFrames(weapon_t* Weapon,SoundManager* Sound)
 				soundF.relativePosition = static_cast<float>(relPos) / static_cast<float>(animLen);
 			}
 		}
-		//_soundFrames.push_back(soundF);
 
 		sGunSound sg;
 		sg.soundInfo = soundF;
@@ -329,7 +347,10 @@ void cGunData::setSoundFrames(weapon_t* Weapon,SoundManager* Sound)
 			break;
 		}
 
-		Sound->createSound(s,fileName);
+		if(fileName != "NULL")
+			Sound->createSound(s,fileName);
+		else
+			s.sound = NULL;
 
 		sg.sound = s;
 		_sounds[soundF.gunSound] = sg;

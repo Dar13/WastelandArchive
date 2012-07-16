@@ -19,7 +19,10 @@ bool SoundManager::Setup()
 		return success;
 	}
 
-	res = _system->init(500,FMOD_INIT_NORMAL | FMOD_INIT_3D_RIGHTHANDED, 0);
+	_system->setSpeakerMode(FMOD_SPEAKERMODE_STEREO);
+	_system->setDSPBufferSize(1024,10);
+
+	res = _system->init(250,FMOD_INIT_NORMAL | FMOD_INIT_3D_RIGHTHANDED, 0);
 	if(res != FMOD_OK)
 	{
 		_errResult = res;
@@ -105,7 +108,7 @@ void SoundManager::createSound(sSound& sound,const std::string& fileName)
 	switch(sound.type)
 	{
 	case SFX:
-		_errResult = _system->createSound(fileName.c_str(),mode | FMOD_SOFTWARE | FMOD_VIRTUAL_PLAYFROMSTART,0,&nSound);
+		_errResult = _system->createSound(fileName.c_str(),mode | FMOD_SOFTWARE,0,&nSound);
 		if(_errResult != FMOD_OK)
 		{
 			_reportError();
@@ -120,7 +123,7 @@ void SoundManager::createSound(sSound& sound,const std::string& fileName)
 		}
 		break;
 	case CHARACTER:
-		_errResult = _system->createSound(fileName.c_str(),mode | FMOD_SOFTWARE | FMOD_VIRTUAL_PLAYFROMSTART,0,&nSound);
+		_errResult = _system->createSound(fileName.c_str(),mode | FMOD_SOFTWARE,0,&nSound);
 		if(_errResult != FMOD_OK)
 		{
 			_reportError();
@@ -225,5 +228,5 @@ void _fadeTransition()
 inline void SoundManager::_reportError()
 {
 	std::string s = FMOD_ErrorString(_errResult);
-	std::cout << "FMOD Error!" << std::endl << s << std::endl;
+	std::cout << "FMOD Error!" << " : " << s << std::endl;
 }

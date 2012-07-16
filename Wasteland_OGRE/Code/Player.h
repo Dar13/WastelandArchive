@@ -194,10 +194,11 @@ private:
 
 	bool _reloadNeeded;
 
+	bool _soundPlayed;
+
 	SoundManager* _soundMgr; // required.
 	std::map<int,sGunSound> _sounds;
 	FMOD::Channel* _soundChannel;
-	//std::vector<sSoundFrame> _soundFrames;
 	
 	AnimationBlender _animBlender;
 	
