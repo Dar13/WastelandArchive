@@ -21,6 +21,15 @@ public:
 
 	bool doesGUISheetExist(const std::string& sheetName);
 	void setCurrentGUISheet(const std::string& sheetName);
+	bool isCurrentGUISheetNull()
+	{
+		if(_currentGUISheet == nullptr)
+		{
+			return true;
+		}
+		
+		return false;
+	}
 	void addGUISheet(CEGUI::Window* guiSheet);
 	void removeGUISheet(CEGUI::Window* guiSheet);
 

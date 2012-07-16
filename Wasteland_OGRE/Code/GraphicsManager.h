@@ -47,6 +47,18 @@ protected:
 	} _fadeOperation;
 };
 
+class ScreenFaderUpdater : public Ogre::FrameListener
+{
+public:
+	void setFader(ScreenFader* fader) { _fader = fader; }
+
+	bool frameStarted(const Ogre::FrameEvent& evt) { _fader->fade(evt.timeSinceLastFrame); return true; }
+	bool frameRenderingQueued(const Ogre::FrameEvent& evt) { return true; }
+	bool frameEnded(const Ogre::FrameEvent& evt) { return true; }
+private:
+	ScreenFader* _fader;
+};
+
 /*! \brief This class manages the entirety of Ogre3D(OOP Graphics Rendering Engine).
 
 Exposes the various Ogre classes(Root,Time,RenderWindow,etc.) to the application states, and performs Ogre-specific tasks
@@ -140,6 +152,7 @@ private:
 	//! Converts a hexadecimal number into an Ogre::ColourValue.
 	Ogre::ColourValue getColorFromHex(int hexColor, float alpha = 1.0f);
 
+	//holds animations to be updated
 	std::vector<Ogre::AnimationState*> _animations;
 
 	//Ogre pointers

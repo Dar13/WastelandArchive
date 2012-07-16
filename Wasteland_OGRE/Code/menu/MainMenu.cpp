@@ -115,6 +115,9 @@ void MainMenu::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 	Sound->addMusicToPlaylist(sound);
 
 	_fader = new ScreenFader("Overlays/FadeInOut","Overlays/FadeMaterial",&_faderCallback);
+	_faderUpdater.setFader(_fader);
+
+	Graphics->getRoot()->addFrameListener(&_faderUpdater);
 
 	return;
 }
@@ -130,12 +133,11 @@ int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,
 	Sound->startMusic();
 	//fade-in to menu
 	_faderCallback.setupMusicFade(Sound);
-	_fader->startFadeIn(5.0);
-	while(!_faderCallback.isFadeFinished())
-	{
-		Sound->Update(Input->getConfiguration());
-	}
+	_fader->startFadeIn(10.0);
+	Gui->setCurrentGUISheet("none");
 	
+	bool fadingIn = true;
+	bool fadingOut = false;
 	bool inOptions = false;
 	while(!_stateShutdown)
 	{
@@ -168,7 +170,21 @@ int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,
 		
 		Sound->Update(Input->getConfiguration());
 
-		Gui->Update(_deltaTime);
+		fadingIn = !_faderCallback.isFadeFinished();
+
+		if(fadingIn || fadingOut)
+		{
+			Gui->setCurrentGUISheet("none");
+		}
+		else
+		{
+			if(Gui->isCurrentGUISheetNull())
+			{
+				Gui->setCurrentGUISheet("main_Root");
+			}
+			Gui->Update(_deltaTime);
+		}
+
 		GameManager::UpdateManagers(Graphics,NULL,_deltaTime);
 
 		if(_goto_Options && !inOptions)
@@ -194,16 +210,30 @@ int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,
 				_cityNode->setVisible(true,true);
 			}
 		}
+
+		if(_stateShutdown && !fadingOut)
+		{
+			fadingOut = true;
+			_faderCallback.setupMusicFade(Sound);
+			_fader->startFadeOut(10.0);
+			Gui->setCurrentGUISheet("none");
+			_stateShutdown = false;
+		}
+
+		if(fadingOut)
+		{
+			if(_faderCallback.isFadeFinished())
+			{
+				_stateShutdown = true;
+			}
+		}
+
 	}
 	//trying to get the screen to clear out.
-	GameManager::UpdateManagers(Graphics,NULL,_deltaTime);
+	//GameManager::UpdateManagers(Graphics,NULL,_deltaTime);
 
 	_faderCallback.setupMusicFade(Sound);
-	_fader->startFadeOut(5.0);
-	while(!_faderCallback.isFadeFinished())
-	{
-		Sound->Update(Input->getConfiguration());
-	}
+	_fader->startFadeOut(10.0);
 
 	return _returnValue;
 }
@@ -243,6 +273,7 @@ void MainMenu::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIManager
 	_opt_guiSheetChildren.clear();
 
 	delete _fader;
+	Graphics->getRoot()->removeFrameListener(&_faderUpdater);
 
 	return;
 }
@@ -533,12 +564,15 @@ void MainMenu_FaderCallback::fadeOutCallback()
 
 void MainMenu_FaderCallback::setupMusicFade(SoundManager* soundMgr)
 {
+	_finished = false;
 	_soundManager = soundMgr;
 	_soundManager->setMusicFade(true);
 }
 
 void MainMenu_FaderCallback::updateFade(double progress)
 {
+	_finished = false;
 	float vol = _soundManager->getDefaultMusicVolume();
-	_soundManager->setMusicFadeVolume(vol * static_cast<float>(progress));
+	_soundManager->setMusicFadeVolume(vol * static_cast<float>(1.0 / progress));
+	std::cout << vol * progress << std::endl;
 }

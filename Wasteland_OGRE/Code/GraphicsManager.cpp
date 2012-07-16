@@ -560,6 +560,7 @@ void ScreenFader::fade(double timeSinceLastFrame)
 										Ogre::LBS_TEXTURE,
 										static_cast<Ogre::Real>(_alpha));
 
+		/*
 		int timeMult = (_fadeOperation == FADE_IN) ? (-1) : 1;
 		_currentDuration += (timeMult * timeSinceLastFrame);
 
@@ -592,5 +593,46 @@ void ScreenFader::fade(double timeSinceLastFrame)
 				_callback->updateFade(_currentDuration / _totalDuration);
 			}
 		}
+		*/
+		// If fading in, decrease the _alpha until it reaches 0.0
+		if( _fadeOperation == FADE_IN )
+		{
+			_currentDuration -= timeSinceLastFrame;
+			_alpha = _currentDuration / _totalDuration;
+			if( _alpha < 0.0 )
+			{
+				_overlay->hide();
+				_fadeOperation = FADE_NONE;
+				if( _callback )
+					_callback->fadeInCallback();
+			}
+			else
+			{
+				if(_callback)
+				{
+					_callback->updateFade(_currentDuration / _totalDuration);
+				}
+			}
+		}
+		// If fading out, increase the _alpha until it reaches 1.0
+		else if( _fadeOperation == FADE_OUT )
+		{
+			_currentDuration += timeSinceLastFrame;
+			_alpha = _currentDuration / _totalDuration;
+			if( _alpha > 1.0 )
+			{
+				_fadeOperation = FADE_NONE;
+				if( _callback )
+					_callback->fadeOutCallback();
+			}
+			else
+			{
+				if(_callback)
+				{
+					_callback->updateFade(_currentDuration / _totalDuration);
+				}
+			}
+         }
+		 
 	}
 }

@@ -71,6 +71,7 @@ private:
 	//Adding a screen fader
 	ScreenFader* _fader;
 	MainMenu_FaderCallback _faderCallback;
+	ScreenFaderUpdater _faderUpdater;
 
 	//FMOD stuff
 	std::vector<sSound> _sounds;
