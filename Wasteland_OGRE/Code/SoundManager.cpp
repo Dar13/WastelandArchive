@@ -54,8 +54,13 @@ bool SoundManager::Update(configuration_t* currentConfiguration)
 	//update the music stuff.
 	unsigned int position;
 	unsigned int length;
+
+	if(!_musicFade)
+	{
+		_musicChannel->setVolume( _mscVolume );
+	}
+
 	_musicChannel->getPosition(&position,FMOD_TIMEUNIT_MS);
-	_musicChannel->setVolume( _mscVolume );
 	_musicPlayList.front()->getLength(&length,FMOD_TIMEUNIT_MS);
 	if((length - position) <= 100)
 	{

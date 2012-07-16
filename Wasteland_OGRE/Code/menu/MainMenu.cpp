@@ -20,6 +20,7 @@ MainMenu::MainMenu()
 	_cityNode = nullptr;
 	_lightNode = nullptr;
 	_testLight = nullptr;
+	_fader = nullptr;
 }
 
 void MainMenu::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
@@ -113,6 +114,8 @@ void MainMenu::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 	Sound->createSound(sound,"resource\\music\\unpromised.mp3");
 	Sound->addMusicToPlaylist(sound);
 
+	_fader = new ScreenFader("Overlays/FadeInOut","Overlays/FadeMaterial",&_faderCallback);
+
 	return;
 }
 
@@ -125,6 +128,13 @@ int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,
 
 	//no need for separate channels right now. SoundManager takes care of music for me.
 	Sound->startMusic();
+	//fade-in to menu
+	_faderCallback.setupMusicFade(Sound);
+	_fader->startFadeIn(5.0);
+	while(!_faderCallback.isFadeFinished())
+	{
+		Sound->Update(Input->getConfiguration());
+	}
 	
 	bool inOptions = false;
 	while(!_stateShutdown)
@@ -188,6 +198,13 @@ int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,
 	//trying to get the screen to clear out.
 	GameManager::UpdateManagers(Graphics,NULL,_deltaTime);
 
+	_faderCallback.setupMusicFade(Sound);
+	_fader->startFadeOut(5.0);
+	while(!_faderCallback.isFadeFinished())
+	{
+		Sound->Update(Input->getConfiguration());
+	}
+
 	return _returnValue;
 }
 
@@ -224,6 +241,8 @@ void MainMenu::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIManager
 
 	_guiSheetChildren.clear();
 	_opt_guiSheetChildren.clear();
+
+	delete _fader;
 
 	return;
 }
@@ -496,4 +515,30 @@ bool MainMenu::_valueUpdate_sliders(const CEGUI::EventArgs& arg)
 	}
 
 	return true;
+}
+
+//-------------------------------------------------------------------------------
+
+void MainMenu_FaderCallback::fadeInCallback()
+{
+	_finished = true;
+	_soundManager->setMusicFade(false);
+}
+
+void MainMenu_FaderCallback::fadeOutCallback()
+{
+	_finished = true;
+	_soundManager->setMusicFade(false);
+}
+
+void MainMenu_FaderCallback::setupMusicFade(SoundManager* soundMgr)
+{
+	_soundManager = soundMgr;
+	_soundManager->setMusicFade(true);
+}
+
+void MainMenu_FaderCallback::updateFade(double progress)
+{
+	float vol = _soundManager->getDefaultMusicVolume();
+	_soundManager->setMusicFadeVolume(vol * static_cast<float>(progress));
 }

@@ -484,3 +484,113 @@ bool GraphicsManager::isPointInTriangle2D(const Ogre::Vector3& pointA,const Ogre
 
 	return (r <= 1 && t<=1 && (r+t) <= 1);
 }
+
+//--------------------------------------------------------------------------------------
+//http://www.ogre3d.org/tikiwiki/FadeEffectOverlay
+ScreenFader::ScreenFader(const char* overlayName,const char* materialName, ScreenFaderCallback* callback)
+{
+	try
+	{
+		_fadeOperation = FADE_NONE;
+		_alpha = 0.0;
+		_callback = callback;
+
+		Ogre::ResourcePtr resPtr = Ogre::MaterialManager::getSingleton().getByName(materialName);
+		Ogre::Material* mat = dynamic_cast<Ogre::Material*>(resPtr.getPointer());
+
+		_textureUnit = mat->getTechnique(0)->getPass(0)->getTextureUnitState(0);
+
+		_overlay = Ogre::OverlayManager::getSingleton().getByName(overlayName);
+		_overlay->hide();
+	}
+	catch(Ogre::Exception& e)
+	{
+		std::cout << "Fader Exception(Ogre) : " << e.what() << std::endl;
+	}
+	catch(std::exception& e)
+	{
+		std::cout << "Fader Exception(Unknown) : " << e.what() << std::endl;
+	}
+}
+
+ScreenFader::~ScreenFader() {}
+
+void ScreenFader::startFadeIn(double duration)
+{
+	if(duration < 0)
+	{
+		duration = -duration;
+	}
+	if(duration < 0.00001)
+	{
+		duration = 1.0;
+	}
+
+	_alpha = 1.0;
+	_totalDuration = duration;
+	_currentDuration = duration;
+	_fadeOperation = FADE_IN;
+	_overlay->show();
+}
+
+void ScreenFader::startFadeOut(double duration)
+{
+	if(duration < 0)
+	{
+		duration = -duration;
+	}
+	if(duration < 0.00001)
+	{
+		duration = 1.0;
+	}
+
+	_alpha = 0.0;
+	_totalDuration = duration;
+	_currentDuration = 0.0;
+	_fadeOperation = FADE_OUT;
+	_overlay->show();
+}
+
+void ScreenFader::fade(double timeSinceLastFrame)
+{
+	if(_fadeOperation != FADE_NONE && _textureUnit)
+	{
+		_textureUnit->setAlphaOperation(Ogre::LBX_MODULATE,
+										Ogre::LBS_MANUAL,
+										Ogre::LBS_TEXTURE,
+										static_cast<Ogre::Real>(_alpha));
+
+		int timeMult = (_fadeOperation == FADE_IN) ? (-1) : 1;
+		_currentDuration += (timeMult * timeSinceLastFrame);
+
+		_alpha = _currentDuration / _totalDuration;
+		if(_alpha < 0.0 && timeMult < 0)
+		{
+			//FADE_IN
+			_overlay->hide();
+			_fadeOperation = FADE_NONE;
+			if(_callback)
+			{
+				_callback->fadeInCallback();
+			}
+		}
+		else if(_alpha > 1.0f && timeMult > 0)
+		{
+			//FADE_OUT
+			_overlay->hide();
+			_fadeOperation = FADE_NONE;
+			if(_callback)
+			{
+				_callback->fadeOutCallback();
+			}
+		}
+		else
+		{
+			//fade still going on
+			if(_callback)
+			{
+				_callback->updateFade(_currentDuration / _totalDuration);
+			}
+		}
+	}
+}

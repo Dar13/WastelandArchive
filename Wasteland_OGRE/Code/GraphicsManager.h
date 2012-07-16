@@ -11,6 +11,42 @@ struct OgreTransform
 	Ogre::Vector3 direction;
 };
 
+//Use this to implement callback from screen fader.
+//Is called when the fade is done.
+class ScreenFaderCallback
+{
+public:
+	virtual void fadeInCallback() {}
+	virtual void fadeOutCallback() {}
+
+	virtual void updateFade(double progress) {}
+};
+
+class ScreenFader
+{
+public:
+	ScreenFader(const char* overlayName,const char* materialName,ScreenFaderCallback* callback = nullptr);
+	~ScreenFader();
+
+	void startFadeIn(double duration = 1.0f);
+	void startFadeOut(double duration = 1.0f);
+	void fade(double timeSinceLastFrame);
+
+protected:
+	double _alpha;
+	double _currentDuration;
+	double _totalDuration;
+	ScreenFaderCallback* _callback;
+	Ogre::TextureUnitState* _textureUnit;
+	Ogre::Overlay* _overlay;
+
+	enum _fadeOperation {
+		FADE_NONE,
+		FADE_IN,
+		FADE_OUT
+	} _fadeOperation;
+};
+
 /*! \brief This class manages the entirety of Ogre3D(OOP Graphics Rendering Engine).
 
 Exposes the various Ogre classes(Root,Time,RenderWindow,etc.) to the application states, and performs Ogre-specific tasks

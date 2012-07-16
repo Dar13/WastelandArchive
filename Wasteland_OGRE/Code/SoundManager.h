@@ -55,6 +55,9 @@ public:
 	void startMusic();
 	void addMusicToPlaylist(const sSound& sound);
 	void stopMusic(bool clearAllMusic = false);
+	void setMusicFade(bool fade = false) { _musicFade = fade; }
+	void setMusicFadeVolume(float volume) { if(_musicFade) { _musicFadeVolume = volume; } }
+	float getDefaultMusicVolume() { return _mscVolume; }
 
 private:
 	//void _fadeTransition();
@@ -70,6 +73,9 @@ private:
 	float _sfxVolume;
 	float _mscVolume;
 	float _charVolume;
+
+	bool _musicFade;
+	float _musicFadeVolume;
 };
 
 #endif

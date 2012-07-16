@@ -16,6 +16,23 @@ protected:
 	CEGUI::Window* _guiSheet;
 };
 
+class MainMenu_FaderCallback : public ScreenFaderCallback
+{
+public:
+	void fadeInCallback();
+	void fadeOutCallback();
+
+	void updateFade(double progress);
+
+	bool isFadeFinished() { return _finished; }
+
+	void setupMusicFade(SoundManager* soundMgr);
+
+private:
+	bool _finished;
+	SoundManager* _soundManager;
+};
+
 class MainMenu : public Menu
 {
 public:
@@ -50,6 +67,10 @@ private:
 	Ogre::SceneNode* _lightNode;
 	//! test light
 	Ogre::SceneNode* _testLight;
+	
+	//Adding a screen fader
+	ScreenFader* _fader;
+	MainMenu_FaderCallback _faderCallback;
 
 	//FMOD stuff
 	std::vector<sSound> _sounds;
