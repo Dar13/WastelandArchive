@@ -230,6 +230,8 @@ public:
 
 	//! Equips an equippable object. (This will be overloaded eventually)
 	void equipObject(const EquippableObject& obj);
+
+	EquippableObject& getEquippedObject() { return _equippables[_curEquippable]; }
 	
 	//! Returns basic player data including health and ammo data.
 	sPlayerData getPlayerData();

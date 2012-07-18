@@ -84,6 +84,8 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	EquippableObject equipObj = GameManager::createEquippable(_scene,"resource\\xml\\weapon_m9se.xml",Graphics,Sound,true);
 	_player->addEquippableObject(equipObj);
 	_player->Setup("TEST",Graphics,_controller->getNode());
+	equipObj.node->scale(.5,.5,.5);
+	std::cout << "Node scaled" << std::endl;
 	
 	std::cout << "Player setup" << std::endl;
 
@@ -97,6 +99,8 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 	Ogre::SceneNode* tmpNode = (Ogre::SceneNode*)_scene->getRootSceneNode()->getChild("nodetestSphere");
 
 	OgreTransform playerTransform;
+
+	bool polySwitch = false;
 	
 	float time;
 	//while the escape key isn't pressed and the state isn't told to shutdown.
@@ -109,16 +113,27 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 		//setting the old time
 		_oldTime = time;
 
-		//quick debugging tool
+		//quick visual debugging tool
 		if(Input->isMBPressed(OIS::MB_Right))
 		{
-			if(_camera->getPolygonMode() == Ogre::PM_WIREFRAME)
+			if(!polySwitch)
 			{
-				_camera->setPolygonMode(Ogre::PM_SOLID);
+				if(_camera->getPolygonMode() == Ogre::PM_WIREFRAME)
+				{
+					_camera->setPolygonMode(Ogre::PM_SOLID);
+				}
+				else
+				{
+					_camera->setPolygonMode(Ogre::PM_WIREFRAME);
+				}
+				polySwitch = true;
 			}
-			else
+		}
+		else
+		{
+			if(polySwitch)
 			{
-				_camera->setPolygonMode(Ogre::PM_WIREFRAME);
+				polySwitch = false;
 			}
 		}
 

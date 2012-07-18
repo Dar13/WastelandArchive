@@ -223,7 +223,7 @@ bool cGunData::frameStarted(const Ogre::FrameEvent& evt)
 		}
 	}
 
-	std::cout << _animBlender.getSource()->getAnimationName() << std::endl;
+	//std::cout << _animBlender.getSource()->getAnimationName() << std::endl;
 
 	//nothing else is going on, go to idle
 	if(!_reloading && (!_firing || _firingOverride) && !_moving)
@@ -360,6 +360,14 @@ void cGunData::setSoundFrames(weapon_t* Weapon,SoundManager* Sound)
 
 void cGunData::setAnimationFrames(Ogre::Entity* entity)
 {
+	if(entity->getName() == "entM9SE")
+	{
+		if(entity->getMesh()->getSkeleton()->getBone("EAI2008_ROOT"))
+		{
+			entity->getMesh()->getSkeleton()->getBone("EAI2008_ROOT")->setScale(.5f,.5f,.5f);
+			std::cout << "Bone scaled" << std::endl;
+		}
+	}
 	_animBlender.setEntity(entity);
 	_animBlender.init("idle",true);
 	std::cout << "AnimationFrames set for " << entity->getName() << std::endl;

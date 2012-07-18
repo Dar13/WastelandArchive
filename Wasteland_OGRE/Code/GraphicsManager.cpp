@@ -513,7 +513,10 @@ ScreenFader::ScreenFader(const char* overlayName,const char* materialName, Scree
 	}
 }
 
-ScreenFader::~ScreenFader() {}
+ScreenFader::~ScreenFader() 
+{
+	Ogre::OverlayManager::getSingleton().destroy(_overlay);
+}
 
 void ScreenFader::startFadeIn(double duration)
 {
@@ -560,40 +563,6 @@ void ScreenFader::fade(double timeSinceLastFrame)
 										Ogre::LBS_TEXTURE,
 										static_cast<Ogre::Real>(_alpha));
 
-		/*
-		int timeMult = (_fadeOperation == FADE_IN) ? (-1) : 1;
-		_currentDuration += (timeMult * timeSinceLastFrame);
-
-		_alpha = _currentDuration / _totalDuration;
-		if(_alpha < 0.0 && timeMult < 0)
-		{
-			//FADE_IN
-			_overlay->hide();
-			_fadeOperation = FADE_NONE;
-			if(_callback)
-			{
-				_callback->fadeInCallback();
-			}
-		}
-		else if(_alpha > 1.0f && timeMult > 0)
-		{
-			//FADE_OUT
-			_overlay->hide();
-			_fadeOperation = FADE_NONE;
-			if(_callback)
-			{
-				_callback->fadeOutCallback();
-			}
-		}
-		else
-		{
-			//fade still going on
-			if(_callback)
-			{
-				_callback->updateFade(_currentDuration / _totalDuration);
-			}
-		}
-		*/
 		// If fading in, decrease the _alpha until it reaches 0.0
 		if( _fadeOperation == FADE_IN )
 		{
@@ -621,6 +590,7 @@ void ScreenFader::fade(double timeSinceLastFrame)
 			_alpha = _currentDuration / _totalDuration;
 			if( _alpha > 1.0 )
 			{
+				_overlay->hide();
 				_fadeOperation = FADE_NONE;
 				if( _callback )
 					_callback->fadeOutCallback();
