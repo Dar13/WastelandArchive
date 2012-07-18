@@ -84,8 +84,8 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	EquippableObject equipObj = GameManager::createEquippable(_scene,"resource\\xml\\weapon_m9se.xml",Graphics,Sound,true);
 	_player->addEquippableObject(equipObj);
 	_player->Setup("TEST",Graphics,_controller->getNode());
-	equipObj.node->scale(.5,.5,.5);
-	std::cout << "Node scaled" << std::endl;
+	//equipObj.node->scale(Ogre::Vector3(CONV_EAIWEAP_TO_METER));
+	//std::cout << "Node scaled" << std::endl;
 	
 	std::cout << "Player setup" << std::endl;
 

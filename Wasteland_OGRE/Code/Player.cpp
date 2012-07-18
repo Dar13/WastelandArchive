@@ -364,7 +364,7 @@ void cGunData::setAnimationFrames(Ogre::Entity* entity)
 	{
 		if(entity->getMesh()->getSkeleton()->getBone("EAI2008_ROOT"))
 		{
-			entity->getMesh()->getSkeleton()->getBone("EAI2008_ROOT")->setScale(.5f,.5f,.5f);
+			//entity->getMesh()->getSkeleton()->getBone("EAI2008_ROOT")->setScale(.5f,.5f,.5f);
 			std::cout << "Bone scaled" << std::endl;
 		}
 	}
@@ -493,15 +493,20 @@ void Player::placeEWS(EWSManager* ews,PhysicsManager* physics,const OgreTransfor
 
 void Player::equipObject(const EquippableObject& obj)
 {
-	obj.node->getParentSceneNode()->removeChild(obj.node);
-	_equipNode->addChild(obj.node);
-	obj.node->setPosition(1.0f,.25f,-.5f);
+	if(obj.node->getParentSceneNode() != _equipNode)
+	{
+		obj.node->getParentSceneNode()->removeChild(obj.node);
+		_equipNode->addChild(obj.node);
+	}
+	obj.node->setPosition(0.0f,0.0f,-.5f);
+	std::cout << obj.node->getPosition() << std::endl;
 	std::cout << "Weapon equipped." << std::endl;
 }
 
 void Player::addEquippableObject(const EquippableObject& object)
 {
 	_equippables.push_back(object);
+	object.node->scale(Ogre::Vector3(CONV_EAIWEAP_TO_METER));
 	_curEquippable = 0; //there's only one...
 	std::cout << "Weapon added to equippables." << std::endl;
 }
