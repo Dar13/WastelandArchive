@@ -14,12 +14,13 @@ namespace LevelData
 		LIGHT,
 		TRIGGERZONE,
 		DOOR,
+		WAYPOINT
 	};
 	//Base entity class, allows some pretty cool things further on
 	class BaseEntity
 	{
 	public:
-		BaseEntity(bool active,int type) { _activated = active; _type = type;}
+		BaseEntity(bool active,int type) : _activated(active),_type(type) {}
 
 		void setType(int entType);
 		int getType();
@@ -220,6 +221,55 @@ namespace LevelData
 		OgreBulletPair _door;
 	};
 
+	//WAYPOINT CLASSES/ENUMS/STRUCTS/ETC
+	class Waypoint : public BaseEntity
+	{
+	public:
+		Waypoint() : BaseEntity(false,WAYPOINT),_position(Ogre::Vector3::ZERO) {}
+
+		~Waypoint() {}
+
+		Ogre::Vector3& getPosition() { return _position; }
+		void setPosition(const Ogre::Vector3& position) { _position = position; }
+
+		void setOrder(int order) { _order = order; }
+		int getOrder() { return _order; }
+
+	protected:
+		Ogre::Vector3 _position;
+		int _order;
+	};
+
+	class WaypointSet
+	{
+	public:
+		WaypointSet() : _currentWaypoint(0),_sorted(false),_finalized(false),_finished(false) {}
+		WaypointSet(const std::vector<Waypoint>& waypoints,bool sortByOrder = true);
+
+		float getProgress() 
+		{ 
+			return (static_cast<float>(_currentWaypoint) / static_cast<float>(_waypoints[_waypoints.size() - 1].getOrder()));
+		}
+
+		bool isFinished() { return _finished; }
+
+		int getCurrentWaypoint() { return _currentWaypoint; }
+
+		void addWaypoint(const Waypoint& waypoint,bool sort = false);
+		void finalizeSet();
+
+		void updateProgress(const Ogre::Vector3& position);
+
+		Ogre::Vector3& getTargetPosition() { return _waypoints[_currentWaypoint].getPosition(); }
+
+	private:
+		bool _finalized;
+		bool _finished;
+		bool _sorted;
+		std::vector<Waypoint> _waypoints;
+		int _currentWaypoint;
+	};
+
 	//Actual LevelParser.
 	//Used to parse level data contained in file.
 	class LevelParser
@@ -232,6 +282,8 @@ namespace LevelData
 		void parseLights(std::vector<std::unique_ptr<LightData>>* lights);
 
 		void parseDoors(std::vector<std::unique_ptr<DoorData>>* doors);
+
+		void parseWaypoints(std::vector<Waypoint>* waypoints);
 	private:
 		std::string _file;
 	};

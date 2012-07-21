@@ -17,15 +17,29 @@ public:
 	ArenaLocker();
 
 	//! State-specific setup.
-	void Setup();
+	void Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound);
 	//! Runs the state code.
-	int Run();
+	int Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound);
 	//! Cleans up the state, releases all memory/assets allocated to it.
-	void Shutdown();
+	void Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound);
 
 private:
 	//tells the state to shutdown or not.
 	bool _stateShutdown;
+
+	//Ogre camera
+	Ogre::Camera* _camera;
+
+	Ogre::Viewport* _view;
+
+	Ogre::SceneManager* _scene;
+	Ogre::SceneNode* _rootNode;
+
+	std::unique_ptr<PhysicsManager> _physics;
+
+	std::vector<sSound> _sounds;
+	std::vector<FMOD::Channel*> _channels;
+
 };
 
 #endif

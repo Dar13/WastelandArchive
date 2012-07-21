@@ -678,6 +678,70 @@ namespace LevelData
 	}
 	float DoorData::getMaxAngle() { return _maxAngle;}
 
+
+	//======================================
+	//Waypoint class(es)
+	//======================================
+	WaypointSet::WaypointSet(const std::vector<Waypoint>& waypoints,bool sortByOrder)
+		: _currentWaypoint(0),_sorted(false),_finished(false),_finalized(false)
+	{
+		_waypoints = waypoints;
+		if(sortByOrder)
+		{
+			std::sort(_waypoints.begin(),
+					  _waypoints.end(),
+					  [&] (Waypoint& w1,Waypoint& w2) { return w1.getOrder() < w2.getOrder(); });
+			_sorted = true;
+		}
+	}
+
+	void WaypointSet::addWaypoint(const Waypoint& waypoint,bool sort)
+	{
+		_waypoints.push_back(waypoint);
+		if(sort)
+		{
+			std::sort(_waypoints.begin(),
+					  _waypoints.end(),
+					  [&] (Waypoint& w1,Waypoint& w2) { return w1.getOrder() < w2.getOrder() } );
+		}
+
+		_sorted = sort;
+
+		return;
+	}
+
+	void WaypointSet::finalizeSet()
+	{
+		//sort it if it isn't already.
+		if(!_sorted)
+		{
+			std::sort(_waypoints.begin(),
+					  _waypoints.end(),
+					  [&] (Waypoint& w1,Waypoint& w2) { return w1.getOrder() < w2.getOrder(); });
+			_sorted = true;
+		}
+
+		_finalized = true;
+	}
+
+	void WaypointSet::updateProgress(const Ogre::Vector3& cameraPosition)
+	{
+		Ogre::Vector3 t1 = cameraPosition;
+		Ogre::Vector3 t2 = _waypoints[_currentWaypoint+1].getPosition();
+		Ogre::Real distToWayPtSQ = t1.squaredDistance(t2);
+		if(Ogre::Math::RealEqual(distToWayPtSQ,2.0f))
+		{
+			if(_currentWaypoint + 1 < _waypoints.size() - 1)
+			{
+				_currentWaypoint++;
+			}
+			else
+			{
+				_finished = true;
+			}
+		}
+	}
+
 	//======================================
 	//Level Parser. Takes a file and determines level data based on it.
 	//======================================
@@ -714,7 +778,7 @@ namespace LevelData
 
 			if(data == "")
 			{
-				break;
+				continue;
 			}
 
 			if(!startObject && !finishedObject)
@@ -831,7 +895,7 @@ namespace LevelData
 		{
 			std::getline(dataFile,data);
 			
-			if(data == "") { break; }
+			if(data == "") { continue; }
 
 			if(!startObject && !finishedObject)
 			{
@@ -970,6 +1034,11 @@ namespace LevelData
 		{
 			std::getline(dataFile,data);
 
+			if(data == "")
+			{
+				continue;
+			}
+
 			if(!startObject)
 			{
 				//get the type of the object first(if applicable)
@@ -992,41 +1061,12 @@ namespace LevelData
 					values = data.substr(data.find(':')+1,data.find(';') - (data.find(':')+1));
 					values = Ogre::StringUtil::replaceAll(values,","," ");
 					position = Ogre::StringConverter::parseVector3(values);
-					/*
-					float x,y,z;
-					int first = values.find(',');
-					int second = values.find(',',first + 1);
-					substr = values.substr(0,values.find_first_of(','));
-					x = boost::lexical_cast<float,std::string>(substr);
-					substr = values.substr(first+1,second - (first + 1));
-					y = boost::lexical_cast<float,std::string>(substr);
-					substr = values.substr(second+1,values.find(';') - (second+1));
-					z = boost::lexical_cast<float ,std::string>(substr);
-					position.x = static_cast<Ogre::Real>(x);
-					position.y = static_cast<Ogre::Real>(y);
-					position.z = static_cast<Ogre::Real>(z);
-					*/
 				}
 				if(dataType == "Direction")
 				{
 					values = data.substr(data.find(':')+1,data.find(';') - (data.find(':')+1));
 					values = Ogre::StringUtil::replaceAll(values,","," ");
 					direction = Ogre::StringConverter::parseVector3(values);
-					/*
-					float x,y,z;
-					int first = values.find(',');
-					int second = values.find(',',first + 1);
-					substr = values.substr(0,values.find_first_of(','));
-					x = boost::lexical_cast<float,std::string>(substr);
-					substr = values.substr(first+1,second - (first + 1));
-					y = boost::lexical_cast<float,std::string>(substr);
-					substr = values.substr(second+1,values.find(';') - (second+1));
-					z = boost::lexical_cast<float,std::string>(substr);
-					//turn the three floats into direction vector
-					direction.x = x;
-					direction.y = y;
-					direction.z = z;
-					*/
 				}
 				if(dataType == "MinAngle")
 				{
@@ -1057,20 +1097,6 @@ namespace LevelData
 					values = data.substr(data.find(':')+1,data.find(';') - (data.find(':')+1));
 					values = Ogre::StringUtil::replaceAll(values,","," ");
 					axis = Ogre::StringConverter::parseVector3(values);
-					/*
-					float x,y,z;
-					int first = values.find(',');
-					int second = values.find(',',first + 1);
-					substr = values.substr(0,values.find_first_of(','));
-					x = boost::lexical_cast<float,std::string>(substr);
-					substr = values.substr(first+1,second - (first + 1));
-					y = boost::lexical_cast<float,std::string>(substr);
-					substr = values.substr(second+1,values.find(';') - (second+1));
-					z = boost::lexical_cast<float,std::string>(substr);
-					axis.x = x;
-					axis.y = y;
-					axis.z = z;
-					*/
 				}
 
 				if(dataType == "DoorConnectionPoint")
@@ -1078,20 +1104,6 @@ namespace LevelData
 					values = data.substr(data.find(':')+1,data.find(';') - (data.find(':')+1));
 					values = Ogre::StringUtil::replaceAll(values,","," ");
 					connectionPoint = Ogre::StringConverter::parseVector3(values);
-					/*
-					float x,y,z;
-					int first = values.find(',');
-					int second = values.find(',',first + 1);
-					substr = values.substr(0,values.find_first_of(','));
-					x = boost::lexical_cast<float,std::string>(substr);
-					substr = values.substr(first+1,second - (first + 1));
-					y = boost::lexical_cast<float,std::string>(substr);
-					substr = values.substr(second+1,values.find(';') - (second+1));
-					z = boost::lexical_cast<float,std::string>(substr);
-					connectionPoint.x = x;
-					connectionPoint.y = y;
-					connectionPoint.z = z;
-					*/
 				}
 
 				if(data == "};")
@@ -1115,6 +1127,73 @@ namespace LevelData
 				dData->setName(name);
 				dData->setScriptName(scriptName);
 				doors->push_back(std::move(dData));
+				finishedObject = false;
+			}
+		}
+	} //end of LevelParser::parseDoors()
+
+	void LevelParser::parseWaypoints(std::vector<Waypoint>* waypoints)
+	{
+		std::ifstream dataFile(_file);
+		std::string data,type,dataType,values;
+
+		Ogre::Vector3 position;
+		int order,wayType;
+
+		bool startObject = false;
+		bool finishedObject = false;
+
+		boost::char_separator<char> fieldSeparator(":;");
+		boost::char_separator<char> dataSeparator(",");
+
+		while(!dataFile.eof() && dataFile.good() && dataFile.is_open())
+		{
+			std::getline(dataFile,data);
+
+			if(data == "")
+			{
+				continue;
+			}
+
+			if(!startObject)
+			{
+				TknItr_Str fieldS = getTknItrStart(data,fieldSeparator);
+				TknItr_Str fieldE = getTknItrEnd(data,fieldSeparator);
+				if(boost::next(fieldS) == fieldE && (*fieldS).find("Waypoint") != std::string::npos)
+				{
+					type = data.substr(0,data.find("_");
+					startObject = true;
+				}
+			}
+
+			if(startObject)
+			{
+				TknItr_Str fieldS = getTknItrStart(data,fieldSeparator);
+				TknItr_Str fieldE = getTknItrEnd(data,fieldSeparator);
+				if(*fieldS == "Position")
+				{
+					values = *boost::next(fieldS);
+					TknItr_Str dataS = getTknItrStart(values,dataSeparator);
+					TknItr_Str dataE = getTknItrEnd(values,dataSeparator);
+					getVector3FromTknItr(position,dataS,dataE);
+				}
+				if(*fieldS == "Order")
+				{
+					order = boost::lexical_cast<int,std::string>(*boost::next(fieldS));
+				}
+				if(*fieldS == "}")
+				{
+					finishedObject = true;
+					startObject = false;
+				}
+			}
+
+			if(finishedObject)
+			{
+				Waypoint way;
+				way.setPosition(position);
+				way.setOrder(order);
+				waypoints->push_back(way);
 				finishedObject = false;
 			}
 		}

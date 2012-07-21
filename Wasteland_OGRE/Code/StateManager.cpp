@@ -13,7 +13,7 @@ StateManager::StateManager()
 	_States[State::INTRO] = nullptr;
 	_States[State::MENU] = new MainMenu();
 	_States[State::GAME_ARENA] = new ArenaTutorial();
-	_States[State::GAME_LOCKER] = nullptr;
+	_States[State::GAME_LOCKER] = new ArenaLocker();
 	_States[State::GAME_LOBBY] = nullptr;
 	_States[State::GAME_OFFICE] = nullptr;
 	_States[State::GAME_ROOF] = nullptr;
