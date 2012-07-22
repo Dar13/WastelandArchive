@@ -45,10 +45,6 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 	std::cout << "Arena Locker - parser finished" << std::endl;
 
 	LevelData::WaypointSet waypointSet(waypoints,true);
-	//_cameraTrack = waypointSet.generateSpline();
-	_cameraTrack.setCamera(_camera);
-	_cameraTrack.setWaypoints(waypointSet);
-	_cameraTrack.generateCurve();
 	std::cout << "Arena Locker - camera track created" << std::endl;
 	
 }
@@ -64,22 +60,6 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 	light->setPosition(Ogre::Vector3(1.5,1.5,2.0));
 	Graphics->setLightRange(light,15);
 
-	Ogre::SceneNode* _testNode = _rootNode->createChildSceneNode("testNode",light->getPosition());
-	light->setPosition(Ogre::Vector3::ZERO);
-	//_testNode->attachObject(light);
-	Ogre::Entity* testEnt = _scene->createEntity("entBox","test/test_box.mesh","Models");
-	_testNode->attachObject(testEnt);
-
-	NodeTrack testTrack;
-	testTrack.setWaypoints(_cameraTrack.getWaypoints());
-	testTrack.generateCurve();
-	testTrack.setNode(_testNode);
-	testTrack.setAtStart();
-	testTrack.setTargetTimeLength(10000.0f);
-	testTrack.update(0.0f);
-
-	bool trackUpdate = false;
-
 	float time,delta,oldtime = Graphics->getTimer()->getMilliseconds();
 	while(!_stateShutdown)
 	{
@@ -89,23 +69,6 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 		time = static_cast<float>(Graphics->getTimer()->getMilliseconds());
 		delta = time - oldtime;
 		oldtime = time;
-
-		if(Input->isMBPressed(OIS::MB_Right))
-		{
-			if(!trackUpdate)
-			{
-				testTrack.update(50.0f);
-				trackUpdate = true;
-				std::cout << "testTrack updated" << std::endl;
-				std::cout << _testNode->getPosition() << std::endl;
-			}
-		}
-		else
-		{
-			trackUpdate = (trackUpdate) ? false : trackUpdate;
-		}
-
-		testTrack.update(delta);
 
 		if(!GameManager::UpdateManagers(Graphics,_physics.get(),delta))
 		{
