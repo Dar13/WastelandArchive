@@ -513,7 +513,7 @@ bool MainMenu::_options(const CEGUI::EventArgs& arg)
 bool MainMenu::_start(const CEGUI::EventArgs& arg)
 {
 	_stateShutdown = true;
-	_returnValue = GAME_ARENA;
+	_returnValue = GAME_LOCKER;
 
 	return true;
 }

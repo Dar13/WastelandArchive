@@ -27,8 +27,11 @@ private:
 	//tells the state to shutdown or not.
 	bool _stateShutdown;
 
+	std::vector<OgreBulletPair> _pairs;
+
 	//Ogre camera
 	Ogre::Camera* _camera;
+	Ogre::SimpleSpline _cameraTrack;
 
 	Ogre::Viewport* _view;
 

@@ -682,15 +682,13 @@ namespace LevelData
 	//======================================
 	//Waypoint class(es)
 	//======================================
-	WaypointSet::WaypointSet(const std::vector<Waypoint>& waypoints,bool sortByOrder)
+	WaypointSet::WaypointSet(std::vector<Waypoint> waypoints,bool sortByOrder)
 		: _currentWaypoint(0),_sorted(false),_finished(false),_finalized(false)
 	{
 		_waypoints = waypoints;
 		if(sortByOrder)
 		{
-			std::sort(_waypoints.begin(),
-					  _waypoints.end(),
-					  [&] (Waypoint& w1,Waypoint& w2) { return w1.getOrder() < w2.getOrder(); });
+			_sort();
 			_sorted = true;
 		}
 	}
@@ -700,9 +698,7 @@ namespace LevelData
 		_waypoints.push_back(waypoint);
 		if(sort)
 		{
-			std::sort(_waypoints.begin(),
-					  _waypoints.end(),
-					  [&] (Waypoint& w1,Waypoint& w2) { return w1.getOrder() < w2.getOrder() } );
+			_sort();
 		}
 
 		_sorted = sort;
@@ -715,9 +711,7 @@ namespace LevelData
 		//sort it if it isn't already.
 		if(!_sorted)
 		{
-			std::sort(_waypoints.begin(),
-					  _waypoints.end(),
-					  [&] (Waypoint& w1,Waypoint& w2) { return w1.getOrder() < w2.getOrder(); });
+			_sort();
 			_sorted = true;
 		}
 
@@ -731,7 +725,7 @@ namespace LevelData
 		Ogre::Real distToWayPtSQ = t1.squaredDistance(t2);
 		if(Ogre::Math::RealEqual(distToWayPtSQ,2.0f))
 		{
-			if(_currentWaypoint + 1 < _waypoints.size() - 1)
+			if(static_cast<unsigned int>(_currentWaypoint) + 1 < _waypoints.size() - 1)
 			{
 				_currentWaypoint++;
 			}
@@ -740,6 +734,35 @@ namespace LevelData
 				_finished = true;
 			}
 		}
+	}
+
+	Ogre::SimpleSpline WaypointSet::generateSpline()
+	{
+		Ogre::SimpleSpline spline;
+		if(_sorted && _finalized)
+		{
+			std::for_each(_waypoints.begin(),
+						  _waypoints.end(),
+						  [&] (Waypoint& w) { spline.addPoint(w.getPosition()); return; });
+		}
+		else
+		{
+			//it may not be finalized, but that doesn't mean I can't do it.
+			_sort(); 
+			_sorted = true;
+			std::for_each(_waypoints.begin(),
+						  _waypoints.end(),
+						  [&] (Waypoint& w) { spline.addPoint(w.getPosition()); return; });
+		}
+
+		return spline;
+	}
+
+	void WaypointSet::_sort()
+	{
+		std::sort(_waypoints.begin(),
+				  _waypoints.end(),
+				  [&] (Waypoint& w1,Waypoint& w2) { return w1.getOrder() < w2.getOrder(); });
 	}
 
 	//======================================
@@ -1138,7 +1161,7 @@ namespace LevelData
 		std::string data,type,dataType,values;
 
 		Ogre::Vector3 position;
-		int order,wayType;
+		int order;
 
 		bool startObject = false;
 		bool finishedObject = false;
@@ -1161,7 +1184,7 @@ namespace LevelData
 				TknItr_Str fieldE = getTknItrEnd(data,fieldSeparator);
 				if(boost::next(fieldS) == fieldE && (*fieldS).find("Waypoint") != std::string::npos)
 				{
-					type = data.substr(0,data.find("_");
+					type = data.substr(0,data.find("_"));
 					startObject = true;
 				}
 			}
@@ -1195,6 +1218,7 @@ namespace LevelData
 				way.setOrder(order);
 				waypoints->push_back(way);
 				finishedObject = false;
+				startObject = false;
 			}
 		}
 	}

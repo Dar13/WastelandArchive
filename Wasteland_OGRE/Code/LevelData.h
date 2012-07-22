@@ -244,7 +244,7 @@ namespace LevelData
 	{
 	public:
 		WaypointSet() : _currentWaypoint(0),_sorted(false),_finalized(false),_finished(false) {}
-		WaypointSet(const std::vector<Waypoint>& waypoints,bool sortByOrder = true);
+		WaypointSet(std::vector<Waypoint> waypoints,bool sortByOrder = true);
 
 		float getProgress() 
 		{ 
@@ -260,9 +260,12 @@ namespace LevelData
 
 		void updateProgress(const Ogre::Vector3& position);
 
-		Ogre::Vector3& getTargetPosition() { return _waypoints[_currentWaypoint].getPosition(); }
+		Ogre::Vector3 getTargetPosition() { return _waypoints[_currentWaypoint].getPosition(); }
+
+		Ogre::SimpleSpline generateSpline();
 
 	private:
+		void _sort();
 		bool _finalized;
 		bool _finished;
 		bool _sorted;
