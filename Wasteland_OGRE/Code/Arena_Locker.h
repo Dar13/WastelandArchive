@@ -4,6 +4,7 @@
 #define _ARENA_LOCKER_H_
 
 #include "State.h"
+#include "SplineTrack.h"
 
 /*! \brief **NOT FULLY IMPLEMENTED** Application state that is the Locker Room scene in Wasteland.
 
@@ -27,11 +28,13 @@ private:
 	//tells the state to shutdown or not.
 	bool _stateShutdown;
 
+	CameraTrack _cameraTrack;
+
 	std::vector<OgreBulletPair> _pairs;
 
 	//Ogre camera
 	Ogre::Camera* _camera;
-	Ogre::SimpleSpline _cameraTrack;
+	//Ogre::SimpleSpline _cameraTrack;
 
 	Ogre::Viewport* _view;
 

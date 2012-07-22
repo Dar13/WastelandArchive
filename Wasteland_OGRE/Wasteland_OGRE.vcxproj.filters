@@ -79,6 +79,9 @@
     <Filter Include="Include Files\Graphics\Animation">
       <UniqueIdentifier>{17da058d-0dc1-4d6b-b489-9980f1ae2cbf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include Files\Game\SplineTrack">
+      <UniqueIdentifier>{6d3033f5-7e53-43e7-b5da-712ee9ecad5d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\State.h">
@@ -177,6 +180,9 @@
     <ClInclude Include="Code\AnimationBlender.h">
       <Filter>Include Files\Graphics\Animation</Filter>
     </ClInclude>
+    <ClInclude Include="Code\SplineTrack.h">
+      <Filter>Include Files\Game\SplineTrack</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">
@@ -268,6 +274,9 @@
     </ClCompile>
     <ClCompile Include="Code\AnimationBlender.cpp">
       <Filter>Include Files\Graphics\Animation</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\SplineTrack.cpp">
+      <Filter>Include Files\Game\SplineTrack</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

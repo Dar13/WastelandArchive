@@ -718,9 +718,9 @@ namespace LevelData
 		_finalized = true;
 	}
 
-	void WaypointSet::updateProgress(const Ogre::Vector3& cameraPosition)
+	void WaypointSet::updateProgress(const Ogre::Vector3& position)
 	{
-		Ogre::Vector3 t1 = cameraPosition;
+		Ogre::Vector3 t1 = position;
 		Ogre::Vector3 t2 = _waypoints[_currentWaypoint+1].getPosition();
 		Ogre::Real distToWayPtSQ = t1.squaredDistance(t2);
 		if(Ogre::Math::RealEqual(distToWayPtSQ,2.0f))
