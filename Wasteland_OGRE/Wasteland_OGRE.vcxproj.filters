@@ -82,6 +82,12 @@
     <Filter Include="Include Files\Game\SplineTrack">
       <UniqueIdentifier>{6d3033f5-7e53-43e7-b5da-712ee9ecad5d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include Files\Recast">
+      <UniqueIdentifier>{03d88c97-63ea-4f2b-9b62-d461d0327be8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files\Recast\InputGeometry">
+      <UniqueIdentifier>{6483b7b1-02ed-4fac-a9f9-b4ccb1d74a6a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\State.h">
@@ -183,6 +189,12 @@
     <ClInclude Include="Code\SplineTrack.h">
       <Filter>Include Files\Game\SplineTrack</Filter>
     </ClInclude>
+    <ClInclude Include="Code\RecastInterface.h">
+      <Filter>Include Files\Recast</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\RecastInputGeometry.h">
+      <Filter>Include Files\Recast\InputGeometry</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">
@@ -277,6 +289,12 @@
     </ClCompile>
     <ClCompile Include="Code\SplineTrack.cpp">
       <Filter>Include Files\Game\SplineTrack</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\RecastInterface.cpp">
+      <Filter>Include Files\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\RecastInputGeometry.cpp">
+      <Filter>Include Files\Recast\InputGeometry</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

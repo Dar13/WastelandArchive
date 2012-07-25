@@ -47,3 +47,17 @@ std::string Utility::vector3_toStr(const btVector3& v)
 	c << v.x() << "," << v.y() << "," << v.z() << std::endl;
 	return c.str();
 }
+
+void Utility::vector3_toFloatPtr(const Ogre::Vector3 vector,float* result)
+{
+	result[0] = vector[0];
+	result[1] = vector[1];
+	result[2] = vector[2];
+}
+
+void Utility::floatPtr_toVector3(const float* vector,Ogre::Vector3& result)
+{
+	result.x = vector[0];
+	result.y = vector[1];
+	result.z = vector[2];
+}

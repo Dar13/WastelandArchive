@@ -106,6 +106,7 @@ public:
 	*/
 	Ogre::SceneNode* createSceneNode(Ogre::SceneManager* scene, object_t* objectInfo,Ogre::SceneNode* parent);
 	Ogre::SceneNode* createSceneNode(Ogre::SceneManager* scene, weapon_t* objectInfo,Ogre::SceneNode* parent = nullptr);
+
 	//! Retrieves all vertex and index data from a mesh.
 	//! Useful for generating complex Bullet rigid bodies.
 	/*!
@@ -118,14 +119,14 @@ public:
 		\param orient **IDK**
 		\param scale **IDK**
 	*/
-	void getMeshInformation(const Ogre::MeshPtr* const meshptr,
-							size_t &vertex_count,
-							Ogre::Vector3* &vertices,
-							size_t &index_count,
-							unsigned long* &indices,
-							const Ogre::Vector3 &position = Ogre::Vector3::ZERO,
-							const Ogre::Quaternion &orient = Ogre::Quaternion::IDENTITY,
-							const Ogre::Vector3 &scale = Ogre::Vector3::UNIT_SCALE);
+	static void getMeshInformation(const Ogre::MeshPtr* const meshptr,
+								   size_t &vertex_count,
+								   Ogre::Vector3* &vertices,
+								   size_t &index_count,
+								   unsigned long* &indices,
+								   const Ogre::Vector3 &position = Ogre::Vector3::ZERO,
+								   const Ogre::Quaternion &orient = Ogre::Quaternion::IDENTITY,
+								   const Ogre::Vector3 &scale = Ogre::Vector3::UNIT_SCALE);
 	
 	void addAnimationState(Ogre::AnimationState* anim);
 	void removeAnimationState(Ogre::AnimationState* anim);

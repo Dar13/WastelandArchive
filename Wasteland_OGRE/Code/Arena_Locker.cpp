@@ -3,6 +3,8 @@
 
 #include "LevelData.h"
 
+#include "RecastInputGeometry.h"
+
 ArenaLocker::ArenaLocker()
 {	
 	_camera = nullptr;
@@ -34,7 +36,6 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 	for(auto itr = objList->file().begin(); itr != objList->file().end(); ++itr)
 	{
 		_pairs.push_back(GameManager::createObject(_scene,(*itr),_physics.get(),Graphics));
-		std::cout << (*itr) << std::endl;
 	}
 	std::cout << "Arena Locker - models loaded" << std::endl;
 
@@ -46,6 +47,17 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 
 	LevelData::WaypointSet waypointSet(waypoints,true);
 	std::cout << "Arena Locker - camera track created" << std::endl;
+
+	Ogre::Entity* testEntity = _scene->createEntity("testSphere","test\\AST_01.mesh","Models");
+	_rootNode->attachObject(testEntity);
+	InputGeometry testGeom(testEntity);
+	if(!testGeom.isEmpty())
+	{
+		testGeom.writeToObj("RECAST_TEST.obj");
+	}
+
+	_rootNode->detachObject(testEntity);
+	_scene->destroyEntity(testEntity);
 	
 }
 

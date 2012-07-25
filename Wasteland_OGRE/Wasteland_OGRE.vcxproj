@@ -38,6 +38,8 @@
     <ClInclude Include="Code\InputManager.h" />
     <ClInclude Include="Code\Player.h" />
     <ClInclude Include="Code\precompiled\StdAfx.h" />
+    <ClInclude Include="Code\RecastInputGeometry.h" />
+    <ClInclude Include="Code\RecastInterface.h" />
     <ClInclude Include="Code\SoundManager.h" />
     <ClInclude Include="Code\SplineTrack.h" />
     <ClInclude Include="Code\State.h" />
@@ -53,6 +55,8 @@
     <ClCompile Include="Code\Arena_Tutorial.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="Code\RecastInputGeometry.cpp" />
+    <ClCompile Include="Code\RecastInterface.cpp" />
     <ClCompile Include="Code\SplineTrack.cpp" />
     <ClCompile Include="Code\LevelData.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
