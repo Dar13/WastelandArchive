@@ -339,76 +339,6 @@ class object_t: public ::xml_schema::type
   void
   shadows (const shadows_type& x);
 
-  // lightType
-  // 
-  typedef ::xml_schema::integer lightType_type;
-  typedef ::xsd::cxx::tree::traits< lightType_type, char > lightType_traits;
-
-  const lightType_type&
-  lightType () const;
-
-  lightType_type&
-  lightType ();
-
-  void
-  lightType (const lightType_type& x);
-
-  // lightRadius
-  // 
-  typedef ::xml_schema::integer lightRadius_type;
-  typedef ::xsd::cxx::tree::traits< lightRadius_type, char > lightRadius_traits;
-
-  const lightRadius_type&
-  lightRadius () const;
-
-  lightRadius_type&
-  lightRadius ();
-
-  void
-  lightRadius (const lightRadius_type& x);
-
-  // lightColorRed
-  // 
-  typedef ::xml_schema::integer lightColorRed_type;
-  typedef ::xsd::cxx::tree::traits< lightColorRed_type, char > lightColorRed_traits;
-
-  const lightColorRed_type&
-  lightColorRed () const;
-
-  lightColorRed_type&
-  lightColorRed ();
-
-  void
-  lightColorRed (const lightColorRed_type& x);
-
-  // lightColorGreen
-  // 
-  typedef ::xml_schema::integer lightColorGreen_type;
-  typedef ::xsd::cxx::tree::traits< lightColorGreen_type, char > lightColorGreen_traits;
-
-  const lightColorGreen_type&
-  lightColorGreen () const;
-
-  lightColorGreen_type&
-  lightColorGreen ();
-
-  void
-  lightColorGreen (const lightColorGreen_type& x);
-
-  // lightColorBlue
-  // 
-  typedef ::xml_schema::integer lightColorBlue_type;
-  typedef ::xsd::cxx::tree::traits< lightColorBlue_type, char > lightColorBlue_traits;
-
-  const lightColorBlue_type&
-  lightColorBlue () const;
-
-  lightColorBlue_type&
-  lightColorBlue ();
-
-  void
-  lightColorBlue (const lightColorBlue_type& x);
-
   // mass
   // 
   typedef ::xml_schema::float_ mass_type;
@@ -647,11 +577,6 @@ class object_t: public ::xml_schema::type
             const fileName_type&,
             const resGroup_type&,
             const shadows_type&,
-            const lightType_type&,
-            const lightRadius_type&,
-            const lightColorRed_type&,
-            const lightColorGreen_type&,
-            const lightColorBlue_type&,
             const mass_type&,
             const collisionShape_type&,
             const colBoxHeight_type&,
@@ -698,11 +623,6 @@ class object_t: public ::xml_schema::type
   ::xsd::cxx::tree::one< fileName_type > fileName_;
   ::xsd::cxx::tree::one< resGroup_type > resGroup_;
   ::xsd::cxx::tree::one< shadows_type > shadows_;
-  ::xsd::cxx::tree::one< lightType_type > lightType_;
-  ::xsd::cxx::tree::one< lightRadius_type > lightRadius_;
-  ::xsd::cxx::tree::one< lightColorRed_type > lightColorRed_;
-  ::xsd::cxx::tree::one< lightColorGreen_type > lightColorGreen_;
-  ::xsd::cxx::tree::one< lightColorBlue_type > lightColorBlue_;
   ::xsd::cxx::tree::one< mass_type > mass_;
   ::xsd::cxx::tree::one< collisionShape_type > collisionShape_;
   ::xsd::cxx::tree::one< colBoxHeight_type > colBoxHeight_;

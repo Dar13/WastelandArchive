@@ -182,96 +182,6 @@ shadows (const shadows_type& x)
   this->shadows_.set (x);
 }
 
-const object_t::lightType_type& object_t::
-lightType () const
-{
-  return this->lightType_.get ();
-}
-
-object_t::lightType_type& object_t::
-lightType ()
-{
-  return this->lightType_.get ();
-}
-
-void object_t::
-lightType (const lightType_type& x)
-{
-  this->lightType_.set (x);
-}
-
-const object_t::lightRadius_type& object_t::
-lightRadius () const
-{
-  return this->lightRadius_.get ();
-}
-
-object_t::lightRadius_type& object_t::
-lightRadius ()
-{
-  return this->lightRadius_.get ();
-}
-
-void object_t::
-lightRadius (const lightRadius_type& x)
-{
-  this->lightRadius_.set (x);
-}
-
-const object_t::lightColorRed_type& object_t::
-lightColorRed () const
-{
-  return this->lightColorRed_.get ();
-}
-
-object_t::lightColorRed_type& object_t::
-lightColorRed ()
-{
-  return this->lightColorRed_.get ();
-}
-
-void object_t::
-lightColorRed (const lightColorRed_type& x)
-{
-  this->lightColorRed_.set (x);
-}
-
-const object_t::lightColorGreen_type& object_t::
-lightColorGreen () const
-{
-  return this->lightColorGreen_.get ();
-}
-
-object_t::lightColorGreen_type& object_t::
-lightColorGreen ()
-{
-  return this->lightColorGreen_.get ();
-}
-
-void object_t::
-lightColorGreen (const lightColorGreen_type& x)
-{
-  this->lightColorGreen_.set (x);
-}
-
-const object_t::lightColorBlue_type& object_t::
-lightColorBlue () const
-{
-  return this->lightColorBlue_.get ();
-}
-
-object_t::lightColorBlue_type& object_t::
-lightColorBlue ()
-{
-  return this->lightColorBlue_.get ();
-}
-
-void object_t::
-lightColorBlue (const lightColorBlue_type& x)
-{
-  this->lightColorBlue_.set (x);
-}
-
 const object_t::mass_type& object_t::
 mass () const
 {
@@ -585,11 +495,6 @@ object_t (const name_type& name,
           const fileName_type& fileName,
           const resGroup_type& resGroup,
           const shadows_type& shadows,
-          const lightType_type& lightType,
-          const lightRadius_type& lightRadius,
-          const lightColorRed_type& lightColorRed,
-          const lightColorGreen_type& lightColorGreen,
-          const lightColorBlue_type& lightColorBlue,
           const mass_type& mass,
           const collisionShape_type& collisionShape,
           const colBoxHeight_type& colBoxHeight,
@@ -613,11 +518,6 @@ object_t (const name_type& name,
   fileName_ (fileName, ::xml_schema::flags (), this),
   resGroup_ (resGroup, ::xml_schema::flags (), this),
   shadows_ (shadows, ::xml_schema::flags (), this),
-  lightType_ (lightType, ::xml_schema::flags (), this),
-  lightRadius_ (lightRadius, ::xml_schema::flags (), this),
-  lightColorRed_ (lightColorRed, ::xml_schema::flags (), this),
-  lightColorGreen_ (lightColorGreen, ::xml_schema::flags (), this),
-  lightColorBlue_ (lightColorBlue, ::xml_schema::flags (), this),
   mass_ (mass, ::xml_schema::flags (), this),
   collisionShape_ (collisionShape, ::xml_schema::flags (), this),
   colBoxHeight_ (colBoxHeight, ::xml_schema::flags (), this),
@@ -648,11 +548,6 @@ object_t (const object_t& x,
   fileName_ (x.fileName_, f, this),
   resGroup_ (x.resGroup_, f, this),
   shadows_ (x.shadows_, f, this),
-  lightType_ (x.lightType_, f, this),
-  lightRadius_ (x.lightRadius_, f, this),
-  lightColorRed_ (x.lightColorRed_, f, this),
-  lightColorGreen_ (x.lightColorGreen_, f, this),
-  lightColorBlue_ (x.lightColorBlue_, f, this),
   mass_ (x.mass_, f, this),
   collisionShape_ (x.collisionShape_, f, this),
   colBoxHeight_ (x.colBoxHeight_, f, this),
@@ -683,11 +578,6 @@ object_t (const ::xercesc::DOMElement& e,
   fileName_ (f, this),
   resGroup_ (f, this),
   shadows_ (f, this),
-  lightType_ (f, this),
-  lightRadius_ (f, this),
-  lightColorRed_ (f, this),
-  lightColorGreen_ (f, this),
-  lightColorBlue_ (f, this),
   mass_ (f, this),
   collisionShape_ (f, this),
   colBoxHeight_ (f, this),
@@ -799,61 +689,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
       if (!shadows_.present ())
       {
         this->shadows_.set (shadows_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // lightType
-    //
-    if (n.name () == "lightType" && n.namespace_ ().empty ())
-    {
-      if (!lightType_.present ())
-      {
-        this->lightType_.set (lightType_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // lightRadius
-    //
-    if (n.name () == "lightRadius" && n.namespace_ ().empty ())
-    {
-      if (!lightRadius_.present ())
-      {
-        this->lightRadius_.set (lightRadius_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // lightColorRed
-    //
-    if (n.name () == "lightColorRed" && n.namespace_ ().empty ())
-    {
-      if (!lightColorRed_.present ())
-      {
-        this->lightColorRed_.set (lightColorRed_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // lightColorGreen
-    //
-    if (n.name () == "lightColorGreen" && n.namespace_ ().empty ())
-    {
-      if (!lightColorGreen_.present ())
-      {
-        this->lightColorGreen_.set (lightColorGreen_traits::create (i, f, this));
-        continue;
-      }
-    }
-
-    // lightColorBlue
-    //
-    if (n.name () == "lightColorBlue" && n.namespace_ ().empty ())
-    {
-      if (!lightColorBlue_.present ())
-      {
-        this->lightColorBlue_.set (lightColorBlue_traits::create (i, f, this));
         continue;
       }
     }
@@ -1082,41 +917,6 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
   {
     throw ::xsd::cxx::tree::expected_element< char > (
       "shadows",
-      "");
-  }
-
-  if (!lightType_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "lightType",
-      "");
-  }
-
-  if (!lightRadius_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "lightRadius",
-      "");
-  }
-
-  if (!lightColorRed_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "lightColorRed",
-      "");
-  }
-
-  if (!lightColorGreen_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "lightColorGreen",
-      "");
-  }
-
-  if (!lightColorBlue_.present ())
-  {
-    throw ::xsd::cxx::tree::expected_element< char > (
-      "lightColorBlue",
       "");
   }
 
