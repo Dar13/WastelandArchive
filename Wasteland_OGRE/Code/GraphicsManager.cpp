@@ -188,30 +188,6 @@ Ogre::SceneNode* GraphicsManager::createSceneNode(Ogre::SceneManager* scene,
 		node->attachObject(ent);
 	}
 
-	if(type == "light")
-	{
-		Ogre::Light* light = scene->createLight("light" + objectInfo->name());
-		//you'd think this would be easy to do. Instead there's a whole function for it.
-		setLightRange(light,(Ogre::Real)objectInfo->lightRadius());
-		//set the color.
-		light->setDiffuseColour(Ogre::ColourValue((Ogre::Real)objectInfo->lightColorRed(),
-												  (Ogre::Real)objectInfo->lightColorGreen(),
-												  (Ogre::Real)objectInfo->lightColorBlue(),1.0f));
-		//dunno if this is needed.
-		switch(objectInfo->lightType())
-		{
-		case Ogre::Light::LT_POINT:
-			//in case of needing to set other properties later on.
-			break;
-		case Ogre::Light::LT_SPOTLIGHT:
-			//in case of needing to set other properties later on.
-			break;
-		case Ogre::Light::LT_DIRECTIONAL:
-			//in case of needing to set other properties later on.
-			break;
-		};
-	}
-
 	if(objectInfo->childName() != "NULL")
 	{
 		//add the node whose name == childName(if it exists) to the current node's children list.
