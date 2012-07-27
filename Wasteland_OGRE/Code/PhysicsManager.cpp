@@ -166,6 +166,12 @@ btCollisionShape* PhysicsManager::generateCollisionShape(object_t* objectInfo)
 		retVal = NULL;
 	}
 
+	if(type == "NULL")
+	{
+		//denotes that the object doesn't need a rigid body representative.
+		retVal = nullptr;
+	}
+
 	return retVal;
 }
 

@@ -70,7 +70,6 @@ namespace GameManager
 			{
 				//get the collision shape.
 				shape = phyManager->generateCollisionShape(objectInfo);
-				//shape = PhysicsManager::getSingleton().generateCollisionShape(objectInfo);
 			}
 			else
 			{
@@ -83,7 +82,6 @@ namespace GameManager
 				else
 				{
 					shape = phyManager->generateCollisionShape(objectInfo);
-					//shape = PhysicsManager::getSingleton().generateCollisionShape(objectInfo);
 				}
 			}
 		
@@ -92,8 +90,14 @@ namespace GameManager
 			init.setOrigin(btVector3(objectInfo->positionX(),objectInfo->positionY(),objectInfo->positionZ()));
 
 			//Easy function call.
-			retVal.btBody = phyManager->addRigidBody(shape,node,objectInfo->mass(),init);
-			//retVal.btBody=PhysicsManager::getSingleton().addRigidBody(shape,node,objectInfo->mass(),init);
+			if(shape != NULL)
+			{
+				retVal.btBody = phyManager->addRigidBody(shape,node,objectInfo->mass(),init);
+			}
+			else
+			{
+				retVal.btBody = NULL;
+			}
 		}
 
 		//return by value, not reference.
