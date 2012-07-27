@@ -57,6 +57,7 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 	testParams.setAgentRadius(.2f);
 	
 	RecastInterface recast(_scene,testParams);
+	recast.getRecastConfig().walkableRadius = .2f;
 	recast.buildNavMesh(&testGeom);
 	recast.exportPolygonMeshToObj("RECAST_NAVMESH_TEST.obj");
 	recast.recastClean();

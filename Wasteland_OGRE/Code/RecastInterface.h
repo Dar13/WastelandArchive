@@ -11,16 +11,16 @@ class RecastConfiguration
 {
 public:
 	RecastConfiguration()
-		: _cellSize(0.3f),
-		  _cellHeight(0.2f),
-		  _agentMaxSlope(20.0f),
-		  _agentHeight(2.5f),
-		  _agentMaxClimb(1),
+		: _cellSize(0.10f),
+		  _cellHeight(0.18f),
+		  _agentMaxSlope(45.0f),
+		  _agentHeight(1.0f),
+		  _agentMaxClimb(.9f),
 		  _agentRadius(.2f),
 		  _edgeMaxLength(12.0f),
 		  _edgeMaxError(1.3f),
-		  _regionMinSize(10),
-		  _regionMergeSize(5),
+		  _regionMinSize(8),
+		  _regionMergeSize(20),
 		  _verticesPerPolygon(6),
 		  _detailSampleDistance(6),
 		  _detailSampleMaxError(1),
@@ -75,6 +75,7 @@ public:
 	inline int _getWalkableClimb() { return _walkableHeight; }
 	inline int _getMaxEdgeLength() { return _maxEdgeLength; }
 	inline int _getWalkableRadius() { return _walkableRadius; }
+	inline void _setWalkableRadius(float radius) { _walkableRadius = radius; }
 	inline int _getMinRegionArea() { return _minRegionArea; }
 	inline int _getMergeRegionArea() { return _mergeRegionArea; }
 	inline float _getDetailSampleDist() { return __detailSampleDist; }
@@ -265,7 +266,7 @@ public:
 
 	void removeDrawnNavMesh(unsigned int tileRef);
 
-	rcConfig getRecastConfig();
+	rcConfig& getRecastConfig() { return _config; }
 
 	void recastClean();
 
@@ -288,7 +289,7 @@ protected:
 	bool _rebuildStaticGeom;
 
 private:
-
+	void _printConfig();
 };
 
 #endif

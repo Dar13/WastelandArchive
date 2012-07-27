@@ -33,6 +33,7 @@ void RecastInterface::configure(RecastConfiguration config)
 	_config.walkableSlopeAngle = config.getAgentMaxSlope();
 	_config.walkableClimb = config._getWalkableClimb();
 	_config.walkableRadius = config._getWalkableRadius();
+	_config.walkableHeight = config._getWalkableHeight();
 	_config.maxEdgeLen = config._getMaxEdgeLength();
 	_config.minRegionArea = config._getMinRegionArea();
 	_config.mergeRegionArea = config._getMergeRegionArea();
@@ -40,7 +41,6 @@ void RecastInterface::configure(RecastConfiguration config)
 	_config.detailSampleMaxError = config._getDetailSampleMaxError();
 	_config.maxVertsPerPoly = config.getVerticesPerPolygon();
 	_config.maxSimplificationError = config.getEdgeMaxError();
-	_config.tileSize = 200;
 
 	_recastParams = config;
 }
@@ -118,6 +118,8 @@ bool RecastInterface::buildNavMesh(InputGeometry* inputGeom)
 	std::cout << " - " << numVerts / 1000.0f << "K vertices, ";
 	std::cout << numTris / 1000.0f << "K triangles" << std::endl;
 
+	_printConfig();
+
 	_solid = rcAllocHeightfield();
 	if(!_solid)
 	{
@@ -189,7 +191,8 @@ bool RecastInterface::buildNavMesh(InputGeometry* inputGeom)
 	}
 
 	//Erode walkable area by agent radius
-	if(!rcErodeWalkableArea(_context,_config.walkableRadius,*_compactHeightfield))
+	//if(!rcErodeWalkableArea(_context,_config.walkableRadius,*_compactHeightfield))
+	if(!rcErodeWalkableArea(_context,2,*_compactHeightfield))
 	{
 		std::cout << "Error! BuildNav - Could not erode walkable areas." << std::endl;
 		return false;
@@ -304,4 +307,15 @@ void RecastInterface::exportPolygonMeshToObj(const std::string& filename)
 	}
 
 	out.close();
+}
+
+void RecastInterface::_printConfig()
+{
+	std::cout << "rcConfig" <<std::endl;
+	std::cout << " - cs:" << _config.cs << std::endl;
+	std::cout << " - ch:" << _config.ch << std::endl;
+	std::cout << " - walkableRadius:" << _config.walkableRadius << std::endl;
+	std::cout << " - walkableClimb:" << _config.walkableClimb << std::endl;
+	std::cout << " - walkableMaxSlope:" << _config.walkableSlopeAngle << std::endl;
+	std::cout << " - walkableHeight:" << _config.walkableHeight << std::endl;
 }
