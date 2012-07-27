@@ -183,13 +183,13 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>E:\boost\boost_1_44\;$(OGRE_HOME)\include\OGRE;$(OGRE_HOME)\include\OIS;$(OGRE_HOME)\include;$(IncludePath)</IncludePath>
-    <LibraryPath>E:\boost\boost_1_44\lib;$(OGRE_HOME)\lib\$(Configuration);$(LibraryPath)</LibraryPath>
+    <IncludePath>E:\RecastBuild\Recast\Include;E:\boost\boost_1_44\;$(OGRE_HOME)\include\OGRE;$(OGRE_HOME)\include\OIS;$(OGRE_HOME)\include;$(IncludePath)</IncludePath>
+    <LibraryPath>E:\RecastBuild\Recast\Debug;E:\boost\boost_1_44\lib;$(OGRE_HOME)\lib\$(Configuration);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>C:\Users\Neil Moore\Documents\Visual Studio 2010\Projects\Wasteland_OGRE\Wasteland_OGRE\Code\precompiled;E:\boost\boost_1_44\;$(OGRE_HOME)\include\OGRE;$(OGRE_HOME)\include\OIS;$(OGRE_HOME)\include;$(IncludePath)</IncludePath>
-    <LibraryPath>E:\boost\boost_1_44\lib;$(OGRE_HOME)\lib\$(Configuration);$(LibraryPath)</LibraryPath>
+    <IncludePath>E:\RecastBuild\Recast\Include;C:\Users\Neil Moore\Documents\Visual Studio 2010\Projects\Wasteland_OGRE\Wasteland_OGRE\Code\precompiled;E:\boost\boost_1_44\;$(OGRE_HOME)\include\OGRE;$(OGRE_HOME)\include\OIS;$(OGRE_HOME)\include;$(IncludePath)</IncludePath>
+    <LibraryPath>E:\RecastBuild\Release;E:\boost\boost_1_44\lib;$(OGRE_HOME)\lib\$(Configuration);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -204,7 +204,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>lua5.1.lib;fmodex_vc.lib;xerces-c_3D.lib;OgreMain_d.lib;OIS_d.lib;dxguid.lib;dinput8.lib;CEGUIBase_d.lib;CEGUIOgreRenderer_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Recast.lib;lua5.1.lib;fmodex_vc.lib;xerces-c_3D.lib;OgreMain_d.lib;OIS_d.lib;dxguid.lib;dinput8.lib;CEGUIBase_d.lib;CEGUIOgreRenderer_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(OutDir)\$(TargetFileName)" "$(OGRE_HOME)\Bin\$(Configuration)"</Command>

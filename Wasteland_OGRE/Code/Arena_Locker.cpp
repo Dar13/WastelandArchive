@@ -3,7 +3,7 @@
 
 #include "LevelData.h"
 
-#include "RecastInputGeometry.h"
+#include "RecastInterface.h"
 
 ArenaLocker::ArenaLocker()
 {	
@@ -48,13 +48,18 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 	LevelData::WaypointSet waypointSet(waypoints,true);
 	std::cout << "Arena Locker - camera track created" << std::endl;
 
-	Ogre::Entity* testEntity = _scene->createEntity("testSphere","test\\AST_01.mesh","Models");
+	Ogre::Entity* testEntity = _scene->createEntity("testLevel","arena_locker/testlevel.mesh","Models");
 	_rootNode->attachObject(testEntity);
 	InputGeometry testGeom(testEntity);
-	if(!testGeom.isEmpty())
-	{
-		testGeom.writeToObj("RECAST_TEST.obj");
-	}
+	
+	RecastConfiguration testParams;
+	testParams.setAgentHeight(2.5f);
+	testParams.setAgentRadius(.2f);
+	
+	RecastInterface recast(_scene,testParams);
+	recast.buildNavMesh(&testGeom);
+	recast.exportPolygonMeshToObj("RECAST_NAVMESH_TEST.obj");
+	recast.recastClean();
 
 	_rootNode->detachObject(testEntity);
 	_scene->destroyEntity(testEntity);
@@ -72,7 +77,7 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 	light->setPosition(Ogre::Vector3(1.5,1.5,2.0));
 	Graphics->setLightRange(light,15);
 
-	float time,delta,oldtime = Graphics->getTimer()->getMilliseconds();
+	float time,delta,oldtime = static_cast<float>(Graphics->getTimer()->getMilliseconds());
 	while(!_stateShutdown)
 	{
 		//checks for escapekey press and updates input manager.

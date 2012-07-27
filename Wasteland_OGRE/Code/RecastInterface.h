@@ -2,6 +2,8 @@
 
 #include <Recast.h>
 
+#include "RecastInputGeometry.h"
+
 #ifndef _RECAST_INTERFACE_H_
 #define _RECAST_INTERFACE_H_
 
@@ -13,17 +15,71 @@ public:
 		  _cellHeight(0.2f),
 		  _agentMaxSlope(20.0f),
 		  _agentHeight(2.5f),
+		  _agentMaxClimb(1),
 		  _agentRadius(.2f),
 		  _edgeMaxLength(12.0f),
 		  _edgeMaxError(1.3f),
-		  _regionMinSize(50),
-		  _regionMergeSize(20),
+		  _regionMinSize(10),
+		  _regionMergeSize(5),
 		  _verticesPerPolygon(6),
 		  _detailSampleDistance(6),
-		  _detailSampleMaxError(1)
+		  _detailSampleMaxError(1),
+		  _keepIntermediateResults(false)
 	{
 		eval();
 	}
+
+	inline void setCellSize(float size) { _cellSize = size; eval(); }
+	inline float getCellSize() { return _cellSize; }
+
+	inline void setCellHeight(float height) { _cellHeight = height; eval(); }
+	inline float getCellHeight() { return _cellHeight; }
+	
+	inline void setAgentMaxSlope(float maxSlope) { _agentMaxSlope = maxSlope; eval(); }
+	inline float getAgentMaxSlope() { return _agentMaxSlope; }
+
+	inline void setAgentMaxClimb(float maxClimb) { _agentMaxClimb = maxClimb; eval(); }
+	inline float getAgentMaxClimb() { return _agentMaxClimb; }
+
+	inline void setAgentHeight(float height) { _agentHeight = height; eval(); eval(); }
+	inline float getAgentHeight() { return _agentHeight; }
+
+	inline void setAgentRadius(float radius) { _agentRadius = radius; eval(); }
+	inline float getAgentRadius() { return _agentRadius; }
+
+	inline void setEdgeMaxLength(float length) { _edgeMaxLength = length; eval(); }
+	inline float getEdgeMaxLength() { return _edgeMaxLength; }
+
+	inline void setEdgeMaxError(float error) { _edgeMaxError = error; }
+	inline float getEdgeMaxError() { return _edgeMaxError; }
+
+	inline void setRegionMinSize(float size) { _regionMinSize = size; }
+	inline float getRegionMinSize() { return _regionMinSize; }
+
+	inline void setRegionMergeSize(float size) { _regionMergeSize = size; }
+	inline float getRegionMergeSize() { return _regionMergeSize; }
+
+	inline void setVerticesPerPolygon(int vertices) { _verticesPerPolygon = vertices; }
+	inline int getVerticesPerPolygon() { return _verticesPerPolygon; }
+
+	inline void setDetailSampleDistance(float distance) { _detailSampleDistance = distance; eval(); }
+	inline float getDetailSampleDistance() { return _detailSampleDistance; }
+
+	inline void setDetailSampleMaxError(float error) { _detailSampleMaxError = error; eval(); }
+	inline float getDetailSampleMaxError() { return _detailSampleMaxError; }
+
+	inline void setKeepIntermediateResults(bool keep = false) { _keepIntermediateResults = keep; }
+	inline bool getKeepIntermediateResults() { return _keepIntermediateResults; }
+
+	inline int _getWalkableHeight() { return _walkableHeight; }
+	inline int _getWalkableClimb() { return _walkableHeight; }
+	inline int _getMaxEdgeLength() { return _maxEdgeLength; }
+	inline int _getWalkableRadius() { return _walkableRadius; }
+	inline int _getMinRegionArea() { return _minRegionArea; }
+	inline int _getMergeRegionArea() { return _mergeRegionArea; }
+	inline float _getDetailSampleDist() { return __detailSampleDist; }
+	inline float _getDetailSampleMaxError() { return __detailSampleMaxError; }
+
 private:
 	inline void eval()
 	{
@@ -173,9 +229,63 @@ private:
 	float __detailSampleMaxError;
 };
 
+
+//The interface between Recast and Ogre
+//Detour will have its own interface.
+
 class RecastInterface
 {
 public:
+	//Initializes the wrapper. It'll be app-state specific, as it relies on a scene manager.
+	RecastInterface(Ogre::SceneManager* scene,RecastConfiguration config = RecastConfiguration());
+
+	void configure(RecastConfiguration config);
+
+	//Update method for debugging static meshes.
+	//Not sure if I'll need it, we'll see.
+	void update();
+
+	//Gets the configuration options used by the wrapper in constructing the current nav mesh.
+	RecastConfiguration& getRecastBuildConfiguration();
+
+	//The amount the drawn debug navmesh polys are offset from the ground.
+	float getNavmeshOffsetFromGround();
+	
+	//Builds a navmesh based on the parameters sent in.
+	bool buildNavMesh(std::vector<Ogre::Entity*> sourceMeshes);
+	bool buildNavMesh(InputGeometry* inputGeom);
+
+	//Generates an ogre-drawable mesh from the nav-mesh.
+	void createRecastPolygonMesh(const std::string& name,const unsigned short *vertices,const int numVerts,
+								 const unsigned short *polygons,const int numPolys,const unsigned char *areas,
+								 const int maxPolys,const unsigned short* regions,const int numVertsPerPoly,
+								 const float cellSize,const float cellHeight,const float* origin,bool colorRegions = true);
+
+	void exportPolygonMeshToObj(const std::string& filename);
+
+	void removeDrawnNavMesh(unsigned int tileRef);
+
+	rcConfig getRecastConfig();
+
+	void recastClean();
+
+protected:
+	Ogre::SceneManager* _scene;
+
+	unsigned char* _triangleAreas;
+	rcHeightfield* _solid;
+	rcCompactHeightfield* _compactHeightfield;
+	rcContourSet* _contourSet;
+	rcPolyMesh* _polyMesh;
+	rcConfig _config;
+	RecastConfiguration _recastParams;
+	rcPolyMeshDetail* _detailMesh;
+
+	InputGeometry* _inputGeom;
+	rcContext* _context;
+
+	Ogre::StaticGeometry* _staticGeom;
+	bool _rebuildStaticGeom;
 
 private:
 
