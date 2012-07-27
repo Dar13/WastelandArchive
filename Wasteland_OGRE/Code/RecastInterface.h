@@ -8,8 +8,35 @@
 class RecastConfiguration
 {
 public:
-
+	RecastConfiguration()
+		: _cellSize(0.3f),
+		  _cellHeight(0.2f),
+		  _agentMaxSlope(20.0f),
+		  _agentHeight(2.5f),
+		  _agentRadius(.2f),
+		  _edgeMaxLength(12.0f),
+		  _edgeMaxError(1.3f),
+		  _regionMinSize(50),
+		  _regionMergeSize(20),
+		  _verticesPerPolygon(6),
+		  _detailSampleDistance(6),
+		  _detailSampleMaxError(1)
+	{
+		eval();
+	}
 private:
+	inline void eval()
+	{
+		_walkableHeight = static_cast<int>(ceilf(_agentHeight / _cellHeight));
+		_walkableClimb = static_cast<int>(floorf(_agentMaxClimb / _cellHeight));
+		_walkableRadius = static_cast<int>(ceilf(_agentRadius / _cellSize));
+		_maxEdgeLength = static_cast<int>(_edgeMaxLength / _cellSize);
+		_minRegionArea = static_cast<int>(_regionMinSize * _regionMinSize);
+		_mergeRegionArea = static_cast<int>(_regionMergeSize * _regionMergeSize);
+		__detailSampleDist = _detailSampleDistance < 0.9f ? 0.0f : _cellSize * _detailSampleDistance;
+		__detailSampleMaxError = _cellHeight * _detailSampleMaxError;
+	}
+
 	//For full explanation of some of the member variables go here:
 	//https://github.com/duststorm/OgreRecastDemo/blob/master/include/OgreRecast.h
 	/*
@@ -79,6 +106,71 @@ private:
 	//Maximum allowed error for contour border edges.
 	//Aliases: maxSimplificationError,edgeMaxDeviation
 	float _edgeMaxError;
+
+	//Minimum number of cells allowed to form isolated island areas(size).
+	//Limit: >= 0
+	float _regionMinSize;
+
+	//If a region is smaller than this value will,if possible, be merged with a larger region
+	//Limit: >= 0 [ unit: voxel ]
+	float _regionMergeSize;
+
+	//Maximum amount of vertices allowed for polygons in the nav mesh
+	//Limit: >= 3
+	//Higher values = higher processing cost, better formed meshes
+	int _verticesPerPolygon;
+
+	//Sets sampling distance to use when generating the detail mesh(height detail only).
+	//Limits: 0 or >= .9 [ unit: wu(??) ]
+	float _detailSampleDistance;
+
+	//Maximum distance the detail mesh surface should deviate from the heightfield data(height detail only).
+	//Limit: >= 0 [ unit: wu(??) ]
+	//Alias: contourMaxDeviation
+	float _detailSampleMaxError;
+
+	bool _keepIntermediateResults;
+
+	//Minimum height in # of cells that the ceiling needs to be. Related to _agentHeight & _cellHeight
+	//Limit: >= 3 [ unit: vx]
+	//Aliases: minTraversableHeight
+	//Note: This should be at least (2*_cellHeight).
+	int _walkableHeight;
+
+	//Maximum ledge height that is walkable in # of cells
+	//Limit: >= 0 [ unit: vx ]
+	//Mesh flows over small lowlying obstructions
+	int _walkableClimb;
+
+	//Distance to erode/shrink walkable area in cell size units
+	//Limit: >= 0 [ unit: vx ]
+	//Alias: traversableAreaBorderSize
+	//Note: should be > _cellSize to have any effect.
+	int _walkableRadius;
+
+	//Limit: >= 0 [ unit: vx ]
+	//Alias: maxEdgeLength
+	int _maxEdgeLength;
+
+	//Minimum # of cells allowed to form isolated island areas
+	//Limit: >= 0 [ unit: vx ]
+	//Alias: minUnconnectedRegionSize
+	int _minRegionArea;
+
+	//Any regions with a span count < this # will be merged into larger region(if possible)
+	//Limit: >= 0 [ unit: vx ]
+	//Aliases: mergeRegionSize or mergeRegionArea
+	int _mergeRegionArea;
+
+	//The following two variables have an extra underscore to avoid a variable name conflict.
+
+	//Sampling distance used when generating detail mesh
+	//Limits: 0 or >= .9 [ unit: wu ]
+	float __detailSampleDist;
+
+	//Maximum distance the detail mesh surface should deviate from the heightfield data
+	//Limit: >= 0 [ unit: wu ]
+	float __detailSampleMaxError;
 };
 
 class RecastInterface
