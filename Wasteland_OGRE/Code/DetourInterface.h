@@ -1,7 +1,10 @@
 #include "StdAfx.h"
 
-#include <Recast.h>
 #include <DetourCommon.h>
+#include <DetourCrowd.h>
+#include <DetourNavMesh.h>
+#include <DetourNavMeshBuilder.h>
+#include <DetourNavMeshQuery.h>
 
 #ifndef _DETOUR_INTERFACE_H_
 #define _DETOUR_INTERFACE_H_
@@ -20,10 +23,33 @@ public:
 	int target;
 };
 
+class rcPolyMesh;
+
 class DetourInterface
 {
 public:
+	enum DT_POLYAREA_TYPE
+	{
+		DT_PA_GROUND = 1,
+		DT_PA_WATER,
+		DT_PA_ROAD,
+		DT_PA_DOOR,
+		DT_PA_GRASS,
+		DT_PA_JUMP,
+		DT_PA_MAX
+	};
+
+	enum DT_POLYFLAG_TYPE
+	{
+		DT_PF_WALK = 0x01,
+		DT_PF_SWIM = 0x02,
+		DT_PF_DOOR = 0x04,
+		DT_PF_JUMP = 0x08,
+		DT_PF_DISABLED = 0x10,
+		DT_PF_ALL = 0xffff
+	};
 	//create constructors that create dtNavMesh/dtNavQuery/etc
+	DetourInterface(rcPolyMesh* polyMesh);
 
 	int findPath(float* startPos,float* endPos,int pathSlot,int targetID);
 	int findPath(const Ogre::Vector3& startPos,const Ogre::Vector3& endPos,int pathSlot,int targetID);

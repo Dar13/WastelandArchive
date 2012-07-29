@@ -287,6 +287,7 @@ bool RecastInterface::buildNavMesh(InputGeometry* inputGeom)
 
 	//Recast navmesh is finished!
 #ifdef DEBUG
+	
 	end = Ogre::Root::getSingletonPtr()->getTimer()->getMilliseconds();
 	std::cout << "Navmesh build finished." << std::endl;
 	std::cout << " - Time elapsed:" << end - start << "ms" << std::endl;

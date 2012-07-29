@@ -185,7 +185,7 @@
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
-    <IncludePath>E:\RecastBuild\DebugUtils\Include;E:\RecastBuild\DetourCrowd\Include;E:\RecastBuild\Detour\Include;E:\RecastBuild\Recast\Include;E:\boost\boost_1_44\;$(OGRE_HOME)\include\OGRE;$(OGRE_HOME)\include\OIS;$(OGRE_HOME)\include;$(IncludePath)</IncludePath>
+    <IncludePath>E:\RecastNav\DebugUtils\Include;E:\RecastNav\DetourCrowd\Include;E:\RecastNav\Detour\Include;E:\RecastNav\Recast\Include;E:\boost\boost_1_44\;$(OGRE_HOME)\include\OGRE;$(OGRE_HOME)\include\OIS;$(OGRE_HOME)\include;$(IncludePath)</IncludePath>
     <LibraryPath>E:\RecastBuild\DetourCrowd\Debug;E:\RecastBuild\Detour\Debug;E:\RecastBuild\DebugUtils\Debug;E:\RecastBuild\Recast\Debug;E:\boost\boost_1_44\lib;$(OGRE_HOME)\lib\$(Configuration);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
