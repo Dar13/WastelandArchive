@@ -195,6 +195,9 @@
     <ClInclude Include="Code\RecastInputGeometry.h">
       <Filter>Include Files\Recast\InputGeometry</Filter>
     </ClInclude>
+    <ClInclude Include="Code\DetourInterface.h">
+      <Filter>Include Files\Recast</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">
@@ -295,6 +298,9 @@
     </ClCompile>
     <ClCompile Include="Code\RecastInputGeometry.cpp">
       <Filter>Include Files\Recast\InputGeometry</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\DetourInterface.cpp">
+      <Filter>Include Files\Recast</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

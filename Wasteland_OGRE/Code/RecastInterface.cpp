@@ -99,9 +99,11 @@ bool RecastInterface::buildNavMesh(InputGeometry* inputGeom)
 
 	//Step 1 : Initialize build configuration
 	//Start the timers.
-	_context->resetTimers();
-	_context->enableTimer(true);
-	_context->startTimer(RC_TIMER_TOTAL);
+	unsigned long start = Ogre::Root::getSingleton().getTimer()->getMilliseconds();
+	unsigned long end = 0;
+	//_context->resetTimers();
+	//_context->enableTimer(true);
+	//_context->startTimer(RC_TIMER_TOTAL);
 
 	//Step 2 : Rasterize input polygon soup
 	//InputGeometry* input = inputGeom; WTF? Is this necessary?
@@ -281,9 +283,9 @@ bool RecastInterface::buildNavMesh(InputGeometry* inputGeom)
 	}
 
 	//Recast navmesh is finished!
-	_context->stopTimer(RC_TIMER_TOTAL);
+	end = Ogre::Root::getSingletonPtr()->getTimer()->getMilliseconds();
 	std::cout << "Navmesh build finished." << std::endl;
-	std::cout << " - Time elapsed:" << _context->getAccumulatedTime(RC_TIMER_TOTAL) << std::endl;
+	std::cout << " - Time elapsed:" << end - start << "ms" << std::endl;
 
 	return true;
 }

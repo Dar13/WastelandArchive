@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 
 #include <Recast.h>
+#include <RecastDump.h>
 
 #include "RecastInputGeometry.h"
 
@@ -75,7 +76,7 @@ public:
 	inline int _getWalkableClimb() { return _walkableHeight; }
 	inline int _getMaxEdgeLength() { return _maxEdgeLength; }
 	inline int _getWalkableRadius() { return _walkableRadius; }
-	inline void _setWalkableRadius(float radius) { _walkableRadius = radius; }
+	inline void _setWalkableRadius(float radius) { _walkableRadius = static_cast<int>(radius); }
 	inline int _getMinRegionArea() { return _minRegionArea; }
 	inline int _getMergeRegionArea() { return _mergeRegionArea; }
 	inline float _getDetailSampleDist() { return __detailSampleDist; }
