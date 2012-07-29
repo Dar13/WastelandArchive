@@ -190,7 +190,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
-    <IncludePath>E:\RecastBuild\Detour\Include;E:\RecastBuild\DetourCrowd\Include;E:\RecastBuild\DebugUtils\Include;E:\RecastBuild\Recast\Include;C:\Users\Neil Moore\Documents\Visual Studio 2010\Projects\Wasteland_OGRE\Wasteland_OGRE\Code\precompiled;E:\boost\boost_1_44\;$(OGRE_HOME)\include\OGRE;$(OGRE_HOME)\include\OIS;$(OGRE_HOME)\include;$(IncludePath)</IncludePath>
+    <IncludePath>E:\RecastNav\Detour\Include;E:\RecastNav\DetourCrowd\Include;E:\RecastNav\DebugUtils\Include;E:\RecastNav\Recast\Include;C:\Users\Neil Moore\Documents\Visual Studio 2010\Projects\Wasteland_OGRE\Wasteland_OGRE\Code\precompiled;E:\boost\boost_1_44\;$(OGRE_HOME)\include\OGRE;$(OGRE_HOME)\include\OIS;$(OGRE_HOME)\include;$(IncludePath)</IncludePath>
     <LibraryPath>E:\RecastBuild\DetourCrowd\Release;E:\RecastBuild\Detour\Release;E:\RecastBuild\DebugUtils\Release;E:\RecastBuild\Release;E:\boost\boost_1_44\lib;$(OGRE_HOME)\lib\$(Configuration);$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -198,7 +198,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>DEBUG;WIN32;_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\Users\Neil Moore\Documents\Visual Studio 2010\Projects\Wasteland_OGRE\Wasteland_OGRE\Code\precompiled;E:\bullet-2.77\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>

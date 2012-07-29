@@ -94,16 +94,16 @@ bool RecastInterface::buildNavMesh(std::vector<Ogre::Entity*> sourceMeshes)
 
 bool RecastInterface::buildNavMesh(InputGeometry* inputGeom)
 {
-	inputGeom->writeToObj("RECAST_BUILD_TEST.obj");
-	std::cout << "NavMesh build started." << std::endl;
+	
 
 	//Step 1 : Initialize build configuration
 	//Start the timers.
+	
+#ifdef DEBUG
+	std::cout << "NavMesh build started." << std::endl;
 	unsigned long start = Ogre::Root::getSingleton().getTimer()->getMilliseconds();
 	unsigned long end = 0;
-	//_context->resetTimers();
-	//_context->enableTimer(true);
-	//_context->startTimer(RC_TIMER_TOTAL);
+#endif
 
 	//Step 2 : Rasterize input polygon soup
 	//InputGeometry* input = inputGeom; WTF? Is this necessary?
@@ -113,6 +113,8 @@ bool RecastInterface::buildNavMesh(InputGeometry* inputGeom)
 
 	int numVerts = inputGeom->getVertexCount();
 	int numTris = inputGeom->getTriangleCount();
+
+#ifdef DEBUG
 	Ogre::Vector3 min,max;
 	Utility::floatPtr_toVector3(inputGeom->getMeshBoundsMin(),min);
 	Utility::floatPtr_toVector3(inputGeom->getMeshBoundsMax(),max);
@@ -124,6 +126,7 @@ bool RecastInterface::buildNavMesh(InputGeometry* inputGeom)
 	std::cout << numTris / 1000.0f << "K triangles" << std::endl;
 
 	_printConfig();
+#endif
 
 	_solid = rcAllocHeightfield();
 	if(!_solid)
@@ -283,9 +286,11 @@ bool RecastInterface::buildNavMesh(InputGeometry* inputGeom)
 	}
 
 	//Recast navmesh is finished!
+#ifdef DEBUG
 	end = Ogre::Root::getSingletonPtr()->getTimer()->getMilliseconds();
 	std::cout << "Navmesh build finished." << std::endl;
 	std::cout << " - Time elapsed:" << end - start << "ms" << std::endl;
+#endif
 
 	return true;
 }
