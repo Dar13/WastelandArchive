@@ -198,6 +198,9 @@
     <ClInclude Include="Code\DetourInterface.h">
       <Filter>Include Files\Recast</Filter>
     </ClInclude>
+    <ClInclude Include="Code\RecastDetourUtil.h">
+      <Filter>Include Files\Recast</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">

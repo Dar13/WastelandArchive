@@ -5,6 +5,7 @@
 #include <DetourNavMesh.h>
 #include <DetourNavMeshBuilder.h>
 #include <DetourNavMeshQuery.h>
+#include "RecastDetourUtil.h"
 
 #ifndef _DETOUR_INTERFACE_H_
 #define _DETOUR_INTERFACE_H_
@@ -24,6 +25,10 @@ public:
 };
 
 class rcPolyMesh;
+class rcPolyMeshDetail;
+class rcConfig;
+struct RecastDetourConfiguration;
+typedef RecastDetourConfiguration rcdtConfig;
 
 class DetourInterface
 {
@@ -49,7 +54,7 @@ public:
 		DT_PF_ALL = 0xffff
 	};
 	//create constructors that create dtNavMesh/dtNavQuery/etc
-	DetourInterface(rcPolyMesh* polyMesh);
+	DetourInterface(rcPolyMesh* polyMesh,rcPolyMeshDetail* detailMesh,rcdtConfig& config);
 
 	int findPath(float* startPos,float* endPos,int pathSlot,int targetID);
 	int findPath(const Ogre::Vector3& startPos,const Ogre::Vector3& endPos,int pathSlot,int targetID);
@@ -58,9 +63,13 @@ public:
 
 	Ogre::Vector3 getRandomNavMeshPoint();
 
+	bool isMeshBuilt() { return _isMeshBuilt; }
+
 private:
 	dtNavMesh* _navMesh;
 	dtNavMeshQuery* _navQuery;
+
+	bool _isMeshBuilt;
 
 	//PathData
 	PathData _pathsData[MAX_PATHSLOT];

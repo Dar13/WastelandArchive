@@ -39,6 +39,7 @@
     <ClInclude Include="Code\InputManager.h" />
     <ClInclude Include="Code\Player.h" />
     <ClInclude Include="Code\precompiled\StdAfx.h" />
+    <ClInclude Include="Code\RecastDetourUtil.h" />
     <ClInclude Include="Code\RecastInputGeometry.h" />
     <ClInclude Include="Code\RecastInterface.h" />
     <ClInclude Include="Code\SoundManager.h" />
