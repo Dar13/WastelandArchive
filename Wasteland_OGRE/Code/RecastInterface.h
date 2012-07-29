@@ -244,7 +244,7 @@ public:
 
 	//Update method for debugging static meshes.
 	//Not sure if I'll need it, we'll see.
-	void update();
+	//void update();
 
 	//Gets the configuration options used by the wrapper in constructing the current nav mesh.
 	RecastConfiguration& getRecastBuildConfiguration();

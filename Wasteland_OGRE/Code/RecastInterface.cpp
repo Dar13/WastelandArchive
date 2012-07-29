@@ -41,6 +41,7 @@ void RecastInterface::configure(RecastConfiguration config)
 	_config.detailSampleMaxError = config._getDetailSampleMaxError();
 	_config.maxVertsPerPoly = config.getVerticesPerPolygon();
 	_config.maxSimplificationError = config.getEdgeMaxError();
+	_config.tileSize = 0;
 
 	_recastParams = config;
 }
@@ -93,18 +94,20 @@ bool RecastInterface::buildNavMesh(std::vector<Ogre::Entity*> sourceMeshes)
 
 bool RecastInterface::buildNavMesh(InputGeometry* inputGeom)
 {
+	inputGeom->writeToObj("RECAST_BUILD_TEST.obj");
 	std::cout << "NavMesh build started." << std::endl;
 
 	//Step 1 : Initialize build configuration
 	//Start the timers.
 	_context->resetTimers();
+	_context->enableTimer(true);
 	_context->startTimer(RC_TIMER_TOTAL);
 
 	//Step 2 : Rasterize input polygon soup
 	//InputGeometry* input = inputGeom; WTF? Is this necessary?
 	rcVcopy(_config.bmin, inputGeom->getMeshBoundsMin());
 	rcVcopy(_config.bmax, inputGeom->getMeshBoundsMax());
-	rcCalcGridSize(_config.bmin,_config.bmin,_config.cs,&_config.width,&_config.height);
+	rcCalcGridSize(_config.bmin,_config.bmax,_config.cs,&_config.width,&_config.height);
 
 	int numVerts = inputGeom->getVertexCount();
 	int numTris = inputGeom->getTriangleCount();
@@ -191,8 +194,7 @@ bool RecastInterface::buildNavMesh(InputGeometry* inputGeom)
 	}
 
 	//Erode walkable area by agent radius
-	//if(!rcErodeWalkableArea(_context,_config.walkableRadius,*_compactHeightfield))
-	if(!rcErodeWalkableArea(_context,2,*_compactHeightfield))
+	if(!rcErodeWalkableArea(_context,_config.walkableRadius,*_compactHeightfield))
 	{
 		std::cout << "Error! BuildNav - Could not erode walkable areas." << std::endl;
 		return false;
@@ -290,19 +292,18 @@ void RecastInterface::exportPolygonMeshToObj(const std::string& filename)
 {
 	std::fstream out(filename.c_str(),std::ios::out);
 
-	for(int i=0; i < _polyMesh->nverts; ++i)
+	for(int i=0; i < _detailMesh->nverts; ++i)
 	{
-		out << "v " << _polyMesh->verts[(3*i)] << " ";
-		out << _polyMesh->verts[(3*i) + 1] << " ";
-		out << _polyMesh->verts[(3*i) + 2];
-		out << std::endl;
+		out << "v " << _detailMesh->verts[3*i] << " ";
+		out << _detailMesh->verts[3*i + 1] << " ";
+		out << _detailMesh->verts[3*i + 2] << std::endl;
 	}
 
-	for(int i = 0; i < _polyMesh->npolys; ++i)
+	for(int i = 0; i < _detailMesh->ntris; ++i)
 	{
-		out << "f " << _polyMesh->polys[3*i] << " ";
-		out << _polyMesh->polys[3*i + 1] << " ";
-		out << _polyMesh->polys[3*i + 2];
+		out << "f " << _detailMesh->tris[3*i] << " ";
+		out << _detailMesh->tris[3*i + 1] << " ";
+		out << _detailMesh->tris[3*i + 2];
 		out << std::endl;
 	}
 
