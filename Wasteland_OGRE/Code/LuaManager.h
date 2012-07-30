@@ -70,34 +70,34 @@ private:
 //==========================================
 
 //Activation function. Allows interface between LuaManager and Lua without luabind or tolua++ or whatever.
-static int activate(lua_State* lua)
-{
-	//number of arguments. NOT ZERO-INDEXED
-	int argNum = lua_gettop(lua);
-
-	std::string entName;
-	bool value = true;
-
-	//Lua function call should look like this: retVal = activate("Entity_to_Activate",1)
-
-	if(argNum == 2)
-	{
-		//assume correct argument order
-		if(lua_isstring(lua,1))
-		{
-			entName = lua_tostring(lua,1);
-		}
-		if(lua_isnumber(lua,2))
-		{
-			value = (lua_toboolean(lua,2) != 0);
-		}
-	}
-
-	LuaManager::getSingleton().activateEntity(entName,value);
-
-	lua_pushboolean(lua,value);
-
-	return 1;
-}
+int activate(lua_State* lua);
+//{
+//	//number of arguments. NOT ZERO-INDEXED
+//	int argNum = lua_gettop(lua);
+//
+//	std::string entName;
+//	bool value = true;
+//
+//	//Lua function call should look like this: retVal = activate("Entity_to_Activate",1)
+//
+//	if(argNum == 2)
+//	{
+//		//assume correct argument order
+//		if(lua_isstring(lua,1))
+//		{
+//			entName = lua_tostring(lua,1);
+//		}
+//		if(lua_isnumber(lua,2))
+//		{
+//			value = (lua_toboolean(lua,2) != 0);
+//		}
+//	}
+//
+//	LuaManager::getSingleton().activateEntity(entName,value);
+//
+//	lua_pushboolean(lua,value);
+//
+//	return 1;
+//}
 
 #endif

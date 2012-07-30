@@ -29,7 +29,8 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 
 	_physics.reset(new PhysicsManager());
 	_physics->Setup();
-	_physics->setGravity(btVector3(0.0f,-9.8f,0.0f));
+	btVector3 grav(0.0f,-9.8f,0.0f);
+	_physics->setGravity(grav);
 	std::cout << "Arena Locker - physics setup" << std::endl;
 
 	auto objList = list("resource\\xml\\lists\\arenalocker_list.xml");

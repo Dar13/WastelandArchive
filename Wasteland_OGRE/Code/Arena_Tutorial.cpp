@@ -33,7 +33,8 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	//physics setup
 	_physics.reset(new PhysicsManager() );
 	_physics->Setup();
-	_physics->setGravity(btVector3(0.0f,-9.8f,0.0f));
+	btVector3 grav(0.0f,-9.8f,0.0f);
+	_physics->setGravity(grav);
 
 	//using a list instead of hardcoded files
 	std::auto_ptr<list_t> objList = list("resource\\xml\\lists\\arena_list.xml");
@@ -96,7 +97,7 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
 {
 	_stateShutdown=false;
-	Ogre::SceneNode* tmpNode = (Ogre::SceneNode*)_scene->getRootSceneNode()->getChild("nodetestSphere");
+	//Ogre::SceneNode* tmpNode = (Ogre::SceneNode*)_scene->getRootSceneNode()->getChild("nodetestSphere");
 
 	OgreTransform playerTransform;
 

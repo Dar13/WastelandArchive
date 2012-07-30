@@ -226,6 +226,7 @@ namespace LevelData
 	//===========================================
 	void LightData::update()
 	{
+		
 		if(_activated)
 		{
 			//should be three return values.
@@ -235,10 +236,9 @@ namespace LevelData
 			3 integers for specular color
 			*/
 			LuaManager::getSingleton().callFunction(0,7);
-
-			int d1,d2,d3;
-			int s1,s2,s3;
-			bool vis;
+			int d1 = 0,d2 = 0,d3 = 0;
+			int s1 = 0,s2 = 0,s3 = 0;
+			bool vis = true;
 			lua_State* L = LuaManager::getSingleton().getLuaState();
 
 			if(lua_isnumber(L,1))
@@ -550,15 +550,17 @@ namespace LevelData
 	*/
 	void DoorData::update()
 	{
+		
+
 		//check for activation and act upon it
 		if(_activated)
 		{
 			LuaManager::getSingleton().callFunction(_scriptName,5);
 			//handle lua return values
 			bool motor = false;
-			float motorTop;
-			float motorInc;
-			std::string ent,nScript;
+			float motorTop = 0.0f;
+			float motorInc = 0.0f;
+			std::string ent = "",nScript = "";
 			lua_State* L = LuaManager::getSingleton().getLuaState();
 			int argNum = lua_gettop(L);
 			if(argNum >=3)
@@ -787,7 +789,7 @@ namespace LevelData
 		std::string script;
 		std::string target;
 		std::string name;
-		int timeDelay;
+		int timeDelay = 0;
 
 		bool startObject = false;
 		bool finishedObject = false;
@@ -1047,7 +1049,7 @@ namespace LevelData
 		Ogre::Vector3 position,direction,connectionPoint,axis;
 		std::string name;
 		std::string doorFileName,scriptName,baseName;
-		float minAng,maxAng;
+		float minAng = 0.0f,maxAng = 0.0f;
 
 		bool startObject = false;
 		bool finishedObject = false;
@@ -1161,7 +1163,7 @@ namespace LevelData
 		std::string data,type,dataType,values;
 
 		Ogre::Vector3 position;
-		int order;
+		int order = 0;
 
 		bool startObject = false;
 		bool finishedObject = false;

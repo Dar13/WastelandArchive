@@ -19,7 +19,8 @@ EWSManager::~EWSManager()
 	//fill overlay texture with transparent black
 	if(_ewsTexture.isNull()==false)
 	{
-		Fill(Ogre::ColourValue(0,0,0,0));
+		Ogre::ColourValue color(0.0f,0.0f,0.0f,0.0f);
+		Fill(color);
 	}
 }
 
@@ -77,12 +78,14 @@ void EWSManager::Update(int newTime,bool isPlacing,const sPlayerData& playerData
 		//assumes timeElapsed is in ms
 		if((newTime - oldTime) > 500 && _playerData != playerData ) //playerInfo != _playerInfo)
 		{
+			Ogre::ColourValue color(189.0f/255.0f,189.0f/255.0f,189.0f/255.0f,0.5f);
 			_playerData = playerData;
 			//redraw the background.
-			Box(Ogre::Rect(15,15,497,497),Ogre::ColourValue(189.0f/255.0f,189.0f/255.0f,189.0f/255.0f,0.5f));
+			Box(Ogre::Rect(15,15,497,497),color);
 
 			//draw health information
-			Box(Ogre::Rect(100,playerData.health + 100,150,400),Ogre::ColourValue(0.0f,.5f,0.0f,1.0f));
+			color = Ogre::ColourValue(0.0f,.5f,0.0f,1.0f);
+			Box(Ogre::Rect(100,playerData.health + 100,150,400),color);
 
 			//draw ammo information
 			if(playerData.ammoInMag < 0)
@@ -95,7 +98,8 @@ void EWSManager::Update(int newTime,bool isPlacing,const sPlayerData& playerData
 				//ammo in magazine
 				float magAmmoPcnt = static_cast<float>(_playerData.ammoInMag) / static_cast<float>(_playerData.magSize);
 				float height = magAmmoPcnt * 300;
-				Box(Ogre::Rect(300,static_cast<long>(400 - (height / 2)),350,400),Ogre::ColourValue(.6f,.01f,.01f,1.0f));
+				color.r = .6f; color.g = .01f; color.b = 0.01f; color.a = 1.0f;
+				Box(Ogre::Rect(300,static_cast<long>(400 - (height / 2)),350,400),color);
 				
 				//number of mags left
 				//write number on texture
@@ -183,10 +187,10 @@ void EWSManager::Fill(Ogre::ColourValue& color)
 	_pixelBuffer->lock(Ogre::HardwareBuffer::HBL_NORMAL);
 	const Ogre::PixelBox& pixBox = _pixelBuffer->getCurrentLock();
 
-	int red = static_cast<int>(color.r * 255);
-	int green = static_cast<int>(color.g * 255);
-	int blue = static_cast<int>(color.b * 255);
-	int alpha = static_cast<int>(color.a * 255);
+	Ogre::uint8 red = static_cast<Ogre::uint8>(color.r * 255);
+	Ogre::uint8 green = static_cast<Ogre::uint8>(color.g * 255);
+	Ogre::uint8 blue = static_cast<Ogre::uint8>(color.b * 255);
+	Ogre::uint8 alpha = static_cast<Ogre::uint8>(color.a * 255);
 
 	Ogre::uint8* pData = static_cast<Ogre::uint8*>(pixBox.data);
 	for(unsigned int i = 0; i < _ewsTexture->getSrcWidth(); ++i)
@@ -203,7 +207,7 @@ void EWSManager::Fill(Ogre::ColourValue& color)
 	_pixelBuffer->unlock();
 }
 
-void EWSManager::Box(Ogre::Rect &rect, Ogre::ColourValue& color)
+void EWSManager::Box(Ogre::Rect rect, Ogre::ColourValue& color)
 {
 	_pixelBuffer->lock(Ogre::HardwareBuffer::HBL_NORMAL);
 	const Ogre::PixelBox& pixBox = _pixelBuffer->getCurrentLock();
