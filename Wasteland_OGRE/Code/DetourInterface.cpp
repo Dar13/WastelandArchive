@@ -2,6 +2,7 @@
 
 #include "DetourInterface.h"
 #include <Recast.h>
+#include "Utility.h"
 
 DetourInterface::DetourInterface(rcPolyMesh* polyMesh,rcPolyMeshDetail* detailMesh,rcdtConfig& config)
 	: _navMesh(nullptr),
@@ -102,4 +103,44 @@ DetourInterface::DetourInterface(rcPolyMesh* polyMesh,rcPolyMeshDetail* detailMe
 	}
 
 	_isMeshBuilt = true;
+}
+
+Ogre::Vector3 DetourInterface::getRandomNavMeshPoint()
+{
+	dtQueryFilter filter;
+	filter.setIncludeFlags(0xFFFF);
+	filter.setExcludeFlags(0);
+	filter.setAreaCost(DT_PA_GROUND,1.0f);
+	//filter.setAreaCost(DT_TILECACHE_WALKABLE_AREA,1.0f);
+
+	float resultPoint[3];
+	dtPolyRef resultPoly;
+	_navQuery->findRandomPoint(&filter,frand,&resultPoly,resultPoint);
+
+	return Ogre::Vector3(resultPoint[0],resultPoint[1],resultPoint[2]);
+}
+
+bool DetourInterface::findNearestPointOnNavmesh(const Ogre::Vector3& position,Ogre::Vector3& resultPoint)
+{
+	float extents[3] = { 16.0f, 16.0f, 16.0f };
+
+	dtQueryFilter filter;
+	filter.setIncludeFlags(0xFFFF);
+	filter.setExcludeFlags(0);
+	filter.setAreaCost(DT_PA_GROUND,1.0f);
+	//filter.setAreaCost(DT_TILECACHE_WALKABLE_AREA,1.0f);
+
+	float point[3];
+	Utility::vector3_toFloatPtr(position,point);
+	float rPoint[3];
+	dtPolyRef poly;
+	dtStatus status = _navQuery->findNearestPoly(point,extents,&filter,&poly,rPoint);
+	//Check if Detour found a polygon.
+	if( (status & DT_FAILURE) || ( status & DT_STATUS_DETAIL_MASK) )
+	{
+		return false;
+	}
+
+	Utility::floatPtr_toVector3(rPoint,resultPoint);
+	return true;
 }
