@@ -99,7 +99,7 @@ bool RecastInterface::buildNavMesh(InputGeometry* inputGeom)
 	//Step 1 : Initialize build configuration
 	//Start the timers.
 	
-#ifdef DEBUG
+#ifdef _DEBUG
 	std::cout << "NavMesh build started." << std::endl;
 	unsigned long start = Ogre::Root::getSingleton().getTimer()->getMilliseconds();
 	unsigned long end = 0;
@@ -114,7 +114,7 @@ bool RecastInterface::buildNavMesh(InputGeometry* inputGeom)
 	int numVerts = inputGeom->getVertexCount();
 	int numTris = inputGeom->getTriangleCount();
 
-#ifdef DEBUG
+#ifdef _DEBUG
 	Ogre::Vector3 min,max;
 	Utility::floatPtr_toVector3(inputGeom->getMeshBoundsMin(),min);
 	Utility::floatPtr_toVector3(inputGeom->getMeshBoundsMax(),max);
@@ -286,8 +286,7 @@ bool RecastInterface::buildNavMesh(InputGeometry* inputGeom)
 	}
 
 	//Recast navmesh is finished!
-#ifdef DEBUG
-	
+#ifdef _DEBUG
 	end = Ogre::Root::getSingletonPtr()->getTimer()->getMilliseconds();
 	std::cout << "Navmesh build finished." << std::endl;
 	std::cout << " - Time elapsed:" << end - start << "ms" << std::endl;

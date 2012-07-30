@@ -3,13 +3,10 @@
 #ifndef _RECAST_DETOUR_UTIL_H_
 #define _RECAST_DETOUR_UTIL_H_
 
-float frand()
-{
-	return static_cast<float>(rand() / RAND_MAX);
-}
+inline float frand() { return static_cast<float>(rand() / RAND_MAX); }
 
 class RecastConfiguration;
-class rcConfig;
+struct rcConfig;
 
 struct RecastDetourConfiguration
 {

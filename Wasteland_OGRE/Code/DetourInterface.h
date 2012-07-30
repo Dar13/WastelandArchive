@@ -24,9 +24,8 @@ public:
 	int target;
 };
 
-class rcPolyMesh;
-class rcPolyMeshDetail;
-class rcConfig;
+struct rcPolyMesh;
+struct rcPolyMeshDetail;
 struct RecastDetourConfiguration;
 typedef RecastDetourConfiguration rcdtConfig;
 

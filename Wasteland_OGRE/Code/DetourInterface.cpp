@@ -54,7 +54,7 @@ DetourInterface::DetourInterface(rcPolyMesh* polyMesh,rcPolyMeshDetail* detailMe
 	params.cs = config.recastConfig->cs;
 	params.ch = config.recastConfig->ch;
 
-#ifdef DEBUG || _DEBUG
+#if defined(DEBUG) || defined(_DEBUG)
 	std::cout << "Detour - Stage 2" << std::endl;
 #endif
 
@@ -65,7 +65,7 @@ DetourInterface::DetourInterface(rcPolyMesh* polyMesh,rcPolyMeshDetail* detailMe
 		return;
 	}
 
-#ifdef DEBUG || _DEBUG
+#if defined(DEBUG) || defined(_DEBUG)
 	std::cout << "Detour - Stage 3" << std::endl;
 #endif
 
@@ -77,7 +77,7 @@ DetourInterface::DetourInterface(rcPolyMesh* polyMesh,rcPolyMeshDetail* detailMe
 		return;
 	}
 
-#ifdef DEBUG || _DEBUG
+#if defined(DEBUG) || defined(_DEBUG)
 	std::cout << "Detour - Stage 4" << std::endl;
 #endif
 
@@ -90,7 +90,7 @@ DetourInterface::DetourInterface(rcPolyMesh* polyMesh,rcPolyMeshDetail* detailMe
 		return;
 	}
 
-#ifdef DEBUG || _DEBUG
+#if defined(DEBUG) || defined(_DEBUG)
 	std::cout << "Detour - Stage 5" << std::endl;
 #endif
 
