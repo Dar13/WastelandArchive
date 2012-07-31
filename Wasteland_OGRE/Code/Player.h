@@ -15,7 +15,7 @@
 #ifndef _PLAYER_H_
 #define _PLAYER_H_
 
-#define CONV_EAIWEAP_TO_METER 0.0254
+#define CONV_EAIWEAP_TO_METER 0.0254f
 
 int getAnimID(const std::string& name);
 int getSoundID(const std::string& sound);

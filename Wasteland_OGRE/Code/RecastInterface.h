@@ -45,6 +45,9 @@ public:
 
 	rcConfig& getRecastConfig() { return _config; }
 
+	rcPolyMesh* getPolyMesh() { return _polyMesh; }
+	rcPolyMeshDetail* getDetailMesh() { return _detailMesh; }
+
 	void recastClean();
 
 protected:

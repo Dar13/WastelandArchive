@@ -4,6 +4,7 @@
 #include "LevelData.h"
 
 #include "RecastInterface.h"
+#include "DetourInterface.h"
 
 ArenaLocker::ArenaLocker()
 {	
@@ -62,6 +63,13 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 	recast.buildNavMesh(&testGeom);
 	recast.exportPolygonMeshToObj("RECAST_NAVMESH_TEST.obj");
 	recast.recastClean();
+
+	rcdtConfig config;
+	config.recastConfig = &recast.getRecastConfig();
+	config.userConfig = &testParams;
+
+	DetourInterface detour(recast.getPolyMesh(),recast.getDetailMesh(),config);
+	std::cout << detour.getRandomNavMeshPoint() << std::endl;
 
 	_rootNode->detachObject(testEntity);
 	_scene->destroyEntity(testEntity);
