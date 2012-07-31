@@ -47,7 +47,7 @@ namespace Utility
 	std::string vector3_toStr(const Ogre::Vector3& v);
 	std::string vector3_toStr(const btVector3& v);
 
-	void vector3_toFloatPtr(const Ogre::Vector3 vector,float* result);
+	void vector3_toFloatPtr(const Ogre::Vector3& vector,float* result);
 	void floatPtr_toVector3(const float* vect,Ogre::Vector3& result);
 };
 

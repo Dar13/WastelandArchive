@@ -442,6 +442,7 @@ namespace LevelData
 		Ogre::Matrix4 toWorld = staticLevel->ogreNode->_getFullTransform();
 		//need to know where the door is pointing
 		//Works, but have only tried a couple of scenarios.
+		Ogre::Vector3 pSide,nSide,localMax = box.getMaximum(),localMin = box.getMinimum();
 		if(_direction == Ogre::Vector3::UNIT_Z || _direction == Ogre::Vector3::NEGATIVE_UNIT_Z)
 		{
 			//facing either z-positive or z-negative
@@ -451,7 +452,6 @@ namespace LevelData
 			float dZ = box.getMaximum().z - box.getMinimum().z;
 
 			//get points on side of box(x-axis)
-			Ogre::Vector3 pSide,nSide;
 			pSide = box.getMaximum();
 			pSide.y = 0.0f;
 			pSide.z = 0.0f;
@@ -469,14 +469,14 @@ namespace LevelData
 			if(pSide.squaredDistance(_connectionPoint) > nSide.squaredDistance(_connectionPoint))
 			{
 				//nSide wins
-				doorConnection.setX(box.getMinimum().x);
+				doorConnection.setX(localMin.x);
 				doorConnection.setY(0.0f);
 				doorConnection.setZ(0.0f);
 				//doorConnection.setZ(dZ/2);
 			}
 			else
 			{
-				doorConnection.setX(box.getMaximum().x);
+				doorConnection.setX(localMax.x);
 				doorConnection.setY(0.0f);
 				doorConnection.setZ(0.0f);
 				//doorConnection.setZ(dZ/2);
@@ -488,7 +488,6 @@ namespace LevelData
 			//get deltaX
 			float dX = box.getMaximum().x - box.getMinimum().x;
 
-			Ogre::Vector3 pSide,nSide;
 			pSide = box.getMaximum();
 			pSide.x = 0.0f;
 			//gets the corner, not the middle
@@ -510,14 +509,14 @@ namespace LevelData
 				doorConnection.setX(0.0f);
 				//doorConnection.setX(dX/2);
 				doorConnection.setY(0.0f);
-				doorConnection.setZ(box.getMinimum().z);
+				doorConnection.setZ(localMin.z);
 			}
 			else
 			{
 				doorConnection.setX(0.0f);
 				//doorConnection.setX(dX/2);
 				doorConnection.setY(0.0f);
-				doorConnection.setZ(box.getMaximum().z);
+				doorConnection.setZ(localMax.z);
 			}
 		}
 

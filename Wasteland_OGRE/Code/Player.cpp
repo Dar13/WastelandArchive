@@ -152,7 +152,7 @@ bool cGunData::frameStarted(const Ogre::FrameEvent& evt)
 			{
 				if(sourceAnim != cGunData::ANIM_FIRE)
 				{
-					if(targetAnim != cGunData::NO_ANIM || targetAnim != cGunData::ANIM_FIRE)
+					if(targetAnim != cGunData::NO_ANIM && targetAnim != cGunData::ANIM_FIRE)
 					{
 						_animBlender.blend("fire",AnimationBlender::BlendWhileAnimating,.2f,false);
 						_soundChannel->stop();
@@ -344,6 +344,9 @@ void cGunData::setSoundFrames(weapon_t* Weapon,SoundManager* Sound)
 			break;
 		case SND_ALTFIRE:
 			fileName = Weapon->sounds().altfire();
+			break;
+		default:
+			fileName = "NULL";
 			break;
 		}
 

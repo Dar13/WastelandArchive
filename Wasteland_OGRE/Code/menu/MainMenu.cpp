@@ -560,17 +560,26 @@ void MainMenu_FaderCallback::fadeOutCallback()
 	_soundManager->setMusicFade(false);
 }
 
-void MainMenu_FaderCallback::setupMusicFade(SoundManager* soundMgr)
+void MainMenu_FaderCallback::setupMusicFade(SoundManager* soundMgr,bool fadeDown)
 {
 	_finished = false;
 	_soundManager = soundMgr;
 	_soundManager->setMusicFade(true);
+	_fadeMusicDown = fadeDown;
 }
 
 void MainMenu_FaderCallback::updateFade(double progress)
 {
 	_finished = false;
 	float vol = _soundManager->getDefaultMusicVolume();
-	_soundManager->setMusicFadeVolume(vol * static_cast<float>(1.0 / progress));
+	if(!_fadeMusicDown)
+	{
+		_soundManager->setMusicFadeVolume(vol * static_cast<float>(1.0 / progress));
+	}
+	else
+	{
+		//need to test this.
+		_soundManager->setMusicFadeVolume(vol * static_cast<float>( progress ));
+	}
 	std::cout << vol * progress << std::endl;
 }

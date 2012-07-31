@@ -26,10 +26,11 @@ public:
 
 	bool isFadeFinished() { return _finished; }
 
-	void setupMusicFade(SoundManager* soundMgr);
+	void setupMusicFade(SoundManager* soundMgr,bool fadeDown = false);
 
 private:
 	bool _finished;
+	bool _fadeMusicDown;
 	SoundManager* _soundManager;
 };
 

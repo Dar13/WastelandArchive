@@ -48,7 +48,7 @@ std::string Utility::vector3_toStr(const btVector3& v)
 	return c.str();
 }
 
-void Utility::vector3_toFloatPtr(const Ogre::Vector3 vector,float* result)
+void Utility::vector3_toFloatPtr(const Ogre::Vector3& vector,float* result)
 {
 	result[0] = vector[0];
 	result[1] = vector[1];

@@ -17,6 +17,7 @@
 class State
 {
 public:
+	~State();
 	enum ApplicationStates
 	{
 		INTRO = 0,

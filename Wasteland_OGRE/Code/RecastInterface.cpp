@@ -27,7 +27,7 @@ void RecastInterface::configure(RecastConfiguration config)
 	}
 	_context = new rcContext(true);
 
-	memset(&_config,0,sizeof(_context));
+	memset(&_config,0,sizeof(_config));
 	_config.cs = config.getCellSize();
 	_config.ch = config.getCellHeight();
 	_config.walkableSlopeAngle = config.getAgentMaxSlope();
