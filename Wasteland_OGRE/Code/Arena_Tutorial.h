@@ -51,6 +51,9 @@ private:
 	//Entity management
 	std::vector<Ogre::Entity*> _entities;
 
+	//player variables
+	std::unique_ptr<Player> _player;
+
 	//EWS and character controller variables
 	std::unique_ptr<CharacterController> _controller;
 	std::unique_ptr<EWSManager> _ews;

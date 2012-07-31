@@ -17,7 +17,7 @@
 class State
 {
 public:
-	~State();
+	~State() {}
 	enum ApplicationStates
 	{
 		INTRO = 0,
@@ -43,7 +43,8 @@ protected:
 	float _deltaTime;
 	float _oldTime;
 
-	std::unique_ptr<Player> _player;
+	//WTF was I thinking?!
+	//std::unique_ptr<Player> _player;
 };
 
 #endif
