@@ -72,7 +72,7 @@ void StateManager::Run()
 				_States[curState] = new ArenaTutorial();
 				break;
 			case State::GAME_LOCKER:
-				//_States[curState] = new ArenaLocker();
+				_States[curState] = new ArenaLocker();
 				break;
 			case State::GAME_LOBBY:
 				//_States[curState] = new Lobby();

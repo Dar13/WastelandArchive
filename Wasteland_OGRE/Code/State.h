@@ -17,7 +17,7 @@
 class State
 {
 public:
-	~State() {}
+	virtual ~State() {}
 	enum ApplicationStates
 	{
 		INTRO = 0,
