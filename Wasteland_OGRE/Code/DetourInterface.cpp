@@ -9,6 +9,8 @@ DetourInterface::DetourInterface(rcPolyMesh* polyMesh,rcPolyMeshDetail* detailMe
 	  _navQuery(nullptr),
 	  _isMeshBuilt(false)
 {
+	detourCleanup();
+
 	unsigned char* navData = 0;
 	int navDataSize = 0;
 
@@ -18,6 +20,10 @@ DetourInterface::DetourInterface(rcPolyMesh* polyMesh,rcPolyMeshDetail* detailMe
 		//_isMeshBuilt = false;
 		return;
 	}
+
+#if defined(DEBUG) || defined(_DEBUG)
+	std::cout << "Detour - Stage 1" << std::endl;
+#endif
 
 	for(int i = 0; i < polyMesh->npolys; ++i)
 	{
@@ -35,6 +41,7 @@ DetourInterface::DetourInterface(rcPolyMesh* polyMesh,rcPolyMeshDetail* detailMe
 	params.polys = polyMesh->polys;
 	params.polyAreas = polyMesh->areas;
 	params.polyFlags = polyMesh->flags;
+	params.polyCount = polyMesh->npolys;
 	params.nvp = polyMesh->nvp;
 	params.detailMeshes = detailMesh->meshes;
 	params.detailVerts = detailMesh->verts;
@@ -48,6 +55,7 @@ DetourInterface::DetourInterface(rcPolyMesh* polyMesh,rcPolyMeshDetail* detailMe
 	params.walkableHeight = config.userConfig->getAgentHeight();
 	params.walkableRadius = config.userConfig->getAgentRadius();
 	params.walkableClimb = config.userConfig->getAgentMaxClimb();
+	params.buildBvTree = true;
 
 	rcVcopy(params.bmin, config.recastConfig->bmin);
 	rcVcopy(params.bmax, config.recastConfig->bmax);
@@ -61,6 +69,9 @@ DetourInterface::DetourInterface(rcPolyMesh* polyMesh,rcPolyMeshDetail* detailMe
 	if(!dtCreateNavMeshData(&params,&navData,&navDataSize))
 	{
 		std::cout << "Error! Detour - could not build navmesh!" << std::endl;
+		std::cout << " - " << params.cs << std::endl;
+		std::cout << " - " << params.ch << std::endl;
+		std::cout << " - " << params.walkableRadius << std::endl;
 		//_isMeshBuilt = false;
 		return;
 	}
@@ -143,4 +154,74 @@ bool DetourInterface::findNearestPointOnNavmesh(const Ogre::Vector3& position,Og
 
 	Utility::floatPtr_toVector3(rPoint,resultPoint);
 	return true;
+}
+
+DetourInterface::DT_PATHFIND_RETURN DetourInterface::findPath(const Ogre::Vector3& startPosition,const Ogre::Vector3& endPosition,int pathNum,int target)
+{
+	float start[3];
+	float end[3];
+	Utility::vector3_toFloatPtr(startPosition,start);
+	Utility::vector3_toFloatPtr(endPosition,end);
+	return findPath(start,end,pathNum,target);
+}
+
+DetourInterface::DT_PATHFIND_RETURN DetourInterface::findPath(float* startPosition,float* endPosition,int pathNum,int target)
+{
+	dtStatus status;
+	float extents[3] = { 32.0f,32.0f,32.0f };
+	dtPolyRef startPoly;
+	float startNearest[3];
+
+	dtPolyRef endPoly;
+	float endNearest[3];
+
+	dtPolyRef polyPath[MAX_PATHPOLY];
+	int pathCount = 0;
+	float straightPath[MAX_PATHVERT * 3];
+	int vertexCount = 0;
+
+	dtQueryFilter filter;
+	filter.setIncludeFlags(0xFFFF);
+	filter.setExcludeFlags(0);
+	filter.setAreaCost(DT_PA_GROUND,1.0f);
+	
+	status = _navQuery->findNearestPoly(startPosition,extents,&filter,&startPoly,startNearest);
+	if( (status & DT_FAILURE) || (status & DT_STATUS_DETAIL_MASK) )
+	{
+		return DT_PATH_NOPOLY_START;
+	}
+
+	status = _navQuery->findNearestPoly(endPosition,extents,&filter,&endPoly,endNearest);
+	if( (status & DT_FAILURE) || (status & DT_STATUS_DETAIL_MASK) )
+	{
+		return DT_PATH_NOPOLY_END;
+	}
+
+	status = _navQuery->findPath(startPoly,endPoly,startPosition,endPosition,&filter,polyPath,&pathCount,MAX_PATHPOLY);
+	if( (status & DT_FAILURE) || (status & DT_STATUS_DETAIL_MASK) )
+	{
+		return DT_PATH_NOCREATE;
+	}
+	if(pathCount == 0) { return DT_PATH_NOFIND; }
+
+	status = _navQuery->findStraightPath(startPosition,endPosition,polyPath,pathCount,straightPath,NULL,NULL,&vertexCount,MAX_PATHVERT);
+	if( (status & DT_FAILURE) || (status & DT_STATUS_DETAIL_MASK) )
+	{
+		return DT_PATH_NOCREATESTRAIGHT;
+	}
+	if(vertexCount == 0) { return DT_PATH_NOFINDSTRAIGHT; }
+
+	//have our path.
+	//copy it to the path storehouse.
+
+
+}
+
+void DetourInterface::detourCleanup()
+{
+	dtFreeNavMesh(_navMesh);
+	_navMesh = 0;
+
+	dtFreeNavMeshQuery(_navQuery);
+	_navQuery = 0;
 }

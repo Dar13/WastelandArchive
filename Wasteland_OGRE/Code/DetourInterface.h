@@ -52,17 +52,30 @@ public:
 		DT_PF_DISABLED = 0x10,
 		DT_PF_ALL = 0xffff
 	};
+
+	enum DT_PATHFIND_RETURN
+	{
+		DT_PATH_FND = 0,
+		DT_PATH_NOPOLY_START,
+		DT_PATH_NOPOLY_END,
+		DT_PATH_NOCREATE,
+		DT_PATH_NOFIND,
+		DT_PATH_NOCREATESTRAIGHT,
+		DT_PATH_NOFINDSTRAIGHT
+	};
 	//create constructors that create dtNavMesh/dtNavQuery/etc
 	DetourInterface(rcPolyMesh* polyMesh,rcPolyMeshDetail* detailMesh,rcdtConfig& config);
-
-	int findPath(float* startPos,float* endPos,int pathSlot,int targetID);
-	int findPath(const Ogre::Vector3& startPos,const Ogre::Vector3& endPos,int pathSlot,int targetID);
 
 	bool findNearestPointOnNavmesh(const Ogre::Vector3& position,Ogre::Vector3& resultPoint);
 
 	Ogre::Vector3 getRandomNavMeshPoint();
 
+	DT_PATHFIND_RETURN findPath(const Ogre::Vector3& startPosition,const Ogre::Vector3& endPosition,int pathNum,int target);
+	DT_PATHFIND_RETURN findPath(float* startPosition, float* endPosition,int pathNum, int target);
+
 	bool isMeshBuilt() { return _isMeshBuilt; }
+
+	void detourCleanup();
 
 private:
 	dtNavMesh* _navMesh;
