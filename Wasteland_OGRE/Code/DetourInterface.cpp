@@ -213,7 +213,15 @@ DetourInterface::DT_PATHFIND_RETURN DetourInterface::findPath(float* startPositi
 
 	//have our path.
 	//copy it to the path storehouse.
-
+	int index = 0;
+	for(int nV = 0; nV < vertexCount; nV++)
+	{
+		_pathsData[pathNum].x[nV]=straightPath[index++];
+		_pathsData[pathNum].y[nV]=straightPath[index++];
+		_pathsData[pathNum].z[nV]=straightPath[index++];
+	}
+	_pathsData[pathNum].maxVertex = vertexCount;
+	_pathsData[pathNum].target = target;
 
 }
 
