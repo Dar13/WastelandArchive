@@ -88,6 +88,12 @@
     <Filter Include="Include Files\Recast\InputGeometry">
       <UniqueIdentifier>{6483b7b1-02ed-4fac-a9f9-b4ccb1d74a6a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include Files\Recast\Crowd">
+      <UniqueIdentifier>{f8edfb09-0771-48e2-9ad7-e98e9af4dd21}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files\Recast\Crowd\CrowdAgent">
+      <UniqueIdentifier>{a3250d46-5c32-4bc1-bfd7-6b42d556e650}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\State.h">
@@ -201,6 +207,12 @@
     <ClInclude Include="Code\RecastDetourUtil.h">
       <Filter>Include Files\Recast</Filter>
     </ClInclude>
+    <ClInclude Include="Code\CrowdManager.h">
+      <Filter>Include Files\Recast\Crowd</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\CrowdAgent.h">
+      <Filter>Include Files\Recast\Crowd\CrowdAgent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">
@@ -304,6 +316,12 @@
     </ClCompile>
     <ClCompile Include="Code\DetourInterface.cpp">
       <Filter>Include Files\Recast</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\CrowdManager.cpp">
+      <Filter>Include Files\Recast\Crowd</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\CrowdAgent.cpp">
+      <Filter>Include Files\Recast\Crowd\CrowdAgent</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

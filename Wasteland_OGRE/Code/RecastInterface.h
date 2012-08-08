@@ -16,6 +16,7 @@ class RecastInterface
 public:
 	//Initializes the wrapper. It'll be app-state specific, as it relies on a scene manager.
 	RecastInterface(Ogre::SceneManager* scene,RecastConfiguration config = RecastConfiguration());
+	~RecastInterface();
 
 	void configure(RecastConfiguration config);
 

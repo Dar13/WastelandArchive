@@ -4,6 +4,8 @@
 #include <Recast.h>
 #include "Utility.h"
 
+float frand() { return (static_cast<float>(rand()) / static_cast<float>(RAND_MAX)); }
+
 DetourInterface::DetourInterface(rcPolyMesh* polyMesh,rcPolyMeshDetail* detailMesh,rcdtConfig& config)
 	: _navMesh(nullptr),
 	  _navQuery(nullptr),
@@ -16,8 +18,6 @@ DetourInterface::DetourInterface(rcPolyMesh* polyMesh,rcPolyMeshDetail* detailMe
 
 	if(config.recastConfig->maxVertsPerPoly > DT_VERTS_PER_POLYGON)
 	{
-		//Not needed, is set to false anyways.
-		//_isMeshBuilt = false;
 		return;
 	}
 
@@ -116,6 +116,11 @@ DetourInterface::DetourInterface(rcPolyMesh* polyMesh,rcPolyMeshDetail* detailMe
 	_isMeshBuilt = true;
 }
 
+DetourInterface::~DetourInterface()
+{
+	detourCleanup();
+}
+
 Ogre::Vector3 DetourInterface::getRandomNavMeshPoint()
 {
 	dtQueryFilter filter;
@@ -156,16 +161,16 @@ bool DetourInterface::findNearestPointOnNavmesh(const Ogre::Vector3& position,Og
 	return true;
 }
 
-DetourInterface::DT_PATHFIND_RETURN DetourInterface::findPath(const Ogre::Vector3& startPosition,const Ogre::Vector3& endPosition,int pathNum,int target)
+DetourInterface::DT_PATHFIND_RETURN DetourInterface::findPath(const Ogre::Vector3& startPosition,const Ogre::Vector3& endPosition,int target,PathData* path)
 {
 	float start[3];
 	float end[3];
 	Utility::vector3_toFloatPtr(startPosition,start);
 	Utility::vector3_toFloatPtr(endPosition,end);
-	return findPath(start,end,pathNum,target);
+	return findPath(start,end,target,path);
 }
 
-DetourInterface::DT_PATHFIND_RETURN DetourInterface::findPath(float* startPosition,float* endPosition,int pathNum,int target)
+DetourInterface::DT_PATHFIND_RETURN DetourInterface::findPath(float* startPosition,float* endPosition,int target,PathData* path)
 {
 	dtStatus status;
 	float extents[3] = { 32.0f,32.0f,32.0f };
@@ -214,6 +219,7 @@ DetourInterface::DT_PATHFIND_RETURN DetourInterface::findPath(float* startPositi
 	//have our path.
 	//copy it to the path storehouse.
 	int index = 0;
+	/*
 	for(int nV = 0; nV < vertexCount; nV++)
 	{
 		_pathsData[pathNum].x[nV]=straightPath[index++];
@@ -222,7 +228,18 @@ DetourInterface::DT_PATHFIND_RETURN DetourInterface::findPath(float* startPositi
 	}
 	_pathsData[pathNum].maxVertex = vertexCount;
 	_pathsData[pathNum].target = target;
+	*/
+	//instead, copy it into the passed-in path variable
+	path->maxVertex = vertexCount;
+	path->target = target;
+	for(int n = 0; n < vertexCount; n++)
+	{
+		path->x[n] = straightPath[index++];
+		path->y[n] = straightPath[index++];
+		path->z[n] = straightPath[index++];
+	}
 
+	return DT_PATH_SUCCESS;
 }
 
 void DetourInterface::detourCleanup()

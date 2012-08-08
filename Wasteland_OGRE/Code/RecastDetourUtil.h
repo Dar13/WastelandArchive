@@ -3,7 +3,7 @@
 #ifndef _RECAST_DETOUR_UTIL_H_
 #define _RECAST_DETOUR_UTIL_H_
 
-inline float frand() { return static_cast<float>(rand() / RAND_MAX); }
+float frand();
 
 class RecastConfiguration;
 struct rcConfig;

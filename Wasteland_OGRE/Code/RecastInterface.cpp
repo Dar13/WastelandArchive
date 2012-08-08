@@ -19,6 +19,11 @@ RecastInterface::RecastInterface(Ogre::SceneManager* scene,RecastConfiguration c
 	configure(config);
 }
 
+RecastInterface::~RecastInterface()
+{
+	recastClean();
+}
+
 void RecastInterface::configure(RecastConfiguration config)
 {
 	if(_context)

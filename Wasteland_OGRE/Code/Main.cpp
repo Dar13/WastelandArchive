@@ -1,6 +1,6 @@
 #include "StdAfx.h"
 
-//#include <vld.h>
+#include <vld.h>
 
 #include <new>
 
@@ -35,6 +35,8 @@ int main(int argc, char **argv[])
 #endif
 		return 1; //error code 1
 	}
+
+	srand(ogre->getTimer()->getMilliseconds());
 
 	//adds all the resource groups defined by the files contained in this file.
 	std::string resFile = "resource\\xml\\lists\\resource_list.xml";

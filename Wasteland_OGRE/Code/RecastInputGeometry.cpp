@@ -172,8 +172,13 @@ void InputGeometry::_convertOgreEntities()
 		i++;
 	}
 
-	delete[] meshVertices;
+	delete[] meshIndices[0];
+	delete[] meshVertices[0];
+
 	delete[] meshIndices;
+	delete[] meshVertices;
+	delete meshVertexCount;
+	delete meshIndexCount;
 
 	_normals = new float[_numTriangles * 3];
 	for(int i = 0; i< _numTriangles * 3; i += 3)

@@ -47,7 +47,13 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 	parser.parseWaypoints(&waypoints);
 	std::cout << "Arena Locker - parser finished" << std::endl;
 
+	int firstWay,thirdWay;
 	LevelData::WaypointSet waypointSet(waypoints,true);
+	for(int i = 0; i < waypoints.size(); ++i) 
+	{ 
+		if(waypoints[i].getOrder() == 1) firstWay = i;
+		if(waypoints[i].getOrder() == 3) thirdWay = i;
+	}
 	std::cout << "Arena Locker - camera track created" << std::endl;
 
 	Ogre::Entity* testEntity = _scene->createEntity("testLevel","arena_locker/testlevel.mesh","Models");
@@ -67,15 +73,27 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 	config.recastConfig = &recast.getRecastConfig();
 	config.userConfig = &testParams;
 
-	DetourInterface detour(recast.getPolyMesh(),recast.getDetailMesh(),config);
+	DetourInterface detour = DetourInterface(recast.getPolyMesh(),recast.getDetailMesh(),config);
 	if(detour.isMeshBuilt())
-	{	
-		std::cout << detour.getRandomNavMeshPoint() << std::endl;
+	{
+		unsigned long start = Graphics->getTimer()->getMilliseconds();
+		unsigned long end = 0;
+		for(int i = 0; i < 10000; ++i)
+		{
+			PathData pathData;
+			detour.findPath(waypoints[firstWay].getPosition(),waypoints[thirdWay].getPosition(),1,&pathData);
+		}
+		end = Graphics->getTimer()->getMilliseconds();
+		std::cout << "Performance Benchmark(simple):" << end - start << std::endl;
+	}
+	else
+	{
+		std::cout << "Detour Failure! Exiting application!" << std::endl;
+		_stateShutdown = true;
 	}
 
 	_rootNode->detachObject(testEntity);
 	_scene->destroyEntity(testEntity);
-	
 }
 
 int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
@@ -88,6 +106,8 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 	light->setType(Ogre::Light::LT_POINT);
 	light->setPosition(Ogre::Vector3(1.5,1.5,2.0));
 	Graphics->setLightRange(light,15);
+
+	bool exitNow = _stateShutdown;
 
 	float time,delta,oldtime = static_cast<float>(Graphics->getTimer()->getMilliseconds());
 	while(!_stateShutdown)
@@ -105,6 +125,13 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 		}
 	}
 
+	if(exitNow)
+	{
+		MessageBoxA(NULL,"Check the WTLD.log file or the debug console for information on this error.","Error",MB_OK);
+		return State::END;
+	}
+
+	//Eventuall will read GAME_LOBBY or something.
 	return State::END;
 }
 

@@ -240,6 +240,8 @@ namespace GameManager
 		delete[] vertices;
 		delete[] indices;
 
+		delete bmesh;
+
 		return shape;
 	}
 
