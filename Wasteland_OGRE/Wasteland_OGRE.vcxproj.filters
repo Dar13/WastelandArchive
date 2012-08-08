@@ -91,7 +91,7 @@
     <Filter Include="Include Files\Recast\Crowd">
       <UniqueIdentifier>{f8edfb09-0771-48e2-9ad7-e98e9af4dd21}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Include Files\Recast\Crowd\CrowdAgent">
+    <Filter Include="Include Files\Recast\Crowd\Character">
       <UniqueIdentifier>{a3250d46-5c32-4bc1-bfd7-6b42d556e650}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
@@ -210,8 +210,8 @@
     <ClInclude Include="Code\CrowdManager.h">
       <Filter>Include Files\Recast\Crowd</Filter>
     </ClInclude>
-    <ClInclude Include="Code\CrowdAgent.h">
-      <Filter>Include Files\Recast\Crowd\CrowdAgent</Filter>
+    <ClInclude Include="Code\Character.h">
+      <Filter>Include Files\Recast\Crowd\Character</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -320,8 +320,8 @@
     <ClCompile Include="Code\CrowdManager.cpp">
       <Filter>Include Files\Recast\Crowd</Filter>
     </ClCompile>
-    <ClCompile Include="Code\CrowdAgent.cpp">
-      <Filter>Include Files\Recast\Crowd\CrowdAgent</Filter>
+    <ClCompile Include="Code\Character.cpp">
+      <Filter>Include Files\Recast\Crowd\Character</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

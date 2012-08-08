@@ -78,6 +78,9 @@ public:
 
 	void detourCleanup();
 
+	dtNavMesh* getNavMesh() { return _navMesh; }
+	dtNavMeshQuery* getNavQuery() { return _navQuery; }
+
 private:
 	dtNavMesh* _navMesh;
 	dtNavMeshQuery* _navQuery;

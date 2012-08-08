@@ -15,7 +15,7 @@
     <ClInclude Include="Code\ArenaALL.h" />
     <ClInclude Include="Code\Arena_Locker.h" />
     <ClInclude Include="Code\Arena_Tutorial.h" />
-    <ClInclude Include="Code\CrowdAgent.h" />
+    <ClInclude Include="Code\Character.h" />
     <ClInclude Include="Code\CrowdManager.h" />
     <ClInclude Include="Code\DetourInterface.h" />
     <ClInclude Include="Code\LevelData.h" />
@@ -59,7 +59,7 @@
     <ClCompile Include="Code\Arena_Tutorial.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="Code\CrowdAgent.cpp" />
+    <ClCompile Include="Code\Character.cpp" />
     <ClCompile Include="Code\CrowdManager.cpp" />
     <ClCompile Include="Code\DetourInterface.cpp" />
     <ClCompile Include="Code\RecastInputGeometry.cpp" />
