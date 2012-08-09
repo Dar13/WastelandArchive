@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 
 #include "CrowdManager.h"
+#include <Recast.h>
 #include "Utility.h"
 
 CrowdManager::CrowdManager(DetourInterface* detour,rcdtConfig* config)
@@ -29,7 +30,7 @@ CrowdManager::CrowdManager(DetourInterface* detour,rcdtConfig* config)
 	dtCrowd* crowd = _crowd;
 	if(nav && crowd && crowd->getAgentCount() == 0)
 	{
-		crowd->init(MAX_AGENTS,config->recastConfig->walkableRadius,nav);
+		crowd->init(MAX_AGENTS,static_cast<float>(config->recastConfig->walkableRadius),nav);
 
 		//excludes disabled polygons.
 		crowd->getEditableFilter()->setExcludeFlags(0x10);
@@ -71,6 +72,31 @@ CrowdManager::~CrowdManager()
 {
 	dtFreeCrowd(_crowd);
 	//dtFreeObstacleAvoidanceDebugData(_vod);
+}
+
+void CrowdManager::updateTick(float deltaTime)
+{
+	if(!_detour->getNavMesh() || !_crowd)
+	{
+		return;
+	}
+
+	_crowd->update(deltaTime,NULL);
+
+	for(int i = 0; i < _crowd->getAgentCount(); ++i)
+	{
+		const dtCrowdAgent* agent = _crowd->getAgent(i);
+		AgentTrail* trail = &_trails[i];
+		if(!agent->active)
+		{
+			continue;
+		}
+
+		trail->htrail = (trail->htrail + 1) % AGENT_MAX_TRAIL_LENGTH;
+		dtVcopy(&trail->trail[trail->htrail*3],agent->npos);
+	}
+
+	//_agentDebug.vod->normalizeSamples();
 }
 
 int CrowdManager::addAgent(const Ogre::Vector3& position)
@@ -175,4 +201,49 @@ void CrowdManager::setMoveTarget(const Ogre::Vector3& position,bool adjust,int a
 			_crowd->requestMoveTarget(i,_targetRef,_targetPosition);
 		}
 	}
+}
+
+bool CrowdManager::requestVelocity(int agentID,const Ogre::Vector3& velocity)
+{
+	if(_crowd->getAgent(agentID)->active)
+	{
+		float velocityF[3];
+		Utility::vector3_toFloatPtr(velocity,velocityF);
+		return _crowd->requestMoveVelocity(agentID,velocityF);
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool CrowdManager::stopAgent(int agentID)
+{
+	float zeroVelocity[3] = {0,0,0};
+	return _crowd->resetMoveTarget(agentID) && _crowd->requestMoveVelocity(agentID,zeroVelocity);
+}
+
+Ogre::Vector3 CrowdManager::calculateVelocity(const Ogre::Vector3& position,const Ogre::Vector3& target,float speed)
+{
+	float pos[3];
+	Utility::vector3_toFloatPtr(position,pos);
+
+	float tgt[3];
+	Utility::vector3_toFloatPtr(target,tgt);
+
+	float res[3];
+	calculateVelocity(res,pos,tgt,speed);
+
+	Ogre::Vector3 result;
+	Utility::floatPtr_toVector3(res,result);
+
+	return result;
+}
+
+void CrowdManager::calculateVelocity(float* velocity,const float* position,const float* target,float speed)
+{
+	dtVsub(velocity,target,position);
+	velocity[1] = 0.0f; //gets rid of Y-component of velocity
+	dtVnormalize(velocity);
+	dtVscale(velocity,velocity,speed);
 }

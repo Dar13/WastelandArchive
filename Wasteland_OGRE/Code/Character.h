@@ -11,13 +11,18 @@ public:
 	Character(const std::string& name, Ogre::SceneManager* scene, CrowdManager* crowd, const Ogre::Vector3& position);
 	Character(Ogre::SceneNode* node,CrowdManager* crowd,const Ogre::Vector3& position);
 
-	Ogre::SceneNode* getNode() { return _node; }
+	inline Ogre::SceneNode* getNode() { return _node; }
 
-	Ogre::Entity* getEntity() { return _entity; }
+	inline Ogre::Entity* getEntity() { return _entity; }
 
 	void update(float deltaTime);
 
-private:
+	inline int getAgentID() { return _agentID; }
+	inline const dtCrowdAgent* getAgent() { return _agent; }
+
+	inline Ogre::Vector3 getDestination() { return _destination; }
+
+protected:
 	float _destRadius;
 
 	std::string name;
@@ -26,7 +31,7 @@ private:
 
 	CrowdManager* _crowd;
 	
-	dtCrowdAgent* _agent;
+	const dtCrowdAgent* _agent;
 	int _agentID;
 
 	Ogre::Vector3 _destination;

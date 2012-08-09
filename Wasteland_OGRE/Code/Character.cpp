@@ -16,5 +16,6 @@ Character::Character(Ogre::SceneNode* node,CrowdManager* crowd,const Ogre::Vecto
 	  _isAgentControlled(true),
 	  _crowd(crowd)
 {
-	
+	_agentID = _crowd->addAgent(position);
+	_agent = _crowd->getAgent(_agentID);
 }
