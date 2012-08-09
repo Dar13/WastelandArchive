@@ -11,6 +11,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Code\AIManager.h" />
+    <ClInclude Include="Code\AI\npc_character.h" />
     <ClInclude Include="Code\AnimationBlender.h" />
     <ClInclude Include="Code\ArenaALL.h" />
     <ClInclude Include="Code\Arena_Locker.h" />
@@ -52,6 +54,8 @@
     <ClInclude Include="Code\XMLReader.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Code\AIManager.cpp" />
+    <ClCompile Include="Code\AI\npc_character.cpp" />
     <ClCompile Include="Code\AnimationBlender.cpp" />
     <ClCompile Include="Code\Arena_Locker.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>

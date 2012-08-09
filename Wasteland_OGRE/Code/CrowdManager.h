@@ -42,6 +42,8 @@ public:
 	std::vector<dtCrowdAgent*> getActiveAgents();
 
 	Ogre::Vector3 getLastDestination();
+
+	DetourInterface* _getDetour() { return _detour; }
 private:
 
 	dtCrowd* _crowd;

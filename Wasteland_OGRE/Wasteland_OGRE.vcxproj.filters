@@ -94,6 +94,15 @@
     <Filter Include="Include Files\Recast\Crowd\Character">
       <UniqueIdentifier>{a3250d46-5c32-4bc1-bfd7-6b42d556e650}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include Files\AI">
+      <UniqueIdentifier>{f9f57d37-3bad-440a-a612-668f73070bf0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files\AI\NPC">
+      <UniqueIdentifier>{4546146f-198a-490c-ada1-39450ea35701}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Include Files\AI\Enemy">
+      <UniqueIdentifier>{fa80dfc1-df44-4e17-ab0f-b69f61aa8ca5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\State.h">
@@ -213,6 +222,12 @@
     <ClInclude Include="Code\Character.h">
       <Filter>Include Files\Recast\Crowd\Character</Filter>
     </ClInclude>
+    <ClInclude Include="Code\AIManager.h">
+      <Filter>Include Files\AI</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\AI\npc_character.h">
+      <Filter>Include Files\AI\NPC</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">
@@ -322,6 +337,12 @@
     </ClCompile>
     <ClCompile Include="Code\Character.cpp">
       <Filter>Include Files\Recast\Crowd\Character</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\AIManager.cpp">
+      <Filter>Include Files\AI</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\AI\npc_character.cpp">
+      <Filter>Include Files\AI\NPC</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
