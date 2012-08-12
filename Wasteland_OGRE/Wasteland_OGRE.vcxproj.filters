@@ -228,6 +228,9 @@
     <ClInclude Include="Code\AI\npc_character.h">
       <Filter>Include Files\AI\NPC</Filter>
     </ClInclude>
+    <ClInclude Include="Code\AI\enemy_character.h">
+      <Filter>Include Files\AI\Enemy</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">
@@ -343,6 +346,9 @@
     </ClCompile>
     <ClCompile Include="Code\AI\npc_character.cpp">
       <Filter>Include Files\AI\NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\AI\enemy_character.cpp">
+      <Filter>Include Files\AI\Enemy</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

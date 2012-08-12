@@ -52,6 +52,8 @@ public:
 	void callFunction(int paramNum,int retNum);
 
 	void addEntity(const std::string& name,LevelData::BaseEntity* entity);
+	LevelData::BaseEntity* getEntity(const std::string& name) { return _entities[name]; }
+	void removeEntity(const std::string& name) { _entities.erase(_entities.find(name)); }
 	void purgeEntities();
 
 	void activateEntity(const std::string& name, bool value);
@@ -71,33 +73,13 @@ private:
 
 //Activation function. Allows interface between LuaManager and Lua without luabind or tolua++ or whatever.
 int activate(lua_State* lua);
-//{
-//	//number of arguments. NOT ZERO-INDEXED
-//	int argNum = lua_gettop(lua);
-//
-//	std::string entName;
-//	bool value = true;
-//
-//	//Lua function call should look like this: retVal = activate("Entity_to_Activate",1)
-//
-//	if(argNum == 2)
-//	{
-//		//assume correct argument order
-//		if(lua_isstring(lua,1))
-//		{
-//			entName = lua_tostring(lua,1);
-//		}
-//		if(lua_isnumber(lua,2))
-//		{
-//			value = (lua_toboolean(lua,2) != 0);
-//		}
-//	}
-//
-//	LuaManager::getSingleton().activateEntity(entName,value);
-//
-//	lua_pushboolean(lua,value);
-//
-//	return 1;
-//}
+
+//Allows Lua scripts to change in-game entity names.
+int changeEntityName(lua_State* lua);
+
+//Allows Lua to print through std::cout directly.
+int printDebug(lua_State* lua);
+
+int distanceCheck(lua_State* lua);
 
 #endif

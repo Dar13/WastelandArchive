@@ -29,6 +29,9 @@ void LuaManager::Setup(std::string luaListFileName)
 
 	//register lua-accessible functions
 	registerFunction("activate",activate);
+	registerFunction("changeEntityName",changeEntityName);
+	registerFunction("printDebug",printDebug);
+	registerFunction("distanceCheck",distanceCheck);
 
 	return;
 }
@@ -117,6 +120,140 @@ int activate(lua_State* lua)
 	LuaManager::getSingleton().activateEntity(entName,value);
 
 	lua_pushboolean(lua,value);
+
+	return 1;
+}
+
+int changeEntityName(lua_State* lua)
+{
+	int argNum = lua_gettop(lua);
+
+	std::string oldName,newName;
+
+	if(argNum == 2)
+	{
+		if(lua_isstring(lua,1))
+		{
+			oldName = lua_tostring(lua,1);
+		}
+		else
+		{
+			lua_pushboolean(lua,0);
+			return 0;
+		}
+
+		if(lua_isstring(lua,2))
+		{
+			oldName = lua_tostring(lua,2);
+		}
+		else
+		{
+			lua_pushboolean(lua,0);
+			return 0;
+		}
+	}
+
+	LevelData::BaseEntity* entity = LuaManager::getSingleton().getEntity(oldName);
+	LuaManager::getSingleton().removeEntity(oldName);
+	LuaManager::getSingleton().addEntity(newName,entity);
+
+	lua_pushboolean(lua,1);
+
+	return 1;
+}
+
+int printDebug(lua_State* lua)
+{
+	int argNum = lua_gettop(lua);
+
+	std::string str;
+
+	for(int i = 1; i <= argNum; ++i)
+	{
+		if(lua_isstring(lua,i))
+		{
+			str = lua_tostring(lua,i);
+			std::cout << str;
+		}
+		else
+		{
+			if(lua_isnumber(lua,i))
+			{
+				double num = lua_tonumber(lua,i);
+				std::cout << num;
+			}
+		}
+	}
+
+	std::cout << std::endl;
+	
+	return 0;
+}
+
+int distanceCheck(lua_State* lua)
+{
+	Ogre::Vector3 v1,v2;
+	double dist;
+	bool success = true;
+
+	if(lua_istable(lua,1))
+	{
+		lua_pushnumber(lua,1);
+		lua_gettable(lua,1);
+		v1.x = static_cast<Ogre::Real>(lua_tonumber(lua,-1));
+		lua_pop(lua,1);
+
+		lua_pushnumber(lua,2);
+		lua_gettable(lua,1);
+		v1.y = static_cast<Ogre::Real>(lua_tonumber(lua,-1));
+		lua_pop(lua,1);
+
+		lua_pushnumber(lua,3);
+		lua_gettable(lua,1);
+		v1.z = static_cast<Ogre::Real>(lua_tonumber(lua,-1));
+		lua_pop(lua,1);
+	}
+	else
+	{
+		std::cout << "Script error: distanceCheck called with non-table parameter. Parameter #: 1" << std::endl;
+		success = false;
+	}
+
+	if(lua_istable(lua,2))
+	{
+		lua_pushnumber(lua,1);
+		lua_gettable(lua,2);
+		v2.x = static_cast<Ogre::Real>(lua_tonumber(lua,-1));
+		lua_pop(lua,1);
+
+		lua_pushnumber(lua,2);
+		lua_gettable(lua,2);
+		v2.y = static_cast<Ogre::Real>(lua_tonumber(lua,-1));
+		lua_pop(lua,1);
+
+		lua_pushnumber(lua,3);
+		lua_gettable(lua,2);
+		v2.z = static_cast<Ogre::Real>(lua_tonumber(lua,-1));
+		lua_pop(lua,1);
+	}
+	else
+	{
+		std::cout << "Script error: distanceCheck called with non-table parameter. Parameter #: 2" << std::endl;
+		success = false;
+	}
+
+	if(lua_isnumber(lua,3))
+	{
+		dist = lua_tonumber(lua,3);
+		success = dist > v1.squaredDistance(v2);
+	}
+	else
+	{
+		std::cout << "Script error: distanceCheck called with non-numeric parameter. Parameter #:3" << std::endl;
+		success = false;
+	}
+
+	lua_pushboolean(lua,success);
 
 	return 1;
 }

@@ -5,6 +5,7 @@
 
 #include "RecastInterface.h"
 #include "DetourInterface.h"
+#include "LuaManager.h"
 
 ArenaLocker::ArenaLocker()
 {	
@@ -47,16 +48,7 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 	parser.parseWaypoints(&waypoints);
 	std::cout << "Arena Locker - parser finished" << std::endl;
 
-	int firstWay,thirdWay;
-	LevelData::WaypointSet waypointSet(waypoints,true);
-	for(int i = 0; i < waypoints.size(); ++i) 
-	{ 
-		if(waypoints[i].getOrder() == 1) firstWay = i;
-		if(waypoints[i].getOrder() == 3) thirdWay = i;
-	}
-	std::cout << "Arena Locker - camera track created" << std::endl;
-
-	Ogre::Entity* testEntity = _scene->createEntity("testLevel","arena_locker/testlevel.mesh","Models");
+	/*Ogre::Entity* testEntity = _scene->createEntity("testLevel","arena_locker/testlevel.mesh","Models");
 	_rootNode->attachObject(testEntity);
 	InputGeometry testGeom(testEntity);
 	
@@ -74,26 +66,14 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 	config.userConfig = &testParams;
 
 	DetourInterface detour = DetourInterface(recast.getPolyMesh(),recast.getDetailMesh(),config);
-	if(detour.isMeshBuilt())
-	{
-		unsigned long start = Graphics->getTimer()->getMilliseconds();
-		unsigned long end = 0;
-		for(int i = 0; i < 10000; ++i)
-		{
-			PathData pathData;
-			detour.findPath(waypoints[firstWay].getPosition(),waypoints[thirdWay].getPosition(),1,&pathData);
-		}
-		end = Graphics->getTimer()->getMilliseconds();
-		std::cout << "Performance Benchmark(simple):" << end - start << std::endl;
-	}
-	else
-	{
-		std::cout << "Detour Failure! Exiting application!" << std::endl;
-		_stateShutdown = true;
-	}
 
 	_rootNode->detachObject(testEntity);
-	_scene->destroyEntity(testEntity);
+	_scene->destroyEntity(testEntity);*/
+
+	LuaManager::getSingleton().prepFunction("arena_Locker");
+	lua_pushnumber(LuaManager::getSingleton().getLuaState(),1001);
+	LuaManager::getSingleton().callFunction(1,0);
+
 }
 
 int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)

@@ -247,3 +247,10 @@ void CrowdManager::calculateVelocity(float* velocity,const float* position,const
 	dtVnormalize(velocity);
 	dtVscale(velocity,velocity,speed);
 }
+
+Ogre::Vector3 CrowdManager::getLastDestination()
+{
+	Ogre::Vector3 result;
+	Utility::floatPtr_toVector3(_targetPosition,result);
+	return result;
+}

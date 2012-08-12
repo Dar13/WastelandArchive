@@ -43,7 +43,7 @@ void Character::setPosition(const Ogre::Vector3& position)
 
 Ogre::Vector3 Character::getPosition()
 {
-	_node->getPosition();
+	return _node->getPosition();
 }
 
 bool Character::destinationReached()
@@ -136,4 +136,38 @@ void Character::setAgentControlled(bool agentControlled)
 		_isAgentControlled = agentControlled;
 	}
 	return;
+}
+
+void Character::updatePosition(float deltaTime)
+{
+	if(_isAgentControlled)
+	{
+		Ogre::Vector3 agentPosition;
+		Utility::floatPtr_toVector3(_agent->npos,agentPosition);
+	}
+	else
+	{
+		if(getVelocity().isZeroLength())
+		{
+			return;
+		}
+
+		Ogre::Vector3 testPosition = getPosition() + deltaTime * getVelocity();
+		if(_crowd->_getDetour()->findNearestPointOnNavmesh(testPosition,testPosition))
+		{
+			_node->setPosition(testPosition);
+		}
+	}
+}
+
+void Character::setDestination(const Ogre::Vector3& destination)
+{
+	if(!_isAgentControlled)
+	{
+		return;
+	}
+
+	_destination = destination;
+	_manualVelocity = Ogre::Vector3::ZERO;
+	_isStopped = false;
 }

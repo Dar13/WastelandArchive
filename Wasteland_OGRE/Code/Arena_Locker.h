@@ -25,6 +25,8 @@ public:
 	void Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound);
 
 private:
+	void _handleScript();
+
 	//tells the state to shutdown or not.
 	bool _stateShutdown;
 
