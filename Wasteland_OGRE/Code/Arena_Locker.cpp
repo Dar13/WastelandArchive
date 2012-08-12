@@ -124,3 +124,8 @@ void ArenaLocker::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIMana
 
 	Graphics->getRoot()->destroySceneManager(_scene);
 }
+
+void ArenaLocker::_handleScript()
+{
+
+}

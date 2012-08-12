@@ -133,7 +133,7 @@ int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,
 	Sound->startMusic();
 	//fade-in to menu
 	_faderCallback.setupMusicFade(Sound);
-	_fader->startFadeIn(1.0);
+	_fader->startFadeIn(10.0);
 	Gui->setCurrentGUISheet("none");
 	
 	bool fadingIn = true;
@@ -214,8 +214,8 @@ int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,
 		if(_stateShutdown && !fadingOut)
 		{
 			fadingOut = true;
-			_faderCallback.setupMusicFade(Sound);
-			_fader->startFadeOut(1.0);
+			_faderCallback.setupMusicFade(Sound,fadingOut);
+			_fader->startFadeOut(10.0);
 			Gui->setCurrentGUISheet("none");
 			Gui->Update(_deltaTime);
 			_stateShutdown = false;
@@ -572,14 +572,5 @@ void MainMenu_FaderCallback::updateFade(double progress)
 {
 	_finished = false;
 	float vol = _soundManager->getDefaultMusicVolume();
-	if(!_fadeMusicDown)
-	{
-		_soundManager->setMusicFadeVolume(vol * static_cast<float>(1.0 / progress));
-	}
-	else
-	{
-		//need to test this.
-		_soundManager->setMusicFadeVolume(vol * static_cast<float>( progress ));
-	}
-	std::cout << vol * progress << std::endl;
+	_soundManager->setMusicFadeVolume(vol * static_cast<float>( 1.0 - progress ));
 }
