@@ -1,6 +1,7 @@
+#include "StdAfx.h"
 #include <lua.hpp>
 
-#include <OgreSingleton.h>
+//#include <OgreSingleton.h>
 
 #ifndef _LUA_MANAGER_H_
 #define _LUA_MANAGER_H_
@@ -51,6 +52,10 @@ public:
 	void prepFunction(const std::string& funcName);
 	void callFunction(int paramNum,int retNum);
 
+	void pushFunctionArg(boost::variant<int,double,std::string> arg);
+	void pushFunctionArgVector(const Ogre::Vector3& vector);
+	void pushFunctionArgVector(const btVector3& vector);
+
 	void addEntity(const std::string& name,LevelData::BaseEntity* entity);
 	LevelData::BaseEntity* getEntity(const std::string& name) { return _entities[name]; }
 	void removeEntity(const std::string& name) { _entities.erase(_entities.find(name)); }
@@ -67,6 +72,26 @@ private:
 	LuaManager& operator=(const LuaManager&);
 };
 
+//Helper class for LuaManager
+class argVisitor : public boost::static_visitor<>
+{
+public:
+	argVisitor() : numeric(0),rational(0.0),string("") {}
+	int numeric;
+	double rational;
+	std::string string;
+
+	void clear() { numeric = 0; rational = 0.0; string = ""; }
+
+	void getType(bool* num,bool* rat,bool* str);
+
+	void operator()(const int& i);
+	void operator()(const std::string& str);
+	void operator()(const double& d);
+private:
+	//bool _isN,_isR,_isD;
+};
+
 //==========================================
 //Functions that will be registered with Lua
 //==========================================
@@ -80,6 +105,7 @@ int changeEntityName(lua_State* lua);
 //Allows Lua to print through std::cout directly.
 int printDebug(lua_State* lua);
 
+//Fast distance check function available through Lua.
 int distanceCheck(lua_State* lua);
 
 #endif

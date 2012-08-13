@@ -133,7 +133,7 @@ int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,
 	Sound->startMusic();
 	//fade-in to menu
 	_faderCallback.setupMusicFade(Sound);
-	_fader->startFadeIn(10.0);
+	_fader->startFadeIn(1.0);
 	Gui->setCurrentGUISheet("none");
 	
 	bool fadingIn = true;
@@ -215,7 +215,7 @@ int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,
 		{
 			fadingOut = true;
 			_faderCallback.setupMusicFade(Sound,fadingOut);
-			_fader->startFadeOut(10.0);
+			_fader->startFadeOut(1.0);
 			Gui->setCurrentGUISheet("none");
 			Gui->Update(_deltaTime);
 			_stateShutdown = false;

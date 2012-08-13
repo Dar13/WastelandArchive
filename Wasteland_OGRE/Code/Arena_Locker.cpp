@@ -70,10 +70,7 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 	_rootNode->detachObject(testEntity);
 	_scene->destroyEntity(testEntity);*/
 
-	LuaManager::getSingleton().prepFunction("arena_Locker");
-	lua_pushnumber(LuaManager::getSingleton().getLuaState(),1001);
-	LuaManager::getSingleton().callFunction(1,0);
-
+	_handleScript(1001);
 }
 
 int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
@@ -125,7 +122,11 @@ void ArenaLocker::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIMana
 	Graphics->getRoot()->destroySceneManager(_scene);
 }
 
-void ArenaLocker::_handleScript()
+void ArenaLocker::_handleScript(unsigned long deltaTime)
 {
-
+	LuaManager::getSingleton().prepFunction("arena_Locker");
+	LuaManager::getSingleton().pushFunctionArg(static_cast<double>(deltaTime));
+	Ogre::Vector3 pos(1,2,4);
+	LuaManager::getSingleton().pushFunctionArgVector(pos);
+	LuaManager::getSingleton().callFunction(2,0);
 }

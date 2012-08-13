@@ -25,7 +25,7 @@ public:
 	void Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound);
 
 private:
-	void _handleScript();
+	void _handleScript(unsigned long deltaTime);
 
 	//tells the state to shutdown or not.
 	bool _stateShutdown;

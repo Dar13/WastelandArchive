@@ -67,9 +67,46 @@ void LuaManager::prepFunction(const std::string& funcName)
 
 void LuaManager::callFunction(int paramNum,int retNum)
 {
-	lua_call(luaState,paramNum,retNum);
+	//lua_call(luaState,paramNum,retNum);
+	int err = lua_pcall(luaState,paramNum,retNum,0);
+	if(err != 0) { std::cout << "Lua Error! Code: " << err << std::endl; }
+	
 }
 //<- Grouped functions
+
+void LuaManager::pushFunctionArg(boost::variant<int,double,std::string> arg)
+{
+	argVisitor visit;
+	boost::apply_visitor(visit,arg);
+
+	bool num,rat,str;
+	visit.getType(&num,&rat,&str);
+	if(num) { lua_pushnumber(luaState,visit.numeric); }
+	if(rat) { lua_pushnumber(luaState,visit.rational); }
+	if(str) { lua_pushstring(luaState,visit.string.c_str()); }
+
+	return;
+}
+
+void LuaManager::pushFunctionArgVector(const Ogre::Vector3& vector)
+{
+	lua_newtable(luaState);
+	int top = lua_gettop(luaState);
+
+	//next two lines in psuedo code: table[1] = vector.x;
+	//the next values would then be like: table[2] = vector.y;
+	for(int i = 0; i < 3; ++i)
+	{
+		lua_pushnumber(luaState,i+1);
+		lua_pushnumber(luaState,vector[i]);
+		lua_settable(luaState,top);
+	}
+}
+
+void LuaManager::pushFunctionArgVector(const btVector3& vector)
+{
+	
+}
 
 void LuaManager::addEntity(const std::string& name,LevelData::BaseEntity* entity)
 {
@@ -93,6 +130,51 @@ LuaManager::~LuaManager()
 	//clean up lua.
 	lua_close(luaState);
 }
+
+//==============================
+
+void argVisitor::getType(bool* num,bool* rat,bool* str)
+{
+	*num = false;
+	*rat = false;
+	*str = false;
+	if(numeric != 0)
+	{
+		*num = true;
+		return;
+	}
+	
+	if( fabs(rational - 0.0) > std::numeric_limits<double>::epsilon())
+	{
+		*rat = true;
+		return;
+	}
+
+	if(string != "")
+	{
+		*str = true;
+		return;
+	}
+
+	return;
+}
+
+void argVisitor::operator()(const int& i)
+{
+	numeric = i;
+}
+
+void argVisitor::operator()(const std::string& str)
+{
+	string = str;
+}
+
+void argVisitor::operator()(const double& d)
+{
+	rational = d;
+}
+
+//==============================
 
 int activate(lua_State* lua)
 {
@@ -177,10 +259,14 @@ int printDebug(lua_State* lua)
 		}
 		else
 		{
-			if(lua_isnumber(lua,i))
+			if(lua_isnumber(lua,i) || lua_isboolean(lua,i))
 			{
 				double num = lua_tonumber(lua,i);
 				std::cout << num;
+			}
+			else
+			{
+				std::cout << "(not printable)";
 			}
 		}
 	}

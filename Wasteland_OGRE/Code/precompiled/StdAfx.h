@@ -5,6 +5,9 @@
 #include <LinearMath\btQuaternion.h>
 #include <btBulletCollisionCommon.h>
 
+#include <boost\variant.hpp>
+#include <boost\lexical_cast.hpp>
+
 #if defined(WIN32) || defined(_WIN32)
 #include <Windows.h>
 #endif 
