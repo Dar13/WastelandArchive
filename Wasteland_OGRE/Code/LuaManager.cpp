@@ -105,7 +105,15 @@ void LuaManager::pushFunctionArgVector(const Ogre::Vector3& vector)
 
 void LuaManager::pushFunctionArgVector(const btVector3& vector)
 {
-	
+	lua_newtable(luaState);
+	int top = lua_gettop(luaState);
+
+	for(int i = 0; i < 3; ++i)
+	{
+		lua_pushnumber(luaState,i+1);
+		lua_pushnumber(luaState,vector.m_floats[i]);
+		lua_settable(luaState,top);
+	}
 }
 
 void LuaManager::addEntity(const std::string& name,LevelData::BaseEntity* entity)
@@ -174,8 +182,33 @@ void argVisitor::operator()(const double& d)
 	rational = d;
 }
 
+//=============================
+
+Ogre::Vector3 getVectorFromLua(lua_State* lua,int tableIndex)
+{
+	if(lua_istable(lua,tableIndex))
+	{
+		Ogre::Vector3 ret;
+		for(int i = 1; i < 4; ++i)
+		{
+			lua_pushnumber(lua,i);
+			lua_gettable(lua,tableIndex);
+			ret[i-1] = static_cast<float>(lua_tonumber(lua,-1));
+			lua_pop(lua,1);
+		}
+
+		return ret;
+	}
+	else
+	{
+		std::cout << "Lua Error: Index provided is not a table." << std::endl;
+		return Ogre::Vector3::ZERO;
+	}
+}
+
 //==============================
 
+// var = activate(entName,value)
 int activate(lua_State* lua)
 {
 	//number of arguments. NOT ZERO-INDEXED
@@ -183,8 +216,6 @@ int activate(lua_State* lua)
 
 	std::string entName;
 	bool value = true;
-
-	//Lua function call should look like this: retVal = activate("Entity_to_Activate",1)
 
 	if(argNum == 2)
 	{
@@ -206,6 +237,7 @@ int activate(lua_State* lua)
 	return 1;
 }
 
+// var = changeEntityName(oldName,newName)
 int changeEntityName(lua_State* lua)
 {
 	int argNum = lua_gettop(lua);
@@ -238,12 +270,14 @@ int changeEntityName(lua_State* lua)
 	LevelData::BaseEntity* entity = LuaManager::getSingleton().getEntity(oldName);
 	LuaManager::getSingleton().removeEntity(oldName);
 	LuaManager::getSingleton().addEntity(newName,entity);
+	entity->setName(newName);
 
 	lua_pushboolean(lua,1);
 
 	return 1;
 }
 
+// printDebug(...)
 int printDebug(lua_State* lua)
 {
 	int argNum = lua_gettop(lua);
@@ -276,55 +310,20 @@ int printDebug(lua_State* lua)
 	return 0;
 }
 
+// var = distanceCheck(v1,v2,dist)
 int distanceCheck(lua_State* lua)
 {
 	Ogre::Vector3 v1,v2;
 	double dist;
 	bool success = true;
 
-	if(lua_istable(lua,1))
+	v1 = getVectorFromLua(lua,1);
+
+	v2 = getVectorFromLua(lua,2);
+
+	if(v1 == Ogre::Vector3::ZERO || v2 == Ogre::Vector3::ZERO)
 	{
-		lua_pushnumber(lua,1);
-		lua_gettable(lua,1);
-		v1.x = static_cast<Ogre::Real>(lua_tonumber(lua,-1));
-		lua_pop(lua,1);
-
-		lua_pushnumber(lua,2);
-		lua_gettable(lua,1);
-		v1.y = static_cast<Ogre::Real>(lua_tonumber(lua,-1));
-		lua_pop(lua,1);
-
-		lua_pushnumber(lua,3);
-		lua_gettable(lua,1);
-		v1.z = static_cast<Ogre::Real>(lua_tonumber(lua,-1));
-		lua_pop(lua,1);
-	}
-	else
-	{
-		std::cout << "Script error: distanceCheck called with non-table parameter. Parameter #: 1" << std::endl;
-		success = false;
-	}
-
-	if(lua_istable(lua,2))
-	{
-		lua_pushnumber(lua,1);
-		lua_gettable(lua,2);
-		v2.x = static_cast<Ogre::Real>(lua_tonumber(lua,-1));
-		lua_pop(lua,1);
-
-		lua_pushnumber(lua,2);
-		lua_gettable(lua,2);
-		v2.y = static_cast<Ogre::Real>(lua_tonumber(lua,-1));
-		lua_pop(lua,1);
-
-		lua_pushnumber(lua,3);
-		lua_gettable(lua,2);
-		v2.z = static_cast<Ogre::Real>(lua_tonumber(lua,-1));
-		lua_pop(lua,1);
-	}
-	else
-	{
-		std::cout << "Script error: distanceCheck called with non-table parameter. Parameter #: 2" << std::endl;
+		std::cout << "Lua Error: distanceCheck parameter error." << std::endl;
 		success = false;
 	}
 

@@ -89,8 +89,12 @@ public:
 	void operator()(const std::string& str);
 	void operator()(const double& d);
 private:
-	//bool _isN,_isR,_isD;
 };
+
+//===========================
+//Some small helper functions
+//===========================
+Ogre::Vector3 getVectorFromLua(lua_State* lua,int tableIndex);
 
 //==========================================
 //Functions that will be registered with Lua
