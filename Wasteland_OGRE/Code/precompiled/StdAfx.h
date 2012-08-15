@@ -8,6 +8,8 @@
 #include <boost\variant.hpp>
 #include <boost\lexical_cast.hpp>
 
+#include <string>
+
 #if defined(WIN32) || defined(_WIN32)
 #include <Windows.h>
 #endif 

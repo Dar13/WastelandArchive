@@ -14,6 +14,7 @@
     <ClInclude Include="Code\AIManager.h" />
     <ClInclude Include="Code\AI\enemy_character.h" />
     <ClInclude Include="Code\AI\npc_character.h" />
+    <ClInclude Include="Code\AI_include.h" />
     <ClInclude Include="Code\AnimationBlender.h" />
     <ClInclude Include="Code\ArenaALL.h" />
     <ClInclude Include="Code\Arena_Locker.h" />

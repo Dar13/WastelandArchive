@@ -231,6 +231,9 @@
     <ClInclude Include="Code\AI\enemy_character.h">
       <Filter>Include Files\AI\Enemy</Filter>
     </ClInclude>
+    <ClInclude Include="Code\AI_include.h">
+      <Filter>Include Files\AI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">

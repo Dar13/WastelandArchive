@@ -3,10 +3,23 @@
 #include "Character.h"
 #include "Utility.h"
 
-Character::Character(const std::string& name,Ogre::SceneManager* scene,CrowdManager* crowd,const Ogre::Vector3& position)
+Character::Character(Ogre::SceneManager* scene,CrowdManager* crowd,const Ogre::Vector3& position)
 {
 	//won't use this often.
 }
+
+Character::Character()
+	: _node(nullptr),
+	  _movableObject(nullptr),
+	  _agentID(-1),
+	  _agent(nullptr),
+	  _isStopped(false),
+	  _isAgentControlled(true),
+	  _crowd(nullptr),
+	  _destination(0.0f),
+	  _manualVelocity(0.0f),
+	  _destRadius(0.0f)
+{}
 
 Character::Character(Ogre::SceneNode* node,CrowdManager* crowd,const Ogre::Vector3& position)
 	: _node(nullptr),

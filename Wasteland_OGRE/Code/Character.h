@@ -8,14 +8,15 @@
 class Character
 {
 public:
-	Character(const std::string& name, Ogre::SceneManager* scene, CrowdManager* crowd, const Ogre::Vector3& position);
+	Character(Ogre::SceneManager* scene, CrowdManager* crowd, const Ogre::Vector3& position);
 	Character(Ogre::SceneNode* node,CrowdManager* crowd,const Ogre::Vector3& position);
+	Character();
 
 	inline Ogre::SceneNode* getNode() { return _node; }
 	inline Ogre::MovableObject* getMovableObject() { return _movableObject; }
 	//inline Ogre::Entity* getEntity() { return _entity; }
 
-	virtual void update(float deltaTime) = 0;
+	virtual void update() = 0;
 
 	inline int getAgentID() { return _agentID; }
 	inline const dtCrowdAgent* getAgent() { return _agent; }
@@ -48,6 +49,7 @@ public:
 	virtual Ogre::Vector3 getLookingDirection();
 
 	void setAgentControlled(bool agentControlled);
+	bool getAgentControlled() { return _isAgentControlled; }
 
 protected:
 	virtual void updatePosition(float deltaTime);

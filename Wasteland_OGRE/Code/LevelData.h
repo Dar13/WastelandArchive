@@ -14,7 +14,9 @@ namespace LevelData
 		LIGHT,
 		TRIGGERZONE,
 		DOOR,
-		WAYPOINT
+		WAYPOINT,
+		NPC,
+		ENEMY
 	};
 	//Base entity class, allows some pretty cool things further on
 	class BaseEntity
