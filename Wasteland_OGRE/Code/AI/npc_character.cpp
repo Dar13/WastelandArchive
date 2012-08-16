@@ -54,7 +54,8 @@ void NPCCharacter::update(float deltaTime)
 			lua_gettable(lua,1);
 			if(lua_istable(lua,-1))
 			{
-				
+				//not sure what to do here
+				moveTarget = getVectorFromLua(lua,-1);
 			}
 			break;
 		case AI::BHV_FOLLOW:
