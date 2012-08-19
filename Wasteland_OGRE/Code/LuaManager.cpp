@@ -21,21 +21,26 @@ void LuaManager::Setup(std::string luaListFileName)
 {
 	luaState = lua_open();
 	luaL_openlibs(luaState);
-
-	//exposes all Lua functions to luaState and thus to the program itself through the LuaManager.
-	list_t* llist = list(luaListFileName).release();
-	std::unique_ptr<list_t> luaList(llist);
-	for(list_t::file_const_iterator itr = luaList->file().begin(); itr != luaList->file().end(); ++itr)
-	{
-		luaL_dofile(luaState,(*itr).c_str());
-	}
-
+	
 	//register lua-accessible functions
 	registerFunction("activate",activate);
 	registerFunction("changeEntityName",changeEntityName);
 	registerFunction("printDebug",printDebug);
 	registerFunction("distanceCheck",distanceCheck);
 	registerFunction("getPlayerPosition",getPlayerPosition);
+	registerFunction("getEntityPosition",getEntityPosition);
+	registerFunction("getNearestEntity",getNearestEntity);
+
+	//exposes all Lua functions to luaState and thus to the program itself through the LuaManager.
+	list_t* llist = list(luaListFileName).release();
+	std::unique_ptr<list_t> luaList(llist);
+	for(list_t::file_const_iterator itr = luaList->file().begin(); itr != luaList->file().end(); ++itr)
+	{
+		if(luaL_dofile(luaState,(*itr).c_str()))
+		{
+			std::cout << "Lua Error!" << std::endl;
+		}
+	}
 
 	return;
 }
@@ -72,6 +77,8 @@ void LuaManager::prepFunction(const std::string& funcName)
 void LuaManager::callFunction(int paramNum,int retNum)
 {
 	//lua_call(luaState,paramNum,retNum);
+	//lua_pushcfunction(luaState,printDebug);
+	//int top = lua_gettop(luaState);
 	int err = lua_pcall(luaState,paramNum,retNum,0);
 	if(err != 0) { std::cout << "Lua Error! Code: " << err << std::endl; }
 	
@@ -499,7 +506,8 @@ int getNearestEntity(lua_State* lua)
 	if(type == "Door") { ltype = LevelData::DOOR; }
 
 	std::string closest = "";
-	float closestDist = 0.0f,dist = 0.0f;
+	Ogre::Vector3 entPos;
+	float closestDist = 500.0f,dist = 500.0f;
 	std::map<std::string,LevelData::BaseEntity*>* ents = LuaManager::getSingleton()._getEntities();
 	auto itr = ents->begin();
 	while(itr != ents->end())
@@ -509,8 +517,9 @@ int getNearestEntity(lua_State* lua)
 			switch(ltype)
 			{
 			case LevelData::NPC:
-				dist = position.squaredDistance(static_cast<NPCCharacter*>(itr->second)->getPosition());
-				if(dist < closestDist)
+				entPos = static_cast<NPCCharacter*>(itr->second)->getPosition();
+				dist = position.squaredDistance(entPos);
+				if(dist < closestDist && dist != 0.0f)
 				{
 					closest = itr->second->getName();
 					closestDist = dist;
@@ -518,7 +527,7 @@ int getNearestEntity(lua_State* lua)
 				break;
 			case LevelData::ENEMY:
 				//dist = position.squardedDistance(static_cast<EnemyCharacter*>(itr->second)->getPosition());
-				if(dist < closestDist)
+				if(dist < closestDist && dist != 0.0f)
 				{
 					closest = itr->second->getName();
 					closestDist = dist;

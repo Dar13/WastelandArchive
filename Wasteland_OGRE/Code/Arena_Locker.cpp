@@ -9,6 +9,8 @@
 
 #include "AI\npc_character.h"
 
+#include "CrowdManager.h"
+
 ArenaLocker::ArenaLocker()
 {	
 	_camera = nullptr;
@@ -49,32 +51,52 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 	parser.setFile("resource\\models\\arena_locker\\arenalocker_test.ent");
 	parser.parseWaypoints(&waypoints);
 	std::cout << "Arena Locker - parser finished" << std::endl;
-
-	NPCCharacter testNPC("test","npc_test",NULL,NULL);
-
-	/*Ogre::Entity* testEntity = _scene->createEntity("testLevel","arena_locker/testlevel.mesh","Models");
-	_rootNode->attachObject(testEntity);
-	InputGeometry testGeom(testEntity);
 	
-	RecastConfiguration testParams;
-	testParams.setAgentHeight(2.5f);
-	testParams.setAgentRadius(.2f);
-	
-	RecastInterface recast(_scene,testParams);
-	recast.getRecastConfig().walkableRadius = static_cast<int>(.2f);
-	recast.buildNavMesh(&testGeom);
-	recast.exportPolygonMeshToObj("RECAST_NAVMESH_TEST.obj");
+	//TESTING IT OUT
 
-	rcdtConfig config;
-	config.recastConfig = &recast.getRecastConfig();
-	config.userConfig = &testParams;
+	//Ogre::Entity* testEntity = _scene->createEntity("testLevel","arena_locker/testlevel.mesh","Models");
+	//_rootNode->attachObject(testEntity);
+	//InputGeometry testGeom(testEntity);
+	//
+	//RecastConfiguration testParams;
+	//testParams.setAgentHeight(2.5f);
+	//testParams.setAgentRadius(.2f);
+	//
+	//RecastInterface recast(_scene,testParams);
+	//recast.getRecastConfig().walkableRadius = static_cast<int>(.2f);
+	//recast.buildNavMesh(&testGeom);
+	//recast.exportPolygonMeshToObj("RECAST_NAVMESH_TEST.obj");
 
-	DetourInterface detour = DetourInterface(recast.getPolyMesh(),recast.getDetailMesh(),config);
+	//rcdtConfig config;
+	//config.recastConfig = &recast.getRecastConfig();
+	//config.userConfig = &testParams;
 
-	_rootNode->detachObject(testEntity);
-	_scene->destroyEntity(testEntity);*/
+	//DetourInterface detour = DetourInterface(recast.getPolyMesh(),recast.getDetailMesh(),config);
 
-	_handleScript(1001);
+	//CrowdManager* crowd = new CrowdManager(&detour,&config);
+
+	//Ogre::Entity* characterEnt = _scene->createEntity("entTestNPC","test_char_arch.mesh","Models");
+	//Ogre::SceneNode* characterNode = _rootNode->createChildSceneNode("nodeTestNPC");
+	//characterNode->attachObject(characterEnt);
+
+	////another, so we can test out something else
+	//Ogre::Entity* character2Ent = characterEnt->clone("entTestNPC2");
+	//Ogre::SceneNode* character2Node = _rootNode->createChildSceneNode("nodeTestNPC2");
+	//character2Node->attachObject(character2Ent);
+
+	//NPCCharacter testCharacter("testNPC","npc_test",characterNode,crowd);
+	//Ogre::Vector3 pos(0,4,-1);
+	//testCharacter.setPosition(pos);
+	//NPCCharacter testCharacter2("testNPC2","npc_test",character2Node,crowd);
+	//pos = Ogre::Vector3(4,4,-1);
+	//testCharacter2.setPosition(pos);
+
+	//_rootNode->detachObject(testEntity);
+	//_scene->destroyEntity(testEntity);
+
+	//delete crowd;
+
+	//_handleScript(1001);
 }
 
 int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)

@@ -14,6 +14,14 @@ NPCCharacter::NPCCharacter(const std::string& name,const std::string& script,Ogr
 	_scriptName = script;
 	_activated = false; // just ensuring that it's de-activated
 
+	_prevBhv = 1;
+	_prevAct = 1;
+	_isBhvFinished = true;
+	_isActFinished = true;
+
+	_bhvChange = false;
+	_actChange = false;
+
 }
 
 /*! \brief Updates the NPCCharacter

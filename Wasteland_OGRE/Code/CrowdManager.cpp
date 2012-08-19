@@ -30,7 +30,8 @@ CrowdManager::CrowdManager(DetourInterface* detour,rcdtConfig* config)
 	dtCrowd* crowd = _crowd;
 	if(nav && crowd && crowd->getAgentCount() == 0)
 	{
-		crowd->init(MAX_AGENTS,static_cast<float>(config->recastConfig->walkableRadius),nav);
+		crowd->init(MAX_AGENTS,config->userConfig->_getWalkableRadius(),nav);
+		//crowd->init(MAX_AGENTS,static_cast<float>(config->recastConfig->walkableRadius),nav);
 
 		//excludes disabled polygons.
 		crowd->getEditableFilter()->setExcludeFlags(0x10);

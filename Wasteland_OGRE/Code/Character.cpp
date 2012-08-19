@@ -22,7 +22,7 @@ Character::Character()
 {}
 
 Character::Character(Ogre::SceneNode* node,CrowdManager* crowd,const Ogre::Vector3& position)
-	: _node(nullptr),
+	: _node(node),
 	  _movableObject(nullptr),
 	  _agentID(-1),
 	  _agent(nullptr),
@@ -32,6 +32,9 @@ Character::Character(Ogre::SceneNode* node,CrowdManager* crowd,const Ogre::Vecto
 {
 	_agentID = _crowd->addAgent(position);
 	_agent = _crowd->getAgent(_agentID);
+
+	//assumes at least one attached entity/light/etc
+	_movableObject = node->getAttachedObject(0);
 }
 
 void Character::updateDestination(const Ogre::Vector3& destination,bool updatePrevPath)

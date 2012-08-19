@@ -82,7 +82,7 @@ public:
 	inline int _getWalkableHeight() { return _walkableHeight; }
 	inline int _getWalkableClimb() { return _walkableHeight; }
 	inline int _getMaxEdgeLength() { return _maxEdgeLength; }
-	inline int _getWalkableRadius() { return _walkableRadius; }
+	inline float _getWalkableRadius() { return _walkableRadius; }
 	inline void _setWalkableRadius(float radius) { _walkableRadius = static_cast<int>(radius); }
 	inline int _getMinRegionArea() { return _minRegionArea; }
 	inline int _getMergeRegionArea() { return _mergeRegionArea; }
