@@ -7,8 +7,7 @@
 #include "DetourInterface.h"
 #include "LuaManager.h"
 
-//for now
-#include "AI_include.h"
+#include "AI\npc_character.h"
 
 ArenaLocker::ArenaLocker()
 {	
@@ -50,6 +49,8 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 	parser.setFile("resource\\models\\arena_locker\\arenalocker_test.ent");
 	parser.parseWaypoints(&waypoints);
 	std::cout << "Arena Locker - parser finished" << std::endl;
+
+	NPCCharacter testNPC("test","npc_test",NULL,NULL);
 
 	/*Ogre::Entity* testEntity = _scene->createEntity("testLevel","arena_locker/testlevel.mesh","Models");
 	_rootNode->attachObject(testEntity);

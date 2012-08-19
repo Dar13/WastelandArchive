@@ -532,4 +532,8 @@ int getNearestEntity(lua_State* lua)
 
 		++itr;
 	}
+
+	lua_pushstring(lua,closest.c_str());
+
+	return 1;
 }

@@ -16,7 +16,7 @@ public:
 	inline Ogre::MovableObject* getMovableObject() { return _movableObject; }
 	//inline Ogre::Entity* getEntity() { return _entity; }
 
-	virtual void update() = 0;
+	virtual void update(float deltaTime) = 0;
 
 	virtual void updateDestination(const Ogre::Vector3& destination,bool updatePrevPath = false);
 

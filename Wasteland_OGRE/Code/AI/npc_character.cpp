@@ -51,26 +51,26 @@ void NPCCharacter::update(float deltaTime)
 		//get behavior
 		lua_pushstring(lua,"behavior");
 		lua_gettable(lua,1);
-		behavior = lua_tonumber(lua,-1);
+		behavior = lua_tointeger(lua,-1);
 		lua_pop(lua,1);
 
 		lua_pushstring(lua,"bhvchange");
 		lua_gettable(lua,1);
 		bhvChange = lua_tointeger(lua,-1);
 		lua_pop(lua,1);
-		_bhvChange = static_cast<bool>(bhvChange);
+		_bhvChange = (bhvChange == 1) ? true : false;
 
 		//get action
 		lua_pushstring(lua,"action");
 		lua_gettable(lua,1);
-		action = lua_tonumber(lua,-1);
+		action = lua_tointeger(lua,-1);
 		lua_pop(lua,1);
 
 		lua_pushstring(lua,"actchange");
 		lua_gettable(lua,1);
 		actChange = lua_tointeger(lua,-1);
 		lua_pop(lua,1);
-		_actChange = static_cast<bool>(actChange);
+		_actChange = (actChange == 1) ? true : false;
 
 		switch(behavior)
 		{
@@ -97,7 +97,7 @@ void NPCCharacter::update(float deltaTime)
 				{
 					lua_pushnumber(lua,i+1);
 					lua_gettable(lua,-2);
-					moveTarget[i] = lua_tonumber(lua,-1);
+					moveTarget[i] = static_cast<float>(lua_tonumber(lua,-1));
 					lua_pop(lua,1);
 				}
 
@@ -126,7 +126,7 @@ void NPCCharacter::update(float deltaTime)
 				{
 					lua_pushnumber(lua,i+1);
 					lua_gettable(lua,-2);
-					shootTarget[i] = lua_tonumber(lua,-1);
+					shootTarget[i] = static_cast<float>(lua_tonumber(lua,-1));
 					lua_pop(lua,1);
 				}
 			}
