@@ -18,6 +18,8 @@ public:
 
 	virtual void update() = 0;
 
+	virtual void updateDestination(const Ogre::Vector3& destination,bool updatePrevPath = false);
+
 	inline int getAgentID() { return _agentID; }
 	inline const dtCrowdAgent* getAgent() { return _agent; }
 

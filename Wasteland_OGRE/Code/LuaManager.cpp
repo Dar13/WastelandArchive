@@ -4,6 +4,9 @@
 
 #include "interfaces\interfaces.h"
 
+#include "AI\npc_character.h"
+#include "AI\enemy_character.h"
+
 template<> LuaManager* Ogre::Singleton<LuaManager>::ms_Singleton = 0;
 
 LuaManager::LuaManager()
@@ -32,6 +35,7 @@ void LuaManager::Setup(std::string luaListFileName)
 	registerFunction("changeEntityName",changeEntityName);
 	registerFunction("printDebug",printDebug);
 	registerFunction("distanceCheck",distanceCheck);
+	registerFunction("getPlayerPosition",getPlayerPosition);
 
 	return;
 }
@@ -128,9 +132,50 @@ void LuaManager::addEntity(const std::string& name,LevelData::BaseEntity* entity
 	return;
 }
 
+void LuaManager::purgeEntities()
+{
+	_entities.clear();
+}
+
 void LuaManager::activateEntity(const std::string& name,bool value)
 {
 	_entities[name]->activate(value);
+}
+
+void LuaManager::addDataPointer(const std::string& name,void* dataPtr)
+{
+	_data[name] = dataPtr;
+}
+
+void LuaManager::removeDataPointer(const std::string& name)
+{
+	auto found = _data.find(name);
+	if(found == _data.end())
+	{
+		return;
+	}
+	else
+	{
+		_data.erase(found);
+	}
+}
+
+void LuaManager::purgeData()
+{
+	_data.clear();
+}
+
+void* LuaManager::_getData(const std::string& name)
+{
+	auto found = _data.find(name);
+	if(found != _data.end())
+	{
+		return (*found).second;
+	}
+	else
+	{
+		return NULL;
+	}
 }
 
 LuaManager::~LuaManager()
@@ -300,7 +345,21 @@ int printDebug(lua_State* lua)
 			}
 			else
 			{
-				std::cout << "(not printable)";
+				if(lua_istable(lua,i))
+				{
+					std::cout << "(table)";
+				}
+				else
+				{
+					if(lua_isnil(lua,i))
+					{
+						std::cout << "(nil)";
+					}
+					else
+					{
+						std::cout << "(not printable)";
+					}
+				}
 			}
 		}
 	}
@@ -341,4 +400,136 @@ int distanceCheck(lua_State* lua)
 	lua_pushboolean(lua,success);
 
 	return 1;
+}
+
+// var = getPlayerPosition()
+int getPlayerPosition(lua_State* lua)
+{
+	Ogre::Vector3 pos;
+	void* ptr = NULL;
+
+	//some error checking...
+	ptr = LuaManager::getSingleton()._getData("playerPosition");
+	if(ptr != NULL)
+	{
+		pos = *(static_cast<Ogre::Vector3*>(ptr));
+	}
+	else
+	{
+		pos = Ogre::Vector3::ZERO;
+	}
+
+	lua_newtable(lua);
+	int top = lua_gettop(lua);
+
+	for(int i = 0; i < 3; ++i)
+	{
+		lua_pushinteger(lua,i+1);
+		lua_pushnumber(lua,pos[i]);
+		lua_settable(lua,top);
+	}
+
+	return 1;
+}
+
+// var = getEntityPosition("entityName","entityType")
+int getEntityPosition(lua_State* lua)
+{
+	Ogre::Vector3 ret;
+
+	if(lua_isstring(lua,1) && lua_isstring(lua,2))
+	{
+		std::string entity = lua_tostring(lua,1);
+		LevelData::BaseEntity* ent = LuaManager::getSingleton().getEntity(entity);
+		std::string type = lua_tostring(lua,2);
+		if(type == "NPC")
+		{
+			ret = static_cast<NPCCharacter*>(ent)->getPosition();
+		}
+		if(type == "Enemy")
+		{
+			//ret = static_cast<EnemyCharacter*>(ent)->getPosition();
+		}
+		//..other types?
+	}
+
+	lua_newtable(lua);
+	int top = lua_gettop(lua);
+
+	for(int i = 0; i < 3; i++)
+	{
+		lua_pushinteger(lua,i+1);
+		lua_pushnumber(lua,ret[i]);
+		lua_settable(lua,top);
+	}
+
+	return 1;
+}
+
+// var = getNearestEntity(position,type)
+int getNearestEntity(lua_State* lua)
+{
+	Ogre::Vector3 position;
+
+	if(lua_istable(lua,1))
+	{
+		position = getVectorFromLua(lua,1);
+	}
+	else
+	{
+		position = Ogre::Vector3::ZERO;
+	}
+
+	if(position == Ogre::Vector3::ZERO)
+	{
+		lua_pushnil(lua);
+		return 1;
+	}
+
+	std::string type = lua_tostring(lua,2);
+	if(type == "" || type.find("Zone") != type.npos)
+	{
+		lua_pushnil(lua);
+		return 1;
+	}
+
+	int ltype;
+	if(type == "NPC") { ltype = LevelData::NPC; }
+	if(type == "Enemy") { ltype = LevelData::ENEMY; }
+	if(type == "Door") { ltype = LevelData::DOOR; }
+
+	std::string closest = "";
+	float closestDist = 0.0f,dist = 0.0f;
+	std::map<std::string,LevelData::BaseEntity*>* ents = LuaManager::getSingleton()._getEntities();
+	auto itr = ents->begin();
+	while(itr != ents->end())
+	{
+		if(itr->second->getType() == ltype)
+		{
+			switch(ltype)
+			{
+			case LevelData::NPC:
+				dist = position.squaredDistance(static_cast<NPCCharacter*>(itr->second)->getPosition());
+				if(dist < closestDist)
+				{
+					closest = itr->second->getName();
+					closestDist = dist;
+				}
+				break;
+			case LevelData::ENEMY:
+				//dist = position.squardedDistance(static_cast<EnemyCharacter*>(itr->second)->getPosition());
+				if(dist < closestDist)
+				{
+					closest = itr->second->getName();
+					closestDist = dist;
+				}
+				break;
+			case LevelData::DOOR:
+				//do this later.
+				break;
+			}
+		}
+
+		++itr;
+	}
 }

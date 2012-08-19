@@ -34,6 +34,25 @@ Character::Character(Ogre::SceneNode* node,CrowdManager* crowd,const Ogre::Vecto
 	_agent = _crowd->getAgent(_agentID);
 }
 
+void Character::updateDestination(const Ogre::Vector3& destination,bool updatePrevPath)
+{
+	if(!_isAgentControlled)
+	{
+		return;
+	}
+
+	Ogre::Vector3 result;
+	if(!_crowd->_getDetour()->findNearestPointOnNavmesh(destination,result))
+	{
+		return;
+	}
+
+	_crowd->setMoveTarget(result,updatePrevPath,_agentID);
+	_destination = destination;
+	_isStopped = false;
+	_manualVelocity = Ogre::Vector3::ZERO;
+}
+
 void Character::setPosition(const Ogre::Vector3& position)
 {
 	if(!_isAgentControlled)
