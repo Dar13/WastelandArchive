@@ -104,6 +104,11 @@ namespace GameManager
 		return retVal;
 	}
 
+	Ogre::SceneNode* createObject(Ogre::SceneManager* scene,std::string& file,GraphicsManager* graphics)
+	{
+		//FILL THIS IN.
+	}
+
 	OgreBulletPair createObject(Ogre::SceneNode* node,object_t* objectInfo,PhysicsManager* phyManager,GraphicsManager* graphicsManager)
 	{
 		//Here's the variable that'll be passed back(by-value, not reference!).

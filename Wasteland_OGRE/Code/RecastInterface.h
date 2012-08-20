@@ -25,7 +25,7 @@ public:
 	//void update();
 
 	//Gets the configuration options used by the wrapper in constructing the current nav mesh.
-	RecastConfiguration& getRecastBuildConfiguration();
+	RecastConfiguration& getRecastBuildConfiguration() { return _recastParams; }
 
 	//The amount the drawn debug navmesh polys are offset from the ground.
 	float getNavmeshOffsetFromGround();
@@ -45,6 +45,7 @@ public:
 	void removeDrawnNavMesh(unsigned int tileRef);
 
 	rcConfig& getRecastConfig() { return _config; }
+	//RecastConfiguration getRecastParams() { return _recastParams; }
 
 	rcPolyMesh* getPolyMesh() { return _polyMesh; }
 	rcPolyMeshDetail* getDetailMesh() { return _detailMesh; }

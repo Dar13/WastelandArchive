@@ -4,7 +4,14 @@
 #define _ARENA_LOCKER_H_
 
 #include "State.h"
-#include "SplineTrack.h"
+
+#include "RecastInterface.h"
+#include "DetourInterface.h"
+
+//#include "CrowdManager.h"
+
+class CrowdManager;
+class NPCCharacter;
 
 /*! \brief **NOT FULLY IMPLEMENTED** Application state that is the Locker Room scene in Wasteland.
 
@@ -42,8 +49,15 @@ private:
 
 	std::unique_ptr<PhysicsManager> _physics;
 
+	std::unique_ptr<CrowdManager> _crowd;
+
+	std::unique_ptr<DetourInterface> _detour;
+	std::unique_ptr<RecastInterface> _recast;
+
 	std::vector<sSound> _sounds;
 	std::vector<FMOD::Channel*> _channels;
+
+	std::vector<NPCCharacter> _npcs;
 
 };
 

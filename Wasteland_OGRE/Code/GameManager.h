@@ -18,9 +18,7 @@ This namespace is where all the different Managers
 perform certain tasks(example: building a btBvhTriangleMeshShape
 from an Ogre::Mesh. This is the abstraction upon which the
 majority of the game code will be built, avoiding reliance
-on the individual managers.
-Will handle certain gameplay-specific managers(EWS and player) from
-beginning to end of the game(from 'new' to 'delete'). Keeps from crowding
+on the individual managers. Keeps from crowding
 Main.cpp
 */
 
@@ -41,6 +39,9 @@ namespace GameManager
 								object_t* objectInfo,
 								PhysicsManager* phyManager,
 								GraphicsManager* graphicsManager);
+	Ogre::SceneNode* createObject(Ogre::SceneManager* scene,
+								  std::string& file,
+								  GraphicsManager* graphics);
 	/*! Creates object, generates Ogre SceneNode and Bullet rigid body.
 
 		\param node Premade SceneNode.
@@ -53,6 +54,17 @@ namespace GameManager
 								PhysicsManager* phyManager,
 								GraphicsManager* graphicsManager);
 
+	/*! Creates an equippable object, compatible with the Player class.
+		
+		\param scene The current SceneManager.
+		\param file The file where the equippable object is defined in the correct XML format.
+		\param graphicsManager A pointer to the GraphicsManager
+		\param soundManager A pointer to the SoundManager
+		\param isWeapon Tells whether to perform weapon-specific preparation on the object
+
+		\returns EquippableObject Contains all the data needed for the object.
+		
+	*/
 	EquippableObject createEquippable(Ogre::SceneManager* scene,
 									  const std::string& file,
 									  GraphicsManager* graphicsManager,

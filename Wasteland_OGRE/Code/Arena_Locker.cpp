@@ -54,47 +54,28 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 	
 	//TESTING IT OUT
 
-	//Ogre::Entity* testEntity = _scene->createEntity("testLevel","arena_locker/testlevel.mesh","Models");
-	//_rootNode->attachObject(testEntity);
-	//InputGeometry testGeom(testEntity);
-	//
-	//RecastConfiguration testParams;
-	//testParams.setAgentHeight(2.5f);
-	//testParams.setAgentRadius(.2f);
-	//
-	//RecastInterface recast(_scene,testParams);
-	//recast.getRecastConfig().walkableRadius = static_cast<int>(.2f);
-	//recast.buildNavMesh(&testGeom);
-	//recast.exportPolygonMeshToObj("RECAST_NAVMESH_TEST.obj");
+	Ogre::Entity* levelEnt = static_cast<Ogre::Entity*>(_pairs.begin()->ogreNode->getAttachedObject(0));
+	InputGeometry levelGeometry(levelEnt);
 
-	//rcdtConfig config;
-	//config.recastConfig = &recast.getRecastConfig();
-	//config.userConfig = &testParams;
+	RecastConfiguration params;
+	params.setAgentHeight(2.5f);
+	params.setAgentRadius(.2f);
 
-	//DetourInterface detour = DetourInterface(recast.getPolyMesh(),recast.getDetailMesh(),config);
+	_recast.reset(new RecastInterface(_scene,params));
+	_recast->getRecastConfig().walkableRadius = static_cast<int>(.2f); // zero?
+	_recast->buildNavMesh(&levelGeometry);
+	_recast->exportPolygonMeshToObj("ARENALOCKER_RECAST_MESH.obj");
 
-	//CrowdManager* crowd = new CrowdManager(&detour,&config);
+	rcdtConfig config;
+	config.recastConfig = &_recast->getRecastConfig();
+	config.userConfig = &_recast->getRecastBuildConfiguration();
 
-	//Ogre::Entity* characterEnt = _scene->createEntity("entTestNPC","test_char_arch.mesh","Models");
-	//Ogre::SceneNode* characterNode = _rootNode->createChildSceneNode("nodeTestNPC");
-	//characterNode->attachObject(characterEnt);
+	_detour.reset(new DetourInterface(_recast->getPolyMesh(),_recast->getDetailMesh(),config));
 
-	////another, so we can test out something else
-	//Ogre::Entity* character2Ent = characterEnt->clone("entTestNPC2");
-	//Ogre::SceneNode* character2Node = _rootNode->createChildSceneNode("nodeTestNPC2");
-	//character2Node->attachObject(character2Ent);
+	_crowd.reset(new CrowdManager(_detour.get(),&config));
 
-	//NPCCharacter testCharacter("testNPC","npc_test",characterNode,crowd);
-	//Ogre::Vector3 pos(0,4,-1);
-	//testCharacter.setPosition(pos);
-	//NPCCharacter testCharacter2("testNPC2","npc_test",character2Node,crowd);
-	//pos = Ogre::Vector3(4,4,-1);
-	//testCharacter2.setPosition(pos);
-
-	//_rootNode->detachObject(testEntity);
-	//_scene->destroyEntity(testEntity);
-
-	//delete crowd;
+	//create some characters
+	NPCCharacter npc("npc","npc_test",&node,_crowd.get());
 
 	//_handleScript(1001);
 }
