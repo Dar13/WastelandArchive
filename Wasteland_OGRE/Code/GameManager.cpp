@@ -106,7 +106,13 @@ namespace GameManager
 
 	Ogre::SceneNode* createObject(Ogre::SceneManager* scene,std::string& file,GraphicsManager* graphics)
 	{
-		//FILL THIS IN.
+		object_t* obj = object(file).get();
+
+		Ogre::SceneNode* node = graphics->createSceneNode(scene,obj,NULL);
+
+		delete obj;
+
+		return node;
 	}
 
 	OgreBulletPair createObject(Ogre::SceneNode* node,object_t* objectInfo,PhysicsManager* phyManager,GraphicsManager* graphicsManager)
@@ -137,6 +143,23 @@ namespace GameManager
 		//retVal.btBody = PhysicsManager::getSingleton().addRigidBody(shape,node,objectInfo->mass(),init);
 
 		return retVal;
+	}
+
+	Ogre::SceneNode* createCharacterObject(Ogre::SceneManager* scene,
+										   characterobject_t* obj,
+										   GraphicsManager* graphics)
+	{
+		Ogre::SceneNode* node = nullptr;
+
+		node = graphics->createSceneNode(scene,obj);
+
+		if(node == nullptr)
+		{
+			std::cout << "Error creating CharacterObject SceneNode!" << std::endl;
+			std::cout << "Character name:" << obj->name() << std::endl;
+		}
+
+		return node;
 	}
 
 	EquippableObject createEquippable(Ogre::SceneManager* scene,

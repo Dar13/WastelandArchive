@@ -6,5 +6,6 @@
 #include "resource.hxx"
 #include "object.hxx"
 #include "weapon.hxx"
+#include "characterobject.hxx"
 
 #endif

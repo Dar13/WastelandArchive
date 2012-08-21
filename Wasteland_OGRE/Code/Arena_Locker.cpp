@@ -39,6 +39,7 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 	_physics->setGravity(grav);
 	std::cout << "Arena Locker - physics setup" << std::endl;
 
+	//list of physics-based entities and such
 	auto objList = list("resource\\xml\\lists\\arenalocker_list.xml");
 	for(auto itr = objList->file().begin(); itr != objList->file().end(); ++itr)
 	{
@@ -74,8 +75,18 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 
 	_crowd.reset(new CrowdManager(_detour.get(),&config));
 
-	//create some characters
-	NPCCharacter npc("npc","npc_test",&node,_crowd.get());
+	//NPC list
+	auto npcList = list("resource\\xml\\lists\\arenalocker_npc_list.xml");
+	for(auto itr = npcList->file().begin(); itr != npcList->file().end(); ++itr)
+	{
+		characterobject_t* obj = characterObject(*itr).release();
+		Ogre::SceneNode* node = GameManager::createCharacterObject(_scene,obj,Graphics);
+
+		NPCCharacter npc(obj->name(),obj->scriptName(),node,_crowd.get());
+		_npcs.push_back(npc);
+
+		delete obj;
+	}
 
 	//_handleScript(1001);
 }

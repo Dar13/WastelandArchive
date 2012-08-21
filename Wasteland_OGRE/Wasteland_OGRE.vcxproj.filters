@@ -123,9 +123,6 @@
     <ClInclude Include="Code\GameManager.h">
       <Filter>Include Files\Game</Filter>
     </ClInclude>
-    <ClInclude Include="Code\XMLReader.h">
-      <Filter>Include Files\XML</Filter>
-    </ClInclude>
     <ClInclude Include="Code\precompiled\StdAfx.h">
       <Filter>Include Files\PCH</Filter>
     </ClInclude>
@@ -234,6 +231,9 @@
     <ClInclude Include="Code\AI_include.h">
       <Filter>Include Files\AI</Filter>
     </ClInclude>
+    <ClInclude Include="Code\interfaces\characterobject.hxx">
+      <Filter>Include Files\XML\interfaces</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">
@@ -250,9 +250,6 @@
     </ClCompile>
     <ClCompile Include="Code\GameManager.cpp">
       <Filter>Include Files\Game</Filter>
-    </ClCompile>
-    <ClCompile Include="Code\XMLReader.cpp">
-      <Filter>Include Files\XML</Filter>
     </ClCompile>
     <ClCompile Include="Code\precompiled\StdAfx.cpp">
       <Filter>Include Files\PCH</Filter>
@@ -352,6 +349,9 @@
     </ClCompile>
     <ClCompile Include="Code\AI\enemy_character.cpp">
       <Filter>Include Files\AI\Enemy</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\interfaces\characterobject.cxx">
+      <Filter>Include Files\XML\interfaces</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

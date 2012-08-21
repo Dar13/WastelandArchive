@@ -22,6 +22,7 @@
     <ClInclude Include="Code\Character.h" />
     <ClInclude Include="Code\CrowdManager.h" />
     <ClInclude Include="Code\DetourInterface.h" />
+    <ClInclude Include="Code\interfaces\characterobject.hxx" />
     <ClInclude Include="Code\LevelData.h" />
     <ClInclude Include="Code\LuaManager.h" />
     <ClInclude Include="Code\PhysicsManager.h" />
@@ -53,7 +54,6 @@
     <ClInclude Include="Code\State.h" />
     <ClInclude Include="Code\StateManager.h" />
     <ClInclude Include="Code\Utility.h" />
-    <ClInclude Include="Code\XMLReader.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\AIManager.cpp" />
@@ -69,6 +69,7 @@
     <ClCompile Include="Code\Character.cpp" />
     <ClCompile Include="Code\CrowdManager.cpp" />
     <ClCompile Include="Code\DetourInterface.cpp" />
+    <ClCompile Include="Code\interfaces\characterobject.cxx" />
     <ClCompile Include="Code\RecastInputGeometry.cpp" />
     <ClCompile Include="Code\RecastInterface.cpp" />
     <ClCompile Include="Code\SplineTrack.cpp" />
@@ -150,9 +151,6 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="Code\Utility.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
-    </ClCompile>
-    <ClCompile Include="Code\XMLReader.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Use</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>

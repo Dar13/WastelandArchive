@@ -222,6 +222,36 @@ Ogre::SceneNode* GraphicsManager::createSceneNode(Ogre::SceneManager* scene,weap
 	return node;
 }
 
+Ogre::SceneNode* GraphicsManager::createSceneNode(Ogre::SceneManager* scene,characterobject_t* objectInfo,Ogre::SceneNode* parent)
+{
+	Ogre::SceneNode* node = nullptr;
+
+	Ogre::Vector3 pos(0.0f);
+	pos = Ogre::StringConverter::parseVector3(objectInfo->position());
+
+	if(parent == nullptr)
+	{
+		node = scene->getRootSceneNode()->createChildSceneNode(objectInfo->name(),pos);
+	}
+
+	Ogre::Entity* model = scene->createEntity("ent" + objectInfo->name(),
+											  objectInfo->modelFilename(),
+											  objectInfo->resourceGroup());
+
+	if(model != nullptr)
+	{
+		node->attachObject(model);
+	}
+	else
+	{
+		scene->getRootSceneNode()->removeAndDestroyChild(node->getName());
+		node == nullptr;
+	}
+
+	return node;
+
+}
+
 //This works, but isn't documented very well...
 //Might come back and document it later, but not right now...
 //In other words...!!!MAGIC DON'T TOUCH!!!

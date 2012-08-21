@@ -54,6 +54,10 @@ namespace GameManager
 								PhysicsManager* phyManager,
 								GraphicsManager* graphicsManager);
 
+	Ogre::SceneNode* createCharacterObject(Ogre::SceneManager* scene,
+										   characterobject_t* obj,
+										   GraphicsManager* graphics);
+
 	/*! Creates an equippable object, compatible with the Player class.
 		
 		\param scene The current SceneManager.
