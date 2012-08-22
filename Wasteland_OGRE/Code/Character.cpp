@@ -37,6 +37,7 @@ Character::Character(Ogre::SceneNode* node,CrowdManager* crowd,const Ogre::Vecto
 	_movableObject = node->getAttachedObject(0);
 }
 
+//!Finds closest point on navmesh and updates destination of agent to it.
 void Character::updateDestination(const Ogre::Vector3& destination,bool updatePrevPath)
 {
 	if(!_isAgentControlled)

@@ -71,7 +71,9 @@ void LuaManager::callFunction(const std::string& funcName,int expectedNumReturn)
 //Useful for AI and global scripts.
 void LuaManager::prepFunction(const std::string& funcName)
 {
+	//std::cout << funcName.c_str() << std::endl;
 	lua_getglobal(luaState,funcName.c_str());
+	if(lua_isnil(luaState,-1)) { std::cout << "Lua can't find function name!" << std::endl; }
 }
 
 void LuaManager::callFunction(int paramNum,int retNum)
@@ -80,7 +82,14 @@ void LuaManager::callFunction(int paramNum,int retNum)
 	//lua_pushcfunction(luaState,printDebug);
 	//int top = lua_gettop(luaState);
 	int err = lua_pcall(luaState,paramNum,retNum,0);
-	if(err != 0) { std::cout << "Lua Error! Code: " << err << std::endl; }
+	if(err != 0) 
+	{ 
+		std::cout << "Lua Error! Code: " << err << std::endl;
+		if(lua_isstring(luaState,-1))
+		{
+			std::cout << lua_tostring(luaState,-1) << std::endl;
+		}
+	}
 	
 }
 //<- Grouped functions

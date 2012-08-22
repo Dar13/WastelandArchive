@@ -114,6 +114,14 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 		delta = time - oldtime;
 		oldtime = time;
 
+		//Update the crowd manager
+		_crowd->updateTick(delta);
+
+		for(auto itr = _npcs.begin(); itr != _npcs.end(); ++itr)
+		{
+			itr->update(delta);
+		}
+
 		if(!GameManager::UpdateManagers(Graphics,_physics.get(),delta))
 		{
 			_stateShutdown = true;

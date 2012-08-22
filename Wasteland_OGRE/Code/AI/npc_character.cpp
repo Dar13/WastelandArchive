@@ -36,12 +36,15 @@ void NPCCharacter::update(float deltaTime)
 
 	//call the lua function
 	LuaManager::getSingleton().prepFunction(_scriptName);
-	LuaManager::getSingleton().pushFunctionArg(deltaTime);
+	LuaManager::getSingleton().pushFunctionArg(deltaTime + .1f);
 	LuaManager::getSingleton().pushFunctionArg(_prevBhv);
 	LuaManager::getSingleton().pushFunctionArg(_prevAct);
 	LuaManager::getSingleton().pushFunctionArg(static_cast<int>(_isBhvFinished));
 	LuaManager::getSingleton().pushFunctionArg(static_cast<int>(_isActFinished));
+	printDebug(LuaManager::getSingleton().getLuaState());
 	LuaManager::getSingleton().callFunction(5,1);
+
+	LuaManager::getSingleton().callFunction("test",0);
 
 	lua_State* lua = LuaManager::getSingleton().getLuaState();
 
@@ -180,7 +183,7 @@ void NPCCharacter::_behaviorIdle()
 void NPCCharacter::_behaviorMove(const Ogre::Vector3& target)
 {
 	//Check for duplicate move calls and update lua function call with that info
-	if(_destination == target)
+	if(_destination.squaredDistance(target) <= 9)
 	{
 		if(destinationReached())
 		{
