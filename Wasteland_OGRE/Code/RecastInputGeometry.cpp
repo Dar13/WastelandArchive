@@ -186,7 +186,7 @@ void InputGeometry::_convertOgreEntities()
 		const float* v0 = &_vertices[_triangles[i] * 3];
 		const float* v1 = &_vertices[_triangles[i+1] * 3];
 		const float* v2 = &_vertices[_triangles[i+2] * 3];
-		std::cout << *v0 << "," << *v1 << "," << *v2 << std::endl;
+		//std::cout << *v0 << "," << *v1 << "," << *v2 << std::endl;
 		float e0[3],e1[3];
 		for(int j = 0; j < 3; j++)
 		{

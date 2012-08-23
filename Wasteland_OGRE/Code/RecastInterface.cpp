@@ -130,7 +130,7 @@ bool RecastInterface::buildNavMesh(InputGeometry* inputGeom)
 	std::cout << " - " << numVerts / 1000.0f << "K vertices, ";
 	std::cout << numTris / 1000.0f << "K triangles" << std::endl;
 
-	_printConfig();
+	//_printConfig();
 #endif
 
 	_solid = rcAllocHeightfield();

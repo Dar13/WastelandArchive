@@ -19,8 +19,9 @@ lua_State* LuaManager::getLuaState() { return luaState;}
 //Forces explicit setup.
 void LuaManager::Setup(std::string luaListFileName)
 {
-	luaState = lua_open();
+	luaState = luaL_newstate();
 	luaL_openlibs(luaState);
+	luaL_checkversion(luaState);
 	
 	//register lua-accessible functions
 	registerFunction("activate",activate);
@@ -71,16 +72,13 @@ void LuaManager::callFunction(const std::string& funcName,int expectedNumReturn)
 //Useful for AI and global scripts.
 void LuaManager::prepFunction(const std::string& funcName)
 {
-	//std::cout << funcName.c_str() << std::endl;
 	lua_getglobal(luaState,funcName.c_str());
 	if(lua_isnil(luaState,-1)) { std::cout << "Lua can't find function name!" << std::endl; }
+	if(!lua_isfunction(luaState,-1)) { std::cout << "Lua function not pushed to stack!!" << std::endl; }
 }
 
 void LuaManager::callFunction(int paramNum,int retNum)
 {
-	//lua_call(luaState,paramNum,retNum);
-	//lua_pushcfunction(luaState,printDebug);
-	//int top = lua_gettop(luaState);
 	int err = lua_pcall(luaState,paramNum,retNum,0);
 	if(err != 0) 
 	{ 
@@ -120,6 +118,7 @@ void LuaManager::pushFunctionArgVector(const Ogre::Vector3& vector)
 		lua_pushnumber(luaState,i+1);
 		lua_pushnumber(luaState,vector[i]);
 		lua_settable(luaState,top);
+		
 	}
 }
 
@@ -382,6 +381,12 @@ int printDebug(lua_State* lua)
 
 	std::cout << std::endl;
 	
+	return 0;
+}
+
+int dummy(lua_State* lua)
+{
+	std::cout << "Dummy function..." << std::endl;
 	return 0;
 }
 

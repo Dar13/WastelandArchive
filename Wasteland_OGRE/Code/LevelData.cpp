@@ -247,27 +247,27 @@ namespace LevelData
 			}
 			if(lua_isnumber(L,2))
 			{
-				d1 = lua_tointeger(L,2);
+				d1 = lua_tointegerx(L,2,NULL);
 			}
 			if(lua_isnumber(L,3))
 			{
-				d2 = lua_tointeger(L,3);
+				d2 = lua_tointegerx(L,3,NULL);
 			}
 			if(lua_isnumber(L,4))
 			{
-				d3 = lua_tointeger(L,4);
+				d3 = lua_tointegerx(L,4,NULL);
 			}
 			if(lua_isnumber(L,5))
 			{
-				s1 = lua_tointeger(L,5);
+				s1 = lua_tointegerx(L,5,NULL);
 			}
 			if(lua_isnumber(L,6))
 			{
-				s2 = lua_tointeger(L,6);
+				s2 = lua_tointegerx(L,6,NULL);
 			}
 			if(lua_isnumber(L,7))
 			{
-				s3 = lua_tointeger(L,7);
+				s3 = lua_tointegerx(L,7,NULL);
 			}
 
 			_diffColour.r = d1 / 255.0f;

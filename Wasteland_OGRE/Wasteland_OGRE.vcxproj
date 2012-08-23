@@ -212,11 +212,13 @@
       <AdditionalIncludeDirectories>C:\Users\Neil Moore\Documents\Visual Studio 2010\Projects\Wasteland_OGRE\Wasteland_OGRE\Code\precompiled;E:\bullet-2.77\src;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <StringPooling>true</StringPooling>
+      <BufferSecurityCheck>false</BufferSecurityCheck>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>DetourCrowd.lib;Detour.lib;DebugUtils.lib;Recast.lib;lua5.1.lib;fmodex_vc.lib;xerces-c_3D.lib;OgreMain_d.lib;OIS_d.lib;dxguid.lib;dinput8.lib;CEGUIBase_d.lib;CEGUIOgreRenderer_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>DetourCrowd.lib;Detour.lib;DebugUtils.lib;Recast.lib;LuaLibrary.lib;fmodex_vc.lib;xerces-c_3D.lib;OgreMain_d.lib;OIS_d.lib;dxguid.lib;dinput8.lib;CEGUIBase_d.lib;CEGUIOgreRenderer_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(OutDir)\$(TargetFileName)" "$(OGRE_HOME)\Bin\$(Configuration)"</Command>

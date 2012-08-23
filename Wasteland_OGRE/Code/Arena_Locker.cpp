@@ -115,7 +115,7 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 		oldtime = time;
 
 		//Update the crowd manager
-		_crowd->updateTick(delta);
+		_crowd->updateTick(delta / 1000.0f);
 
 		for(auto itr = _npcs.begin(); itr != _npcs.end(); ++itr)
 		{

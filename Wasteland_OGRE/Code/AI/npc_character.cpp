@@ -22,6 +22,12 @@ NPCCharacter::NPCCharacter(const std::string& name,const std::string& script,Ogr
 	_bhvChange = false;
 	_actChange = false;
 
+	Ogre::Vector3 testDest(-4.50f,.5f,-5.5f);
+
+	std::cout << _agentID << std::endl;
+
+	updateDestination(testDest,false);
+
 }
 
 /*! \brief Updates the NPCCharacter
@@ -29,34 +35,44 @@ NPCCharacter::NPCCharacter(const std::string& name,const std::string& script,Ogr
 Internally updates the inherited LevelData::BaseEntity and the inherited Character.
 
 */
-void NPCCharacter::update(float deltaTime)
+void NPCCharacter::update(float deltaTimeInMilliSecs)
 {
 	//before anything else, update the position
-	updatePosition(deltaTime);
+	updatePosition(deltaTimeInMilliSecs/1000.0f);
 
-	//call the lua function
-	LuaManager::getSingleton().prepFunction(_scriptName);
-	LuaManager::getSingleton().pushFunctionArg(deltaTime + .1f);
-	LuaManager::getSingleton().pushFunctionArg(_prevBhv);
-	LuaManager::getSingleton().pushFunctionArg(_prevAct);
-	LuaManager::getSingleton().pushFunctionArg(static_cast<int>(_isBhvFinished));
-	LuaManager::getSingleton().pushFunctionArg(static_cast<int>(_isActFinished));
-	printDebug(LuaManager::getSingleton().getLuaState());
-	LuaManager::getSingleton().callFunction(5,1);
+	//std::cout << "Pos:" << _node->getPosition() << std::endl;
+	//std::cout << "Dest:" << _destination << std::endl;
 
-	LuaManager::getSingleton().callFunction("test",0);
+	_behaviorMove(_destination);
 
+	/*
 	lua_State* lua = LuaManager::getSingleton().getLuaState();
-
+	
 	lua_pushstring(lua,_name.c_str());
 	lua_setglobal(lua,"callingEntity");
 
-	int behavior,action;
+	lua_getglobal(lua,"test_npc_track");
+	lua_pushnumber(lua,16.666);
+	lua_pushinteger(lua,1);
+	lua_pushinteger(lua,1);
+	lua_pushinteger(lua,0);
+	lua_pushinteger(lua,1);
+	int err = lua_pcall(lua,5,1,0);
+	if(err == 2)
+	{
+		std::cout << "Lua error!" << std::endl;
+		if(lua_isstring(lua,1))
+		{
+			std::cout << lua_tostring(lua,1) << std::endl;
+		}
+	}
+
+	int behavior = 0,action = 0;
 	std::string bhvTarget,actTarget,changeWep;
 	Ogre::Vector3 moveTarget,shootTarget;
 
-	int bhvChange,actChange;
-	
+	int bhvChange = 0,actChange = 0;
+
 	if(lua_istable(LuaManager::getSingleton().getLuaState(),1))
 	{
 		//get behavior
@@ -111,9 +127,9 @@ void NPCCharacter::update(float deltaTime)
 					moveTarget[i] = static_cast<float>(lua_tonumber(lua,-1));
 					lua_pop(lua,1);
 				}
-
-				lua_pop(lua,1);
 			}
+
+			lua_pop(lua,1);
 
 			_behaviorMove(moveTarget);
 			break;
@@ -155,13 +171,17 @@ void NPCCharacter::update(float deltaTime)
 		}
 	}
 
+	//Just in case I missed something up there(missing lua_pop,etc)
+	lua_settop(lua,0);
+
+	//std::cout << behavior << "," << action << std::endl;
+
 	_prevBhv = behavior;
 	_prevAct = action;
 
-
 	//lastly, update the animations
 	//_anim.update(deltaTime);
-	
+	*/
 }
 
 void NPCCharacter::_behaviorIdle()

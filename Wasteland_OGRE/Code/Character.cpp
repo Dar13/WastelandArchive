@@ -32,6 +32,11 @@ Character::Character(Ogre::SceneNode* node,CrowdManager* crowd,const Ogre::Vecto
 {
 	_agentID = _crowd->addAgent(position);
 	_agent = _crowd->getAgent(_agentID);
+	
+	if(_agent->active != 1)
+	{
+		std::cout << "Agent is inactive! Name:" << node->getName() << std::endl;
+	}
 
 	//assumes at least one attached entity/light/etc
 	_movableObject = node->getAttachedObject(0);
@@ -174,12 +179,13 @@ void Character::setAgentControlled(bool agentControlled)
 	return;
 }
 
-void Character::updatePosition(float deltaTime)
+void Character::updatePosition(float deltaTimeInSecs)
 {
 	if(_isAgentControlled)
 	{
 		Ogre::Vector3 agentPosition;
 		Utility::floatPtr_toVector3(_agent->npos,agentPosition);
+		_node->setPosition(agentPosition);
 	}
 	else
 	{
@@ -188,7 +194,7 @@ void Character::updatePosition(float deltaTime)
 			return;
 		}
 
-		Ogre::Vector3 testPosition = getPosition() + deltaTime * getVelocity();
+		Ogre::Vector3 testPosition = getPosition() + deltaTimeInSecs * getVelocity();
 		if(_crowd->_getDetour()->findNearestPointOnNavmesh(testPosition,testPosition))
 		{
 			_node->setPosition(testPosition);
