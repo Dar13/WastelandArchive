@@ -2,6 +2,7 @@
 
 #include "RecastInterface.h"
 #include "Utility.h"
+#include "GraphicsManager.h"
 
 RecastInterface::RecastInterface(Ogre::SceneManager* scene,RecastConfiguration config)
 	: _scene(scene),
@@ -302,24 +303,106 @@ bool RecastInterface::buildNavMesh(InputGeometry* inputGeom)
 
 void RecastInterface::exportPolygonMeshToObj(const std::string& filename)
 {
-	std::fstream out(filename.c_str(),std::ios::out);
+	/*std::fstream out(filename.c_str(),std::ios::out);
 
 	for(int i=0; i < _detailMesh->nverts; ++i)
 	{
-		out << "v " << _detailMesh->verts[3*i] << " ";
-		out << _detailMesh->verts[3*i + 1] << " ";
-		out << _detailMesh->verts[3*i + 2] << std::endl;
+		out << "v " << _polyMesh->verts[3*i] << " ";
+		out << _polyMesh->verts[3*i + 1] << " ";
+		out << _polyMesh->verts[3*i + 2] << std::endl;
 	}
 
-	for(int i = 0; i < _detailMesh->ntris; ++i)
+	for(int i = 0; i < _polyMesh->npolys; ++i)
 	{
-		out << "f " << _detailMesh->tris[3*i] << " ";
-		out << _detailMesh->tris[3*i + 1] << " ";
-		out << _detailMesh->tris[3*i + 2];
+		out << "f " << 1 + _polyMesh->polys[3*i] << " ";
+		out << 1 + _polyMesh->polys[3*i + 1] << " ";
+		out << 1 + _polyMesh->polys[3*i + 2];
 		out << std::endl;
 	}
 
+	out.close();*/
+	Ogre::ManualObject* obj = _exportPolygonMeshToEntity(_polyMesh->verts,
+														 _polyMesh->nverts,
+														 _polyMesh->polys,
+														 _polyMesh->npolys,
+														 _polyMesh->maxpolys,
+														 _polyMesh->nvp,
+														 Ogre::Vector3(0,0,0));
+	exportPolygonMeshToObj(obj,filename);
+}
+
+void RecastInterface::exportPolygonMeshToObj(Ogre::ManualObject* recastPolyMesh,const std::string& filename)
+{
+	std::fstream out(filename,std::ios::out);
+
+	Ogre::MeshPtr mesh = recastPolyMesh->convertToMesh("tempMesh","Models");
+
+	size_t vertCount,indexCount;
+	Ogre::Vector3* vertices;
+	unsigned long* indices;
+
+	GraphicsManager::getMeshInformation(&mesh,vertCount,vertices,indexCount,indices);
+
+	for(int i = 0; i < vertCount; ++i)
+	{
+		out << "v " << vertices[i].x << " " << vertices[i].y << " " << vertices[i].z <<std::endl;
+	}
+
+	for(int i = 0; i < indexCount/3; ++i)
+	{
+		out << "f " << indices[3*i] << " " << indices[3*i + 1] << " " << indices[3*i + 2] << std::endl;
+	}
+
+	delete[] vertices;
+	delete[] indices;
+
 	out.close();
+}
+
+Ogre::ManualObject* RecastInterface::_exportPolygonMeshToEntity(unsigned short* vertices,
+														  int numVertices,
+														  unsigned short* polygons,
+														  int numPolys,
+														  int maxPolys,
+														  int numVertsPerPoly,
+														  const Ogre::Vector3& origin)
+{
+	if(_polyMesh == nullptr || _detailMesh == nullptr)
+	{
+		return NULL;
+	}
+
+	int nIndex = 0;
+	Ogre::ManualObject* manObj = _scene->createManualObject("recastTempMO");
+	manObj->begin("arena_locker/blue",Ogre::RenderOperation::OT_TRIANGLE_LIST);
+	for( int i = 0; i < numPolys; ++i)
+	{
+		const unsigned short* p = &polygons[i * numVertsPerPoly * 2];
+
+		unsigned short vi[3];
+		for(int j = 2; j < numVertsPerPoly; ++j)
+		{
+			if(p[j] == RC_MESH_NULL_IDX) break;
+			vi[0] = p[0];
+			vi[1] = p[j-1];
+			vi[2] = p[j];
+			for(int k = 0; k < 3; ++k)
+			{
+				const unsigned short* v = &vertices[vi[k]*3];
+				const float x = origin[0] + v[0] * _recastParams.getCellSize();
+				const float y = origin[1] + v[1] * _recastParams.getCellHeight();
+				const float z = origin[2] + v[2] * _recastParams.getCellSize();
+
+				manObj->position(x,y,z);
+			}
+			manObj->triangle(nIndex,nIndex+1,nIndex+2);
+			nIndex += 3;
+		}
+	}
+
+	manObj->end();
+
+	return manObj;
 }
 
 void RecastInterface::_printConfig()

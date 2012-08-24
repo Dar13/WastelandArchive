@@ -41,6 +41,14 @@ public:
 								 const float cellSize,const float cellHeight,const float* origin,bool colorRegions = true);
 
 	void exportPolygonMeshToObj(const std::string& filename);
+	void exportPolygonMeshToObj(Ogre::ManualObject* recastPolyMesh,const std::string& filename);
+	Ogre::ManualObject* _exportPolygonMeshToEntity(unsigned short* vertices,
+											 int numVertices,
+											 unsigned short* polygons,
+											 int numPolys,
+											 int maxPolys,
+											 int numVertsPerPoly,
+											 const Ogre::Vector3& origin);
 
 	void removeDrawnNavMesh(unsigned int tileRef);
 
