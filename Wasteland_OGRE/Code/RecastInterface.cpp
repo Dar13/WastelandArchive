@@ -350,7 +350,7 @@ void RecastInterface::exportPolygonMeshToObj(Ogre::ManualObject* recastPolyMesh,
 
 	for(int i = 0; i < indexCount/3; ++i)
 	{
-		out << "f " << indices[3*i] << " " << indices[3*i + 1] << " " << indices[3*i + 2] << std::endl;
+		out << "f " << 1+indices[3*i] << " " << 1+indices[3*i + 1] << " " << 1+indices[3*i + 2] << std::endl;
 	}
 
 	delete[] vertices;
