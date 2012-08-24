@@ -14,19 +14,13 @@ NPCCharacter::NPCCharacter(const std::string& name,const std::string& script,Ogr
 	_scriptName = script;
 	_activated = false; // just ensuring that it's de-activated
 
-	_prevBhv = 1;
-	_prevAct = 1;
+	_prevBhv = 0;
+	_prevAct = 0;
 	_isBhvFinished = true;
 	_isActFinished = true;
 
 	_bhvChange = false;
 	_actChange = false;
-
-	Ogre::Vector3 testDest(-4.50f,.5f,-5.5f);
-
-	std::cout << _agentID << std::endl;
-
-	updateDestination(testDest,false);
 
 }
 
@@ -40,12 +34,6 @@ void NPCCharacter::update(float deltaTimeInMilliSecs)
 	//before anything else, update the position
 	updatePosition(deltaTimeInMilliSecs/1000.0f);
 
-	//std::cout << "Pos:" << _node->getPosition() << std::endl;
-	//std::cout << "Dest:" << _destination << std::endl;
-
-	_behaviorMove(_destination);
-
-	/*
 	lua_State* lua = LuaManager::getSingleton().getLuaState();
 	
 	lua_pushstring(lua,_name.c_str());
@@ -53,10 +41,10 @@ void NPCCharacter::update(float deltaTimeInMilliSecs)
 
 	lua_getglobal(lua,"test_npc_track");
 	lua_pushnumber(lua,16.666);
-	lua_pushinteger(lua,1);
-	lua_pushinteger(lua,1);
-	lua_pushinteger(lua,0);
-	lua_pushinteger(lua,1);
+	lua_pushinteger(lua,_prevBhv);
+	lua_pushinteger(lua,_prevAct);
+	lua_pushinteger(lua,static_cast<int>(_isBhvFinished));
+	lua_pushinteger(lua,static_cast<int>(_isActFinished));
 	int err = lua_pcall(lua,5,1,0);
 	if(err == 2)
 	{
@@ -70,6 +58,7 @@ void NPCCharacter::update(float deltaTimeInMilliSecs)
 	int behavior = 0,action = 0;
 	std::string bhvTarget,actTarget,changeWep;
 	Ogre::Vector3 moveTarget,shootTarget;
+	Ogre::Vector3 tmp;
 
 	int bhvChange = 0,actChange = 0;
 
@@ -124,8 +113,16 @@ void NPCCharacter::update(float deltaTimeInMilliSecs)
 				{
 					lua_pushnumber(lua,i+1);
 					lua_gettable(lua,-2);
-					moveTarget[i] = static_cast<float>(lua_tonumber(lua,-1));
+					tmp[i] = static_cast<float>(lua_tonumber(lua,-1));
 					lua_pop(lua,1);
+					if(tmp != Ogre::Vector3(-1000,-1000,-1000))
+					{
+						moveTarget = tmp;
+					}
+					else
+					{
+						moveTarget = _destination;
+					}
 				}
 			}
 
@@ -181,7 +178,6 @@ void NPCCharacter::update(float deltaTimeInMilliSecs)
 
 	//lastly, update the animations
 	//_anim.update(deltaTime);
-	*/
 }
 
 void NPCCharacter::_behaviorIdle()
@@ -203,15 +199,21 @@ void NPCCharacter::_behaviorIdle()
 void NPCCharacter::_behaviorMove(const Ogre::Vector3& target)
 {
 	//Check for duplicate move calls and update lua function call with that info
-	if(_destination.squaredDistance(target) <= 9)
+	if(_destination.squaredDistance(target) >= 4)
 	{
-		if(destinationReached())
-		{
-			_isBhvFinished = true;
-			_behaviorIdle();
-		}
+		updateDestination(target,false);
+		_destination = target;
 	}
-	updateDestination(target,false);
+
+	if(destinationReached())
+	{
+		_isBhvFinished = true;
+	}
+	else
+	{
+		_isBhvFinished = false;
+	}
+	
 
 	//point the character in the direction it's traveling
 	Ogre::Vector3 vel = getVelocity();

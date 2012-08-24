@@ -18,7 +18,7 @@ Character::Character()
 	  _crowd(nullptr),
 	  _destination(0.0f),
 	  _manualVelocity(0.0f),
-	  _destRadius(0.0f)
+	  _destRadius(4.0f)
 {}
 
 Character::Character(Ogre::SceneNode* node,CrowdManager* crowd,const Ogre::Vector3& position)
@@ -28,7 +28,8 @@ Character::Character(Ogre::SceneNode* node,CrowdManager* crowd,const Ogre::Vecto
 	  _agent(nullptr),
 	  _isStopped(false),
 	  _isAgentControlled(true),
-	  _crowd(crowd)
+	  _crowd(crowd),
+	  _destRadius(4.0f)
 {
 	_agentID = _crowd->addAgent(position);
 	_agent = _crowd->getAgent(_agentID);
@@ -57,7 +58,7 @@ void Character::updateDestination(const Ogre::Vector3& destination,bool updatePr
 	}
 
 	_crowd->setMoveTarget(result,updatePrevPath,_agentID);
-	_destination = destination;
+	_destination = result;
 	_isStopped = false;
 	_manualVelocity = Ogre::Vector3::ZERO;
 }
