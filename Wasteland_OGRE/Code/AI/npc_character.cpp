@@ -200,7 +200,7 @@ void NPCCharacter::_behaviorIdle()
 void NPCCharacter::_behaviorMove(const Ogre::Vector3& target)
 {
 	//Check for duplicate move calls and update lua function call with that info
-	std::cout << target << std::endl;
+	//std::cout << target << std::endl;
 	if(_destination.squaredDistance(target) >= 6)
 	{
 		updateDestination(target,false);
