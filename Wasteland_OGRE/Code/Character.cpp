@@ -79,6 +79,7 @@ void Character::setPosition(const Ogre::Vector3& position)
 
 	_crowd->removeAgent(_agentID);
 	_agentID = _crowd->addAgent(result);
+	_agent = _crowd->getAgent(_agentID);
 
 	_node->setPosition(result);
 }
@@ -139,6 +140,15 @@ float Character::getSpeed()
 float Character::getMaxSpeed()
 {
 	return _agent->params.maxSpeed;
+}
+
+void Character::setMaxSpeed(float maxSpeedFactor)
+{
+	_crowd->removeAgent(_agentID);
+	_agentID = _crowd->addAgent(_node->getPosition(),maxSpeedFactor);
+	_agent = _crowd->getAgent(_agentID);
+
+	return;
 }
 
 float Character::getMaxAcceleration()

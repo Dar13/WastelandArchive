@@ -7,6 +7,7 @@
 
 #define AGENT_MAX_TRAIL_LENGTH 64
 #define MAX_AGENTS 128
+#define DEFAULT_MAXSPEED 1.5f
 
 class CrowdManager
 {
@@ -15,6 +16,7 @@ public:
 	~CrowdManager();
 
 	int addAgent(const Ogre::Vector3& position);
+	int addAgent(const Ogre::Vector3& position, float maxSpeedFactor);
 
 	const dtCrowdAgent* getAgent(int id);
 

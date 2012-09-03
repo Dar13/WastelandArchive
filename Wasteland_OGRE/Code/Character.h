@@ -43,6 +43,7 @@ public:
 	virtual float getSpeed();
 
 	virtual float getMaxSpeed();
+	virtual void setMaxSpeed(float maxSpeedFactor);
 
 	virtual float getMaxAcceleration();
 

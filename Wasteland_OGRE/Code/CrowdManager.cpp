@@ -102,12 +102,18 @@ void CrowdManager::updateTick(float deltaTime)
 
 int CrowdManager::addAgent(const Ogre::Vector3& position)
 {
+	//default speed factor is passed in
+	return addAgent(position,DEFAULT_MAXSPEED);
+}
+
+int CrowdManager::addAgent(const Ogre::Vector3& position,float maxSpeedFactor)
+{
 	dtCrowdAgentParams ap;
 	memset(&ap,0,sizeof(ap));
 	ap.radius = _config->userConfig->getAgentRadius();
 	ap.height = _config->userConfig->getAgentHeight();
 	ap.maxAcceleration = 8.0f;
-	ap.maxSpeed = (ap.height / 2.0f) * 1.5f;
+	ap.maxSpeed = (ap.height / 2.0f) * maxSpeedFactor;
 	ap.collisionQueryRange = ap.radius * 12.0f;
 	ap.pathOptimizationRange = ap.radius * 30.0f;
 

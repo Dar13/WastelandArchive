@@ -83,6 +83,7 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 		Ogre::SceneNode* node = GameManager::createCharacterObject(_scene,obj,Graphics);
 
 		NPCCharacter npc(obj->name(),obj->scriptName(),node,_crowd.get());
+		npc.setMaxSpeed(.5f);
 		_npcs.push_back(npc);
 		LuaManager::getSingleton().addEntity(npc.getName(),&_npcs.back());
 
@@ -95,7 +96,6 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
 {
 	_camera->setPosition(Ogre::Vector3(-5,25,-5));
-	//_camera->setPosition(Ogre::Vector3(0,0,-1));
 	_camera->setFarClipDistance(1000);
 	_camera->lookAt(Ogre::Vector3::ZERO);
 
