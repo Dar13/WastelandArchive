@@ -234,6 +234,12 @@ Ogre::SceneNode* GraphicsManager::createSceneNode(Ogre::SceneManager* scene,char
 		node = scene->getRootSceneNode()->createChildSceneNode(objectInfo->name(),pos);
 	}
 
+	if(node == nullptr)
+	{
+		std::cout << "Error creating SceneNode. Name:" << objectInfo->name() << std::endl;
+		return node;
+	}
+
 	Ogre::Entity* model = scene->createEntity("ent" + objectInfo->name(),
 											  objectInfo->modelFilename(),
 											  objectInfo->resourceGroup());
@@ -245,7 +251,7 @@ Ogre::SceneNode* GraphicsManager::createSceneNode(Ogre::SceneManager* scene,char
 	else
 	{
 		scene->getRootSceneNode()->removeAndDestroyChild(node->getName());
-		node == nullptr;
+		node = nullptr;
 	}
 
 	return node;

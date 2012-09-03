@@ -21,7 +21,6 @@ NPCCharacter::NPCCharacter(const std::string& name,const std::string& script,Ogr
 
 	_bhvChange = false;
 	_actChange = false;
-
 }
 
 /*! \brief Updates the NPCCharacter
@@ -39,7 +38,7 @@ void NPCCharacter::update(float deltaTimeInMilliSecs)
 	lua_pushstring(lua,_name.c_str());
 	lua_setglobal(lua,"callingEntity");
 
-	lua_getglobal(lua,"test_npc_track");
+	lua_getglobal(lua,this->_scriptName.c_str());
 	lua_pushnumber(lua,16.666);
 	lua_pushinteger(lua,_prevBhv);
 	lua_pushinteger(lua,_prevAct);
@@ -193,13 +192,16 @@ void NPCCharacter::_behaviorIdle()
 	vel.normalise();
 	_node->rotate(src.getRotationTo(vel));
 
+	_isBhvFinished = true;
+
 	//transition to idle animation
 }
 
 void NPCCharacter::_behaviorMove(const Ogre::Vector3& target)
 {
 	//Check for duplicate move calls and update lua function call with that info
-	if(_destination.squaredDistance(target) >= 4)
+	std::cout << target << std::endl;
+	if(_destination.squaredDistance(target) >= 6)
 	{
 		updateDestination(target,false);
 		_destination = target;
