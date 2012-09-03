@@ -411,8 +411,6 @@ int distanceCheck(lua_State* lua)
 	{
 		dist = lua_tonumber(lua,3);
 		success = dist > v1.squaredDistance(v2);
-		//std::cout << dist << ":" << v1.squaredDistance(v2);
-		//std::cout << ":" << success << std::endl;
 	}
 	else
 	{
