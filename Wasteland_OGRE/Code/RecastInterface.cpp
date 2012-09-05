@@ -343,12 +343,12 @@ void RecastInterface::exportPolygonMeshToObj(Ogre::ManualObject* recastPolyMesh,
 
 	GraphicsManager::getMeshInformation(&mesh,vertCount,vertices,indexCount,indices);
 
-	for(int i = 0; i < vertCount; ++i)
+	for(size_t i = 0; i < vertCount; ++i)
 	{
 		out << "v " << vertices[i].x << " " << vertices[i].y << " " << vertices[i].z <<std::endl;
 	}
 
-	for(int i = 0; i < indexCount/3; ++i)
+	for(size_t i = 0; i < indexCount/3; ++i)
 	{
 		out << "f " << 1+indices[3*i] << " " << 1+indices[3*i + 1] << " " << 1+indices[3*i + 2] << std::endl;
 	}

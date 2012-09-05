@@ -16,7 +16,7 @@ Console::Console(const std::string& name)
 
 	// set the screen buffer to be big enough to let us scroll text
 	GetConsoleScreenBufferInfo(GetStdHandle(STD_OUTPUT_HANDLE),&coninfo);
-	coninfo.dwSize.Y = 100;
+	coninfo.dwSize.Y = 200;
 	SetConsoleScreenBufferSize(GetStdHandle(STD_OUTPUT_HANDLE),coninfo.dwSize);
 
 	// redirect unbuffered STDOUT to the console
