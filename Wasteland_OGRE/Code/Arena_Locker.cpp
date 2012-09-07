@@ -136,7 +136,7 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 		return State::END;
 	}
 
-	//Eventuall will read GAME_LOBBY or something.
+	//Eventually will be GAME_LOBBY or something.
 	return State::END;
 }
 

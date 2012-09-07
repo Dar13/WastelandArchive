@@ -14,6 +14,26 @@ NPCCharacter::NPCCharacter(const std::string& name,const std::string& script,Ogr
 	_scriptName = script;
 	_activated = false; // just ensuring that it's de-activated
 
+	//check for animations
+	Ogre::Entity* ent = static_cast<Ogre::Entity*>(node->getAttachedObject(0));
+	node->scale(.1,.1,.1);
+	if(ent != nullptr)
+	{
+		std::cout << "NPCCharacter \'" << name << "\' has an entity attached." << std::endl;
+		Ogre::AnimationStateSet* animSet = ent->getAllAnimationStates();
+		if(animSet != nullptr)
+		{
+			std::cout << "  - has animations" << std::endl;
+			_animHandler.setEntity(ent);
+			_animHandler.init("Idle",true);
+		}
+		else
+		{
+			std::cout << " - doesn't have animations" << std::endl;
+			_animHandler.setEntity(NULL);
+		}
+	}
+
 	_prevBhv = 0;
 	_prevAct = 0;
 	_isBhvFinished = true;
@@ -176,7 +196,7 @@ void NPCCharacter::update(float deltaTimeInMilliSecs)
 	_prevAct = action;
 
 	//lastly, update the animations
-	//_anim.update(deltaTime);
+	_animHandler.addTime(deltaTimeInMilliSecs);
 }
 
 void NPCCharacter::_behaviorIdle()
@@ -195,6 +215,7 @@ void NPCCharacter::_behaviorIdle()
 	_isBhvFinished = true;
 
 	//transition to idle animation
+	_animHandler.blend("Idle",AnimationBlender::BlendWhileAnimating,1.0f,true);
 }
 
 void NPCCharacter::_behaviorMove(const Ogre::Vector3& target)
@@ -231,6 +252,16 @@ void NPCCharacter::_behaviorMove(const Ogre::Vector3& target)
 		_node->rotate(src.getRotationTo(vel));
 
 		//change animation if needed.
+		if(_animHandler.getSource() != nullptr)
+		{
+			Ogre::AnimationState* target = _animHandler.getTarget();
+			if((target == nullptr && _animHandler.getSource()->getAnimationName() != "Walk") || 
+				(target != nullptr && target->getAnimationName() != "Walk"))
+			{
+				_animHandler.blend("Walk",AnimationBlender::BlendWhileAnimating,1.0f,true);
+			}
+		}
+		
 	}
 }
 

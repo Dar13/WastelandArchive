@@ -23,6 +23,8 @@ public:
 
 	Ogre::SceneNode* getNode() { return cNode; }
 
+	void shutdown() { _world->removeAction(cController); _world->removeCollisionObject(cGhostObject); }
+
 private:
 	//prefix 'c' to denote privateness AND to differentiate from other variables.
 	//prefix '_' to denote privateness with no need to differentiate from other variables.

@@ -268,7 +268,8 @@ namespace GameManager
 		delete[] vertices;
 		delete[] indices;
 
-		delete bmesh;
+		//delete bmesh;
+		shape->setUserPointer(static_cast<void*>(bmesh));
 
 		return shape;
 	}

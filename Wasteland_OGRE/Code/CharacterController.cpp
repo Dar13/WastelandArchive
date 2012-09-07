@@ -17,6 +17,7 @@ void CharacterController::create(Ogre::Camera* camera,const Ogre::Vector3& initi
 	cGhostObject->setWorldTransform(initial);
 
 	//collision shape
+	//memory leak.
 	phyWorld->getPairCache()->setInternalGhostPairCallback(new btGhostPairCallback());
 	btScalar charHeight = 1.9f;
 	btScalar charWidth = .75f;
@@ -192,9 +193,11 @@ void CharacterController::update(float physicsTimeElapsed,InputManager* inputMan
 
 CharacterController::~CharacterController()
 {
+	//Patch: Can't rely on the destructor to be called before the current PhysicsManager destructor is called.
 	//have to remove the controller and ghost object from the physics world.
-	_world->removeAction(cController);
-	_world->removeCollisionObject(cGhostObject);
+	//_world->removeAction(cController);
+	//_world->removeCollisionObject(cGhostObject);
 	delete cController;
+	delete cGhostObject->getCollisionShape();
 	delete cGhostObject;
 }

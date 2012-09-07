@@ -5,6 +5,7 @@
 
 #include "../LevelData.h"
 #include "../Character.h"
+#include "../AnimationBlender.h"
 //#include "../AI_include.h"
 
 class NPCCharacter : public LevelData::BaseEntity,public Character
@@ -31,6 +32,8 @@ private:
 	bool _isActFinished;
 
 	bool _bhvChange,_actChange;
+
+	AnimationBlender _animHandler;
 };
 
 #endif
