@@ -31,6 +31,8 @@ private:
 	Ogre::Camera* cCamera;
 	Ogre::SceneNode* cNode;
 
+	btGhostPairCallback __pairCallback;
+
 	btKinematicCharacterController* cController;
 	btPairCachingGhostObject* cGhostObject;
 	btDiscreteDynamicsWorld* _world;

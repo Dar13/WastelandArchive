@@ -17,8 +17,8 @@ void CharacterController::create(Ogre::Camera* camera,const Ogre::Vector3& initi
 	cGhostObject->setWorldTransform(initial);
 
 	//collision shape
-	//memory leak.
-	phyWorld->getPairCache()->setInternalGhostPairCallback(new btGhostPairCallback());
+	//Patch: uses a member variable instead of a 'new btGhostPairCallback' that causes a memory leak.
+	phyWorld->getPairCache()->setInternalGhostPairCallback(&__pairCallback);
 	btScalar charHeight = 1.9f;
 	btScalar charWidth = .75f;
 	btConvexShape* capsule = new btCapsuleShape(charWidth,charHeight);
