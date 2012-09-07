@@ -153,17 +153,12 @@ bool cGunData::frameStarted(const Ogre::FrameEvent& evt)
 				
 				if(sourceAnim != cGunData::ANIM_FIRE)
 				{
-					if(targetAnim != cGunData::NO_ANIM || targetAnim != cGunData::ANIM_FIRE)
+					if(targetAnim != cGunData::ANIM_FIRE)
 					{
-						std::cout << "Fire should be happening." << std::endl;
 						_animBlender.blend("fire",AnimationBlender::BlendWhileAnimating,.2f,false);
 						_soundChannel->stop();
 						_soundChannel = _soundMgr->playSound(_sounds[SND_FIRE].sound);
 						std::cout << "fire" << std::endl;
-					}
-					else
-					{
-						std::cout << sourceAnim << "," << targetAnim << std::endl;
 					}
 				}
 				else
@@ -181,9 +176,8 @@ bool cGunData::frameStarted(const Ogre::FrameEvent& evt)
 		//if the source is reload then job is done.
 		if(sourceAnim != cGunData::ANIM_RELOAD)
 		{
-			//combines the two previous if-statements.
-			//checks for finished blend and for non-reloading animations.
-			if(targetAnim != cGunData::NO_ANIM || targetAnim != cGunData::ANIM_RELOAD)
+			//checks for non-reloading animations.
+			if(targetAnim != cGunData::ANIM_RELOAD)
 			{
 				_animBlender.blend("reload",AnimationBlender::BlendSwitch,.2f,false);
 			}
@@ -266,8 +260,8 @@ bool cGunData::frameStarted(const Ogre::FrameEvent& evt)
 	if( abs(_sounds[sndID].soundInfo.relativePosition - animRelPos) < 0.075f && 
 		_sounds[sndID].soundInfo.relativePosition != 0)
 	{
-		std::cout << "SndRelPos:" << _sounds[sndID].soundInfo.relativePosition;
-		std::cout << " AnimRelPos: " << animRelPos << std::endl;
+		//std::cout << "SndRelPos:" << _sounds[sndID].soundInfo.relativePosition;
+		//std::cout << " AnimRelPos: " << animRelPos << std::endl;
 		if(_sounds[sndID].sound.sound != nullptr && !_soundPlayed)
 		{
 				std::cout << "Sound is played" << std::endl;
