@@ -150,14 +150,20 @@ bool cGunData::frameStarted(const Ogre::FrameEvent& evt)
 			//left mouse button is clicked, but not held yet
 			if(!_mouseHeld)
 			{
+				
 				if(sourceAnim != cGunData::ANIM_FIRE)
 				{
-					if(targetAnim != cGunData::NO_ANIM && targetAnim != cGunData::ANIM_FIRE)
+					if(targetAnim != cGunData::NO_ANIM || targetAnim != cGunData::ANIM_FIRE)
 					{
+						std::cout << "Fire should be happening." << std::endl;
 						_animBlender.blend("fire",AnimationBlender::BlendWhileAnimating,.2f,false);
 						_soundChannel->stop();
 						_soundChannel = _soundMgr->playSound(_sounds[SND_FIRE].sound);
 						std::cout << "fire" << std::endl;
+					}
+					else
+					{
+						std::cout << sourceAnim << "," << targetAnim << std::endl;
 					}
 				}
 				else
@@ -175,14 +181,9 @@ bool cGunData::frameStarted(const Ogre::FrameEvent& evt)
 		//if the source is reload then job is done.
 		if(sourceAnim != cGunData::ANIM_RELOAD)
 		{
-			//if the blend is completely done.
-			if(targetAnim != cGunData::NO_ANIM)
-			{
-				_animBlender.blend("reload",AnimationBlender::BlendSwitch,.2f,false);
-			}
-
-			//if the blend isn't quite done
-			if(targetAnim != cGunData::ANIM_RELOAD)
+			//combines the two previous if-statements.
+			//checks for finished blend and for non-reloading animations.
+			if(targetAnim != cGunData::NO_ANIM || targetAnim != cGunData::ANIM_RELOAD)
 			{
 				_animBlender.blend("reload",AnimationBlender::BlendSwitch,.2f,false);
 			}
@@ -450,9 +451,16 @@ bool Player::Update(InputManager* input,PhysicsManager* physics,EWSManager* ews,
 
 	if(gun != nullptr)
 	{	
+		bool movkey = false;
+		movkey = (input->isCFGKeyPressed(InputManager::FORWARD) || 
+			      input->isCFGKeyPressed(InputManager::BACKWARD)||
+				  input->isCFGKeyPressed(InputManager::RIGHT) ||
+				  input->isCFGKeyPressed(InputManager::LEFT));
+
 		if(input->isMBPressed(OIS::MB_Left))
 		{
 			//shoot gun
+			std::cout << "MB_Left pressed..." << std::endl;
 			gun->fire();
 		}
 		else
@@ -465,7 +473,7 @@ bool Player::Update(InputManager* input,PhysicsManager* physics,EWSManager* ews,
 			gun->reload();
 		}
 
-		if(input->isCFGKeyPressed(InputManager::FORWARD))
+		if(movkey)
 		{
 			gun->setMoving(true);
 		}
