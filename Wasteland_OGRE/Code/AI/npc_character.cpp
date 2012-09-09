@@ -199,7 +199,6 @@ void NPCCharacter::update(float deltaTimeInMilliSecs)
 	//something is funky with FPSC character models.
 	//Will probably have to get custom ones somewhere.
 	_animHandler.addTime(deltaTimeInMilliSecs / 1000.0f);
-	//std::cout << deltaTimeInMilliSecs << "," << deltaTimeInMilliSecs / 100.0f << std::endl;
 }
 
 void NPCCharacter::_behaviorIdle()
