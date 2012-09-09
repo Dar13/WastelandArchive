@@ -176,14 +176,11 @@ void ArenaTutorial::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIMa
 	Input->setMouseLock(false);
 
 	std::for_each(_pairs.begin(),_pairs.end(),[] (OgreBulletPair ipair) {
-		if(ipair.ogreNode->getName() == "nodeArenaLevel")
+		if(ipair.btBody->getCollisionShape()->getShapeType() == TRIANGLE_MESH_SHAPE_PROXYTYPE)
 		{
-			if(ipair.btBody->getCollisionShape()->getShapeType() == TRIANGLE_MESH_SHAPE_PROXYTYPE)
-			{
-				btBvhTriangleMeshShape* mesh = static_cast<btBvhTriangleMeshShape*>(ipair.btBody->getCollisionShape());
-				btTriangleMesh* trimesh = static_cast<btTriangleMesh*>(mesh->getUserPointer());
-				delete trimesh;
-			}
+			btBvhTriangleMeshShape* mesh = static_cast<btBvhTriangleMeshShape*>(ipair.btBody->getCollisionShape());
+			btTriangleMesh* trimesh = static_cast<btTriangleMesh*>(mesh->getUserPointer());
+			delete trimesh;
 		}
 	});
 

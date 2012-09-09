@@ -142,6 +142,15 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 
 void ArenaLocker::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
 {
+	std::for_each(_pairs.begin(),_pairs.end(),[] (OgreBulletPair ipair) {
+		if(ipair.btBody->getCollisionShape()->getShapeType() == TRIANGLE_MESH_SHAPE_PROXYTYPE)
+		{
+			btBvhTriangleMeshShape* mesh = static_cast<btBvhTriangleMeshShape*>(ipair.btBody->getCollisionShape());
+			btTriangleMesh* trimesh = static_cast<btTriangleMesh*>(mesh->getUserPointer());
+			delete trimesh;
+		}
+	});
+
 	Graphics->getRenderWindow()->removeAllViewports();
 
 	_scene->destroyCamera(_camera);
