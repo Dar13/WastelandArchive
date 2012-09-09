@@ -125,10 +125,9 @@ namespace GameManager
 
 		//Easy(ish) function call.
 		btCollisionShape* shape = NULL;
-		if(objectInfo->mass()!=0.0f)
+		if(objectInfo->mass()!= 0.0f)
 		{
 			shape = phyManager->generateCollisionShape(objectInfo);
-			//shape = PhysicsManager::getSingleton().generateCollisionShape(objectInfo);
 		}
 		else
 		{
@@ -140,7 +139,6 @@ namespace GameManager
 		pos.setY(objectInfo->positionY());
 		pos.setZ(objectInfo->positionZ());
 		retVal.btBody = phyManager->addRigidBody(shape,node,objectInfo->mass(),init);
-		//retVal.btBody = PhysicsManager::getSingleton().addRigidBody(shape,node,objectInfo->mass(),init);
 
 		return retVal;
 	}

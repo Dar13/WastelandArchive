@@ -174,23 +174,18 @@ void ArenaTutorial::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIMa
 
 	//undo what I set in OIS
 	Input->setMouseLock(false);
-	
-	OgreBulletPair level;
-	for(auto i = _pairs.begin(); i != _pairs.end(); ++i)
-	{
-		if(i->ogreNode->getName() == "nodeArenaLevel")
-		{
-			level = *i;
-		}
-	}
 
-	int shapeType = level.btBody->getCollisionShape()->getShapeType();
-	if(shapeType == TRIANGLE_MESH_SHAPE_PROXYTYPE)
-	{
-		btBvhTriangleMeshShape* mesh = static_cast<::btBvhTriangleMeshShape*>(level.btBody->getCollisionShape());
-		btTriangleMesh* trimesh = static_cast<btTriangleMesh*>(mesh->getUserPointer());
-		delete trimesh;
-	}
+	std::for_each(_pairs.begin(),_pairs.end(),[] (OgreBulletPair ipair) {
+		if(ipair.ogreNode->getName() == "nodeArenaLevel")
+		{
+			if(ipair.btBody->getCollisionShape()->getShapeType() == TRIANGLE_MESH_SHAPE_PROXYTYPE)
+			{
+				btBvhTriangleMeshShape* mesh = static_cast<btBvhTriangleMeshShape*>(ipair.btBody->getCollisionShape());
+				btTriangleMesh* trimesh = static_cast<btTriangleMesh*>(mesh->getUserPointer());
+				delete trimesh;
+			}
+		}
+	});
 
 	//clean up what you initialized in the Setup() function.
 	Graphics->getRenderWindow()->removeAllViewports();
@@ -207,7 +202,6 @@ void ArenaTutorial::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIMa
 	_nodes.clear();
 	_entities.clear();
 	
-
 	//I'm clearing them due to physicsManager clean-up.
 	_constraints.clear();
 
