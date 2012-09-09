@@ -196,7 +196,10 @@ void NPCCharacter::update(float deltaTimeInMilliSecs)
 	_prevAct = action;
 
 	//lastly, update the animations
-	_animHandler.addTime(deltaTimeInMilliSecs);
+	//something is funky with FPSC character models.
+	//Will probably have to get custom ones somewhere.
+	_animHandler.addTime(deltaTimeInMilliSecs / 1000.0f);
+	//std::cout << deltaTimeInMilliSecs << "," << deltaTimeInMilliSecs / 100.0f << std::endl;
 }
 
 void NPCCharacter::_behaviorIdle()
@@ -215,7 +218,7 @@ void NPCCharacter::_behaviorIdle()
 	_isBhvFinished = true;
 
 	//transition to idle animation
-	_animHandler.blend("Idle",AnimationBlender::BlendWhileAnimating,1.0f,true);
+	_animHandler.blend("Idle",AnimationBlender::BlendWhileAnimating,.2f,true);
 }
 
 void NPCCharacter::_behaviorMove(const Ogre::Vector3& target)
@@ -255,10 +258,12 @@ void NPCCharacter::_behaviorMove(const Ogre::Vector3& target)
 		if(_animHandler.getSource() != nullptr)
 		{
 			Ogre::AnimationState* target = _animHandler.getTarget();
+			//this relies on the properties of the '&&' construct used by C++(if the first is false,
+			//then the if-statement is false. It DOESN'T check both fields.
 			if((target == nullptr && _animHandler.getSource()->getAnimationName() != "Walk") || 
 				(target != nullptr && target->getAnimationName() != "Walk"))
 			{
-				_animHandler.blend("Walk",AnimationBlender::BlendWhileAnimating,1.0f,true);
+				_animHandler.blend("Walk",AnimationBlender::BlendWhileAnimating,.2f,true);
 			}
 		}
 		

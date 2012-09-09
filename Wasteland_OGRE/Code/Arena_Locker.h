@@ -13,7 +13,7 @@
 class CrowdManager;
 class NPCCharacter;
 
-/*! \brief **NOT FULLY IMPLEMENTED** Application state that is the Locker Room scene in Wasteland.
+/*! \brief Application state that is the Locker Room scene in Wasteland.
 
 Is not a truly interactive scene, but shows an important plot point.
 */
