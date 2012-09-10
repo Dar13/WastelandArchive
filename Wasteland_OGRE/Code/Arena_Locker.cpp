@@ -11,11 +11,6 @@
 
 #include "CrowdManager.h"
 
-//I only want the pause menu
-#define _PAUSE_ONLY_
-#include "menu\Menu.h"
-#undef _PAUSE_ONLY_
-
 ArenaLocker::ArenaLocker()
 {	
 	_camera = nullptr;
@@ -95,6 +90,9 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 		delete obj;
 	}
 
+	_pauseMenu.reset(new PauseMenu(State::GAME_LOCKER));
+	_pauseMenu->Setup(Input,Graphics,Gui,Sound);
+
 	//_handleScript(1001);
 }
 
@@ -110,6 +108,7 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 	Graphics->setLightRange(light,15);
 
 	bool exitNow = _stateShutdown;
+	bool paused = false;
 
 	float time,delta,oldtime = static_cast<float>(Graphics->getTimer()->getMilliseconds());
 	while(!_stateShutdown)
@@ -120,6 +119,12 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 		time = static_cast<float>(Graphics->getTimer()->getMilliseconds());
 		delta = time - oldtime;
 		oldtime = time;
+
+		if(paused)
+		{
+			paused = false;
+			delta = 16.6f;
+		}
 
 		//Update the crowd manager
 		_crowd->updateTick(delta / 1000.0f);
@@ -132,6 +137,19 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 		if(!GameManager::UpdateManagers(Graphics,_physics.get(),delta))
 		{
 			_stateShutdown = true;
+		}
+
+		if(Input->escapePressed())
+		{
+			int ret = _pauseMenu->Run(Input,Graphics,Gui,Sound);
+			if(ret == State::END)
+			{
+				_stateShutdown = true;
+			}
+			else
+			{
+				paused = true;
+			}
 		}
 	}
 

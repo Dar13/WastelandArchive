@@ -8,6 +8,11 @@
 #include "RecastInterface.h"
 #include "DetourInterface.h"
 
+//I only want the pause menu
+#define _PAUSE_ONLY_
+#include "menu\Menu.h"
+#undef _PAUSE_ONLY_
+
 //#include "CrowdManager.h"
 
 class CrowdManager;
@@ -33,6 +38,9 @@ public:
 
 private:
 	void _handleScript(unsigned long deltaTime);
+
+	//Pause menu variable
+	std::unique_ptr<PauseMenu> _pauseMenu;
 
 	//tells the state to shutdown or not.
 	bool _stateShutdown;

@@ -11,7 +11,7 @@ void PauseMenu::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* 
 {
 	_stateShutdown = false;
 
-	Input->setMouseLock(false);
+	//Input->setMouseLock(false);
 
 	if(!Gui->doesGUISheetExist("pause_Root"))
 	{
@@ -65,9 +65,16 @@ void PauseMenu::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* 
 
 int PauseMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
 {
+	Input->setMouseLock(false);
 
 	while(!_stateShutdown)
 	{
+		Input->Update(false);
+
+		_deltaTime = Graphics->getTimer()->getMilliseconds() - _oldTime;
+		_oldTime = static_cast<float>(Graphics->getTimer()->getMilliseconds());
+
+		Gui->Update(_deltaTime);
 
 	}
 
@@ -76,5 +83,15 @@ int PauseMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui
 
 void PauseMenu::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
 {
+	Gui->setCurrentGUISheet("none");
+	Gui->removeGUISheet(_guiSheet);
+	Gui->getWinManager()->destroyWindow(_guiSheet);
+	
+	CEGUI::MouseCursor::getSingleton().hide();
+
+	Input->setMouseLock(true);
+
+	_guiSheetChildren.clear();
+
 	return;
 }
