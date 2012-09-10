@@ -70,6 +70,7 @@
     <ClCompile Include="Code\CrowdManager.cpp" />
     <ClCompile Include="Code\DetourInterface.cpp" />
     <ClCompile Include="Code\interfaces\characterobject.cxx" />
+    <ClCompile Include="Code\PauseMenu.cpp" />
     <ClCompile Include="Code\RecastInputGeometry.cpp" />
     <ClCompile Include="Code\RecastInterface.cpp" />
     <ClCompile Include="Code\SplineTrack.cpp" />

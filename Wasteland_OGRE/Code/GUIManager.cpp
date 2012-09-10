@@ -69,24 +69,31 @@ void GUIManager::setCurrentGUISheet(const std::string& sheetName)
 		if(_currentGUISheet->getName() == sheetName)
 			return;
 	}
-	if(sheetName == "none")
+	std::string tmp = sheetName;
+	std::for_each(tmp.begin(),tmp.end(),[] (char &i) { i = tolower(i); });
+	if(tmp == "none")
 	{
 		_currentGUISheet = NULL;
 		_guiSystem->setGUISheet(0);
 	}
-	//else we're going to have to iterate through each element in the vector
-	for(std::vector<CEGUI::Window*>::iterator itr = _guiSheets.begin(); itr != _guiSheets.end() && found == false; ++itr)
+	else
 	{
-		if( (*itr)->getName() == sheetName )
+		//else we're going to have to iterate through each element in the vector
+		std::for_each(_guiSheets.begin(),_guiSheets.end(),[this,&found,&sheetName](CEGUI::Window* win) 
 		{
-			_currentGUISheet = (*itr);
-			_guiSystem->setGUISheet(_currentGUISheet);
-			found = true;
+			if(win->getName() == sheetName)
+			{
+				_currentGUISheet = win;
+				_guiSystem->setGUISheet(win);
+				found = true;
+			}
+		});
+		
+		if(!found)
+		{
+			_currentGUISheet = 0;
+			_guiSystem->setGUISheet(0);
 		}
-	}
-	if(!found)
-	{
-		_currentGUISheet = 0;
 	}
 	//returns despite whether or not the guisheet has been changed.
 }

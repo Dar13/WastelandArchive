@@ -11,6 +11,11 @@
 
 #include "CrowdManager.h"
 
+//I only want the pause menu
+#define _PAUSE_ONLY_
+#include "menu\Menu.h"
+#undef _PAUSE_ONLY_
+
 ArenaLocker::ArenaLocker()
 {	
 	_camera = nullptr;

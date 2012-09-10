@@ -353,5 +353,8 @@
     <ClCompile Include="Code\interfaces\characterobject.cxx">
       <Filter>Include Files\XML\interfaces</Filter>
     </ClCompile>
+    <ClCompile Include="Code\PauseMenu.cpp">
+      <Filter>Include Files\Game\Menu</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

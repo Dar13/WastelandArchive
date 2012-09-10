@@ -16,6 +16,8 @@ protected:
 	CEGUI::Window* _guiSheet;
 };
 
+#ifndef _PAUSE_ONLY_
+
 class MainMenu_FaderCallback : public ScreenFaderCallback
 {
 public:
@@ -77,6 +79,25 @@ private:
 	//FMOD stuff
 	std::vector<sSound> _sounds;
 	std::vector<FMOD::Channel*> _channels;
+};
+
+#endif
+
+class PauseMenu : public Menu
+{
+public:
+	PauseMenu(int currentGameState);
+
+	void Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound);
+
+	int Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound);
+
+	void Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound);
+
+private:
+	std::map<std::string,CEGUI::Window*> _guiSheetChildren;
+
+	int _returnValue; //returns either the current game state, or State::END
 };
 
 #endif

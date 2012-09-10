@@ -16,7 +16,7 @@ NPCCharacter::NPCCharacter(const std::string& name,const std::string& script,Ogr
 
 	//check for animations
 	Ogre::Entity* ent = static_cast<Ogre::Entity*>(node->getAttachedObject(0));
-	node->scale(.1,.1,.1);
+	node->scale(.1f,.1f,.1f);
 	if(ent != nullptr)
 	{
 		std::cout << "NPCCharacter \'" << name << "\' has an entity attached." << std::endl;
