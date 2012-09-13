@@ -201,60 +201,12 @@ bool InputManager::keyPressed(const OIS::KeyEvent &evt)
 	CEGUI::System::getSingleton().injectKeyDown(evt.key);
 	CEGUI::System::getSingleton().injectChar(evt.text);
 
-	/*char character = evt.text;
-	std::string checkString;
-	checkString = character;*/
-
-	//check for specific control characters, if applicable for the KeyValues.
-	//unfortunately can't figure out how to make it dynamic enough to handle all characters on keyboard
-	/*switch(evt.key)
-	{
-	case OIS::KC_SPACE:
-		checkString = "space";
-		break;
-	case OIS::KC_RCONTROL:
-		checkString = "rcontrol";
-		break;
-	case OIS::KC_LCONTROL:
-		checkString = "lcontrol";
-		break;
-	case OIS::KC_UP:
-		checkString = "uparrow";
-		break;
-	case OIS::KC_DOWN:
-		checkString = "downarrow";
-		break;
-	case OIS::KC_LEFT:
-		checkString = "leftarrow";
-		break;
-	case OIS::KC_RIGHT:
-		checkString = "rightarrow";
-		break;
-	case OIS::KC_RSHIFT:
-		checkString = "rshift";
-		break;
-	case OIS::KC_LSHIFT:
-		checkString = "lshift";
-		break;
-	case OIS::KC_RMENU:
-		checkString = "ralt";
-		break;
-	case OIS::KC_LMENU:
-		checkString = "lalt";
-		break;
-	};*/
-
 	for(unsigned int i = FORWARD; i<MAXVALUE; ++i)
 	{
 		if(evt.key == _nKeyValues[i])
 		{
 			_keyDown[i] = true;
 		}
-
-		/*if(_keyValues[i] == checkString)
-		{
-			_keyDown[i] = true;	
-		}*/
 	}
 
 	return true;
@@ -267,49 +219,6 @@ bool InputManager::keyReleased(const OIS::KeyEvent &evt)
 	//Will eventually inject input into CEGUI/Bullet/etc.
 	//injection into CEGUI...
 	CEGUI::System::getSingleton().injectKeyUp(evt.key);
-	
-	//char character = getCharFromKeyCode(evt.key);
-	//std::string checkString;
-	//checkString = character;
-
-	//check for specific control characters, if applicable for the KeyValues.
-	//unfortunately can't figure out how to make it dynamic enough to handle all characters on keyboard
-	/*switch(evt.key)
-	{
-	case OIS::KC_SPACE:
-		checkString = "space";
-		break;
-	case OIS::KC_RCONTROL:
-		checkString = "rcontrol";
-		break;
-	case OIS::KC_LCONTROL:
-		checkString = "lcontrol";
-		break;
-	case OIS::KC_UP:
-		checkString = "uparrow";
-		break;
-	case OIS::KC_DOWN:
-		checkString = "downarrow";
-		break;
-	case OIS::KC_LEFT:
-		checkString = "leftarrow";
-		break;
-	case OIS::KC_RIGHT:
-		checkString = "rightarrow";
-		break;
-	case OIS::KC_RSHIFT:
-		checkString = "rshift";
-		break;
-	case OIS::KC_LSHIFT:
-		checkString = "lshift";
-		break;
-	case OIS::KC_RMENU:
-		checkString = "ralt";
-		break;
-	case OIS::KC_LMENU:
-		checkString = "lalt";
-		break;
-	};*/
 
 	for(unsigned int i = FORWARD; i<MAXVALUE; ++i)
 	{
@@ -318,10 +227,6 @@ bool InputManager::keyReleased(const OIS::KeyEvent &evt)
 			_keyDown[i] = false;
 		}
 
-		/*if(_keyValues[i] == checkString)
-		{
-			_keyDown[i] = false;
-		}*/
 	}
 
 	return true;
@@ -384,7 +289,6 @@ bool InputManager::mouseReleased(const OIS::MouseEvent &evt,OIS::MouseButtonID i
 void InputManager::setConfiguration(configuration_t* config)
 {
 	_config = config;
-	_keyValues.clear();
 	_nKeyValues.clear();
 
 	//convert the values to KC_values
@@ -411,34 +315,6 @@ void InputManager::setConfiguration(configuration_t* config)
 			_nKeyValues.push_back(_KC_map.at(values[i]));
 		}
 	}
-	
-
-	//follows the convention set in CONFIG_KEY_VALUES.
-	//This can be added to, but CONFIG_KEY_VALUES must also be changed as well.
-	/*
-	_config->movement().forward()[0] = tolower(_config->movement().forward()[0]);
-	_config->movement().backward()[0] = tolower(_config->movement().backward()[0]);
-	_config->movement().right()[0] = tolower(_config->movement().right()[0]);
-	_config->movement().left()[0] = tolower(_config->movement().left()[0]);
-	_config->movement().jump()[0] = tolower(_config->movement().jump()[0]);
-	_config->movement().sprint()[0] = tolower(_config->movement().sprint()[0]);
-	_config->action().use()[0] = tolower(_config->action().use()[0]);
-	_config->action().envwarnsys()[0] = tolower(_config->action().envwarnsys()[0]);
-	_config->action().reload()[0] = tolower(_config->action().reload()[0]);
-	_config->action().weapon1()[0] = tolower(_config->action().weapon1()[0]);
-	_config->action().weapon2()[0] = tolower(_config->action().weapon2()[0]);
-	_keyValues.push_back(_config->movement().forward()); //forward first
-	_keyValues.push_back(_config->movement().backward());
-	_keyValues.push_back(_config->movement().right());
-	_keyValues.push_back(_config->movement().left());
-	_keyValues.push_back(_config->movement().jump());
-	_keyValues.push_back(_config->movement().sprint());
-	_keyValues.push_back(_config->action().use());
-	_keyValues.push_back(_config->action().envwarnsys());
-	_keyValues.push_back(_config->action().reload()); 
-	_keyValues.push_back(_config->action().weapon1());
-	_keyValues.push_back(_config->action().weapon2());//weapon2 last.
-	*/
 
 	//just setting up this vector
 	_keyDown.clear();
@@ -447,11 +323,6 @@ void InputManager::setConfiguration(configuration_t* config)
 		_keyDown.push_back(false);
 	}
 }
-
-//char InputManager::getCharFromKeyCode(unsigned int keyCode)
-//{
-//	return _KC_map[keyCode];
-//}
 
 bool isControlCharacter(OIS::KeyCode keyCode)
 {

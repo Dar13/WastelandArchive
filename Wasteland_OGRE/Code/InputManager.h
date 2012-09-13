@@ -94,16 +94,11 @@ private:
 
 	//configuration
 	configuration_t* _config;
-	std::vector<std::string> _keyValues;
-	std::vector<int> _nKeyValues;
+	std::vector<int> _nKeyValues; //numerical key values
 	std::vector<bool> _keyDown;
-
-	//control character keyvalues
-	std::vector<std::string> _ckeyValues;
 
 	//holds conversion from char to OIS keycodes
 	std::map<std::string,int> _KC_map;
-	//char getCharFromKeyCode(unsigned int keyCode);
 
 	//mouse movement variables
 	bool _lockMouse;
