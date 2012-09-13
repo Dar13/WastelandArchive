@@ -114,7 +114,7 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 	while(!_stateShutdown)
 	{
 		//checks for escapekey press and updates input manager.
-		_stateShutdown = Input->Update(true);
+		_stateShutdown = Input->Update(false);
 
 		time = static_cast<float>(Graphics->getTimer()->getMilliseconds());
 		delta = time - oldtime;
@@ -139,7 +139,7 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 			_stateShutdown = true;
 		}
 
-		if(Input->escapePressed())
+		if(Input->escapePressed() && !paused)
 		{
 			int ret = _pauseMenu->Run(Input,Graphics,Gui,Sound);
 			if(ret == State::END)
@@ -173,6 +173,8 @@ void ArenaLocker::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIMana
 			delete trimesh;
 		}
 	});
+
+	_pauseMenu->Shutdown(Input,Graphics,Gui,Sound);
 
 	Graphics->getRenderWindow()->removeAllViewports();
 

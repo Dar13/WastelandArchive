@@ -34,32 +34,52 @@ InputManager::InputManager(unsigned long windowHandle)
 	_mouseLB = false;
 
 	//set up the keycode stuff
-	_KC_map[OIS::KC_A] = 'a';
-	_KC_map[OIS::KC_B] = 'b';
-	_KC_map[OIS::KC_C] = 'c';
-	_KC_map[OIS::KC_D] = 'd';
-	_KC_map[OIS::KC_E] = 'e';
-	_KC_map[OIS::KC_F] = 'f';
-	_KC_map[OIS::KC_G] = 'g';
-	_KC_map[OIS::KC_H] = 'h';
-	_KC_map[OIS::KC_I] = 'i';
-	_KC_map[OIS::KC_J] = 'j';
-	_KC_map[OIS::KC_K] = 'k';
-	_KC_map[OIS::KC_L] = 'l';
-	_KC_map[OIS::KC_M] = 'm';
-	_KC_map[OIS::KC_N] = 'n';
-	_KC_map[OIS::KC_O] = 'o';
-	_KC_map[OIS::KC_P] = 'p';
-	_KC_map[OIS::KC_Q] = 'q';
-	_KC_map[OIS::KC_R] = 'r';
-	_KC_map[OIS::KC_S] = 's';
-	_KC_map[OIS::KC_T] = 't';
-	_KC_map[OIS::KC_U] = 'u';
-	_KC_map[OIS::KC_V] = 'v';
-	_KC_map[OIS::KC_W] = 'w';
-	_KC_map[OIS::KC_X] = 'x';
-	_KC_map[OIS::KC_Y] = 'y';
-	_KC_map[OIS::KC_Z] = 'z';
+	_KC_map["a"] = OIS::KC_A;
+	_KC_map["b"] = OIS::KC_B;
+	_KC_map["c"] = OIS::KC_C;
+	_KC_map["d"] = OIS::KC_D;
+	_KC_map["e"] = OIS::KC_E;
+	_KC_map["f"] = OIS::KC_F;
+	_KC_map["g"] = OIS::KC_G;
+	_KC_map["h"] = OIS::KC_H;
+	_KC_map["i"] = OIS::KC_I;
+	_KC_map["j"] = OIS::KC_J;
+	_KC_map["k"] = OIS::KC_K;
+	_KC_map["l"] = OIS::KC_L;
+	_KC_map["m"] = OIS::KC_M;
+	_KC_map["n"] = OIS::KC_N;
+	_KC_map["o"] = OIS::KC_O;
+	_KC_map["p"] = OIS::KC_P;
+	_KC_map["q"] = OIS::KC_Q;
+	_KC_map["r"] = OIS::KC_R;
+	_KC_map["s"] = OIS::KC_S;
+	_KC_map["t"] = OIS::KC_T;
+	_KC_map["u"] = OIS::KC_U;
+	_KC_map["v"] = OIS::KC_V;
+	_KC_map["w"] = OIS::KC_W;
+	_KC_map["x"] = OIS::KC_X;
+	_KC_map["y"] = OIS::KC_Y;
+	_KC_map["z"] = OIS::KC_Z;
+	_KC_map["lshift"] = OIS::KC_LSHIFT;
+	_KC_map["rshift"] = OIS::KC_RSHIFT;
+	_KC_map["lalt"] = OIS::KC_LMENU;
+	_KC_map["ralt"] = OIS::KC_RMENU;
+	_KC_map["lctrl"] = OIS::KC_LCONTROL;
+	_KC_map["rctrl"] = OIS::KC_RCONTROL;
+	_KC_map["enter"] = OIS::KC_RETURN;
+	_KC_map["tab"] = OIS::KC_TAB;
+	_KC_map["space"] = OIS::KC_SPACE;
+	for(int i = OIS::KC_1; i < OIS::KC_0+1; ++i)
+	{
+		if(i != OIS::KC_0)
+		{
+			_KC_map[Ogre::StringConverter::toString(i-1)] = i;
+		}
+		else
+		{
+			_KC_map["0"] = OIS::KC_0;
+		}
+	}
 }
 
 //Cleaning up.
@@ -181,13 +201,13 @@ bool InputManager::keyPressed(const OIS::KeyEvent &evt)
 	CEGUI::System::getSingleton().injectKeyDown(evt.key);
 	CEGUI::System::getSingleton().injectChar(evt.text);
 
-	char character = evt.text;
+	/*char character = evt.text;
 	std::string checkString;
-	checkString = character;
+	checkString = character;*/
 
 	//check for specific control characters, if applicable for the KeyValues.
 	//unfortunately can't figure out how to make it dynamic enough to handle all characters on keyboard
-	switch(evt.key)
+	/*switch(evt.key)
 	{
 	case OIS::KC_SPACE:
 		checkString = "space";
@@ -222,14 +242,19 @@ bool InputManager::keyPressed(const OIS::KeyEvent &evt)
 	case OIS::KC_LMENU:
 		checkString = "lalt";
 		break;
-	};
+	};*/
 
 	for(unsigned int i = FORWARD; i<MAXVALUE; ++i)
 	{
-		if(_keyValues[i] == checkString)
+		if(evt.key == _nKeyValues[i])
+		{
+			_keyDown[i] = true;
+		}
+
+		/*if(_keyValues[i] == checkString)
 		{
 			_keyDown[i] = true;	
-		}
+		}*/
 	}
 
 	return true;
@@ -237,17 +262,19 @@ bool InputManager::keyPressed(const OIS::KeyEvent &evt)
 
 bool InputManager::keyReleased(const OIS::KeyEvent &evt)
 {
+	_appShutdown = (evt.key == OIS::KC_ESCAPE) ? false : _appShutdown;
+
 	//Will eventually inject input into CEGUI/Bullet/etc.
 	//injection into CEGUI...
 	CEGUI::System::getSingleton().injectKeyUp(evt.key);
 	
-	char character = getCharFromKeyCode(evt.key);
-	std::string checkString;
-	checkString = character;
+	//char character = getCharFromKeyCode(evt.key);
+	//std::string checkString;
+	//checkString = character;
 
 	//check for specific control characters, if applicable for the KeyValues.
 	//unfortunately can't figure out how to make it dynamic enough to handle all characters on keyboard
-	switch(evt.key)
+	/*switch(evt.key)
 	{
 	case OIS::KC_SPACE:
 		checkString = "space";
@@ -282,14 +309,19 @@ bool InputManager::keyReleased(const OIS::KeyEvent &evt)
 	case OIS::KC_LMENU:
 		checkString = "lalt";
 		break;
-	};
+	};*/
 
 	for(unsigned int i = FORWARD; i<MAXVALUE; ++i)
 	{
-		if(_keyValues[i] == checkString)
+		if(evt.key == _nKeyValues[i])
 		{
 			_keyDown[i] = false;
 		}
+
+		/*if(_keyValues[i] == checkString)
+		{
+			_keyDown[i] = false;
+		}*/
 	}
 
 	return true;
@@ -353,8 +385,37 @@ void InputManager::setConfiguration(configuration_t* config)
 {
 	_config = config;
 	_keyValues.clear();
+	_nKeyValues.clear();
+
+	//convert the values to KC_values
+	std::vector<std::string> values;
+	configuration_t::movement_type* movement = &_config->movement();
+	configuration_t::action_type* action = &_config->action();
+	values.push_back(movement->forward());
+	values.push_back(movement->backward());
+	values.push_back(movement->right());
+	values.push_back(movement->left());
+	values.push_back(movement->jump());
+	values.push_back(movement->sprint());
+	values.push_back(action->use());
+	values.push_back(action->envwarnsys());
+	values.push_back(action->reload());
+	values.push_back(action->weapon1());
+	values.push_back(action->weapon2());
+	
+	for(int i = 0; i < MAXVALUE; ++i)
+	{
+		std::transform(values[i].begin(),values[i].end(),values[i].begin(),tolower);
+		if(_KC_map.find(values[i]) != _KC_map.end())
+		{
+			_nKeyValues.push_back(_KC_map.at(values[i]));
+		}
+	}
+	
+
 	//follows the convention set in CONFIG_KEY_VALUES.
 	//This can be added to, but CONFIG_KEY_VALUES must also be changed as well.
+	/*
 	_config->movement().forward()[0] = tolower(_config->movement().forward()[0]);
 	_config->movement().backward()[0] = tolower(_config->movement().backward()[0]);
 	_config->movement().right()[0] = tolower(_config->movement().right()[0]);
@@ -377,6 +438,7 @@ void InputManager::setConfiguration(configuration_t* config)
 	_keyValues.push_back(_config->action().reload()); 
 	_keyValues.push_back(_config->action().weapon1());
 	_keyValues.push_back(_config->action().weapon2());//weapon2 last.
+	*/
 
 	//just setting up this vector
 	_keyDown.clear();
@@ -386,10 +448,10 @@ void InputManager::setConfiguration(configuration_t* config)
 	}
 }
 
-char InputManager::getCharFromKeyCode(unsigned int keyCode)
-{
-	return _KC_map[keyCode];
-}
+//char InputManager::getCharFromKeyCode(unsigned int keyCode)
+//{
+//	return _KC_map[keyCode];
+//}
 
 bool isControlCharacter(OIS::KeyCode keyCode)
 {

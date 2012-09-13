@@ -240,6 +240,8 @@ void MainMenu::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIManager
 {
 	//undo whatever is done in the setup.
 	Gui->setCurrentGUISheet("none");
+	Gui->removeGUISheet(_guiSheet);
+	Gui->removeGUISheet(_opt_guiSheet);
 	Gui->getWinManager()->destroyWindow(_guiSheet);
 	Gui->getWinManager()->destroyWindow(_opt_guiSheet);
 	CEGUI::MouseCursor::getSingleton().hide();
@@ -513,7 +515,7 @@ bool MainMenu::_options(const CEGUI::EventArgs& arg)
 bool MainMenu::_start(const CEGUI::EventArgs& arg)
 {
 	_stateShutdown = true;
-	_returnValue = GAME_LOCKER;
+	_returnValue = GAME_ARENA;
 
 	return true;
 }

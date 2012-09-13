@@ -11,7 +11,7 @@
 /*! \brief The OIS(Object Oriented Input System) Manager. Handles all inputManager for Wasteland.
 
 Is entirely self-contained, has no reliance on any other Manager.
-Needs an interface to find out about specific key presses.
+TODO:Needs an interface to find out about specific key presses.
 */
 
 class InputManager : OIS::MouseListener, OIS::KeyListener
@@ -49,6 +49,7 @@ public:
 
 	//! Sets whether or not OIS should lock the abs location of the mouse.
 	void setMouseLock(bool lock);
+	bool getMouseLock() { return _lockMouse; }
 
 	//! Sets absolute location of the mouse
 	void setMousePosition(int& x,int& y);
@@ -94,14 +95,15 @@ private:
 	//configuration
 	configuration_t* _config;
 	std::vector<std::string> _keyValues;
+	std::vector<int> _nKeyValues;
 	std::vector<bool> _keyDown;
 
 	//control character keyvalues
 	std::vector<std::string> _ckeyValues;
 
-	//holds conversion from OIS keycodes to char
-	std::map<int,char> _KC_map;
-	char getCharFromKeyCode(unsigned int keyCode);
+	//holds conversion from char to OIS keycodes
+	std::map<std::string,int> _KC_map;
+	//char getCharFromKeyCode(unsigned int keyCode);
 
 	//mouse movement variables
 	bool _lockMouse;

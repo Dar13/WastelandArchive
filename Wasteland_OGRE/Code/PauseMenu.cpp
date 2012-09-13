@@ -2,6 +2,8 @@
 
 #include "menu\Menu.h"
 
+#include "GameManager.h"
+
 PauseMenu::PauseMenu(int currentGameState)
 	: _returnValue(currentGameState)
 {
@@ -16,7 +18,7 @@ void PauseMenu::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* 
 	if(!Gui->doesGUISheetExist("pause_Root"))
 	{
 		Gui->getSystem()->setDefaultMouseCursor("TaharezLook","MouseArrow");
-		CEGUI::MouseCursor::getSingleton().show();
+		//CEGUI::MouseCursor::getSingleton().show();
 
 		_guiSheet = Gui->getWinManager()->createWindow("DefaultWindow","pause_Root");
 		CEGUI::WindowManager* winMgr = Gui->getWinManager();
@@ -58,13 +60,15 @@ void PauseMenu::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* 
 		_guiSheet->addChildWindow(window.second);
 	}
 
-	Gui->setCurrentGUISheet("pause_Root");
-
 	return;
 }
 
 int PauseMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
 {
+	Gui->setCurrentGUISheet("pause_Root");
+	CEGUI::MouseCursor::getSingleton().show();
+
+	bool locked = Input->getMouseLock();
 	Input->setMouseLock(false);
 
 	while(!_stateShutdown)
@@ -76,7 +80,21 @@ int PauseMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui
 
 		Gui->Update(_deltaTime);
 
+		if(!GameManager::UpdateManagers(Graphics,NULL,_deltaTime))
+		{
+			_stateShutdown = true;
+			_returnValue = State::END;
+		}
 	}
+
+	Gui->setCurrentGUISheet("none");
+
+	Input->setMouseLock(locked);
+	
+	CEGUI::MouseCursor::getSingleton().hide();
+
+	//since the state can be used multiple times...
+	_stateShutdown = false;
 
 	return _returnValue;
 }
@@ -87,8 +105,6 @@ void PauseMenu::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIManage
 	Gui->removeGUISheet(_guiSheet);
 	Gui->getWinManager()->destroyWindow(_guiSheet);
 	
-	CEGUI::MouseCursor::getSingleton().hide();
-
 	Input->setMouseLock(true);
 
 	_guiSheetChildren.clear();
