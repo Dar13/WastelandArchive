@@ -74,7 +74,14 @@ void MainMenu::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 		window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.425f,0),CEGUI::UDim(.7f,0)));
 		window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.15f,0),CEGUI::UDim(.1f,0)));
 		window.second->setDestroyedByParent(true);
-		window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(&MainMenu::_shutdown,this));
+		window.second->subscribeEvent(CEGUI::PushButton::EventClicked,
+			CEGUI::Event::Subscriber([this] (const CEGUI::EventArgs& args) -> bool 
+			{
+				_stateShutdown = true;
+				_returnValue = END;
+				return true;	
+			})
+		);
 		window.second->setAlwaysOnTop(true);
 		_guiSheetChildren.insert(window);
 		_guiSheet->addChildWindow(window.second);
@@ -85,7 +92,13 @@ void MainMenu::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 		window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.425f,0),CEGUI::UDim(.3f,0)));
 		window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.15f,0),CEGUI::UDim(.1f,0)));
 		window.second->setDestroyedByParent(true);
-		window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(&MainMenu::_start,this));
+		window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber([this] (const CEGUI::EventArgs& args) -> bool
+			{
+				_stateShutdown = true;
+				_returnValue = State::GAME_LOCKER;
+				return true;
+			})
+		);
 		window.second->setAlwaysOnTop(true);
 		_guiSheetChildren.insert(window);
 		_guiSheet->addChildWindow(window.second);
@@ -96,7 +109,17 @@ void MainMenu::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 		window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.1f,0),CEGUI::UDim(.1f,0)));
 		window.second->setDestroyedByParent(true);
 		window.second->setText("Options");
-		window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(&MainMenu::_options,this));
+		window.second->subscribeEvent(CEGUI::PushButton::EventClicked,
+			CEGUI::Event::Subscriber([this] (const CEGUI::EventArgs& args) -> bool 
+			{
+				if(_goto_Options)
+					_goto_Options = false;
+				else
+					_goto_Options = true;
+
+				return true;
+			})
+		);
 		window.second->setAlwaysOnTop(true);
 		_guiSheet->addChildWindow(window.second);
 		_guiSheetChildren.insert(window);
@@ -615,32 +638,6 @@ void MainMenu::_saveOptionChanges()
 	doc->release();
 	serializer->release();
 	xercesc::XMLPlatformUtils::Terminate();
-}
-
-bool MainMenu::_shutdown(const CEGUI::EventArgs& arg)
-{
-	_stateShutdown = true;
-	_returnValue = END;
-
-	return true;
-}
-
-bool MainMenu::_options(const CEGUI::EventArgs& arg)
-{
-	if(_goto_Options)
-		_goto_Options = false;
-	else
-		_goto_Options = true;
-
-	return true;
-}
-
-bool MainMenu::_start(const CEGUI::EventArgs& arg)
-{
-	_stateShutdown = true;
-	_returnValue = GAME_ARENA;
-
-	return true;
 }
 
 bool MainMenu::_valueUpdate_sliders(const CEGUI::EventArgs& arg)
