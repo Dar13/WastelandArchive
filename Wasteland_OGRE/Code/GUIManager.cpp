@@ -78,11 +78,11 @@ void GUIManager::setCurrentGUISheet(const std::string& sheetName)
 	}
 	else
 	{
-		std::cout << sheetName << std::endl;
+		//std::cout << sheetName << std::endl;
 		//else we're going to have to iterate through each element in the vector
 		std::for_each(_guiSheets.begin(),_guiSheets.end(),[this,&found,&sheetName](CEGUI::Window* win) 
 		{
-			std::cout << win->getName() << std::endl;
+			//std::cout << win->getName() << std::endl;
 			if(win->getName() == sheetName)
 			{
 				_currentGUISheet = win;

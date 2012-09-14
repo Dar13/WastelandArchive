@@ -52,8 +52,6 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 	parser.setFile("resource\\models\\arena_locker\\arenalocker_test.ent");
 	parser.parseWaypoints(&waypoints);
 	std::cout << "Arena Locker - parser finished" << std::endl;
-	
-	//TESTING IT OUT
 
 	Ogre::Entity* levelEnt = static_cast<Ogre::Entity*>(_pairs.begin()->ogreNode->getAttachedObject(0));
 	InputGeometry levelGeometry(levelEnt);

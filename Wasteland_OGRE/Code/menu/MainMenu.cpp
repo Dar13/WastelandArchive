@@ -5,6 +5,9 @@
 #include "..\GameManager.h"
 #include <boost\lexical_cast.hpp>
 
+#include <xercesc\dom\DOM.hpp>
+//#include <xercesc\dom\DOMImplementationRegistry.hpp>
+
 MainMenu::MainMenu()
 {
 	_stateShutdown = false;
@@ -204,6 +207,7 @@ int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,
 		{
 			if(_goto_Options == false && inOptions)
 			{
+				_saveOptionChanges();
 				Gui->setCurrentGUISheet("main_Root");
 				inOptions = false;
 				isCamRotating = true;
@@ -232,6 +236,8 @@ int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,
 	}
 	//trying to get the screen to clear out.
 	//GameManager::UpdateManagers(Graphics,NULL,_deltaTime);
+
+	
 
 	return _returnValue;
 }
@@ -492,6 +498,123 @@ void MainMenu::createOptionsMenu(GUIManager* Gui)
 	_opt_guiSheetChildren.insert(window);
 	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(&MainMenu::_options,this));
 
+}
+
+void MainMenu::_saveOptionChanges()
+{
+	//get the information first
+	std::vector<std::string> actionValues,movementValues;
+	int characterValue,musicValue,soundValue;
+
+	CEGUI::Slider* slider = static_cast<CEGUI::Slider*>(_opt_guiSheetChildren["opt_Config_Audio_vol_sfx_sldr"]);
+	soundValue = static_cast<int>(slider->getCurrentValue() * 100);
+
+	slider = static_cast<CEGUI::Slider*>(_opt_guiSheetChildren["opt_Config_Audio_vol_chr_sldr"]);
+	characterValue = static_cast<int>(slider->getCurrentValue() * 100);
+
+	slider = static_cast<CEGUI::Slider*>(_opt_guiSheetChildren["opt_Config_Audio_vol_msc_sldr"]);
+	musicValue = static_cast<int>(slider->getCurrentValue() * 100);
+
+	//...still need to add options for the controls and such.
+
+	//serialize what we have
+	xercesc::XMLPlatformUtils::Initialize();
+
+	xercesc::DOMImplementation* domImpl = nullptr;
+	xercesc::DOMImplementation* serImpl = xercesc::DOMImplementationRegistry::getDOMImplementation(L"LS");
+	domImpl = xercesc::DOMImplementationRegistry::getDOMImplementation(xercesc::XMLString::transcode("core"));
+
+	xercesc::DOMLSSerializer* serializer = serImpl->createLSSerializer();
+	xercesc::DOMLSOutput* serOutput = serImpl->createLSOutput();
+	//serOutput->set
+
+	serializer->getDomConfig()->setParameter(L"format-pretty-print",true);
+	serializer->setNewLine(L"\n");
+
+	xercesc::DOMDocument* doc = domImpl->createDocument(0,L"configuration",0);
+	doc->setXmlStandalone(false);
+	doc->setXmlVersion(L"1.0");
+
+	//setting up the DOM
+	xercesc::DOMElement* root = static_cast<xercesc::DOMElement*>(doc->getFirstChild());
+	root->setAttribute(L"xmlns:xsi",L"http://www.w3.org/2001/XMLSchema-instance");
+	root->setAttribute(L"xsi:noNamespaceSchemaLocation",L"schemas/configuration.xsd");
+
+	//action stuff
+	xercesc::DOMElement* actionElement = doc->createElement(L"action");
+	root->appendChild(actionElement);
+
+	xercesc::DOMElement* reload = doc->createElement(L"reload");
+	actionElement->appendChild(reload);
+	reload->appendChild(doc->createTextNode(L"R"));
+
+	xercesc::DOMElement* ews = doc->createElement(L"envwarnsys");
+	actionElement->appendChild(ews);
+	ews->appendChild(doc->createTextNode(L"E"));
+
+	xercesc::DOMElement* use = doc->createElement(L"use");
+	actionElement->appendChild(use);
+	use->appendChild(doc->createTextNode(L"F"));
+
+	xercesc::DOMElement* wep1 = doc->createElement(L"weapon1");
+	actionElement->appendChild(wep1);
+	wep1->appendChild(doc->createTextNode(L"Q"));
+
+	xercesc::DOMElement* wep2 = doc->createElement(L"weapon2");
+	actionElement->appendChild(wep2);
+	wep2->appendChild(doc->createTextNode(L"T"));
+
+	//Movement stuff.
+	xercesc::DOMElement* moveElement = doc->createElement(L"movement");
+	root->appendChild(moveElement);
+
+	xercesc::DOMElement* move = doc->createElement(L"forward");
+	moveElement->appendChild(move);
+	move->appendChild(doc->createTextNode(L"W"));
+
+	move = doc->createElement(L"backward");
+	moveElement->appendChild(move);
+	move->appendChild(doc->createTextNode(L"S"));
+
+	move = doc->createElement(L"right");
+	moveElement->appendChild(move);
+	move->appendChild(doc->createTextNode(L"D"));
+
+	move = doc->createElement(L"left");
+	moveElement->appendChild(move);
+	move->appendChild(doc->createTextNode(L"A"));
+
+	move = doc->createElement(L"sprint");
+	moveElement->appendChild(move);
+	move->appendChild(doc->createTextNode(L"lshift"));
+
+	move = doc->createElement(L"jump");
+	moveElement->appendChild(move);
+	move->appendChild(doc->createTextNode(L"space"));
+
+	//Volume stuff
+	xercesc::DOMElement* volumeElement = doc->createElement(L"volume");
+	root->appendChild(volumeElement);
+
+	xercesc::DOMElement* vol = doc->createElement(L"character");
+	volumeElement->appendChild(vol);
+	vol->appendChild(doc->createTextNode(boost::lexical_cast<std::wstring,int>(characterValue).c_str()));
+
+	vol = doc->createElement(L"music");
+	volumeElement->appendChild(vol);
+	vol->appendChild(doc->createTextNode(boost::lexical_cast<std::wstring,int>(musicValue).c_str()));
+
+	vol = doc->createElement(L"soundfx");
+	volumeElement->appendChild(vol);
+	vol->appendChild(doc->createTextNode(boost::lexical_cast<std::wstring,int>(soundValue).c_str()));
+	
+	XMLCh* output = serializer->writeToString(doc);
+
+	serializer->writeToURI(doc,L"test.xml");
+
+	doc->release();
+	serializer->release();
+	xercesc::XMLPlatformUtils::Terminate();
 }
 
 bool MainMenu::_shutdown(const CEGUI::EventArgs& arg)
