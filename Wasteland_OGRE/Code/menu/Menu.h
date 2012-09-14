@@ -49,10 +49,6 @@ public:
 
 	void createOptionsMenu(GUIManager* Gui);
 
-	bool _shutdown(const CEGUI::EventArgs&);
-	bool _start(const CEGUI::EventArgs&);
-	bool _options(const CEGUI::EventArgs&);
-
 	bool _valueUpdate_sliders(const CEGUI::EventArgs&);
 private:
 	void _saveOptionChanges();

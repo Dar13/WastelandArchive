@@ -519,7 +519,17 @@ void MainMenu::createOptionsMenu(GUIManager* Gui)
 	window.second->setDestroyedByParent(true);
 	_opt_guiSheet->addChildWindow(window.second);
 	_opt_guiSheetChildren.insert(window);
-	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(&MainMenu::_options,this));
+	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,
+		CEGUI::Event::Subscriber([this] (const CEGUI::EventArgs& args) -> bool 
+		{
+			if(_goto_Options)
+				_goto_Options = false;
+			else
+				_goto_Options = true;
+
+			return true;
+		})
+	);
 
 }
 
