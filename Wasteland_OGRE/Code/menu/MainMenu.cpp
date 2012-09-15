@@ -225,6 +225,18 @@ int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,
 			inOptions = true;
 			isCamRotating = false;
 			_cityNode->setVisible(false,true);
+
+			//set up the event subscribers
+			_opt_guiSheetChildren["opt_Config_Controls_fwd_val"]->subscribeEvent(CEGUI::PushButton::EventKeyDown,
+				CEGUI::Event::Subscriber([this,Input] ( const CEGUI::EventArgs& args) -> bool 
+				{
+					const CEGUI::KeyEventArgs& realArgs = static_cast<const CEGUI::KeyEventArgs&>(args);
+					std::string str;
+					str = Input->__getKeyboard()->getAsString(static_cast<OIS::KeyCode>(realArgs.scancode));
+					realArgs.window->setText(str);
+					return true;
+				})
+			);
 		}
 		else
 		{
@@ -329,7 +341,7 @@ void MainMenu::createOptionsMenu(GUIManager* Gui)
 	window.second->setDestroyedByParent(true);
 	_opt_guiSheet->addChildWindow(window.second);
 	_opt_guiSheetChildren.insert(window);
-
+	
 	//graphic options...
 	window.first = "opt_Config_Graphic_wnd";
 	window.second = Gui->getWinManager()->createWindow("DefaultWindow",window.first);
@@ -508,6 +520,32 @@ void MainMenu::createOptionsMenu(GUIManager* Gui)
 	window.second->setDestroyedByParent(true);
 	_opt_guiSheetChildren["opt_Config_Audio_vol_wnd"]->addChildWindow(window.second);
 	_opt_guiSheetChildren.insert(window);
+
+	//Control options tab
+	window.first = "opt_Config_Controls_wnd";
+	window.second = Gui->getWinManager()->createWindow("DefaultWindow",window.first);
+	window.second->setText("Controls");
+	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(0.0f,0),CEGUI::UDim(0.0f,0)));
+	window.second->setID(3);
+	window.second->setDestroyedByParent(true);
+	tabCntrl->addTab(window.second);
+	_opt_guiSheetChildren.insert(window);
+
+	window.first = "opt_Config_Controls_fwd_val";
+	window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
+	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(0.075f,0),CEGUI::UDim(.1f,0)));
+	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.1f,0),CEGUI::UDim(.1f,0)));
+	window.second->setText("W");
+	_opt_guiSheetChildren["opt_Config_Controls_wnd"]->addChildWindow(window.second);
+	_opt_guiSheetChildren.insert(window);
+	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,
+		CEGUI::Event::Subscriber([this] (const CEGUI::EventArgs& args) -> bool
+		{
+			const CEGUI::WindowEventArgs& realArgs = static_cast<const CEGUI::KeyEventArgs&>(args);
+			realArgs.window->setText("Press a new key...");
+			return true;
+		})
+	);
 
 	//option menu exit button
 	window.first = "opt_Exit_btn";

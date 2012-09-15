@@ -80,6 +80,8 @@ public:
 	//! Gets configuration.
 	configuration_t* getConfiguration() { return _config; }
 
+	OIS::Keyboard* __getKeyboard() { return _keyObj; }
+
 	//! Returns true if the Escape key is pressed.
 	bool escapePressed(){return _appShutdown;}
 private:

@@ -77,6 +77,9 @@ private:
 	//FMOD stuff
 	std::vector<sSound> _sounds;
 	std::vector<FMOD::Channel*> _channels;
+
+	//specific CEGUI options handling stuff
+	std::pair<bool,int> _controlChangeStatus;
 };
 
 #endif
