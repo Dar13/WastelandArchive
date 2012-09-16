@@ -217,7 +217,7 @@ int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,
 		{
 			if(!Gui->doesGUISheetExist("options_Root"))
 			{
-				createOptionsMenu(Gui);
+				createOptionsMenu(Input,Gui);
 			}
 			Gui->setCurrentGUISheet("options_Root");
 			CEGUI::TabControl* tControl = static_cast<CEGUI::TabControl*>(_opt_guiSheetChildren["opt_Config_tabcntrl"]);
@@ -227,16 +227,7 @@ int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,
 			_cityNode->setVisible(false,true);
 
 			//set up the event subscribers
-			_opt_guiSheetChildren["opt_Config_Controls_fwd_val"]->subscribeEvent(CEGUI::PushButton::EventKeyDown,
-				CEGUI::Event::Subscriber([this,Input] ( const CEGUI::EventArgs& args) -> bool 
-				{
-					const CEGUI::KeyEventArgs& realArgs = static_cast<const CEGUI::KeyEventArgs&>(args);
-					std::string str;
-					str = Input->__getKeyboard()->getAsString(static_cast<OIS::KeyCode>(realArgs.scancode));
-					realArgs.window->setText(str);
-					return true;
-				})
-			);
+			
 		}
 		else
 		{
@@ -319,7 +310,7 @@ void MainMenu::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIManager
 	return;
 }
 
-void MainMenu::createOptionsMenu(GUIManager* Gui)
+void MainMenu::createOptionsMenu(InputManager* Input,GUIManager* Gui)
 {
 	CEGUI::Window* _opt_guiSheet = Gui->getWinManager()->createWindow("DefaultWindow","options_Root");
 	Gui->addGUISheet(_opt_guiSheet);
@@ -531,21 +522,217 @@ void MainMenu::createOptionsMenu(GUIManager* Gui)
 	tabCntrl->addTab(window.second);
 	_opt_guiSheetChildren.insert(window);
 
-	window.first = "opt_Config_Controls_fwd_val";
-	window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
-	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(0.075f,0),CEGUI::UDim(.1f,0)));
-	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.1f,0),CEGUI::UDim(.1f,0)));
-	window.second->setText("W");
+	auto controlClicked = [this] (const CEGUI::EventArgs& args) -> bool
+	{
+		const CEGUI::WindowEventArgs& realArgs = static_cast<const CEGUI::WindowEventArgs&>(args);
+		realArgs.window->setText("Press a new key");
+		return true;
+	};
+
+	float xOffset = .0f;
+	float yOffset = .1f;
+	std::string desc[11] = {"fwd","bwd","rgt","lft","jmp","spr","rld","ews","use","wep1","wep2"};
+	std::string fullDesc[11] = {"Forward","Backward","Right","Left","Jump","Sprint","Reload","EWS","Use","Weapon1","Weapon2"};
+	for(int i = 0; i < 11; ++i)
+	{
+		if(i > 5) { xOffset = .4f; yOffset = .1f + (i - 6)*.05f; }
+		else { yOffset = .1f + (i*.05f); }
+		window.first = "opt_Config_Controls_"+desc[i]+"_txt";
+		window.second = Gui->getWinManager()->createWindow("TaharezLook/StaticText",window.first);
+		window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.1f,0),CEGUI::UDim(.05f,0)));
+		window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(xOffset,0),CEGUI::UDim(yOffset,0)));
+		window.second->setText(fullDesc[i]);
+		window.second->setFont("DejaVuSans-6");
+		_opt_guiSheetChildren["opt_Config_Controls_wnd"]->addChildWindow(window.second);
+		_opt_guiSheetChildren.insert(window);
+	}
+
+	window.first = "opt_Config_Controls_move_txt";
+	window.second = Gui->getWinManager()->createWindow("TaharezLook/StaticText",window.first);
+	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.225f,0),CEGUI::UDim(.05f,0)));
+	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.0f,0),CEGUI::UDim(.05f,0)));
+	window.second->setText("Movement");
 	_opt_guiSheetChildren["opt_Config_Controls_wnd"]->addChildWindow(window.second);
 	_opt_guiSheetChildren.insert(window);
-	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,
-		CEGUI::Event::Subscriber([this] (const CEGUI::EventArgs& args) -> bool
+
+	window.first = "opt_Config_Controls_act_txt";
+	window.second = Gui->getWinManager()->createWindow("TaharezLook/StaticText",window.first);
+	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.225f,0),CEGUI::UDim(.05f,0)));
+	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.4f,0),CEGUI::UDim(.05f,0)));
+	window.second->setText("Actions");
+	_opt_guiSheetChildren["opt_Config_Controls_wnd"]->addChildWindow(window.second);
+	_opt_guiSheetChildren.insert(window);
+
+	xOffset = .1f;
+	yOffset = .1f;
+	for(int i = 0; i < 11; ++i)
+	{
+		if(i < InputManager::USE){ xOffset = .1f; yOffset = .1f + i*.05f;}
+		else{ xOffset = .5f; yOffset = .1f + (i - 6)*0.05f;}
+		window.first = "opt_Config_Controls_"+desc[i]+"_val";
+		window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
+		window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.125f,0),CEGUI::UDim(.05f,0)));
+		window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(xOffset,0),CEGUI::UDim(yOffset,0)));
+		window.second->setFont("DejaVuSans-6");
+		_opt_guiSheetChildren["opt_Config_Controls_wnd"]->addChildWindow(window.second);
+		_opt_guiSheetChildren.insert(window);
+		window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(controlClicked));
+
+		switch(i)
 		{
-			const CEGUI::WindowEventArgs& realArgs = static_cast<const CEGUI::KeyEventArgs&>(args);
-			realArgs.window->setText("Press a new key...");
-			return true;
-		})
-	);
+		case InputManager::FORWARD:
+			window.second->setText(Input->getConfiguration()->movement().forward());
+			break;
+		case InputManager::BACKWARD:
+			window.second->setText(Input->getConfiguration()->movement().backward());
+			break;
+		case InputManager::RIGHT:
+			window.second->setText(Input->getConfiguration()->movement().right());
+			break;
+		case InputManager::LEFT:
+			window.second->setText(Input->getConfiguration()->movement().left());
+			break;
+		case InputManager::JUMP:
+			window.second->setText(Input->getConfiguration()->movement().jump());
+			break;
+		case InputManager::SPRINT:
+			window.second->setText(Input->getConfiguration()->movement().sprint());
+			break;
+		case InputManager::RELOAD:
+			window.second->setText(Input->getConfiguration()->action().reload());
+			break;
+		case InputManager::ENVWARNSYS:
+			window.second->setText(Input->getConfiguration()->action().envwarnsys());
+			break;
+		case InputManager::USE:
+			window.second->setText(Input->getConfiguration()->action().use());
+			break;
+		case InputManager::WEAPON1:
+			window.second->setText(Input->getConfiguration()->action().weapon1());
+			break;
+		case InputManager::WEAPON2:
+			window.second->setText(Input->getConfiguration()->action().weapon2());
+			break;
+		}
+	}
+
+	/*window.first = "opt_Config_Controls_fwd_val";
+	window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
+	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(0.125f,0),CEGUI::UDim(.05f,0)));
+	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.1f,0),CEGUI::UDim(.1f,0)));
+	window.second->setText("W");
+	window.second->setFont("DejaVuSans-6");
+	_opt_guiSheetChildren["opt_Config_Controls_wnd"]->addChildWindow(window.second);
+	_opt_guiSheetChildren.insert(window);
+	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(controlClicked));
+
+	window.first = "opt_Config_Controls_bwd_val";
+	window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
+	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(0.125f,0),CEGUI::UDim(.05f,0)));
+	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.1f,0),CEGUI::UDim(.15f,0)));
+	window.second->setText("S");
+	window.second->setFont("DejaVuSans-6");
+	_opt_guiSheetChildren["opt_Config_Controls_wnd"]->addChildWindow(window.second);
+	_opt_guiSheetChildren.insert(window);
+	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(controlClicked));
+
+	window.first = "opt_Config_Controls_rgt_val";
+	window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
+	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(0.125f,0),CEGUI::UDim(.05f,0)));
+	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.1f,0),CEGUI::UDim(.2f,0)));
+	window.second->setText("D");
+	window.second->setFont("DejaVuSans-6");
+	_opt_guiSheetChildren["opt_Config_Controls_wnd"]->addChildWindow(window.second);
+	_opt_guiSheetChildren.insert(window);
+	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(controlClicked));
+
+	window.first = "opt_Config_Controls_lft_val";
+	window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
+	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(0.125f,0),CEGUI::UDim(.05f,0)));
+	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.1f,0),CEGUI::UDim(.25f,0)));
+	window.second->setText("S");
+	window.second->setFont("DejaVuSans-6");
+	_opt_guiSheetChildren["opt_Config_Controls_wnd"]->addChildWindow(window.second);
+	_opt_guiSheetChildren.insert(window);
+	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(controlClicked));
+
+	window.first = "opt_Config_Controls_spr_val";
+	window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
+	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(0.125f,0),CEGUI::UDim(.05f,0)));
+	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.1f,0),CEGUI::UDim(.3f,0)));
+	window.second->setText("Left Shift");
+	window.second->setFont("DejaVuSans-6");
+	_opt_guiSheetChildren["opt_Config_Controls_wnd"]->addChildWindow(window.second);
+	_opt_guiSheetChildren.insert(window);
+	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(controlClicked));
+
+	window.first = "opt_Config_Controls_jmp_val";
+	window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
+	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(0.125f,0),CEGUI::UDim(.05f,0)));
+	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.1f,0),CEGUI::UDim(.35f,0)));
+	window.second->setText("Space");
+	window.second->setFont("DejaVuSans-6");
+	_opt_guiSheetChildren["opt_Config_Controls_wnd"]->addChildWindow(window.second);
+	_opt_guiSheetChildren.insert(window);
+	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(controlClicked));
+
+	window.first = "opt_Config_Controls_act_txt";
+	window.second = Gui->getWinManager()->createWindow("TaharezLook/StaticText",window.first);
+	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.125f,0),CEGUI::UDim(.05f,0)));
+	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.5f,0),CEGUI::UDim(.05f,0)));
+	window.second->setText("Actions");
+	_opt_guiSheetChildren["opt_Config_Controls_wnd"]->addChildWindow(window.second);
+	_opt_guiSheetChildren.insert(window);
+
+	window.first = "opt_Config_Controls_rld_val";
+	window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
+	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(0.125f,0),CEGUI::UDim(.05f,0)));
+	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.5f,0),CEGUI::UDim(.1f,0)));
+	window.second->setText("R");
+	window.second->setFont("DejaVuSans-6");
+	_opt_guiSheetChildren["opt_Config_Controls_wnd"]->addChildWindow(window.second);
+	_opt_guiSheetChildren.insert(window);
+	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(controlClicked));
+
+	window.first = "opt_Config_Controls_ews_val";
+	window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
+	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(0.125f,0),CEGUI::UDim(.05f,0)));
+	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.5f,0),CEGUI::UDim(.15f,0)));
+	window.second->setText("E");
+	window.second->setFont("DejaVuSans-6");
+	_opt_guiSheetChildren["opt_Config_Controls_wnd"]->addChildWindow(window.second);
+	_opt_guiSheetChildren.insert(window);
+	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(controlClicked));
+
+	window.first = "opt_Config_Controls_use_val";
+	window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
+	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(0.125f,0),CEGUI::UDim(.05f,0)));
+	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.5f,0),CEGUI::UDim(.2f,0)));
+	window.second->setText("F");
+	window.second->setFont("DejaVuSans-6");
+	_opt_guiSheetChildren["opt_Config_Controls_wnd"]->addChildWindow(window.second);
+	_opt_guiSheetChildren.insert(window);
+	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(controlClicked));
+
+	window.first = "opt_Config_Controls_wep1_val";
+	window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
+	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(0.125f,0),CEGUI::UDim(.05f,0)));
+	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.5f,0),CEGUI::UDim(.25f,0)));
+	window.second->setText("1");
+	window.second->setFont("DejaVuSans-6");
+	_opt_guiSheetChildren["opt_Config_Controls_wnd"]->addChildWindow(window.second);
+	_opt_guiSheetChildren.insert(window);
+	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(controlClicked));
+
+	window.first = "opt_Config_Controls_wep2_val";
+	window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
+	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(0.125f,0),CEGUI::UDim(.05f,0)));
+	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.5f,0),CEGUI::UDim(.3f,0)));
+	window.second->setText("2");
+	window.second->setFont("DejaVuSans-6");
+	_opt_guiSheetChildren["opt_Config_Controls_wnd"]->addChildWindow(window.second);
+	_opt_guiSheetChildren.insert(window);
+	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(controlClicked));*/
 
 	//option menu exit button
 	window.first = "opt_Exit_btn";
@@ -569,6 +756,50 @@ void MainMenu::createOptionsMenu(GUIManager* Gui)
 		})
 	);
 
+}
+
+void MainMenu::_setupOptionEvents(InputManager* Input)
+{
+	auto func = [this,Input] (const CEGUI::EventArgs& args) -> bool
+	{
+		const CEGUI::KeyEventArgs& realArgs = static_cast<const CEGUI::KeyEventArgs&>(args);
+		std::string str;
+		str = Input->__getKeyboard()->getAsString(static_cast<OIS::KeyCode>(realArgs.scancode));
+		realArgs.window->setText(str);
+		return true;
+	};
+	_opt_guiSheetChildren["opt_Config_Controls_fwd_val"]->subscribeEvent(CEGUI::PushButton::EventKeyDown,
+		CEGUI::Event::Subscriber(func));
+
+	_opt_guiSheetChildren["opt_Config_Controls_bwd_val"]->subscribeEvent(CEGUI::PushButton::EventKeyDown,
+		CEGUI::Event::Subscriber(func));
+
+	_opt_guiSheetChildren["opt_Config_Controls_rgt_val"]->subscribeEvent(CEGUI::PushButton::EventKeyDown,
+		CEGUI::Event::Subscriber(func));
+
+	_opt_guiSheetChildren["opt_Config_Controls_lft_val"]->subscribeEvent(CEGUI::PushButton::EventKeyDown,
+		CEGUI::Event::Subscriber(func));
+
+	_opt_guiSheetChildren["opt_Config_Controls_spr_val"]->subscribeEvent(CEGUI::PushButton::EventKeyDown,
+		CEGUI::Event::Subscriber(func));
+
+	_opt_guiSheetChildren["opt_Config_Controls_jmp_val"]->subscribeEvent(CEGUI::PushButton::EventKeyDown,
+		CEGUI::Event::Subscriber(func));
+
+	_opt_guiSheetChildren["opt_Config_Controls_rld_val"]->subscribeEvent(CEGUI::PushButton::EventKeyDown,
+		CEGUI::Event::Subscriber(func));
+
+	_opt_guiSheetChildren["opt_Config_Controls_ews_val"]->subscribeEvent(CEGUI::PushButton::EventKeyDown,
+		CEGUI::Event::Subscriber(func));
+
+	_opt_guiSheetChildren["opt_Config_Controls_use_val"]->subscribeEvent(CEGUI::PushButton::EventKeyDown,
+		CEGUI::Event::Subscriber(func));
+
+	_opt_guiSheetChildren["opt_Config_Controls_wep1_val"]->subscribeEvent(CEGUI::PushButton::EventKeyDown,
+		CEGUI::Event::Subscriber(func));
+
+	_opt_guiSheetChildren["opt_Config_Controls_wep2_val"]->subscribeEvent(CEGUI::PushButton::EventKeyDown,
+		CEGUI::Event::Subscriber(func));
 }
 
 void MainMenu::_saveOptionChanges()

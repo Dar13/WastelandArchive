@@ -47,10 +47,11 @@ public:
 
 	void Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound);
 
-	void createOptionsMenu(GUIManager* Gui);
+	void createOptionsMenu(InputManager* Input,GUIManager* Gui);
 
 	bool _valueUpdate_sliders(const CEGUI::EventArgs&);
 private:
+	void _setupOptionEvents(InputManager* Input);
 	void _saveOptionChanges();
 
 	std::map<std::string,CEGUI::Window*> _guiSheetChildren;
@@ -77,9 +78,6 @@ private:
 	//FMOD stuff
 	std::vector<sSound> _sounds;
 	std::vector<FMOD::Channel*> _channels;
-
-	//specific CEGUI options handling stuff
-	std::pair<bool,int> _controlChangeStatus;
 };
 
 #endif
