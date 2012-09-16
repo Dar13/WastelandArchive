@@ -61,3 +61,17 @@ void Utility::floatPtr_toVector3(const float* vector,Ogre::Vector3& result)
 	result.y = vector[1];
 	result.z = vector[2];
 }
+
+std::wstring Utility::stringToWString(const std::string& str)
+{
+	std::wstring ret(str.begin(),str.end());
+	ret.assign(str.begin(),str.end());
+	return ret;
+}
+
+std::string wstringToString(const std::wstring& str)
+{
+	std::string ret(str.begin(),str.end());
+	ret.assign(str.begin(),str.end());
+	return ret;
+}

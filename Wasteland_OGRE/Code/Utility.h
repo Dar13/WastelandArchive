@@ -49,6 +49,9 @@ namespace Utility
 
 	void vector3_toFloatPtr(const Ogre::Vector3& vector,float* result);
 	void floatPtr_toVector3(const float* vect,Ogre::Vector3& result);
+
+	std::wstring stringToWString(const std::string& str);
+	std::string wstringToString(const std::wstring& wstr);
 };
 
 #endif

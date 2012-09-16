@@ -50,7 +50,6 @@ void MainMenu::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 	_camNode = _cityNode->createChildSceneNode("mmCamNode");
 	_camNode->attachObject(_camera);
 	_camNode->setPosition(Ogre::Vector3(750.0f,500.0f,0.0f));
-	//_cityNode->setVisible(false,true);
 
 	Ogre::Light* menuLight = _scene->createLight("mmLight");
 	menuLight->setType(Ogre::Light::LT_POINT);
@@ -225,9 +224,6 @@ int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,
 			inOptions = true;
 			isCamRotating = false;
 			_cityNode->setVisible(false,true);
-
-			//set up the event subscribers
-			
 		}
 		else
 		{
@@ -261,9 +257,6 @@ int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,
 
 	}
 	//trying to get the screen to clear out.
-	//GameManager::UpdateManagers(Graphics,NULL,_deltaTime);
-
-	
 
 	return _returnValue;
 }
@@ -616,124 +609,6 @@ void MainMenu::createOptionsMenu(InputManager* Input,GUIManager* Gui)
 		}
 	}
 
-	/*window.first = "opt_Config_Controls_fwd_val";
-	window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
-	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(0.125f,0),CEGUI::UDim(.05f,0)));
-	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.1f,0),CEGUI::UDim(.1f,0)));
-	window.second->setText("W");
-	window.second->setFont("DejaVuSans-6");
-	_opt_guiSheetChildren["opt_Config_Controls_wnd"]->addChildWindow(window.second);
-	_opt_guiSheetChildren.insert(window);
-	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(controlClicked));
-
-	window.first = "opt_Config_Controls_bwd_val";
-	window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
-	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(0.125f,0),CEGUI::UDim(.05f,0)));
-	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.1f,0),CEGUI::UDim(.15f,0)));
-	window.second->setText("S");
-	window.second->setFont("DejaVuSans-6");
-	_opt_guiSheetChildren["opt_Config_Controls_wnd"]->addChildWindow(window.second);
-	_opt_guiSheetChildren.insert(window);
-	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(controlClicked));
-
-	window.first = "opt_Config_Controls_rgt_val";
-	window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
-	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(0.125f,0),CEGUI::UDim(.05f,0)));
-	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.1f,0),CEGUI::UDim(.2f,0)));
-	window.second->setText("D");
-	window.second->setFont("DejaVuSans-6");
-	_opt_guiSheetChildren["opt_Config_Controls_wnd"]->addChildWindow(window.second);
-	_opt_guiSheetChildren.insert(window);
-	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(controlClicked));
-
-	window.first = "opt_Config_Controls_lft_val";
-	window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
-	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(0.125f,0),CEGUI::UDim(.05f,0)));
-	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.1f,0),CEGUI::UDim(.25f,0)));
-	window.second->setText("S");
-	window.second->setFont("DejaVuSans-6");
-	_opt_guiSheetChildren["opt_Config_Controls_wnd"]->addChildWindow(window.second);
-	_opt_guiSheetChildren.insert(window);
-	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(controlClicked));
-
-	window.first = "opt_Config_Controls_spr_val";
-	window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
-	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(0.125f,0),CEGUI::UDim(.05f,0)));
-	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.1f,0),CEGUI::UDim(.3f,0)));
-	window.second->setText("Left Shift");
-	window.second->setFont("DejaVuSans-6");
-	_opt_guiSheetChildren["opt_Config_Controls_wnd"]->addChildWindow(window.second);
-	_opt_guiSheetChildren.insert(window);
-	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(controlClicked));
-
-	window.first = "opt_Config_Controls_jmp_val";
-	window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
-	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(0.125f,0),CEGUI::UDim(.05f,0)));
-	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.1f,0),CEGUI::UDim(.35f,0)));
-	window.second->setText("Space");
-	window.second->setFont("DejaVuSans-6");
-	_opt_guiSheetChildren["opt_Config_Controls_wnd"]->addChildWindow(window.second);
-	_opt_guiSheetChildren.insert(window);
-	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(controlClicked));
-
-	window.first = "opt_Config_Controls_act_txt";
-	window.second = Gui->getWinManager()->createWindow("TaharezLook/StaticText",window.first);
-	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.125f,0),CEGUI::UDim(.05f,0)));
-	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.5f,0),CEGUI::UDim(.05f,0)));
-	window.second->setText("Actions");
-	_opt_guiSheetChildren["opt_Config_Controls_wnd"]->addChildWindow(window.second);
-	_opt_guiSheetChildren.insert(window);
-
-	window.first = "opt_Config_Controls_rld_val";
-	window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
-	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(0.125f,0),CEGUI::UDim(.05f,0)));
-	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.5f,0),CEGUI::UDim(.1f,0)));
-	window.second->setText("R");
-	window.second->setFont("DejaVuSans-6");
-	_opt_guiSheetChildren["opt_Config_Controls_wnd"]->addChildWindow(window.second);
-	_opt_guiSheetChildren.insert(window);
-	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(controlClicked));
-
-	window.first = "opt_Config_Controls_ews_val";
-	window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
-	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(0.125f,0),CEGUI::UDim(.05f,0)));
-	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.5f,0),CEGUI::UDim(.15f,0)));
-	window.second->setText("E");
-	window.second->setFont("DejaVuSans-6");
-	_opt_guiSheetChildren["opt_Config_Controls_wnd"]->addChildWindow(window.second);
-	_opt_guiSheetChildren.insert(window);
-	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(controlClicked));
-
-	window.first = "opt_Config_Controls_use_val";
-	window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
-	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(0.125f,0),CEGUI::UDim(.05f,0)));
-	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.5f,0),CEGUI::UDim(.2f,0)));
-	window.second->setText("F");
-	window.second->setFont("DejaVuSans-6");
-	_opt_guiSheetChildren["opt_Config_Controls_wnd"]->addChildWindow(window.second);
-	_opt_guiSheetChildren.insert(window);
-	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(controlClicked));
-
-	window.first = "opt_Config_Controls_wep1_val";
-	window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
-	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(0.125f,0),CEGUI::UDim(.05f,0)));
-	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.5f,0),CEGUI::UDim(.25f,0)));
-	window.second->setText("1");
-	window.second->setFont("DejaVuSans-6");
-	_opt_guiSheetChildren["opt_Config_Controls_wnd"]->addChildWindow(window.second);
-	_opt_guiSheetChildren.insert(window);
-	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(controlClicked));
-
-	window.first = "opt_Config_Controls_wep2_val";
-	window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
-	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(0.125f,0),CEGUI::UDim(.05f,0)));
-	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.5f,0),CEGUI::UDim(.3f,0)));
-	window.second->setText("2");
-	window.second->setFont("DejaVuSans-6");
-	_opt_guiSheetChildren["opt_Config_Controls_wnd"]->addChildWindow(window.second);
-	_opt_guiSheetChildren.insert(window);
-	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber(controlClicked));*/
-
 	//option menu exit button
 	window.first = "opt_Exit_btn";
 	window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
@@ -756,6 +631,8 @@ void MainMenu::createOptionsMenu(InputManager* Input,GUIManager* Gui)
 		})
 	);
 
+
+	_setupOptionEvents(Input);
 }
 
 void MainMenu::_setupOptionEvents(InputManager* Input)
@@ -817,7 +694,19 @@ void MainMenu::_saveOptionChanges()
 	slider = static_cast<CEGUI::Slider*>(_opt_guiSheetChildren["opt_Config_Audio_vol_msc_sldr"]);
 	musicValue = static_cast<int>(slider->getCurrentValue() * 100);
 
-	//...still need to add options for the controls and such.
+	std::string desc[11] = {"fwd","bwd","rgt","lft","jmp","spr","rld","ews","use","wep1","wep2"};
+	std::wstring fullDesc[11] = {L"Forward",L"Backward",L"Right",L"Left",L"Jump",L"Sprint",L"Reload",L"EWS",L"Use",L"Weapon1",L"Weapon2"};
+	for(int i = 0; i < 11; ++i)
+	{
+		if(i < 6)
+		{
+			movementValues.push_back(_opt_guiSheetChildren["opt_Config_Controls_"+desc[i]+"_val"]->getText().c_str());
+		}
+		else
+		{
+			actionValues.push_back(_opt_guiSheetChildren["opt_Config_Controls_"+desc[i]+"_val"]->getText().c_str());
+		}
+	}
 
 	//serialize what we have
 	xercesc::XMLPlatformUtils::Initialize();
@@ -846,53 +735,25 @@ void MainMenu::_saveOptionChanges()
 	xercesc::DOMElement* actionElement = doc->createElement(L"action");
 	root->appendChild(actionElement);
 
-	xercesc::DOMElement* reload = doc->createElement(L"reload");
-	actionElement->appendChild(reload);
-	reload->appendChild(doc->createTextNode(L"R"));
-
-	xercesc::DOMElement* ews = doc->createElement(L"envwarnsys");
-	actionElement->appendChild(ews);
-	ews->appendChild(doc->createTextNode(L"E"));
-
-	xercesc::DOMElement* use = doc->createElement(L"use");
-	actionElement->appendChild(use);
-	use->appendChild(doc->createTextNode(L"F"));
-
-	xercesc::DOMElement* wep1 = doc->createElement(L"weapon1");
-	actionElement->appendChild(wep1);
-	wep1->appendChild(doc->createTextNode(L"Q"));
-
-	xercesc::DOMElement* wep2 = doc->createElement(L"weapon2");
-	actionElement->appendChild(wep2);
-	wep2->appendChild(doc->createTextNode(L"T"));
+	for(int i = 0; i < 5; ++i)
+	{
+		xercesc::DOMElement* element = doc->createElement(fullDesc[i+6].c_str());
+		actionElement->appendChild(element);
+		std::wstring tmp = Utility::stringToWString(actionValues[i]);
+		element->appendChild(doc->createTextNode(tmp.c_str()));
+	}
 
 	//Movement stuff.
 	xercesc::DOMElement* moveElement = doc->createElement(L"movement");
 	root->appendChild(moveElement);
 
-	xercesc::DOMElement* move = doc->createElement(L"forward");
-	moveElement->appendChild(move);
-	move->appendChild(doc->createTextNode(L"W"));
-
-	move = doc->createElement(L"backward");
-	moveElement->appendChild(move);
-	move->appendChild(doc->createTextNode(L"S"));
-
-	move = doc->createElement(L"right");
-	moveElement->appendChild(move);
-	move->appendChild(doc->createTextNode(L"D"));
-
-	move = doc->createElement(L"left");
-	moveElement->appendChild(move);
-	move->appendChild(doc->createTextNode(L"A"));
-
-	move = doc->createElement(L"sprint");
-	moveElement->appendChild(move);
-	move->appendChild(doc->createTextNode(L"lshift"));
-
-	move = doc->createElement(L"jump");
-	moveElement->appendChild(move);
-	move->appendChild(doc->createTextNode(L"space"));
+	for(int i = 0; i < 6; ++i)
+	{
+		xercesc::DOMElement* element = doc->createElement(fullDesc[i].c_str());
+		moveElement->appendChild(element);
+		std::wstring tmp = Utility::stringToWString(movementValues[i]);
+		element->appendChild(doc->createTextNode(tmp.c_str()));
+	}
 
 	//Volume stuff
 	xercesc::DOMElement* volumeElement = doc->createElement(L"volume");
@@ -919,6 +780,7 @@ void MainMenu::_saveOptionChanges()
 	xercesc::XMLPlatformUtils::Terminate();
 }
 
+//TODO: Decide whether or not to split this up into three different lambda functions.
 bool MainMenu::_valueUpdate_sliders(const CEGUI::EventArgs& arg)
 {
 	//convert to a more comprehensive event argument class.
