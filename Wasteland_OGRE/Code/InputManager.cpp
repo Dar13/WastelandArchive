@@ -288,6 +288,9 @@ bool InputManager::mouseReleased(const OIS::MouseEvent &evt,OIS::MouseButtonID i
 
 void InputManager::setConfiguration(configuration_t* config)
 {
+	//delete the previously held configuration
+	delete _config;
+
 	_config = config;
 	_nKeyValues.clear();
 

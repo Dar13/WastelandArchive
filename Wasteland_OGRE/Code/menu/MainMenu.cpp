@@ -256,7 +256,9 @@ int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,
 		}
 
 	}
-	//trying to get the screen to clear out.
+
+	//update the configuration file
+	Input->setConfiguration(configuration("resource//xml//config.xml").release());
 
 	return _returnValue;
 }
@@ -773,7 +775,7 @@ void MainMenu::_saveOptionChanges()
 	
 	XMLCh* output = serializer->writeToString(doc);
 
-	serializer->writeToURI(doc,L"test.xml");
+	serializer->writeToURI(doc,L"resource//xml//config.xml");
 
 	doc->release();
 	serializer->release();
