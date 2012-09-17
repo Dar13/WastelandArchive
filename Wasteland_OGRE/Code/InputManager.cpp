@@ -10,13 +10,17 @@
 bool isControlCharacter(OIS::KeyCode keyCode);
 
 InputManager::InputManager(unsigned long windowHandle)
+	: _mouseRB(false),
+	  _mouseMB(false),
+	  _mouseLB(false),
+	  _config(nullptr),
+	  _lockMouse(false),
+	  _mouseMoveX(0),
+	  _mouseMoveY(0),
+	  _mouseMoveZ(0),
+	  _appShutdown(false),
+	  _windowHandle(windowHandle) /*Keeping this window handle around in case I have to reinitialize.*/
 {
-	//init some of the member variables
-	_appShutdown=false;
-
-	//Just keeping this window handle around. In case I have to reinitialize.
-	_windowHandle = windowHandle;
-	
 	//Putting the window handle into OIS-terms.
 	OIS::ParamList pl;
 	pl.insert(OIS::ParamList::value_type("WINDOW",Ogre::StringConverter::toString(windowHandle)));
@@ -28,10 +32,6 @@ InputManager::InputManager(unsigned long windowHandle)
 
 	_mouseObj->setEventCallback(this); //this class is a mouseListener
 	_keyObj->setEventCallback(this); //this class is a keyboardListener
-
-	_mouseRB = false;
-	_mouseMB = false;
-	_mouseLB = false;
 
 	//set up the keycode stuff
 	_KC_map["a"] = OIS::KC_A;
@@ -116,14 +116,27 @@ void InputManager::setMousePosition(int& x,int& y)
 bool InputManager::Update(bool checkEscapeKey)
 {
 	//get input
-	capture();
+	try
+	{
+		capture();
+	}
+	catch(OIS::Exception& o)
+	{
+		OutputDebugStringA(o.what());
+		OutputDebugStringA(o.eFile);
+		char buf[100];
+		itoa(o.eType,buf,10);
+		OutputDebugStringA(buf);
+	}
 
 	//check if exit char is pressed.
 	if(checkEscapeKey)
-		return _appShutdown;
+		return ((_appShutdown) ? false : true);
 
 	//return false by default.
-	return false;
+	//return false;
+	//to keep in line with other managers' update methods, return true by default.
+	return true;
 }
 
 void InputManager::capture()
@@ -133,6 +146,7 @@ void InputManager::capture()
 	
 	if(_lockMouse)
 	{
+		//variable name is mutMS because I can change the variables(aka mutable MouseState).
 		OIS::MouseState &mutMS = const_cast<OIS::MouseState &>(_mouseObj->getMouseState());
 		mutMS.X.abs = mutMS.width/2;
 		mutMS.Y.abs = mutMS.height/2;
@@ -325,10 +339,4 @@ void InputManager::setConfiguration(configuration_t* config)
 	{
 		_keyDown.push_back(false);
 	}
-}
-
-bool isControlCharacter(OIS::KeyCode keyCode)
-{
-	//gotta be a better way...
-	return false;
 }
