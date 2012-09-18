@@ -10,6 +10,10 @@
 #include "PhysicsManager.h"
 #include "LevelData.h"
 
+#define _PAUSE_ONLY_
+#include "menu\Menu.h"
+#undef _PAUSE_ONLY_
+
 // forward declaration, keeping the header file slim.
 struct OgreBulletPair;
 
@@ -58,6 +62,10 @@ private:
 	std::unique_ptr<CharacterController> _controller;
 	std::unique_ptr<EWSManager> _ews;
 
+	//Pause menu variable
+	std::unique_ptr<PauseMenu> _pauseMenu;
+
+	//Physics stuff
 	std::unique_ptr<PhysicsManager> _physics;
 	std::vector<btTypedConstraint*> _constraints;
 

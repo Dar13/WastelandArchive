@@ -12,12 +12,13 @@
 #include "CrowdManager.h"
 
 ArenaLocker::ArenaLocker()
-{	
-	_camera = nullptr;
-	_view = nullptr;
-	_rootNode = nullptr;
-	_stateShutdown = false;
-	_scene = nullptr;
+	: _camera(nullptr),
+	  _view(nullptr),
+	  _rootNode(nullptr),
+	  _stateShutdown(nullptr),
+	  _scene(nullptr)
+{
+	_returnValue = State::GAME_LOBBY;
 }
 
 void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
@@ -111,8 +112,11 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 	float time,delta,oldtime = static_cast<float>(Graphics->getTimer()->getMilliseconds());
 	while(!_stateShutdown)
 	{
-		//checks for escapekey press and updates input manager.
-		_stateShutdown = Input->Update(false);
+		//updates input manager.
+		if(!Input->Update(false))
+		{
+			_stateShutdown = true;
+		}
 
 		time = static_cast<float>(Graphics->getTimer()->getMilliseconds());
 		delta = time - oldtime;
@@ -143,6 +147,7 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 			if(ret == State::END)
 			{
 				_stateShutdown = true;
+				_returnValue = ret;
 			}
 			else
 			{
@@ -158,7 +163,7 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 	}
 
 	//Eventually will be GAME_LOBBY or something.
-	return State::END;
+	return _returnValue;
 }
 
 void ArenaLocker::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)

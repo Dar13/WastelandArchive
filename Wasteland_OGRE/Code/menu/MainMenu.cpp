@@ -697,7 +697,7 @@ void MainMenu::_saveOptionChanges()
 	musicValue = static_cast<int>(slider->getCurrentValue() * 100);
 
 	std::string desc[11] = {"fwd","bwd","rgt","lft","jmp","spr","rld","ews","use","wep1","wep2"};
-	std::wstring fullDesc[11] = {L"Forward",L"Backward",L"Right",L"Left",L"Jump",L"Sprint",L"Reload",L"EWS",L"Use",L"Weapon1",L"Weapon2"};
+	std::wstring fullDesc[11] = {L"forward",L"backward",L"right",L"left",L"sprint",L"jump",L"reload",L"envwarnsys",L"use",L"weapon1",L"weapon2"};
 	for(int i = 0; i < 11; ++i)
 	{
 		if(i < 6)

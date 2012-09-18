@@ -74,6 +74,7 @@ void StateManager::Run()
 			case State::GAME_LOCKER:
 				_States[curState] = new ArenaLocker();
 				break;
+				/*
 			case State::GAME_LOBBY:
 				//_States[curState] = new Lobby();
 				break;
@@ -85,6 +86,13 @@ void StateManager::Run()
 				break;
 			case State::CREDITS:
 				//_States[curState] = new Credits
+				break;
+				*/
+			case State::GAME_LOBBY:
+			case State::GAME_OFFICE:
+			case State::GAME_ROOF:
+			case State::CREDITS:
+				curState = State::END;
 				break;
 			};
 		}

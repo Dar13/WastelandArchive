@@ -55,7 +55,6 @@ private:
 	void _saveOptionChanges();
 
 	std::map<std::string,CEGUI::Window*> _guiSheetChildren;
-	int _returnValue; //used because there might be two different possible game states that this class exits to.
 	
 	CEGUI::Window* _opt_guiSheet;
 	std::map<std::string,CEGUI::Window*> _opt_guiSheetChildren;

@@ -43,8 +43,8 @@ protected:
 	float _deltaTime;
 	float _oldTime;
 
-	//WTF was I thinking?!
-	//std::unique_ptr<Player> _player;
+	//since almost all of them define this themselves...
+	int _returnValue;
 };
 
 #endif

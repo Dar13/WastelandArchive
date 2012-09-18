@@ -88,12 +88,16 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	
 	std::cout << "Player setup" << std::endl;
 
+	_pauseMenu.reset(new PauseMenu(State::GAME_ARENA));
+	_pauseMenu->Setup(Input,Graphics,Gui,Sound);
+
 	//physics debug drawer.
 	//_physics->setDebugDrawer(new CDebugDraw(_scene,_physics->getWorld()));
 }
 
 int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
 {
+	_returnValue = State::GAME_LOCKER;
 	_stateShutdown=false;
 	//Ogre::SceneNode* tmpNode = (Ogre::SceneNode*)_scene->getRootSceneNode()->getChild("nodetestSphere");
 
@@ -102,6 +106,7 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 	bool polySwitch = false;
 	
 	float time;
+	bool paused = false;
 	//while the escape key isn't pressed and the state isn't told to shutdown.
 	while(!_stateShutdown)
 	{
@@ -137,7 +142,10 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 		}
 
 		//the state shutdown based on player input(?)
-		_stateShutdown = Input->Update(true);
+		if(!Input->Update(false))
+		{
+			_stateShutdown = true;
+		}
 
 		//Update the character controller
 		_controller->update(_deltaTime,Input,playerTransform);
@@ -161,10 +169,24 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 		_updateLights();
 		_updateTriggers(playerTransform,static_cast<int>(time));
 		_updateDoors();
+
+		//handling the pause menu
+		if(Input->escapePressed() && !paused)
+		{
+			int ret = _pauseMenu->Run(Input,Graphics,Gui,Sound);
+			if(ret == State::END)
+			{
+				_stateShutdown = true;
+				_returnValue = State::END;
+			}
+			else
+			{
+				paused = true;
+			}
+		}
 	}
 
-	//no matter what, end the program after this state. **TESTING ONLY**
-	return END;
+	return _returnValue;
 }
 
 //clean-up of state
