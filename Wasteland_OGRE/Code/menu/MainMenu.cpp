@@ -94,7 +94,7 @@ void MainMenu::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 		window.second->subscribeEvent(CEGUI::PushButton::EventClicked,CEGUI::Event::Subscriber([this] (const CEGUI::EventArgs& args) -> bool
 			{
 				_stateShutdown = true;
-				_returnValue = State::GAME_LOCKER;
+				_returnValue = State::GAME_ARENA;
 				return true;
 			})
 		);
