@@ -117,6 +117,13 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 		//setting the old time
 		_oldTime = time;
 
+		if(paused)
+		{
+			_deltaTime = 16.6f;
+			paused = false;
+
+		}
+
 		//quick visual debugging tool
 		if(Input->isMBPressed(OIS::MB_Right))
 		{
@@ -177,7 +184,7 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 			if(ret == State::END)
 			{
 				_stateShutdown = true;
-				_returnValue = State::END;
+				_returnValue = ret;
 			}
 			else
 			{
