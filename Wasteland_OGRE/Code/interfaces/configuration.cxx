@@ -41,6 +41,58 @@
 
 #include "configuration.hxx"
 
+// graphics_t
+// 
+
+const graphics_t::resolution_type& graphics_t::
+resolution () const
+{
+  return this->resolution_.get ();
+}
+
+graphics_t::resolution_type& graphics_t::
+resolution ()
+{
+  return this->resolution_.get ();
+}
+
+void graphics_t::
+resolution (const resolution_type& x)
+{
+  this->resolution_.set (x);
+}
+
+void graphics_t::
+resolution (::std::auto_ptr< resolution_type > x)
+{
+  this->resolution_.set (x);
+}
+
+const graphics_t::fullscreen_type& graphics_t::
+fullscreen () const
+{
+  return this->fullscreen_.get ();
+}
+
+graphics_t::fullscreen_type& graphics_t::
+fullscreen ()
+{
+  return this->fullscreen_.get ();
+}
+
+void graphics_t::
+fullscreen (const fullscreen_type& x)
+{
+  this->fullscreen_.set (x);
+}
+
+void graphics_t::
+fullscreen (::std::auto_ptr< fullscreen_type > x)
+{
+  this->fullscreen_.set (x);
+}
+
+
 // action_t
 // 
 
@@ -374,6 +426,30 @@ soundfx (const soundfx_type& x)
 // configuration_t
 // 
 
+const configuration_t::graphics_type& configuration_t::
+graphics () const
+{
+  return this->graphics_.get ();
+}
+
+configuration_t::graphics_type& configuration_t::
+graphics ()
+{
+  return this->graphics_.get ();
+}
+
+void configuration_t::
+graphics (const graphics_type& x)
+{
+  this->graphics_.set (x);
+}
+
+void configuration_t::
+graphics (::std::auto_ptr< graphics_type > x)
+{
+  this->graphics_.set (x);
+}
+
 const configuration_t::action_type& configuration_t::
 action () const
 {
@@ -448,6 +524,111 @@ volume (::std::auto_ptr< volume_type > x)
 
 
 #include <xsd/cxx/xml/dom/parsing-source.hxx>
+
+// graphics_t
+//
+
+graphics_t::
+graphics_t (const resolution_type& resolution,
+            const fullscreen_type& fullscreen)
+: ::xml_schema::type (),
+  resolution_ (resolution, ::xml_schema::flags (), this),
+  fullscreen_ (fullscreen, ::xml_schema::flags (), this)
+{
+}
+
+graphics_t::
+graphics_t (const graphics_t& x,
+            ::xml_schema::flags f,
+            ::xml_schema::container* c)
+: ::xml_schema::type (x, f, c),
+  resolution_ (x.resolution_, f, this),
+  fullscreen_ (x.fullscreen_, f, this)
+{
+}
+
+graphics_t::
+graphics_t (const ::xercesc::DOMElement& e,
+            ::xml_schema::flags f,
+            ::xml_schema::container* c)
+: ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  resolution_ (f, this),
+  fullscreen_ (f, this)
+{
+  if ((f & ::xml_schema::flags::base) == 0)
+  {
+    ::xsd::cxx::xml::dom::parser< char > p (e, true, false);
+    this->parse (p, f);
+  }
+}
+
+void graphics_t::
+parse (::xsd::cxx::xml::dom::parser< char >& p,
+       ::xml_schema::flags f)
+{
+  for (; p.more_elements (); p.next_element ())
+  {
+    const ::xercesc::DOMElement& i (p.cur_element ());
+    const ::xsd::cxx::xml::qualified_name< char > n (
+      ::xsd::cxx::xml::dom::name< char > (i));
+
+    // resolution
+    //
+    if (n.name () == "resolution" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< resolution_type > r (
+        resolution_traits::create (i, f, this));
+
+      if (!resolution_.present ())
+      {
+        this->resolution_.set (r);
+        continue;
+      }
+    }
+
+    // fullscreen
+    //
+    if (n.name () == "fullscreen" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< fullscreen_type > r (
+        fullscreen_traits::create (i, f, this));
+
+      if (!fullscreen_.present ())
+      {
+        this->fullscreen_.set (r);
+        continue;
+      }
+    }
+
+    break;
+  }
+
+  if (!resolution_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "resolution",
+      "");
+  }
+
+  if (!fullscreen_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "fullscreen",
+      "");
+  }
+}
+
+graphics_t* graphics_t::
+_clone (::xml_schema::flags f,
+        ::xml_schema::container* c) const
+{
+  return new class graphics_t (*this, f, c);
+}
+
+graphics_t::
+~graphics_t ()
+{
+}
 
 // action_t
 //
@@ -959,10 +1140,12 @@ volume_t::
 //
 
 configuration_t::
-configuration_t (const action_type& action,
+configuration_t (const graphics_type& graphics,
+                 const action_type& action,
                  const movement_type& movement,
                  const volume_type& volume)
 : ::xml_schema::type (),
+  graphics_ (graphics, ::xml_schema::flags (), this),
   action_ (action, ::xml_schema::flags (), this),
   movement_ (movement, ::xml_schema::flags (), this),
   volume_ (volume, ::xml_schema::flags (), this)
@@ -970,10 +1153,12 @@ configuration_t (const action_type& action,
 }
 
 configuration_t::
-configuration_t (::std::auto_ptr< action_type >& action,
+configuration_t (::std::auto_ptr< graphics_type >& graphics,
+                 ::std::auto_ptr< action_type >& action,
                  ::std::auto_ptr< movement_type >& movement,
                  ::std::auto_ptr< volume_type >& volume)
 : ::xml_schema::type (),
+  graphics_ (graphics, ::xml_schema::flags (), this),
   action_ (action, ::xml_schema::flags (), this),
   movement_ (movement, ::xml_schema::flags (), this),
   volume_ (volume, ::xml_schema::flags (), this)
@@ -985,6 +1170,7 @@ configuration_t (const configuration_t& x,
                  ::xml_schema::flags f,
                  ::xml_schema::container* c)
 : ::xml_schema::type (x, f, c),
+  graphics_ (x.graphics_, f, this),
   action_ (x.action_, f, this),
   movement_ (x.movement_, f, this),
   volume_ (x.volume_, f, this)
@@ -996,6 +1182,7 @@ configuration_t (const ::xercesc::DOMElement& e,
                  ::xml_schema::flags f,
                  ::xml_schema::container* c)
 : ::xml_schema::type (e, f | ::xml_schema::flags::base, c),
+  graphics_ (f, this),
   action_ (f, this),
   movement_ (f, this),
   volume_ (f, this)
@@ -1016,6 +1203,20 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     const ::xercesc::DOMElement& i (p.cur_element ());
     const ::xsd::cxx::xml::qualified_name< char > n (
       ::xsd::cxx::xml::dom::name< char > (i));
+
+    // graphics
+    //
+    if (n.name () == "graphics" && n.namespace_ ().empty ())
+    {
+      ::std::auto_ptr< graphics_type > r (
+        graphics_traits::create (i, f, this));
+
+      if (!graphics_.present ())
+      {
+        this->graphics_.set (r);
+        continue;
+      }
+    }
 
     // action
     //
@@ -1060,6 +1261,13 @@ parse (::xsd::cxx::xml::dom::parser< char >& p,
     }
 
     break;
+  }
+
+  if (!graphics_.present ())
+  {
+    throw ::xsd::cxx::tree::expected_element< char > (
+      "graphics",
+      "");
   }
 
   if (!action_.present ())

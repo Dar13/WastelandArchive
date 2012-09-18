@@ -357,7 +357,7 @@ void MainMenu::createOptionsMenu(InputManager* Input,GUIManager* Gui)
 	resCombobox->setPosition(CEGUI::UVector2(CEGUI::UDim(.0f,5),CEGUI::UDim(.1f,0)));
 	resCombobox->setSize(CEGUI::UVector2(CEGUI::UDim(.2f,0),CEGUI::UDim(.2f,0)));
 
-	CEGUI::ListboxTextItem* cbItem = new CEGUI::ListboxTextItem("1920x1024",10);
+	CEGUI::ListboxTextItem* cbItem = new CEGUI::ListboxTextItem("1920x1080",10);
 	cbItem->setSelectionBrushImage("TaharezLook","ComboboxSelectionBrush");
 	cbItem->setSelected(true);
 	cbItem->setAutoDeleted(true);
@@ -732,6 +732,23 @@ void MainMenu::_saveOptionChanges()
 	xercesc::DOMElement* root = static_cast<xercesc::DOMElement*>(doc->getFirstChild());
 	root->setAttribute(L"xmlns:xsi",L"http://www.w3.org/2001/XMLSchema-instance");
 	root->setAttribute(L"xsi:noNamespaceSchemaLocation",L"schemas/configuration.xsd");
+
+	//graphics stuff
+	xercesc::DOMElement* graphics = doc->createElement(L"graphics");
+	root->appendChild(graphics);
+	
+	std::wstring graphicsOpts[2] = {L"resolution",L"fullscreen"};
+
+	CEGUI::Combobox* list = static_cast<CEGUI::Combobox*>(_opt_guiSheetChildren["opt_Config_Graphic_Res_list"]);
+	CEGUI::ListboxItem* item = list->getSelectedItem();
+	xercesc::DOMElement* element = doc->createElement(L"resolution");
+	graphics->appendChild(element);
+	std::string tmp = item->getText().c_str();
+	element->appendChild(doc->createTextNode(Utility::stringToWString(tmp).c_str()));
+
+	element = doc->createElement(L"fullscreen");
+	graphics->appendChild(element);
+	element->appendChild(doc->createTextNode(L"false"));
 
 	//action stuff
 	xercesc::DOMElement* actionElement = doc->createElement(L"action");
