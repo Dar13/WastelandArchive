@@ -74,7 +74,7 @@ public:
 	~GraphicsManager(){Shutdown();}
 
 	//! Sets up the class to handle Ogre things.
-	bool Setup();
+	bool Setup(configuration_t* currentConfig = nullptr);
 	//! Updates Ogre, while rendering one frame.
 	bool Render();
 	//! Shutsdown Ogre as cleanly as possible.

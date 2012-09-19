@@ -3,15 +3,15 @@
 #include "GraphicsManager.h"
 
 GraphicsManager::GraphicsManager()
+	: _Root(nullptr),
+	  _Window(nullptr),
+	  _Log(nullptr),
+	  _Timer(nullptr),
+	  _windowHandle(0)
 {
-	_Root=0;
-	_Window=0;
-	_Log=0;
-	_Timer=0;
-	_windowHandle = 0;
 }
 
-bool GraphicsManager::Setup()
+bool GraphicsManager::Setup(configuration_t* currentConfig)
 {
 	Ogre::LogManager* logMgr = NULL;
 	bool retVal=true;
@@ -47,10 +47,19 @@ bool GraphicsManager::Setup()
 	_Root->loadPlugin("Plugin_OctreeSceneManager");
 #endif
 
-	//Will have this read-in from a config file, but for now it'll be hard-coded.
+	//Will have this read-in from a config file.
 	Ogre::NameValuePairList options;
-	options["resolution"] = "1920x1080";
-	options["fullscreen"] = "false";
+	if(currentConfig != nullptr)
+	{
+		options["resolution"] = currentConfig->graphics().resolution();
+		options["fullscreen"] = currentConfig->graphics().fullscreen();
+	}
+	else
+	{
+		options["resolution"] = "1920x1080";
+		options["fullscreen"] = "false";
+	}
+	
 	options["vsync"] = "true";
 	options["FSAAHint"] = "Quality";
 	options["FSAA"] = "4x";

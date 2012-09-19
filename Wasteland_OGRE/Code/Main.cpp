@@ -24,8 +24,9 @@ int main(int argc, char **argv[])
 
 	//Smart pointer holding ogre manager pointer.
 	const std::unique_ptr<GraphicsManager> ogre(new GraphicsManager());
+	configuration_t* config = configuration("resource\\xml\\config.xml").release();
 	//Setup ogre. If this fails, crash to desktop. Probably should pop-up a message box.
-	if(!ogre->Setup())
+	if(!ogre->Setup(config))
 	{
 #if defined(WIN32)
 		MessageBoxA(NULL,"The Object-Oriented Graphics Rendering Engine(OGRE) has failed to initialize properly.","ERROR",MB_OK);
@@ -50,8 +51,7 @@ int main(int argc, char **argv[])
 
 	//Setup the input handler(OIS)
 	const std::unique_ptr<InputManager> ois(new InputManager(hWnd));
-	resFile = "resource\\xml\\config.xml"; //re-using string variable.
-	ois->setConfiguration(configuration(resFile).release());
+	ois->setConfiguration(config);
 
 	const std::unique_ptr<SoundManager> sound(new SoundManager());
 	if(!sound->Setup())
