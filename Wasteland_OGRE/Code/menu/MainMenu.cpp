@@ -357,31 +357,57 @@ void MainMenu::createOptionsMenu(InputManager* Input,GUIManager* Gui)
 	resCombobox->setPosition(CEGUI::UVector2(CEGUI::UDim(.0f,5),CEGUI::UDim(.1f,0)));
 	resCombobox->setSize(CEGUI::UVector2(CEGUI::UDim(.2f,0),CEGUI::UDim(.2f,0)));
 
-	CEGUI::ListboxTextItem* cbItem = new CEGUI::ListboxTextItem("1920x1080",10);
-	cbItem->setSelectionBrushImage("TaharezLook","ComboboxSelectionBrush");
-	cbItem->setSelected(true);
-	cbItem->setAutoDeleted(true);
-	resCombobox->addItem(cbItem);
+	std::string resList[5] = {"1920x1080","1600x1050","1366x768","1280x1024","1024x768"};
+	for(int i = 0; i < 5; i++)
+	{
+		CEGUI::ListboxTextItem* cbItem = new CEGUI::ListboxTextItem(resList[i]);
+		cbItem->setSelectionBrushImage("TaharezLook","ComboboxSelectionBrush");
+		if(Input->getConfiguration()->graphics().resolution() == resList[i])
+		{
+			cbItem->setSelected(true);
+		}
+		else
+		{
+			cbItem->setSelected(false);
+		}
+		cbItem->setAutoDeleted(true);
+		resCombobox->addItem(cbItem);
+	}
 
-	cbItem = new CEGUI::ListboxTextItem("1600x1050",20);
-	cbItem->setSelectionBrushImage("TaharezLook","ComboboxSelectionBrush");
-	cbItem->setAutoDeleted(true);
-	resCombobox->addItem(cbItem);
+	//fullscreen
+	window.first = "opt_Config_Graphic_fscrn_txt";
+	window.second = Gui->getWinManager()->createWindow("TaharezLook/StaticText",window.first);
+	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.2f,0),CEGUI::UDim(.05f,0)));
+	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(0.25f,0),CEGUI::UDim(.05f,0)));
+	window.second->setText("Fullscreen");
+	window.second->setDestroyedByParent(true);
+	_opt_guiSheetChildren["opt_Config_Graphic_wnd"]->addChildWindow(window.second);
+	_opt_guiSheetChildren.insert(window);
 
-	cbItem = new CEGUI::ListboxTextItem("1366x768",30);
-	cbItem->setSelectionBrushImage("TaharezLook","ComboboxSelectionBrush");
-	cbItem->setAutoDeleted(true);
-	resCombobox->addItem(cbItem);
-	
-	cbItem = new CEGUI::ListboxTextItem("1280x1024",40);
-	cbItem->setSelectionBrushImage("TaharezLook","ComboboxSelectionBrush");
-	cbItem->setAutoDeleted(true);
-	resCombobox->addItem(cbItem);
+	window.first = "opt_Config_Graphic_fscrn_val";
+	window.second = Gui->getWinManager()->createWindow("TaharezLook/Button",window.first);
+	window.second->setSize(CEGUI::UVector2(CEGUI::UDim(.2f,0),CEGUI::UDim(.05f,0)));
+	window.second->setPosition(CEGUI::UVector2(CEGUI::UDim(.25f,0),CEGUI::UDim(.1f,0)));
+	window.second->setDestroyedByParent(true);
+	window.second->setText(Input->getConfiguration()->graphics().fullscreen());
+	window.second->subscribeEvent(CEGUI::PushButton::EventClicked,
+		CEGUI::Event::Subscriber([this] (const CEGUI::EventArgs& args) -> bool 
+		{
+			const CEGUI::WindowEventArgs& realArgs = static_cast<const CEGUI::WindowEventArgs&>(args);
+			if(realArgs.window->getText() == "True")
+			{
+				realArgs.window->setText("False");
+			}
+			else
+			{
+				realArgs.window->setText("True");
+			}
 
-	cbItem = new CEGUI::ListboxTextItem("1024x768",50);
-	cbItem->setSelectionBrushImage("TaharezLook","ComboboxSelectionBrush");
-	cbItem->setAutoDeleted(true);
-	resCombobox->addItem(cbItem);
+			return true;
+		})
+	);
+	_opt_guiSheetChildren["opt_Config_Graphic_wnd"]->addChildWindow(window.second);
+	_opt_guiSheetChildren.insert(window);
 
 	//other graphics options...
 
@@ -748,7 +774,9 @@ void MainMenu::_saveOptionChanges()
 
 	element = doc->createElement(L"fullscreen");
 	graphics->appendChild(element);
-	element->appendChild(doc->createTextNode(L"false"));
+	tmp = _opt_guiSheetChildren["opt_Config_Graphic_fscrn_val"]->getText().c_str();
+	std::transform(tmp.begin(),tmp.end(),tmp.begin(),tolower);
+	element->appendChild(doc->createTextNode(Utility::stringToWString(tmp).c_str()));
 
 	//action stuff
 	xercesc::DOMElement* actionElement = doc->createElement(L"action");

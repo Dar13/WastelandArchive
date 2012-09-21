@@ -47,17 +47,23 @@ bool GraphicsManager::Setup(configuration_t* currentConfig)
 	_Root->loadPlugin("Plugin_OctreeSceneManager");
 #endif
 
+	int resHeight,resWidth;
+	bool fullscreen = false;
+
 	//Will have this read-in from a config file.
 	Ogre::NameValuePairList options;
 	if(currentConfig != nullptr)
 	{
-		options["resolution"] = currentConfig->graphics().resolution();
-		options["fullscreen"] = currentConfig->graphics().fullscreen();
+		std::string t = currentConfig->graphics().resolution();
+		resWidth = boost::lexical_cast<int,std::string>(t.substr(0,t.find('x')));
+		resHeight = boost::lexical_cast<int,std::string>(t.substr(t.find('x')+1));
+		fullscreen = (currentConfig->graphics().fullscreen() == "true") ? true : false;
 	}
 	else
 	{
-		options["resolution"] = "1920x1080";
-		options["fullscreen"] = "false";
+		resWidth = 1920;
+		resHeight = 1080;
+		fullscreen = false;
 	}
 	
 	options["vsync"] = "true";
@@ -65,7 +71,7 @@ bool GraphicsManager::Setup(configuration_t* currentConfig)
 	options["FSAA"] = "4x";
 	options["monitorIndex"] = "0";
 
-	_Window = _Root->createRenderWindow("WasTeLanD - DEBUG",1920,1080,false,&options);
+	_Window = _Root->createRenderWindow("WasTeLanD - DEBUG",resWidth,resHeight,fullscreen,&options);
 	
 	//Leave the SceneManager, Camera/Viewport stuff for the appstates to deal with.
 
