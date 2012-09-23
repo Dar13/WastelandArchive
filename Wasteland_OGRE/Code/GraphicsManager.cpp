@@ -155,7 +155,7 @@ void GraphicsManager::Shutdown()
 {
 	clearAnimationStates();
 	_Root->shutdown();
-	delete _Log;
+	//delete _Log;
 	delete _Root;
 }
 

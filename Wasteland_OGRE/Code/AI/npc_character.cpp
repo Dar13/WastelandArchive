@@ -275,6 +275,60 @@ void NPCCharacter::_behaviorWander()
 
 void NPCCharacter::_behaviorTalk(const std::string& targetName)
 {
+	//have to start moving to the target entity until the distance is acceptable
+	LevelData::BaseEntity* targetEnt = LuaManager::getSingleton().getEntity(targetName);
+
+	//Can't talk to a trigger zone or door(though I *could* do the door, it would be an easter egg).
+	if(targetEnt->getType() != LevelData::NPC || targetEnt->getType() != LevelData::ENEMY)
+	{
+		_isBhvFinished = true;
+		return;
+	}
+
+	if(targetEnt->getType() == LevelData::NPC)
+	{
+		NPCCharacter* targetNpc = static_cast<NPCCharacter*>(targetEnt);
+
+		//choosing to ignore the y-value to get a true 4 unit distance horizontally from the target.
+		//might remove if it doesn't make a difference.
+		Ogre::Vector3 tgtNpc = targetNpc->getPosition(); tgtNpc.y = 0;
+		Ogre::Vector3 pos = getPosition(); pos.y = 0;
+
+		//position has to be less than 16 units to talk to the entity.
+		//chose to use 18 instead due to float inaccuracies(might have a value like 16.0178)
+		if(tgtNpc.squaredDistance(pos) > 18)
+		{
+			//move towards the entity(not using the _behaviorMove function though)
+			//or can I??
+			//generate a more correct position
+			Ogre::Vector3 target,tmp;
+			tmp = targetNpc->getPosition() - getPosition(); //distance and direction to the target
+			tmp.y = 0;
+			Ogre::Real len = tmp.normalise();
+			//original + (unit direction vector * desired distance from target[non-squared])
+			target = getPosition() + (tmp * ( len - 4));
+
+			_behaviorMove(targetNpc->getPosition());
+
+			if(_isBhvFinished)
+			{
+				//reached the destination
+				_isBhvFinished = false;
+
+				//animate like they're talking
+			}
+		}
+		else
+		{
+			//rotate to face the target
+			Ogre::Vector3 src = _node->getOrientation() * Ogre::Vector3::NEGATIVE_UNIT_Z;
+			src.y = 0;
+
+			_node->rotate(src.getRotationTo(tgtNpc));
+
+			//then start the talk sequence(animation, sound,etc)
+		}
+	}
 
 }
 
