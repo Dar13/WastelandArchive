@@ -19,7 +19,7 @@ private:
 	//Methods to implement behaviors specific to NPCs.
 	void _behaviorMove(const Ogre::Vector3& target);
 	void _behaviorIdle();
-	void _behaviorWander();
+	void _behaviorWander(const Ogre::Vector3& min,const Ogre::Vector3& max);
 	void _behaviorTalk(const std::string& targetName);
 	void _behaviorFollow(const std::string& targetName);
 

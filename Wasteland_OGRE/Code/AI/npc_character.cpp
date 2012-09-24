@@ -106,6 +106,8 @@ void NPCCharacter::update(float deltaTimeInMilliSecs)
 		actChange = lua_tointeger(lua,-1);
 		lua_pop(lua,1);
 		_actChange = (actChange == 1) ? true : false;
+		
+		Ogre::Vector3 min,max,mtmp;
 
 		switch(behavior)
 		{
@@ -113,7 +115,45 @@ void NPCCharacter::update(float deltaTimeInMilliSecs)
 			_behaviorIdle();
 			break;
 		case AI::BHV_WANDER:
-			_behaviorWander();
+			lua_pushstring(lua,"bhvmin");
+			
+			lua_gettable(lua,1);
+			if(lua_istable(lua,-1))
+			{
+				//this works.
+				for(int i = 0; i < 3; i++)
+				{
+					lua_pushnumber(lua,i+1);
+					lua_gettable(lua,-2);
+					mtmp[i] = static_cast<float>(lua_tonumber(lua,-1));
+					lua_pop(lua,1);
+					
+				}
+			}
+			lua_pop(lua,1);
+			if(mtmp != Ogre::Vector3(-1000,-1000,-1000))
+			{
+				min = mtmp;
+			} else { min = Ogre::Vector3::ZERO; }
+
+			lua_pushstring(lua,"bhvmax");
+			lua_gettable(lua,1);
+			if(lua_istable(lua,-1))
+			{
+				for(int i = 0; i < 3; ++i)
+				{
+					lua_pushnumber(lua,i+1);
+					lua_gettable(lua,-2);
+					mtmp[i] = static_cast<float>(lua_tonumber(lua,-1));
+					lua_pop(lua,1);
+				}
+			}
+			lua_pop(lua,1);
+			if(mtmp != Ogre::Vector3(-1000,-1000,-1000))
+			{
+				max = mtmp;
+			} else { max = Ogre::Vector3::ZERO; }
+			_behaviorWander(min,max);
 			break;
 		case AI::BHV_TALK:
 			lua_pushstring(lua,"bhvtarget");
@@ -134,18 +174,19 @@ void NPCCharacter::update(float deltaTimeInMilliSecs)
 					lua_gettable(lua,-2);
 					tmp[i] = static_cast<float>(lua_tonumber(lua,-1));
 					lua_pop(lua,1);
-					if(tmp != Ogre::Vector3(-1000,-1000,-1000))
-					{
-						moveTarget = tmp;
-					}
-					else
-					{
-						moveTarget = _destination;
-					}
+					
 				}
 			}
-
 			lua_pop(lua,1);
+
+			if(tmp != Ogre::Vector3(-1000,-1000,-1000))
+			{
+				moveTarget = tmp;
+			}
+			else
+			{
+				moveTarget = _destination;
+			}
 
 			_behaviorMove(moveTarget);
 			break;
@@ -269,8 +310,21 @@ void NPCCharacter::_behaviorMove(const Ogre::Vector3& target)
 	}
 }
 
-void NPCCharacter::_behaviorWander()
+void NPCCharacter::_behaviorWander(const Ogre::Vector3& min,const Ogre::Vector3& max)
 {
+	//pick a random point within the box defined by min and max and go there.
+	Ogre::AxisAlignedBox box(min,max);
+	
+	//generate a random point
+	Ogre::Vector3 point;
+	point.x = Ogre::Math::RangeRandom(min.x,max.x);
+	point.y = (min.y + max.y) / 2.0f; //average of the two heights(really ought to be the same lol).
+	point.z = Ogre::Math::RangeRandom(min.z,max.z);
+
+	if(box.intersects(point))
+	{
+		_behaviorMove(point);
+	}
 }
 
 void NPCCharacter::_behaviorTalk(const std::string& targetName)
@@ -312,10 +366,8 @@ void NPCCharacter::_behaviorTalk(const std::string& targetName)
 
 			if(_isBhvFinished)
 			{
-				//reached the destination
+				//reached the destination, but behavior isn't done yet.
 				_isBhvFinished = false;
-
-				//animate like they're talking
 			}
 		}
 		else
@@ -326,10 +378,33 @@ void NPCCharacter::_behaviorTalk(const std::string& targetName)
 
 			_node->rotate(src.getRotationTo(tgtNpc));
 
-			//then start the talk sequence(animation, sound,etc)
+			//make sure any other blends are finished first.
+			if(_animHandler.getTarget() == nullptr)
+			{
+				if(_animHandler.getSource()->getAnimationName() == "Talk")
+				{
+					_isBhvFinished = true;
+				}
+				else
+				{
+					//start the blend to the talk animation.
+					//_animHandler([animation],[blend technique],.2,true);
+				}
+			}
 		}
+
+		return;
 	}
 
+	if(targetEnt->getType() == LevelData::ENEMY)
+	{
+		//nothing for now.
+
+		return;
+	}
+
+
+	return;
 }
 
 void NPCCharacter::_behaviorFollow(const std::string& targetName)
