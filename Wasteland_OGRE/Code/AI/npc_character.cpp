@@ -310,9 +310,10 @@ void NPCCharacter::_behaviorMove(const Ogre::Vector3& target)
 	}
 }
 
-void NPCCharacter::_behaviorWander(const Ogre::Vector3& min,const Ogre::Vector3& max)
+void NPCCharacter::_behaviorWander(Ogre::Vector3& min,Ogre::Vector3& max)
 {
 	//pick a random point within the box defined by min and max and go there.
+	Utility::fixMinMax(min,max); //just to ensure that I won't get an assert.
 	Ogre::AxisAlignedBox box(min,max);
 	
 	//generate a random point
@@ -325,6 +326,15 @@ void NPCCharacter::_behaviorWander(const Ogre::Vector3& min,const Ogre::Vector3&
 	{
 		_behaviorMove(point);
 	}
+	else
+	{
+		_isBhvFinished = false;
+		return;
+	}
+	
+	//If the bhvFinished is set, then I think that's it. Sweet!
+
+	return;
 }
 
 void NPCCharacter::_behaviorTalk(const std::string& targetName)

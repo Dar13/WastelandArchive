@@ -69,9 +69,17 @@ std::wstring Utility::stringToWString(const std::string& str)
 	return ret;
 }
 
-std::string wstringToString(const std::wstring& str)
+std::string Utility::wstringToString(const std::wstring& str)
 {
 	std::string ret(str.begin(),str.end());
 	ret.assign(str.begin(),str.end());
 	return ret;
+}
+
+void Utility::fixMinMax(Ogre::Vector3& min,Ogre::Vector3& max)
+{
+	if(min.x > max.x) { std::swap(min.x,max.x); }
+	if(min.y > max.y) { std::swap(min.y,max.y); }
+	if(min.z > max.z) { std::swap(min.z,max.z); }
+	return;
 }

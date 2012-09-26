@@ -52,6 +52,8 @@ namespace Utility
 
 	std::wstring stringToWString(const std::string& str);
 	std::string wstringToString(const std::wstring& wstr);
+
+	void fixMinMax(Ogre::Vector3& min,Ogre::Vector3& max);
 };
 
 #endif
