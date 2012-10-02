@@ -337,6 +337,7 @@ void NPCCharacter::_behaviorWander(Ogre::Vector3& min,Ogre::Vector3& max)
 	return;
 }
 
+//Probably the most involved behavior so far.
 void NPCCharacter::_behaviorTalk(const std::string& targetName)
 {
 	//have to start moving to the target entity until the distance is acceptable
@@ -364,6 +365,7 @@ void NPCCharacter::_behaviorTalk(const std::string& targetName)
 		{
 			//move towards the entity(not using the _behaviorMove function though)
 			//or can I??
+			//yes I can actually. *does a jig*
 			//generate a more correct position
 			Ogre::Vector3 target,tmp;
 			tmp = targetNpc->getPosition() - getPosition(); //distance and direction to the target
@@ -398,7 +400,7 @@ void NPCCharacter::_behaviorTalk(const std::string& targetName)
 				else
 				{
 					//start the blend to the talk animation.
-					//_animHandler([animation],[blend technique],.2,true);
+					//_animHandler.blend([animation],[blend technique],.2,true);
 				}
 			}
 		}
@@ -419,5 +421,27 @@ void NPCCharacter::_behaviorTalk(const std::string& targetName)
 
 void NPCCharacter::_behaviorFollow(const std::string& targetName)
 {
+	LevelData::BaseEntity* ent = LuaManager::getSingleton().getEntity(targetName);
+	if(ent == nullptr)
+	{
+		_isBhvFinished = true;
+		return;
+	}
+
+	if(ent->getType() == LevelData::NPC)
+	{
+		NPCCharacter* npc = static_cast<NPCCharacter*>(ent);
+		Ogre::Vector3 pos = getPosition(),npcPos = npc->getPosition();
+		pos.y = 0; npcPos.y = 0;
+		Ogre::Vector3 diff = npcPos - pos;
+		float len = diff.normalise();
+		if(len > 18)
+		{
+			//new position = old position + (direction vector * (length - distance from target))
+			pos = pos + (diff * (len - 4.0));
+			_behaviorMove(pos);
+		}
+
+	}
 
 }
