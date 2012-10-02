@@ -82,7 +82,7 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 		Ogre::SceneNode* node = GameManager::createCharacterObject(_scene,obj,Graphics);
 
 		NPCCharacter npc(obj->name(),obj->scriptName(),node,_crowd.get());
-		npc.setMaxSpeed(.5f);
+		npc.setMaxSpeed(.9f);
 		_npcs.push_back(npc);
 		LuaManager::getSingleton().addEntity(npc.getName(),&_npcs.back());
 

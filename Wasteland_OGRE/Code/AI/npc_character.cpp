@@ -134,7 +134,7 @@ void NPCCharacter::update(float deltaTimeInMilliSecs)
 			if(mtmp != Ogre::Vector3(-1000,-1000,-1000))
 			{
 				min = mtmp;
-			} else { min = Ogre::Vector3::ZERO; }
+			} else { min = _destination; }
 
 			lua_pushstring(lua,"bhvmax");
 			lua_gettable(lua,1);
@@ -149,10 +149,12 @@ void NPCCharacter::update(float deltaTimeInMilliSecs)
 				}
 			}
 			lua_pop(lua,1);
+
 			if(mtmp != Ogre::Vector3(-1000,-1000,-1000))
 			{
 				max = mtmp;
-			} else { max = Ogre::Vector3::ZERO; }
+			} else { max = _destination; }
+
 			_behaviorWander(min,max);
 			break;
 		case AI::BHV_TALK:
@@ -312,6 +314,12 @@ void NPCCharacter::_behaviorMove(const Ogre::Vector3& target)
 
 void NPCCharacter::_behaviorWander(Ogre::Vector3& min,Ogre::Vector3& max)
 {
+	// don't want to override an earlier target.
+	if(min == _destination || max == _destination)
+	{
+		_behaviorMove(_destination);
+		return;
+	}
 	//pick a random point within the box defined by min and max and go there.
 	Utility::fixMinMax(min,max); //just to ensure that I won't get an assert.
 	Ogre::AxisAlignedBox box(min,max);
