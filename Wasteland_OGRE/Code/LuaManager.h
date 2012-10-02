@@ -11,24 +11,6 @@
 //Make my life easier
 typedef int (*luaFunction)(lua_State*);
 
-/*
-lua_State* luaTest;
-luaTest = lua_open();
-
-luaL_openlibs(luaTest);
-luaL_dofile(luaTest,"resource\\lua\\test.lua");
-int sum;
-{
-	lua_getglobal(luaTest,"add");
-	lua_pushnumber(luaTest,5);
-	lua_pushnumber(luaTest,2);
-	lua_call(luaTest,2,1);
-	sum = (int)lua_tointeger(luaTest,-1);
-	lua_pop(luaTest,1);
-}
-lua_close(luaTest);
-*/
-
 class LuaManager : public Ogre::Singleton<LuaManager>
 {
 public:
@@ -62,7 +44,10 @@ public:
 
 	//Entity handling functions.
 	void addEntity(const std::string& name,LevelData::BaseEntity* entity);
-	LevelData::BaseEntity* getEntity(const std::string& name) { return _entities[name]; }
+	LevelData::BaseEntity* getEntity(const std::string& name) 
+	{ 
+		return _entities[name]; 
+	}
 	void removeEntity(const std::string& name) { _entities.erase(_entities.find(name)); }
 	void purgeEntities();
 	void activateEntity(const std::string& name, bool value);

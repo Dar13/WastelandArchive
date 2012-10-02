@@ -65,7 +65,7 @@ private:
 	std::vector<sSound> _sounds;
 	std::vector<FMOD::Channel*> _channels;
 
-	std::vector<NPCCharacter> _npcs;
+	std::vector<NPCCharacter*> _npcs;
 
 };
 

@@ -81,10 +81,10 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 		characterobject_t* obj = characterObject(*itr).release();
 		Ogre::SceneNode* node = GameManager::createCharacterObject(_scene,obj,Graphics);
 
-		NPCCharacter npc(obj->name(),obj->scriptName(),node,_crowd.get());
-		npc.setMaxSpeed(.9f);
+		NPCCharacter* npc = new NPCCharacter(obj->name(),obj->scriptName(),node,_crowd.get());
+		npc->setMaxSpeed(.9f);
 		_npcs.push_back(npc);
-		LuaManager::getSingleton().addEntity(npc.getName(),&_npcs.back());
+		LuaManager::getSingleton().addEntity(npc->getName(),npc);
 
 		delete obj;
 	}
@@ -133,7 +133,7 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 
 		for(auto itr = _npcs.begin(); itr != _npcs.end(); ++itr)
 		{
-			itr->update(delta);
+			(*itr)->update(delta);
 		}
 
 		if(!GameManager::UpdateManagers(Graphics,_physics.get(),delta))
@@ -168,6 +168,12 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 
 void ArenaLocker::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
 {
+	std::for_each(_npcs.begin(),_npcs.end(),[] (NPCCharacter* npc) {
+		delete npc;
+		npc = nullptr;
+	});
+	_npcs.clear();
+
 	std::for_each(_pairs.begin(),_pairs.end(),[] (OgreBulletPair ipair) {
 		if(ipair.btBody->getCollisionShape()->getShapeType() == TRIANGLE_MESH_SHAPE_PROXYTYPE)
 		{
