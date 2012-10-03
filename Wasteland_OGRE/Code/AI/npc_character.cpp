@@ -352,7 +352,7 @@ void NPCCharacter::_behaviorTalk(const std::string& targetName)
 	LevelData::BaseEntity* targetEnt = LuaManager::getSingleton().getEntity(targetName);
 
 	//Can't talk to a trigger zone or door(though I *could* do the door, it would be an easter egg).
-	if(targetEnt->getType() != LevelData::NPC || targetEnt->getType() != LevelData::ENEMY)
+	if(targetEnt->getType() != LevelData::NPC && targetEnt->getType() != LevelData::ENEMY)
 	{
 		_isBhvFinished = true;
 		return;
@@ -382,7 +382,7 @@ void NPCCharacter::_behaviorTalk(const std::string& targetName)
 			//original + (unit direction vector * desired distance from target[non-squared])
 			target = getPosition() + (tmp * ( len - 4));
 
-			_behaviorMove(targetNpc->getPosition());
+			_behaviorMove(target);
 
 			if(_isBhvFinished)
 			{
@@ -401,6 +401,10 @@ void NPCCharacter::_behaviorTalk(const std::string& targetName)
 			//make sure any other blends are finished first.
 			if(_animHandler.getTarget() == nullptr)
 			{
+				//this ends the behavior until the talk animation or sound file is implemented
+				_isBhvFinished = true;
+
+				//this would be the actual way to finish the behavior(or even with the end of a sound file)
 				if(_animHandler.getSource()->getAnimationName() == "Talk")
 				{
 					_isBhvFinished = true;
