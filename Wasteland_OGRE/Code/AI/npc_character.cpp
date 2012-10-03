@@ -393,10 +393,11 @@ void NPCCharacter::_behaviorTalk(const std::string& targetName)
 		else
 		{
 			//rotate to face the target
+			Ogre::Vector3 dir = tgtNpc - pos; dir.normalise();
 			Ogre::Vector3 src = _node->getOrientation() * Ogre::Vector3::NEGATIVE_UNIT_Z;
 			src.y = 0;
 
-			_node->rotate(src.getRotationTo(tgtNpc));
+			_node->rotate(src.getRotationTo(dir));
 
 			//make sure any other blends are finished first.
 			if(_animHandler.getTarget() == nullptr)
@@ -447,11 +448,15 @@ void NPCCharacter::_behaviorFollow(const std::string& targetName)
 		pos.y = 0; npcPos.y = 0;
 		Ogre::Vector3 diff = npcPos - pos;
 		float len = diff.normalise();
-		if(len > 18)
+		if(len > 3)
 		{
 			//new position = old position + (direction vector * (length - distance from target))
 			pos = pos + (diff * (len - 4.0));
 			_behaviorMove(pos);
+		}
+		else
+		{
+			_isBhvFinished = true;
 		}
 
 	}
