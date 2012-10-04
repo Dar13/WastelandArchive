@@ -30,6 +30,7 @@ void LuaManager::Setup(std::string luaListFileName)
 	registerFunction("distanceCheck",distanceCheck);
 	registerFunction("getPlayerPosition",getPlayerPosition);
 	registerFunction("getEntityPosition",getEntityPosition);
+	registerFunction("getEntityHeadPosition",getEntityHeadPosition);
 	registerFunction("getNearestEntity",getNearestEntity);
 
 	//exposes all Lua functions to luaState and thus to the program itself through the LuaManager.
@@ -473,6 +474,41 @@ int getEntityPosition(lua_State* lua)
 			//ret = static_cast<EnemyCharacter*>(ent)->getPosition();
 		}
 		//..other types?
+	}
+
+	lua_newtable(lua);
+	int top = lua_gettop(lua);
+
+	for(int i = 0; i < 3; i++)
+	{
+		lua_pushinteger(lua,i+1);
+		lua_pushnumber(lua,ret[i]);
+		lua_settable(lua,top);
+	}
+
+	return 1;
+}
+
+// var = getEntityHeadPosition("entityName","entityType")
+int getEntityHeadPosition(lua_State* lua)
+{
+	Ogre::Vector3 ret;
+	if(lua_isstring(lua,1) && lua_isstring(lua,2))
+	{
+		std::string entity = lua_tostring(lua,1);
+		LevelData::BaseEntity* ent = LuaManager::getSingleton().getEntity(entity);
+		std::string type = lua_tostring(lua,2);
+		if(type == "NPC")
+		{
+			Ogre::Entity* oent = static_cast<Ogre::Entity*>(static_cast<NPCCharacter*>(ent)->getMovableObject());
+			Ogre::Bone* head = oent->getSkeleton()->getBone("Bip01_Head");
+			ret = head->_getDerivedPosition() * oent->getParentNode()->_getDerivedScale().x + oent->getParentNode()->getPosition();
+		}
+
+		if(type == "Enemy")
+		{
+			//not yet.
+		}
 	}
 
 	lua_newtable(lua);

@@ -16,6 +16,7 @@ NPCCharacter::NPCCharacter(const std::string& name,const std::string& script,Ogr
 
 	//check for animations
 	Ogre::Entity* ent = static_cast<Ogre::Entity*>(node->getAttachedObject(0));
+	
 	node->scale(.1f,.1f,.1f);
 	if(ent != nullptr)
 	{
@@ -33,6 +34,8 @@ NPCCharacter::NPCCharacter(const std::string& name,const std::string& script,Ogr
 			_animHandler.setEntity(NULL);
 		}
 	}
+	
+	ent->getSkeleton()->removeAllLinkedSkeletonAnimationSources();
 
 	_prevBhv = 0;
 	_prevAct = 0;
@@ -227,7 +230,37 @@ void NPCCharacter::update(float deltaTimeInMilliSecs)
 			}
 			lua_pop(lua,1);
 			break;
+		case AI::ACT_IDLE:
+			_actionIdle();
+			break;
+		case AI::ACT_LOOKAT:
+			lua_pushstring(lua,"lookat");
+			lua_gettable(lua,1);
+			Ogre::Vector3 tmp;
+			if(lua_istable(lua,-1))
+			{
+				//this works.
+				for(int i = 0; i < 3; i++)
+				{
+					lua_pushnumber(lua,i+1);
+					lua_gettable(lua,-2);
+					tmp[i] = static_cast<float>(lua_tonumber(lua,-1));
+					lua_pop(lua,1);
+				}
+			}
+			lua_pop(lua,1);
+
+			if(tmp != Ogre::Vector3(-1000,-1000,-1000))
+			{
+				_actionLook(tmp);
+			}
+			else
+			{
+				_actionIdle();
+			}
+			break;
 		}
+		
 	}
 
 	//Just in case I missed something up there(missing lua_pop,etc)
@@ -461,4 +494,47 @@ void NPCCharacter::_behaviorFollow(const std::string& targetName)
 
 	}
 
+}
+
+//This is basically just a time-waster
+void NPCCharacter::_actionIdle()
+{
+	//want the head to point straight ahead when it's idling
+	Ogre::Bone* headBone;
+	Ogre::Skeleton* skel = static_cast<Ogre::Entity*>(_movableObject)->getSkeleton();
+	headBone = skel->getBone("Bip01_Head");
+	if(headBone->isManuallyControlled())
+	{
+		//rotate it to be aligned with the body.
+
+	}
+
+	_isActFinished = true;
+}
+
+void NPCCharacter::_actionLook(const Ogre::Vector3& target)
+{
+	Ogre::Bone* headBone;
+	std::string n = _node->getName();
+	Ogre::Skeleton* skel = static_cast<Ogre::Entity*>(_movableObject)->getSkeleton();
+	headBone = skel->getBone("Bip01_Head");
+	headBone->setManuallyControlled(true);
+	headBone->setInheritOrientation(true);
+	int nAnim = skel->getNumAnimations();
+	for(int i = 0; i < nAnim; ++i)
+	{
+		skel->getAnimation(i)->destroyNodeTrack(headBone->getHandle());
+	}
+
+	Ogre::Vector3 test = headBone->_getDerivedPosition() * .1f + _node->getPosition();
+	Ogre::Vector3 dir = target - test;
+	Ogre::Quaternion nodeRot,boneRot;
+	boneRot = headBone->_getDerivedOrientation();
+	Ogre::Vector3 boneTest = boneRot * Ogre::Vector3::UNIT_Z;
+	dir.y = 0;
+	dir.normalise();
+
+	headBone->rotate(boneTest.getRotationTo(dir),Ogre::Node::TS_WORLD);
+
+	_isActFinished = true;
 }

@@ -19,7 +19,8 @@ namespace AI
 		ACT_IDLE = 0,
 		ACT_SHOOT,
 		ACT_RELOAD,
-		ACT_CHANGEWEP
+		ACT_CHANGEWEP,
+		ACT_LOOKAT
 	};
 }
 

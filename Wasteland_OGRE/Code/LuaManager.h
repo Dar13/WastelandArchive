@@ -111,6 +111,9 @@ int changeEntityName(lua_State* lua);
 //Allows Lua scripts to get entity positions.
 int getEntityPosition(lua_State* lua);
 
+//Allows Lua scripts to get the position of an entity's head
+int getEntityHeadPosition(lua_State* lua);
+
 //Allows Lua scripts to find nearest entities
 int getNearestEntity(lua_State* lua);
 

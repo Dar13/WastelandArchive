@@ -24,7 +24,8 @@ private:
 	void _behaviorFollow(const std::string& targetName);
 
 	//Methods to implement actions specific to NPCs.
-	// void....
+	void _actionIdle();
+	void _actionLook(const Ogre::Vector3& target);
 
 	int _prevBhv;
 	int _prevAct;
