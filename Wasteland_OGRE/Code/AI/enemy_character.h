@@ -16,12 +16,16 @@ private:
 	//Methods to implement behaviors
 	void _behaviorMove(const Ogre::Vector3& target);
 	void _behaviorIdle();
-	void _behaviorWander(Ogre::Vector3 min,Ogre::Vector3& max);
+	void _behaviorWander(Ogre::Vector3& min,Ogre::Vector3& max);
 	void _behaviorTalk(const std::string& targetName);
 	void _behaviorFollow(const std::string& targetName);
 
 	//Methods to implement actions for Enemies
-	//not yet
+	void _actionIdle();
+	void _actionLookAt(const Ogre::Vector3& target);
+	void _actionReload();
+	void _actionShoot(const std::string& target);
+	void _actionChangeWeapon(const std::string& newWep);
 
 	int _prevBhv;
 	int _prevAct;

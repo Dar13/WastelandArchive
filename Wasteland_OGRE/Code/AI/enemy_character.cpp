@@ -11,7 +11,7 @@ EnemyCharacter::EnemyCharacter(const std::string& name,const std::string& script
 	_name = name;
 	_scriptName = script;
 
-	Ogre::Entity* ent = static_cast<Ogre::Entity*>(node->getAttachedObject(0));
+	Ogre::Entity* ent = static_cast<Ogre::Entity*>(getMovableObject());
 
 	//this will probably have to change
 	node->scale(.1f,.1f,.1f);
@@ -40,4 +40,59 @@ EnemyCharacter::EnemyCharacter(const std::string& name,const std::string& script
 
 	_bhvChange = false;
 	_actChange = false;
+}
+
+void EnemyCharacter::update(float deltaTime)
+{
+
+}
+
+void EnemyCharacter::_behaviorIdle()
+{
+
+}
+
+void EnemyCharacter::_behaviorMove(const Ogre::Vector3& target)
+{
+
+}
+
+void EnemyCharacter::_behaviorWander(Ogre::Vector3& min,Ogre::Vector3& max)
+{
+
+}
+
+void EnemyCharacter::_behaviorTalk(const std::string& targetName)
+{
+
+}
+
+void EnemyCharacter::_behaviorFollow(const std::string& targetName)
+{
+
+}
+
+void EnemyCharacter::_actionIdle()
+{
+
+}
+
+void EnemyCharacter::_actionLookAt(const Ogre::Vector3& target)
+{
+
+}
+
+void EnemyCharacter::_actionReload()
+{
+
+}
+
+void EnemyCharacter::_actionShoot(const std::string& target)
+{
+
+}
+
+void EnemyCharacter::_actionChangeWeapon(const std::string& newWep)
+{
+
 }

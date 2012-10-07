@@ -12,10 +12,9 @@ NPCCharacter::NPCCharacter(const std::string& name,const std::string& script,Ogr
 {
 	_name = name;
 	_scriptName = script;
-	_activated = false; // just ensuring that it's de-activated
 
 	//check for animations
-	Ogre::Entity* ent = static_cast<Ogre::Entity*>(node->getAttachedObject(0));
+	Ogre::Entity* ent = static_cast<Ogre::Entity*>(getMovableObject());
 	
 	node->scale(.1f,.1f,.1f);
 	if(ent != nullptr)
