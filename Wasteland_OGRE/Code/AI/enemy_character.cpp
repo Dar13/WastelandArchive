@@ -42,9 +42,67 @@ EnemyCharacter::EnemyCharacter(const std::string& name,const std::string& script
 	_actChange = false;
 }
 
-void EnemyCharacter::update(float deltaTime)
+void EnemyCharacter::update(float deltaTimeInMilliSecs)
 {
+	updatePosition(deltaTimeInMilliSecs/1000.0f);
 
+	lua_State* lua = LuaManager::getSingleton().getLuaState();
+
+	lua_pushstring(lua,_name.c_str());
+	lua_setglobal(lua,"callingEntity");
+
+	lua_getglobal(lua,this->_scriptName.c_str());
+	lua_pushnumber(lua,deltaTimeInMilliSecs);
+	lua_pushinteger(lua,_prevBhv);
+	lua_pushinteger(lua,_prevAct);
+	lua_pushinteger(lua,static_cast<int>(_isBhvFinished));
+	lua_pushinteger(lua,static_cast<int>(_isActFinished));
+	int err = lua_pcall(lua,5,1,0);
+	if(err == 2)
+	{
+		std::cout << "Lua error!" << std::endl;
+		if(lua_isstring(lua,1))
+		{
+			std::cout << lua_tostring(lua,1) << std::endl;
+		}
+	}
+
+	int behavior = 0,action = 0;
+	std::string bhvTarget,actTarget,changeWep;
+	Ogre::Vector3 moveTarget,tmp;
+
+	int bhvChange = 0,actChange = 0;
+
+	if(lua_istable(LuaManager::getSingleton().getLuaState(),1))
+	{
+
+		bhvChange = LuaManager::getIntegerFromLuaTable(lua,"bhvchange");
+		_bhvChange = (bhvChange == 1) ? true : false;
+
+		if(_bhvChange)
+		{
+			behavior = LuaManager::getIntegerFromLuaTable(lua,"behavior");
+		}
+		else
+		{
+			behavior = _prevBhv;
+		}
+
+		actChange = LuaManager::getIntegerFromLuaTable(lua,"actchange");
+		_actChange = (actChange == 1) ? true : false;
+
+		if(_actChange)
+		{
+			action = LuaManager::getIntegerFromLuaTable(lua,"action");
+		}
+		else
+		{
+			action = _prevAct;
+		}
+
+		//continue...
+
+	}
 }
 
 void EnemyCharacter::_behaviorIdle()

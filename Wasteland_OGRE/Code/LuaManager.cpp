@@ -194,6 +194,15 @@ void* LuaManager::_getData(const std::string& name)
 	}
 }
 
+int LuaManager::getIntegerFromLuaTable(lua_State* lua,const std::string& field)
+{
+	lua_pushstring(lua,field.c_str());
+	lua_gettable(lua,1);
+	int ret = lua_tointeger(lua,-1);
+	lua_pop(lua,1);
+	return ret;
+}
+
 LuaManager::~LuaManager()
 {
 	//clean up lua.
@@ -382,12 +391,6 @@ int printDebug(lua_State* lua)
 
 	std::cout << std::endl;
 	
-	return 0;
-}
-
-int dummy(lua_State* lua)
-{
-	std::cout << "Dummy function..." << std::endl;
 	return 0;
 }
 

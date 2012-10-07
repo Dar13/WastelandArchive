@@ -11,7 +11,7 @@ class EnemyCharacter : public LevelData::BaseEntity,public Character
 {
 	EnemyCharacter(const std::string& name,const std::string& script,Ogre::SceneNode* node,CrowdManager* crowdMgr);
 
-	void update(float deltaTime);
+	void update(float deltaTimeInMilliSecs);
 private:
 	//Methods to implement behaviors
 	void _behaviorMove(const Ogre::Vector3& target);

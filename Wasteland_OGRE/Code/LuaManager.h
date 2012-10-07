@@ -126,6 +126,4 @@ int distanceCheck(lua_State* lua);
 //Allows Lua access to player position information.
 int getPlayerPosition(lua_State* lua);
 
-int dummy(lua_State* lua);
-
 #endif
