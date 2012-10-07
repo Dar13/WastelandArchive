@@ -34,8 +34,6 @@ NPCCharacter::NPCCharacter(const std::string& name,const std::string& script,Ogr
 			_animHandler.setEntity(NULL);
 		}
 	}
-	
-	ent->getSkeleton()->removeAllLinkedSkeletonAnimationSources();
 
 	_prevBhv = 0;
 	_prevAct = 0;

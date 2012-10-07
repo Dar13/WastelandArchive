@@ -61,7 +61,6 @@ protected:
 
 	float _destRadius;
 
-	std::string name;
 	Ogre::SceneNode* _node;
 	//Ogre::Entity* _entity;
 	Ogre::MovableObject* _movableObject;
