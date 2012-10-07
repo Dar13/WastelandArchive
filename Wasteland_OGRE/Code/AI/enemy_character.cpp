@@ -69,7 +69,7 @@ void EnemyCharacter::update(float deltaTimeInMilliSecs)
 
 	int behavior = 0,action = 0;
 	std::string bhvTarget,actTarget,changeWep;
-	Ogre::Vector3 moveTarget,tmp;
+	Ogre::Vector3 moveTarget,tmp,min,max,mtmp;
 
 	int bhvChange = 0,actChange = 0;
 
@@ -100,7 +100,32 @@ void EnemyCharacter::update(float deltaTimeInMilliSecs)
 			action = _prevAct;
 		}
 
-		//continue...
+		switch(behavior)
+		{
+		case AI::BHV_IDLE:
+			_behaviorIdle();
+			break;
+		case AI::BHV_MOVE:
+			moveTarget = LuaManager::getVectorFromLuaTable(lua,"bhvtarget");
+			if(moveTarget == Ogre::Vector3(-1000,-1000,-1000))
+			{
+				moveTarget = _destination;
+			}
+
+			_behaviorMove(moveTarget);
+			break;
+		case AI::BHV_WANDER:
+
+			break;
+		case AI::BHV_FOLLOW:
+			bhvTarget = LuaManager::getStringFromLuaTable(lua,"bhvtarget");
+			_behaviorFollow(bhvTarget);
+			break;
+		case AI::BHV_TALK:
+			bhvTarget = LuaManager::getStringFromLuaTable(lua,"bhvtarget");
+			_behaviorTalk(bhvTarget);
+			break;
+		}
 
 	}
 }

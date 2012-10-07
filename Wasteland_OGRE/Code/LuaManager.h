@@ -63,6 +63,12 @@ public:
 	//throughout the game, unlike the physics engine or the player construct.
 	void* _getData(const std::string& name);
 
+	static int getIntegerFromLuaTable(lua_State* lua,const std::string& field);
+
+	static std::string getStringFromLuaTable(lua_State* lua,const std::string& field);
+
+	static Ogre::Vector3 getVectorFromLuaTable(lua_State* lua,const std::string& field);
+
 private:
 	lua_State* luaState;
 
@@ -120,7 +126,7 @@ int getNearestEntity(lua_State* lua);
 //Allows Lua to print through std::cout directly.
 int printDebug(lua_State* lua);
 
-//Fast distance check function available through Lua.
+//Fast distance check function available to Lua.
 int distanceCheck(lua_State* lua);
 
 //Allows Lua access to player position information.

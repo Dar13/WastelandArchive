@@ -200,6 +200,37 @@ int LuaManager::getIntegerFromLuaTable(lua_State* lua,const std::string& field)
 	lua_gettable(lua,1);
 	int ret = lua_tointeger(lua,-1);
 	lua_pop(lua,1);
+
+	return ret;
+}
+
+std::string LuaManager::getStringFromLuaTable(lua_State* lua,const std::string& field)
+{
+	lua_pushstring(lua,field.c_str());
+	lua_gettable(lua,1);
+	std::string ret = lua_tostring(lua,-1);
+	lua_pop(lua,1);
+
+	return ret;
+}
+
+Ogre::Vector3 LuaManager::getVectorFromLuaTable(lua_State* lua,const std::string& field)
+{
+	lua_pushstring(lua,field.c_str());
+	lua_gettable(lua,1);
+	Ogre::Vector3 ret;
+	if(lua_istable(lua,-1))
+	{
+		for(int i = 0; i < 3; ++i)
+		{
+			lua_pushnumber(lua,i+1);
+			lua_gettable(lua,-2);
+			ret[i] = static_cast<float>(lua_tonumber(lua,-1));
+			lua_pop(lua,1);
+		}
+	}
+	lua_pop(lua,1);
+
 	return ret;
 }
 
@@ -262,7 +293,7 @@ Ogre::Vector3 getVectorFromLua(lua_State* lua,int tableIndex)
 		for(int i = 1; i < 4; ++i)
 		{
 			lua_pushnumber(lua,i);
-			lua_gettable(lua,tableIndex);
+			lua_gettable(lua,tableIndex-1);
 			ret[i-1] = static_cast<float>(lua_tonumber(lua,-1));
 			lua_pop(lua,1);
 		}

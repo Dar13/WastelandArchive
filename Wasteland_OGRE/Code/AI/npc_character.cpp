@@ -76,7 +76,7 @@ void NPCCharacter::update(float deltaTimeInMilliSecs)
 
 	int behavior = 0,action = 0;
 	std::string bhvTarget,actTarget,changeWep;
-	Ogre::Vector3 moveTarget,shootTarget;
+	Ogre::Vector3 moveTarget;
 	Ogre::Vector3 tmp;
 
 	int bhvChange = 0,actChange = 0;
