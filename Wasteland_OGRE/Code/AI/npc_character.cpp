@@ -76,7 +76,7 @@ void NPCCharacter::update(float deltaTimeInMilliSecs)
 
 	int behavior = 0,action = 0;
 	std::string bhvTarget,actTarget,changeWep;
-	Ogre::Vector3 moveTarget;
+	Ogre::Vector3 moveTarget,shootTarget;
 	Ogre::Vector3 tmp;
 
 	int bhvChange = 0,actChange = 0;
@@ -321,10 +321,7 @@ void NPCCharacter::_behaviorMove(const Ogre::Vector3& target)
 	if(speed > .2f)
 	{
 		//moving sufficiently fast, change to moving animation and point character
-		Ogre::Vector3 src = _node->getOrientation() * Ogre::Vector3::NEGATIVE_UNIT_Z;
-		src.y = 0;
-
-		_node->rotate(src.getRotationTo(vel));
+		Utility::rotateToTarget(_node,target,true);
 
 		//change animation if needed.
 		if(_animHandler.getSource() != nullptr)
@@ -410,7 +407,7 @@ void NPCCharacter::_behaviorTalk(const std::string& targetName)
 			tmp.y = 0;
 			Ogre::Real len = tmp.normalise();
 			//original + (unit direction vector * desired distance from target[non-squared])
-			target = getPosition() + (tmp * ( len - 4));
+			target = getPosition() + (tmp * ( len - 1));
 
 			_behaviorMove(target);
 

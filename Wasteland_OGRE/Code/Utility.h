@@ -54,6 +54,11 @@ namespace Utility
 	std::string wstringToString(const std::wstring& wstr);
 
 	void fixMinMax(Ogre::Vector3& min,Ogre::Vector3& max);
+
+	void rotateToTarget(Ogre::SceneNode* node,
+						const Ogre::Vector3& target,
+						bool ignoreY = true,
+						Ogre::Vector3& originalOrientation = Ogre::Vector3::NEGATIVE_UNIT_Z);
 };
 
 #endif

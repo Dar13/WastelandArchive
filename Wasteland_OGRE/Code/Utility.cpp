@@ -83,3 +83,19 @@ void Utility::fixMinMax(Ogre::Vector3& min,Ogre::Vector3& max)
 	if(min.z > max.z) { std::swap(min.z,max.z); }
 	return;
 }
+
+void Utility::rotateToTarget(Ogre::SceneNode* node,
+											  const Ogre::Vector3& target,
+											  bool ignoreY,
+											  Ogre::Vector3& originalDirection)
+{
+	Ogre::Vector3 source = node->getOrientation() * originalDirection;
+	if(ignoreY)
+	{
+		source.y = 0;
+	}
+
+	node->rotate(source.getRotationTo(target));
+
+	return;
+}

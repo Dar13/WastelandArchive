@@ -115,7 +115,14 @@ void EnemyCharacter::update(float deltaTimeInMilliSecs)
 			_behaviorMove(moveTarget);
 			break;
 		case AI::BHV_WANDER:
-
+			min = LuaManager::getVectorFromLuaTable(lua,"bhvmin");
+			max = LuaManager::getVectorFromLuaTable(lua,"bhvmax");
+			if(min == Ogre::Vector3::ZERO || max == Ogre::Vector3::ZERO)
+			{
+				min = _destination;
+				max = _destination;
+			}
+			_behaviorWander(min,max);
 			break;
 		case AI::BHV_FOLLOW:
 			bhvTarget = LuaManager::getStringFromLuaTable(lua,"bhvtarget");
@@ -132,17 +139,84 @@ void EnemyCharacter::update(float deltaTimeInMilliSecs)
 
 void EnemyCharacter::_behaviorIdle()
 {
+	//stop moving the character.
+	stop();
 
+	Ogre::Vector3 vel = getVelocity();
+	float speed = vel.length();
+	vel.y = 0;
+	vel.normalise();
+
+	Utility::rotateToTarget(_node,vel,true);
+
+	_animHandler.blend("Idle",AnimationBlender::BlendWhileAnimating,.2f,true);
+
+	_isBhvFinished = true;
 }
 
 void EnemyCharacter::_behaviorMove(const Ogre::Vector3& target)
 {
+	if(_destination.squaredDistance(target) >= 6)
+	{
+		updateDestination(target,false);
+		_destination = target;
+	}
 
+	_isBhvFinished = (destinationReached()) ? true : false;
+
+	Ogre::Vector3 velocity = getVelocity();
+	float speed = velocity.length();
+	velocity.y = 0;
+	velocity.normalise();
+
+	if(speed > .2f)
+	{
+		Utility::rotateToTarget(_node,target,true);
+
+		if(_animHandler.getSource() != nullptr)
+		{
+			Ogre::AnimationState* target = _animHandler.getTarget();
+			if(target == nullptr)
+			{
+				_animHandler.blend("Walk",AnimationBlender::BlendWhileAnimating,.2f,true);
+			}
+			else
+			{
+				if(target->getAnimationName() != "Walk")
+				{
+					_animHandler.blend("Walk",AnimationBlender::BlendWhileAnimating,.2f,true);
+				}
+			}
+		}
+	}
 }
 
 void EnemyCharacter::_behaviorWander(Ogre::Vector3& min,Ogre::Vector3& max)
 {
+	if(min == _destination || max == _destination)
+	{
+		_behaviorMove(_destination);
+		return;
+	}
 
+	Utility::fixMinMax(min,max);
+	Ogre::AxisAlignedBox box(min,max);
+
+	Ogre::Vector3 point;
+	point.x = Ogre::Math::RangeRandom(min.x,max.x);
+	point.y = (min.y + max.y) / 2.0f;
+	point.z = Ogre::Math::RangeRandom(min.z,max.z);
+
+	if(box.intersects(point))
+	{
+		_behaviorMove(point);
+	}
+	else
+	{
+		_behaviorMove(_destination);
+	}
+
+	return;
 }
 
 void EnemyCharacter::_behaviorTalk(const std::string& targetName)
