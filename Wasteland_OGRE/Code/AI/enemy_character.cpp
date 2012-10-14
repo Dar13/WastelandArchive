@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 
 #include "enemy_character.h"
+#include "npc_character.h"
 #include "../LuaManager.h"
 #include "../AI_include.h"
 
@@ -221,7 +222,110 @@ void EnemyCharacter::_behaviorWander(Ogre::Vector3& min,Ogre::Vector3& max)
 
 void EnemyCharacter::_behaviorTalk(const std::string& targetName)
 {
+	LevelData::BaseEntity* targetEnt = LuaManager::getSingleton().getEntity(targetName);
 
+	if(targetEnt != nullptr && ( targetEnt->getType() != LevelData::NPC || targetEnt->getType() != LevelData::ENEMY) )
+	{
+		_isBhvFinished = true;
+		return;
+	}
+
+	if(targetEnt->getType() == LevelData::NPC)
+	{
+		NPCCharacter* targetNPC = static_cast<NPCCharacter*>(targetEnt);
+
+		Ogre::Vector3 tgtNpc = targetNPC->getPosition(); tgtNpc.y = 0;
+		Ogre::Vector3 pos = getPosition(); pos.y = 0;
+
+		if(tgtNpc.squaredDistance(pos) > 2)
+		{
+			Ogre::Vector3 tgt,tmp;
+			tmp = tgtNpc - pos;
+			float len = tmp.normalise();
+			tgt = pos + (tmp * (len - 1));
+
+			_behaviorMove(tgt);
+
+			//Have to check for this, since the move behavior sets this variable but this behavior isn't quite done
+			if(_isBhvFinished)
+			{
+				_isBhvFinished = false;
+			}
+		}
+		else
+		{
+			Ogre::Vector3 dir = tgtNpc - pos; dir.normalise();
+			Utility::rotateToTarget(_node,dir,true);
+
+			if(_animHandler.getTarget() == nullptr)
+			{
+				//this is just to stop the behavior while there isn't a sound file playing.
+				_isBhvFinished = true;
+
+				//This would be the logic to actually stop the behavior.
+				if(_animHandler.getSource()->getAnimationName() == "Talk")
+				{
+					//this doesn't take into the account an accompanied sound file.
+					_isBhvFinished = true;
+				}
+				else
+				{
+					//start the blend to the talk animation
+				}
+			}
+		}
+		return;
+	}
+
+	if(targetEnt->getType() == LevelData::ENEMY)
+	{
+		EnemyCharacter* targetEMY = static_cast<EnemyCharacter*>(targetEnt);
+
+		Ogre::Vector3 tgtEnem = targetEMY->getPosition(); tgtEnem.y = 0;
+		Ogre::Vector3 pos = getPosition(); pos.y = 0;
+
+		if(tgtEnem.squaredDistance(pos) > 2)
+		{
+			Ogre::Vector3 tgt,tmp;
+			tmp = tgtEnem - pos;
+			float len = tmp.normalise();
+			tgt = pos + (tmp * (len - 1));
+
+			_behaviorMove(tgt);
+
+			//Have to check for this, since _behaviorMove might have changed it.
+			if(_isBhvFinished)
+			{
+				_isBhvFinished = false;
+			}
+		}
+		else
+		{
+			Ogre::Vector3 dir = tgtEnem - pos; 
+			dir.normalise();
+
+			Utility::rotateToTarget(_node,dir,true);
+
+			if(_animHandler.getTarget() == nullptr)
+			{
+				//Only to be used until the rest of this logic is implemented
+				_isBhvFinished = true;
+
+				if(_animHandler.getSource()->getAnimationName() == "Talk")
+				{
+					_isBhvFinished = true;
+				}
+				else
+				{
+					//start the blend of the talk animation.
+				}
+			}
+		}
+
+		return;
+	}
+
+	return;
 }
 
 void EnemyCharacter::_behaviorFollow(const std::string& targetName)

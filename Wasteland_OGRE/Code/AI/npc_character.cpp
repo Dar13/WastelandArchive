@@ -1,6 +1,7 @@
 #include "StdAfx.h"
 
 #include ".\npc_character.h"
+#include "enemy_character.h"
 
 #include "../LuaManager.h"
 
@@ -478,7 +479,7 @@ void NPCCharacter::_behaviorFollow(const std::string& targetName)
 		if(len > 3)
 		{
 			//new position = old position + (direction vector * (length - distance from target))
-			pos = pos + (diff * (len - 4.0));
+			pos = pos + (diff * (len - 4.0f));
 			_behaviorMove(pos);
 		}
 		else

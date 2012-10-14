@@ -3,7 +3,7 @@
 #ifndef _UTILITY_H_
 #define _UTILITY_H_
 
-/*! \brief Return structure for player data. Made for use by the EW system
+/*! \brief Return structure for player data. Made for use by the EnvWarn system
 */
 struct sPlayerData
 {
@@ -58,7 +58,7 @@ namespace Utility
 	void rotateToTarget(Ogre::SceneNode* node,
 						const Ogre::Vector3& target,
 						bool ignoreY = true,
-						Ogre::Vector3& originalOrientation = Ogre::Vector3::NEGATIVE_UNIT_Z);
+						Ogre::Vector3 originalOrientation = Ogre::Vector3::NEGATIVE_UNIT_Z);
 };
 
 #endif

@@ -87,7 +87,7 @@ void Utility::fixMinMax(Ogre::Vector3& min,Ogre::Vector3& max)
 void Utility::rotateToTarget(Ogre::SceneNode* node,
 											  const Ogre::Vector3& target,
 											  bool ignoreY,
-											  Ogre::Vector3& originalDirection)
+											  Ogre::Vector3 originalDirection)
 {
 	Ogre::Vector3 source = node->getOrientation() * originalDirection;
 	if(ignoreY)
