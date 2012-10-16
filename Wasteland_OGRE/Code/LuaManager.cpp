@@ -292,9 +292,16 @@ Ogre::Vector3 getVectorFromLua(lua_State* lua,int tableIndex)
 		Ogre::Vector3 ret;
 		for(int i = 1; i < 4; ++i)
 		{
-			lua_pushnumber(lua,i);
-			lua_gettable(lua,tableIndex-1);
-			ret[i-1] = static_cast<float>(lua_tonumber(lua,-1));
+			lua_pushnumber(lua,i); 
+			lua_gettable(lua,tableIndex);
+			if(lua_isnumber(lua,-1))
+			{
+				ret[i-1] = static_cast<float>(lua_tonumber(lua,-1));
+			}
+			else
+			{
+				ret[i-1] = 0;
+			}
 			lua_pop(lua,1);
 		}
 
@@ -433,12 +440,16 @@ int distanceCheck(lua_State* lua)
 	bool success = true;
 
 	v1 = getVectorFromLua(lua,1);
+	if(v1 == Ogre::Vector3::ZERO)
+	{
+		std::cout << "Lua Error: distanceCheck parameter error. Parameter #1." << std::endl;
+		success = false;
+	}
 
 	v2 = getVectorFromLua(lua,2);
-
-	if(v1 == Ogre::Vector3::ZERO || v2 == Ogre::Vector3::ZERO)
+	if(v2 == Ogre::Vector3::ZERO)
 	{
-		std::cout << "Lua Error: distanceCheck parameter error." << std::endl;
+		std::cout << "Lua Error: distanceCheck parameter error. Parameter #2." << std::endl;
 		success = false;
 	}
 
@@ -453,7 +464,6 @@ int distanceCheck(lua_State* lua)
 		success = false;
 	}
 
-	//std::cout << success << std::endl;
 	lua_pushinteger(lua,static_cast<int>(success));
 
 	return 1;
@@ -510,14 +520,11 @@ int getEntityPosition(lua_State* lua)
 		//..other types?
 	}
 
-	lua_newtable(lua);
-	int top = lua_gettop(lua);
-
+	lua_createtable(lua,3,0);
 	for(int i = 0; i < 3; i++)
 	{
-		lua_pushinteger(lua,i+1);
 		lua_pushnumber(lua,ret[i]);
-		lua_settable(lua,top);
+		lua_rawseti(lua,-2,i);
 	}
 
 	return 1;

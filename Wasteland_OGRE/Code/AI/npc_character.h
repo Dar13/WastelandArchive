@@ -15,7 +15,7 @@ public:
 
 	void update(float deltaTimeInMilliSecs);
 
-private:
+protected:
 	//Methods to implement behaviors specific to NPCs.
 	void _behaviorMove(const Ogre::Vector3& target);
 	void _behaviorIdle();

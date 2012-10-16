@@ -321,8 +321,11 @@ void NPCCharacter::_behaviorMove(const Ogre::Vector3& target)
 	vel.normalise();
 	if(speed > .2f)
 	{
+		Ogre::Vector3 src = _node->getOrientation() * Ogre::Vector3::NEGATIVE_UNIT_Z;
+		src.y = 0;
+
 		//moving sufficiently fast, change to moving animation and point character
-		Utility::rotateToTarget(_node,target,true);
+		Utility::rotateToTarget(_node,vel,true);
 
 		//change animation if needed.
 		if(_animHandler.getSource() != nullptr)
