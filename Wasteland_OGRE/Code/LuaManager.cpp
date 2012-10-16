@@ -285,7 +285,7 @@ void argVisitor::operator()(const double& d)
 
 //=============================
 
-Ogre::Vector3 getVectorFromLua(lua_State* lua,int tableIndex)
+Ogre::Vector3 LuaManager::getVectorFromLua(lua_State* lua,int tableIndex)
 {
 	if(lua_istable(lua,tableIndex))
 	{
@@ -439,14 +439,14 @@ int distanceCheck(lua_State* lua)
 	double dist;
 	bool success = true;
 
-	v1 = getVectorFromLua(lua,1);
+	v1 = LuaManager::getVectorFromLua(lua,1);
 	if(v1 == Ogre::Vector3::ZERO)
 	{
 		std::cout << "Lua Error: distanceCheck parameter error. Parameter #1." << std::endl;
 		success = false;
 	}
 
-	v2 = getVectorFromLua(lua,2);
+	v2 = LuaManager::getVectorFromLua(lua,2);
 	if(v2 == Ogre::Vector3::ZERO)
 	{
 		std::cout << "Lua Error: distanceCheck parameter error. Parameter #2." << std::endl;
@@ -572,7 +572,7 @@ int getNearestEntity(lua_State* lua)
 
 	if(lua_istable(lua,1))
 	{
-		position = getVectorFromLua(lua,1);
+		position = LuaManager::getVectorFromLua(lua,1);
 	}
 	else
 	{

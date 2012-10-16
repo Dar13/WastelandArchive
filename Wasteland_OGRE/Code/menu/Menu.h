@@ -29,11 +29,13 @@ public:
 	bool isFadeFinished() { return _finished; }
 
 	void setupMusicFade(SoundManager* soundMgr,bool fadeDown = false);
+	void setupGUIFade(CEGUI::Window* GUISheet);
 
 private:
 	bool _finished;
 	bool _fadeMusicDown;
 	SoundManager* _soundManager;
+	CEGUI::Window* _guiSheet;
 };
 
 class MainMenu : public Menu

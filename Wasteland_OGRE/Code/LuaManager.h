@@ -69,6 +69,8 @@ public:
 
 	static Ogre::Vector3 getVectorFromLuaTable(lua_State* lua,const std::string& field);
 
+	static Ogre::Vector3 getVectorFromLua(lua_State* lua,int tableIndex);
+
 private:
 	lua_State* luaState;
 
@@ -98,11 +100,6 @@ public:
 	void operator()(const double& d);
 private:
 };
-
-//===========================
-//Some small helper functions
-//===========================
-Ogre::Vector3 getVectorFromLua(lua_State* lua,int tableIndex);
 
 //==========================================
 //Functions that will be registered with Lua

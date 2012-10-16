@@ -6,7 +6,6 @@
 #include <boost\lexical_cast.hpp>
 
 #include <xercesc\dom\DOM.hpp>
-//#include <xercesc\dom\DOMImplementationRegistry.hpp>
 
 MainMenu::MainMenu()
 {
@@ -82,6 +81,7 @@ void MainMenu::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 			})
 		);
 		window.second->setAlwaysOnTop(true);
+		window.second->setInheritsAlpha(true);
 		_guiSheetChildren.insert(window);
 		_guiSheet->addChildWindow(window.second);
 	
@@ -98,6 +98,7 @@ void MainMenu::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 				return true;
 			})
 		);
+		window.second->setInheritsAlpha(true);
 		window.second->setAlwaysOnTop(true);
 		_guiSheetChildren.insert(window);
 		_guiSheet->addChildWindow(window.second);
@@ -120,6 +121,7 @@ void MainMenu::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 			})
 		);
 		window.second->setAlwaysOnTop(true);
+		window.second->setInheritsAlpha(true);
 		_guiSheet->addChildWindow(window.second);
 		_guiSheetChildren.insert(window);
 	}
@@ -158,8 +160,9 @@ int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,
 	Sound->startMusic();
 	//fade-in to menu
 	_faderCallback.setupMusicFade(Sound);
+	_faderCallback.setupGUIFade(_guiSheet);
 	_fader->startFadeIn(1.0);
-	Gui->setCurrentGUISheet("none");
+	Gui->setCurrentGUISheet("main_Root");
 	
 	bool fadingIn = true;
 	bool fadingOut = false;
@@ -195,20 +198,7 @@ int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,
 		
 		Sound->Update(Input->getConfiguration());
 
-		fadingIn = !_faderCallback.isFadeFinished();
-
-		if(fadingIn || fadingOut)
-		{
-			Gui->setCurrentGUISheet("none");
-		}
-		else
-		{
-			if(Gui->isCurrentGUISheetNull())
-			{
-				Gui->setCurrentGUISheet("main_Root");
-			}
-			Gui->Update(_deltaTime);
-		}
+		Gui->Update(_deltaTime);
 
 		GameManager::UpdateManagers(Graphics,NULL,_deltaTime);
 
@@ -242,8 +232,6 @@ int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,
 			fadingOut = true;
 			_faderCallback.setupMusicFade(Sound,fadingOut);
 			_fader->startFadeOut(1.0);
-			Gui->setCurrentGUISheet("none");
-			Gui->Update(_deltaTime);
 			_stateShutdown = false;
 		}
 
@@ -878,9 +866,17 @@ void MainMenu_FaderCallback::setupMusicFade(SoundManager* soundMgr,bool fadeDown
 	_fadeMusicDown = fadeDown;
 }
 
+void MainMenu_FaderCallback::setupGUIFade(CEGUI::Window* GUISheet)
+{
+	_guiSheet = GUISheet;
+}
+
 void MainMenu_FaderCallback::updateFade(double progress)
 {
 	_finished = false;
 	float vol = _soundManager->getDefaultMusicVolume();
 	_soundManager->setMusicFadeVolume(vol * static_cast<float>( 1.0 - progress ));
+	
+	//also update the alpha of the GUI
+	_guiSheet->setAlpha(static_cast<float>(1.0 - progress));
 }
