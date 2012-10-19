@@ -160,8 +160,8 @@ int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,
 	Sound->startMusic();
 	//fade-in to menu
 	_faderCallback.setupMusicFade(Sound);
-	_faderCallback.setupGUIFade(_guiSheet);
-	_fader->startFadeIn(1.0);
+	_faderCallback.setupGUIFade(_guiSheet,2);
+	_fader->startFadeIn(4.0);
 	Gui->setCurrentGUISheet("main_Root");
 	
 	bool fadingIn = true;
@@ -231,7 +231,7 @@ int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,
 		{
 			fadingOut = true;
 			_faderCallback.setupMusicFade(Sound,fadingOut);
-			_fader->startFadeOut(1.0);
+			_fader->startFadeOut(4.0);
 			_stateShutdown = false;
 		}
 
@@ -850,12 +850,20 @@ void MainMenu_FaderCallback::fadeInCallback()
 {
 	_finished = true;
 	_soundManager->setMusicFade(false);
+	if(_guiSheet)
+	{
+		_guiSheet->setAlpha(1.0f);
+	}
 }
 
 void MainMenu_FaderCallback::fadeOutCallback()
 {
 	_finished = true;
 	_soundManager->setMusicFade(false);
+	if(_guiSheet)
+	{
+		_guiSheet->setAlpha(0.0f);
+	}
 }
 
 void MainMenu_FaderCallback::setupMusicFade(SoundManager* soundMgr,bool fadeDown)
@@ -866,17 +874,23 @@ void MainMenu_FaderCallback::setupMusicFade(SoundManager* soundMgr,bool fadeDown
 	_fadeMusicDown = fadeDown;
 }
 
-void MainMenu_FaderCallback::setupGUIFade(CEGUI::Window* GUISheet)
+void MainMenu_FaderCallback::setupGUIFade(CEGUI::Window* GUISheet,int timeInSecs)
 {
 	_guiSheet = GUISheet;
+	_guiDuration = timeInSecs;
 }
 
-void MainMenu_FaderCallback::updateFade(double progress)
+void MainMenu_FaderCallback::updateFade(double progress,double currentTime)
 {
 	_finished = false;
 	float vol = _soundManager->getDefaultMusicVolume();
 	_soundManager->setMusicFadeVolume(vol * static_cast<float>( 1.0 - progress ));
 	
-	//also update the alpha of the GUI
-	_guiSheet->setAlpha(static_cast<float>(1.0 - progress));
+	//also update the alpha of the GUI(based on its own timer)
+	if(currentTime <= _guiDuration)
+	{
+		double guiProg = currentTime / static_cast<float>(_guiDuration);
+		std::cout << currentTime / _guiDuration << std::endl;
+		_guiSheet->setAlpha(static_cast<float>(1.0 - guiProg));
+	}
 }

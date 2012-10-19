@@ -607,7 +607,7 @@ void ScreenFader::fade(double timeSinceLastFrame)
 			{
 				if(_callback)
 				{
-					_callback->updateFade(_currentDuration / _totalDuration);
+					_callback->updateFade(_currentDuration / _totalDuration, _currentDuration);
 				}
 			}
 		}
@@ -627,10 +627,14 @@ void ScreenFader::fade(double timeSinceLastFrame)
 			{
 				if(_callback)
 				{
-					_callback->updateFade(_currentDuration / _totalDuration);
+					_callback->updateFade(_currentDuration / _totalDuration, _currentDuration);
 				}
 			}
          }
-		 
+
+		if(_callback)
+		{
+			//_callback->updateFade(_currentDuration / _totalDuration, _currentDuration);
+		}
 	}
 }

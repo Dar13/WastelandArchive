@@ -24,14 +24,15 @@ public:
 	void fadeInCallback();
 	void fadeOutCallback();
 
-	void updateFade(double progress);
+	void updateFade(double progress,double currentTime);
 
 	bool isFadeFinished() { return _finished; }
 
 	void setupMusicFade(SoundManager* soundMgr,bool fadeDown = false);
-	void setupGUIFade(CEGUI::Window* GUISheet);
+	void setupGUIFade(CEGUI::Window* GUISheet,int fadeInTime,int fadeOutTime);
 
 private:
+	int _guiFadeIn,_guiFadeOut;
 	bool _finished;
 	bool _fadeMusicDown;
 	SoundManager* _soundManager;

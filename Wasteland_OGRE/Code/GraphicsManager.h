@@ -19,7 +19,7 @@ public:
 	virtual void fadeInCallback() {}
 	virtual void fadeOutCallback() {}
 
-	virtual void updateFade(double progress) {}
+	virtual void updateFade(double progress,double currentTime) {}
 };
 
 class ScreenFader
