@@ -103,6 +103,9 @@
     <Filter Include="Include Files\AI\Enemy">
       <UniqueIdentifier>{fa80dfc1-df44-4e17-ab0f-b69f61aa8ca5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include Files\Player\GunData">
+      <UniqueIdentifier>{3eb9f36c-eaaa-4e38-ad63-01a911a59327}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\State.h">
@@ -234,6 +237,9 @@
     <ClInclude Include="Code\interfaces\characterobject.hxx">
       <Filter>Include Files\XML\interfaces</Filter>
     </ClInclude>
+    <ClInclude Include="Code\GunData.h">
+      <Filter>Include Files\Player\GunData</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">
@@ -355,6 +361,9 @@
     </ClCompile>
     <ClCompile Include="Code\PauseMenu.cpp">
       <Filter>Include Files\Game\Menu</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\GunData.cpp">
+      <Filter>Include Files\Player\GunData</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

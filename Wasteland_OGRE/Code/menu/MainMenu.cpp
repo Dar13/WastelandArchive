@@ -894,6 +894,6 @@ void MainMenu_FaderCallback::updateFade(double progress,double currentTime,int f
 	if(currentTime < (totalDuration - time))
 	{
 		double curGui = (totalDuration - time) - currentTime;
-		_guiSheet->setAlpha(curGui / time);
+		_guiSheet->setAlpha(static_cast<float>(curGui / time));
 	}
 }

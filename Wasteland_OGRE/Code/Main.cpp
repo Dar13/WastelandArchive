@@ -22,8 +22,8 @@ int main(int argc, char **argv[])
 {
 #endif
 
-	srand(time(0));
-	srand((rand() % RAND_MAX) * time(0));
+	srand(static_cast<int>(time(0)));
+	srand(static_cast<int>((rand() % RAND_MAX) * time(0)));
 
 	//Smart pointer holding ogre manager pointer.
 	const std::unique_ptr<GraphicsManager> ogre(new GraphicsManager());

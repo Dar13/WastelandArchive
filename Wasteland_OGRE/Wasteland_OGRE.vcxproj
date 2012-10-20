@@ -22,6 +22,7 @@
     <ClInclude Include="Code\Character.h" />
     <ClInclude Include="Code\CrowdManager.h" />
     <ClInclude Include="Code\DetourInterface.h" />
+    <ClInclude Include="Code\GunData.h" />
     <ClInclude Include="Code\interfaces\characterobject.hxx" />
     <ClInclude Include="Code\LevelData.h" />
     <ClInclude Include="Code\LuaManager.h" />
@@ -69,6 +70,7 @@
     <ClCompile Include="Code\Character.cpp" />
     <ClCompile Include="Code\CrowdManager.cpp" />
     <ClCompile Include="Code\DetourInterface.cpp" />
+    <ClCompile Include="Code\GunData.cpp" />
     <ClCompile Include="Code\interfaces\characterobject.cxx" />
     <ClCompile Include="Code\PauseMenu.cpp" />
     <ClCompile Include="Code\RecastInputGeometry.cpp" />
