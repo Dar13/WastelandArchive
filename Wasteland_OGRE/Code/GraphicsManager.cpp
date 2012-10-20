@@ -515,14 +515,14 @@ bool GraphicsManager::isPointInTriangle2D(const Ogre::Vector3& pointA,const Ogre
 
 //--------------------------------------------------------------------------------------
 //http://www.ogre3d.org/tikiwiki/FadeEffectOverlay
+//--------------------------------------------------------------------------------------
 ScreenFader::ScreenFader(const char* overlayName,const char* materialName, ScreenFaderCallback* callback)
+	: _fadeOperation(FADE_NONE),
+	  _alpha(0.0),
+	  _callback(callback)
 {
 	try
 	{
-		_fadeOperation = FADE_NONE;
-		_alpha = 0.0;
-		_callback = callback;
-
 		Ogre::ResourcePtr resPtr = Ogre::MaterialManager::getSingleton().getByName(materialName);
 		Ogre::Material* mat = dynamic_cast<Ogre::Material*>(resPtr.getPointer());
 
@@ -607,7 +607,7 @@ void ScreenFader::fade(double timeSinceLastFrame)
 			{
 				if(_callback)
 				{
-					_callback->updateFade(_currentDuration / _totalDuration, _currentDuration);
+					_callback->updateFade(_currentDuration / _totalDuration, _currentDuration,_fadeOperation);
 				}
 			}
 		}
@@ -627,7 +627,7 @@ void ScreenFader::fade(double timeSinceLastFrame)
 			{
 				if(_callback)
 				{
-					_callback->updateFade(_currentDuration / _totalDuration, _currentDuration);
+					_callback->updateFade(_currentDuration / _totalDuration, _currentDuration,_fadeOperation);
 				}
 			}
          }

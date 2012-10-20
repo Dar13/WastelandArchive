@@ -24,7 +24,7 @@ public:
 	void fadeInCallback();
 	void fadeOutCallback();
 
-	void updateFade(double progress,double currentTime);
+	void updateFade(double progress,double currentTime,int fadeOp);
 
 	bool isFadeFinished() { return _finished; }
 

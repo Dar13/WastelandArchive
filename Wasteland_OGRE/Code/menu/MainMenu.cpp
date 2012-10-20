@@ -160,7 +160,7 @@ int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,
 	Sound->startMusic();
 	//fade-in to menu
 	_faderCallback.setupMusicFade(Sound);
-	_faderCallback.setupGUIFade(_guiSheet,2);
+	_faderCallback.setupGUIFade(_guiSheet,2,2);
 	_fader->startFadeIn(4.0);
 	Gui->setCurrentGUISheet("main_Root");
 	
@@ -874,23 +874,26 @@ void MainMenu_FaderCallback::setupMusicFade(SoundManager* soundMgr,bool fadeDown
 	_fadeMusicDown = fadeDown;
 }
 
-void MainMenu_FaderCallback::setupGUIFade(CEGUI::Window* GUISheet,int timeInSecs)
+void MainMenu_FaderCallback::setupGUIFade(CEGUI::Window* GUISheet,int fadeInTime,int fadeOutTime)
 {
 	_guiSheet = GUISheet;
-	_guiDuration = timeInSecs;
+	_guiFadeIn = fadeInTime;
+	_guiFadeOut = fadeOutTime;
+	_guiSheet->setAlpha(0.0f); //to prevent some popping-in during the GUI Fadeout time.
 }
 
-void MainMenu_FaderCallback::updateFade(double progress,double currentTime)
+void MainMenu_FaderCallback::updateFade(double progress,double currentTime,int fadeOp)
 {
 	_finished = false;
 	float vol = _soundManager->getDefaultMusicVolume();
 	_soundManager->setMusicFadeVolume(vol * static_cast<float>( 1.0 - progress ));
-	
+
 	//also update the alpha of the GUI(based on its own timer)
-	if(currentTime <= _guiDuration)
+	double totalDuration = currentTime / progress;
+	double time = (fadeOp == 1) ? _guiFadeIn : _guiFadeOut;
+	if(currentTime < (totalDuration - time))
 	{
-		double guiProg = currentTime / static_cast<float>(_guiDuration);
-		std::cout << currentTime / _guiDuration << std::endl;
-		_guiSheet->setAlpha(static_cast<float>(1.0 - guiProg));
+		double curGui = (totalDuration - time) - currentTime;
+		_guiSheet->setAlpha(curGui / time);
 	}
 }
