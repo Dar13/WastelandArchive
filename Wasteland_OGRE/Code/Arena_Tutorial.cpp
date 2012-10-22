@@ -28,6 +28,8 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	_view = Graphics->getRenderWindow()->addViewport(_camera);
 	_view->setBackgroundColour(Ogre::ColourValue(0,0,0));
 
+	DamageInterface* damage = new DamageInterface();
+
 	_rootNode = _scene->getRootSceneNode();
 
 	//physics setup
@@ -84,7 +86,7 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	//testing out the M9SE
 	EquippableObject equipObj = GameManager::createEquippable(_scene,"resource\\xml\\weapon_m9se.xml",Graphics,Sound,true);
 	_player->addEquippableObject(equipObj);
-	_player->Setup("TEST",Graphics,_controller->getNode());
+	_player->Setup("TEST",Graphics,_controller->getNode(),damage);
 	
 	std::cout << "Player setup" << std::endl;
 

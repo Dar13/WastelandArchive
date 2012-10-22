@@ -14,6 +14,10 @@
 
 #define CONV_EAIWEAP_TO_METER 0.0254f
 
+#ifndef _PLAYER_INTERFACE_
+
+class DamageInterface;
+
 /*! \brief Handles the player instance in the current application state.
 
 */
@@ -26,9 +30,15 @@ public:
 	~Player();
 	
 	//! Sets up the player instance.
-	void Setup(const std::string& file,GraphicsManager* graphics,Ogre::SceneNode* equipNode);
+	void Setup(const std::string& file,
+			   GraphicsManager* graphics,
+			   Ogre::SceneNode* equipNode,
+               DamageInterface* damageInterface = nullptr);
 	//! Updates the player instance, including the weapons and scripts associated with it.
-	bool Update(InputManager* input,PhysicsManager* physics,EWSManager* ews,const OgreTransform& transform);
+	bool Update(InputManager* input,
+				PhysicsManager* physics,
+				EWSManager* ews,
+				const OgreTransform& transform);
 	//! Cleans up the player instance's memory and such.
 	void Clean(bool reuse = false);
 
@@ -46,6 +56,9 @@ public:
 	//! Returns basic player data including health and ammo data.
 	sPlayerData getPlayerData();
 
+	//! Returns the damage interface, so that the Enemies and Player can use the same one
+	DamageInterface* getDamageInterface() { return _damageInterface; }
+
 	//! Sets the scene node that all equippable nodes will be attached to.
 	void setEquipNode(Ogre::SceneNode* node) { _equipNode = node; }
 
@@ -62,6 +75,26 @@ private:
 
 	int _curEquippable;
 	std::vector<EquippableObject> _equippables;
+
+	DamageInterface* _damageInterface;
+};
+
+#endif
+
+/*! \brief Callback class to handle being shot by enemies/NPCs
+
+*/
+class DamageInterface
+{
+public:
+	void registerShotAtPlayer(sGunShot gunshot,float distanceSquared);
+	void registerShotAtEnemy(sGunShot gunshot,std::string& enemyName);
+	//! Clears the _damage vector.
+	double getTotalDamagePlayer();
+	double getEnemyDamage(std::string& name);
+private:
+	std::vector<double> _damagePlayer;
+	std::map<std::string,double> _damageEnemy;
 };
 
 #endif

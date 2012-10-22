@@ -9,6 +9,13 @@
 #ifndef _GUN_DATA_H_
 #define _GUN_DATA_H_
 
+struct sGunShot
+{
+	int gunName;
+	int damage;
+	double accuracyRadius;
+};
+
 struct sSoundFrame
 {
 	int gunSound;
@@ -129,8 +136,13 @@ public:
 	int getMagazineSize() { return _magazineSize; }
 	//! Sets the damage per bullet fired.
 	void setDamagePerBullet(const int& damage) { _damagePerBullet = damage; }
+	//! Gets the damage per bullet fired.
+	int getDamagePerBullet() { return _damagePerBullet; }
+	//Accuracy radius = radius of base of firing-cone at 50 meters distance.
 	//! Sets the accuracy radius of the gun
 	void setAccuracyRadius(const int& accuracy) { _accuracyRadius = accuracy; }
+	//! Gets the accuracy of the gun
+	int getAccuracyRadius() { return _accuracyRadius; }
 	//! Sets the effective range of the gun
 	void setEffectiveRange(const int& range) { _effectiveRange = range; }
 	//! Sets the fire rate of the gun(1 = 1 bullet per mouse-click, >1 = number of bullets fired per second(?) )
@@ -161,7 +173,11 @@ public:
 	//! Interface for frameListener
 	bool frameEnded(const Ogre::FrameEvent& evt);
 
-
+	sGunShot getGunshotData() { sGunShot shot; 
+								shot.gunName = _name; 
+								shot.damage = _damagePerBullet; 
+								shot.accuracyRadius = _accuracyRadius; 
+								return shot; }
 
 	//Here's some useful static functions
 	static int getAnimID(const std::string& name);
@@ -176,6 +192,7 @@ private:
 	GUN_NAME _name;
 	int _magazineSize;
 	int _damagePerBullet;
+	//! Radius of firing-cone at 50 meters
 	int _accuracyRadius;
 	int _effectiveRange;
 	int _fireRate;

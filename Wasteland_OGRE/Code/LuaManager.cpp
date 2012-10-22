@@ -515,7 +515,7 @@ int getEntityPosition(lua_State* lua)
 		}
 		if(type == "Enemy")
 		{
-			//ret = static_cast<EnemyCharacter*>(ent)->getPosition();
+			ret = static_cast<EnemyCharacter*>(ent)->getPosition();
 		}
 		//..other types?
 	}

@@ -46,7 +46,14 @@ public:
 	void addEntity(const std::string& name,LevelData::BaseEntity* entity);
 	LevelData::BaseEntity* getEntity(const std::string& name) 
 	{ 
-		return _entities[name]; 
+		if(_entities.find(name) != _entities.end())
+		{
+			return _entities[name];
+		}
+		else
+		{
+			return nullptr;
+		}
 	}
 	void removeEntity(const std::string& name) { _entities.erase(_entities.find(name)); }
 	void purgeEntities();
@@ -63,12 +70,10 @@ public:
 	//throughout the game, unlike the physics engine or the player construct.
 	void* _getData(const std::string& name);
 
+	//Helper functions
 	static int getIntegerFromLuaTable(lua_State* lua,const std::string& field);
-
 	static std::string getStringFromLuaTable(lua_State* lua,const std::string& field);
-
 	static Ogre::Vector3 getVectorFromLuaTable(lua_State* lua,const std::string& field);
-
 	static Ogre::Vector3 getVectorFromLua(lua_State* lua,int tableIndex);
 
 private:

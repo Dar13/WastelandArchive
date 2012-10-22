@@ -5,8 +5,9 @@
 #include "../LuaManager.h"
 #include "../AI_include.h"
 
-EnemyCharacter::EnemyCharacter(const std::string& name,const std::string& script,Ogre::SceneNode* node,CrowdManager* crowdMgr)
-	: NPCCharacter(name,script,node,crowdMgr)
+EnemyCharacter::EnemyCharacter(const std::string& name,const std::string& script,Ogre::SceneNode* node,CrowdManager* crowdMgr,DamageInterface* damageInterface)
+	: NPCCharacter(name,script,node,crowdMgr),
+	  _damageInterface(damageInterface)
 {
 	_name = name;
 	_scriptName = script;
@@ -45,6 +46,9 @@ EnemyCharacter::EnemyCharacter(const std::string& name,const std::string& script
 void EnemyCharacter::update(float deltaTimeInMilliSecs)
 {
 	updatePosition(deltaTimeInMilliSecs/1000.0f);
+
+	double dmg = _damageInterface->getEnemyDamage(this->_name);
+	//subtract from health, kill off if below zero.
 
 	lua_State* lua = LuaManager::getSingleton().getLuaState();
 
@@ -138,12 +142,28 @@ void EnemyCharacter::update(float deltaTimeInMilliSecs)
 
 void EnemyCharacter::_actionReload()
 {
-
+	_currentWeapon->reload();
+	_isActFinished = true;
 }
 
 void EnemyCharacter::_actionShoot(const std::string& target)
 {
+	//look at entity target
+	LevelData::BaseEntity* entity = LuaManager::getSingleton().getEntity(target);
+	//if the target isn't a NPC/Enemy, I don't want my enemy wasting his ammo.
+	if(entity->getType() == LevelData::NPC || entity->getType() == LevelData::ENEMY)
+	{
+		Ogre::Vector3 targetPosition = static_cast<NPCCharacter*>(entity)->getPosition();
 
+		Ogre::Vector3 sourcePosition = _node->getOrientation() * Ogre::Vector3::NEGATIVE_UNIT_Z;
+		sourcePosition.y = 0;
+
+		Utility::rotateToTarget(_node,targetPosition,true);
+
+		//after rotation, fire?
+		_currentWeapon->fire();
+		_damageInterface->registerShotAtPlayer(_currentWeapon->getGunshotData(),sourcePosition.squaredDistance(targetPosition));
+	}
 }
 
 void EnemyCharacter::_actionChangeWeapon(const std::string& newWep)

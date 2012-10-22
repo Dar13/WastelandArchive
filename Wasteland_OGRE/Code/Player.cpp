@@ -10,16 +10,23 @@
 
 #include "debug\print.h"
 
-Player::Player()
-{
-	_firingWeapon = false;
-	_reloadingWeapon = false;
+#include "LuaManager.h"
 
-	_health = 100;
+Player::Player()
+	: _firingWeapon(false),
+	  _reloadingWeapon(false),
+	  _health(100),
+	  _damageInterface(nullptr),
+	  _equipNode(nullptr),
+	  _soundMgr(nullptr)
+{
 }
 
 Player::~Player()
 {
+	//Delete this, since the appstate gives you control of it.
+	delete _damageInterface;
+
 	//clean up equippables
 	for(auto itr = _equippables.begin(); itr != _equippables.end(); ++itr)
 	{
@@ -34,7 +41,7 @@ Player::~Player()
 	}
 }
 
-void Player::Setup(const std::string& file,GraphicsManager* graphics,Ogre::SceneNode* equipNode)
+void Player::Setup(const std::string& file,GraphicsManager* graphics,Ogre::SceneNode* equipNode,DamageInterface* damageInterface)
 {
 	if(equipNode != nullptr)
 	{
@@ -54,9 +61,14 @@ void Player::Setup(const std::string& file,GraphicsManager* graphics,Ogre::Scene
 			graphics->getRoot()->addFrameListener(static_cast<cGunData*>(itr->equip));
 		}
 	}
+
+	_damageInterface = damageInterface;
 }
 
-bool Player::Update(InputManager* input,PhysicsManager* physics,EWSManager* ews,const OgreTransform& transform)
+bool Player::Update(InputManager* input,
+					PhysicsManager* physics,
+					EWSManager* ews,
+					const OgreTransform& transform)
 {
 	if(input->isCFGKeyPressed(InputManager::ENVWARNSYS))
 	{
@@ -83,6 +95,31 @@ bool Player::Update(InputManager* input,PhysicsManager* physics,EWSManager* ews,
 			//shoot gun
 			std::cout << "MB_Left pressed..." << std::endl;
 			gun->fire();
+			//check for collisions with enemies
+			Ogre::SceneManager* scene = _equipNode->getCreator();
+			Ogre::Vector3 dir = _equipNode->getOrientation() * Ogre::Vector3::NEGATIVE_UNIT_Z;
+			Ogre::Ray ray(_equipNode->_getDerivedPosition(),dir);
+
+			Ogre::RaySceneQuery* rayQuery = scene->createRayQuery(ray);
+			rayQuery->setSortByDistance(true);
+
+			Ogre::RaySceneQueryResult results = rayQuery->execute();
+
+			auto shot =  [this,gun] (Ogre::RaySceneQueryResultEntry& entry) 
+			{
+				if(entry.movable != nullptr)
+				{
+					std::string name = entry.movable->getName().substr(3,std::string::npos);
+					LevelData::BaseEntity* ent = LuaManager::getSingleton().getEntity(name);
+					if(ent != nullptr && (ent->getType() == LevelData::NPC || ent->getType() == LevelData::ENEMY))
+					{
+						_damageInterface->registerShotAtEnemy(gun->getGunshotData(),ent->getName());
+					}
+				}
+			};
+			std::for_each(results.begin(),results.end(),shot);
+
+			scene->destroyQuery(rayQuery);
 		}
 		else
 		{
@@ -105,6 +142,12 @@ bool Player::Update(InputManager* input,PhysicsManager* physics,EWSManager* ews,
 				gun->setMoving(false);
 			}
 		}
+	}
+
+	if(_damageInterface != nullptr)
+	{
+		//this clears out the added-up damage in the interface.
+		_health -= _damageInterface->getTotalDamagePlayer();
 	}
 
 	return true;
@@ -161,5 +204,48 @@ sPlayerData Player::getPlayerData()
 
 void Player::Clean(bool reuse)
 {
+
 	return;
+}
+
+void DamageInterface::registerShotAtPlayer(sGunShot gunshot,float distanceSquared)
+{
+	float newRadius = distanceSquared * (gunshot.accuracyRadius / 50.0f);
+	if(distanceSquared < 64)
+	{
+		_damagePlayer.push_back(gunshot.damage);
+	}
+	else
+	{
+		if(Ogre::Math::RangeRandom(0.0,(newRadius / 2.0f) + 2.0f) + (newRadius / 2.0f) < newRadius)
+		{
+			_damagePlayer.push_back(gunshot.damage);
+		}
+	}
+}
+
+void DamageInterface::registerShotAtEnemy(sGunShot gunshot,std::string& enemyName)
+{
+	_damageEnemy[enemyName] += gunshot.damage;
+}
+
+double DamageInterface::getTotalDamagePlayer()
+{
+	double total;
+	auto sumUp = [&total] (const double& dmg)
+	{
+		total += dmg;
+	};
+	std::for_each(_damagePlayer.begin(),_damagePlayer.end(),sumUp);
+
+	_damagePlayer.clear();
+
+	return total;
+}
+
+double DamageInterface::getEnemyDamage(std::string& name)
+{
+	double dmg = _damageEnemy[name];
+	_damageEnemy[name] = 0;
+	return dmg;
 }
