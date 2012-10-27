@@ -96,7 +96,7 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	RecastConfiguration params;
 	params.setAgentHeight(2.5f);
 	params.setAgentRadius(.2f);
-	params.setCellSize(.2f);
+	params.setCellSize(.3f);
 
 	_recast.reset(new RecastInterface(_scene,params));
 	_recast->getRecastConfig().walkableRadius = static_cast<int>(.2f);

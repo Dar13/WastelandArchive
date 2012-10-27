@@ -147,7 +147,7 @@ bool Player::Update(InputManager* input,
 	if(_damageInterface != nullptr)
 	{
 		//this clears out the added-up damage in the interface.
-		_health -= _damageInterface->getTotalDamagePlayer();
+		_health -= static_cast<int>(_damageInterface->getTotalDamagePlayer());
 	}
 
 	return true;
@@ -173,7 +173,7 @@ void Player::equipObject(const EquippableObject& obj)
 		obj.node->getParentSceneNode()->removeChild(obj.node);
 		_equipNode->addChild(obj.node);
 	}
-	obj.node->setPosition(0.25f,-0.1f,-.25f);
+	obj.node->setPosition(0.11f,-0.08f,-.25f);
 	std::cout << obj.node->getPosition() << std::endl;
 	std::cout << "Weapon equipped." << std::endl;
 }
@@ -210,7 +210,7 @@ void Player::Clean(bool reuse)
 
 void DamageInterface::registerShotAtPlayer(sGunShot gunshot,float distanceSquared)
 {
-	float newRadius = distanceSquared * (gunshot.accuracyRadius / 50.0f);
+	float newRadius = static_cast<float>(distanceSquared * (gunshot.accuracyRadius / 50.0f));
 	if(distanceSquared < 64)
 	{
 		_damagePlayer.push_back(gunshot.damage);
@@ -227,6 +227,7 @@ void DamageInterface::registerShotAtPlayer(sGunShot gunshot,float distanceSquare
 void DamageInterface::registerShotAtEnemy(sGunShot gunshot,std::string& enemyName)
 {
 	_damageEnemy[enemyName] += gunshot.damage;
+	std::cout << "Enemy:" << enemyName << " has been hit!" << std::endl;
 }
 
 double DamageInterface::getTotalDamagePlayer()
