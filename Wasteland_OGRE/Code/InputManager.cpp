@@ -61,11 +61,11 @@ InputManager::InputManager(unsigned long windowHandle)
 	_KC_map["y"] = OIS::KC_Y;
 	_KC_map["z"] = OIS::KC_Z;
 	_KC_map["lshift"] = OIS::KC_LSHIFT;
-	_KC_map["rshift"] = OIS::KC_RSHIFT;
+	_KC_map["right shift"] = OIS::KC_RSHIFT;
 	_KC_map["lalt"] = OIS::KC_LMENU;
-	_KC_map["ralt"] = OIS::KC_RMENU;
+	_KC_map["right alt"] = OIS::KC_RMENU;
 	_KC_map["lctrl"] = OIS::KC_LCONTROL;
-	_KC_map["rctrl"] = OIS::KC_RCONTROL;
+	_KC_map["right ctrl"] = OIS::KC_RCONTROL;
 	_KC_map["enter"] = OIS::KC_RETURN;
 	_KC_map["tab"] = OIS::KC_TAB;
 	_KC_map["space"] = OIS::KC_SPACE;

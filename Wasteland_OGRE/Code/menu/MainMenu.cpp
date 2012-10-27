@@ -658,6 +658,20 @@ void MainMenu::_setupOptionEvents(InputManager* Input)
 		const CEGUI::KeyEventArgs& realArgs = static_cast<const CEGUI::KeyEventArgs&>(args);
 		std::string str;
 		str = Input->__getKeyboard()->getAsString(static_cast<OIS::KeyCode>(realArgs.scancode));
+		
+
+		//need to check for left and right variations of some keys.
+		switch(realArgs.scancode)
+		{
+		case CEGUI::Key::LeftAlt:
+		case CEGUI::Key::LeftBracket:
+		case CEGUI::Key::LeftControl:
+		case CEGUI::Key::LeftShift:
+		case CEGUI::Key::LeftWindows:
+			str.insert(str.begin(),'L');
+			break;
+		}
+			
 		realArgs.window->setText(str);
 		return true;
 	};

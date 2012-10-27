@@ -15,7 +15,7 @@ EnemyCharacter::EnemyCharacter(const std::string& name,const std::string& script
 	Ogre::Entity* ent = static_cast<Ogre::Entity*>(getMovableObject());
 
 	//this will probably have to change
-	node->scale(.1f,.1f,.1f);
+	node->scale(CHARACTER_SCALE_FACTOR,CHARACTER_SCALE_FACTOR,CHARACTER_SCALE_FACTOR);
 
 	if(ent != nullptr)
 	{
@@ -34,6 +34,10 @@ EnemyCharacter::EnemyCharacter(const std::string& name,const std::string& script
 		}
 	}
 
+	//set up the weapon
+	_currentWeapon.node = nullptr;
+	_currentWeapon.weapon = nullptr;
+
 	_prevBhv = AI::BHV_IDLE;
 	_prevAct = AI::ACT_IDLE;
 	_isBhvFinished = true;
@@ -41,6 +45,18 @@ EnemyCharacter::EnemyCharacter(const std::string& name,const std::string& script
 
 	_bhvChange = false;
 	_actChange = false;
+}
+
+void EnemyCharacter::addWeapons(GraphicsManager* graphics,SoundManager* sound)
+{
+	EquippableObject tmp;
+	/*tmp = GameManager::createEquippable(_node->getCreator(),"resources//xml//weapon_g36c.xml",graphics,sound,true);
+	_weaponRifle.node = tmp.node;
+	_weaponRifle.weapon = static_cast<cGunData*>(tmp.equip);*/
+
+	tmp = GameManager::createEquippable(_node->getCreator(),"resources//xml//weapon_m9se.xml",graphics,sound,true);
+	_weaponPistol.node = tmp.node;
+	_weaponPistol.weapon = static_cast<cGunData*>(tmp.equip);
 }
 
 void EnemyCharacter::update(float deltaTimeInMilliSecs)
@@ -142,7 +158,7 @@ void EnemyCharacter::update(float deltaTimeInMilliSecs)
 
 void EnemyCharacter::_actionReload()
 {
-	_currentWeapon->reload();
+	_currentWeapon.weapon->reload();
 	_isActFinished = true;
 }
 
@@ -161,12 +177,34 @@ void EnemyCharacter::_actionShoot(const std::string& target)
 		Utility::rotateToTarget(_node,targetPosition,true);
 
 		//after rotation, fire?
-		_currentWeapon->fire();
-		_damageInterface->registerShotAtPlayer(_currentWeapon->getGunshotData(),sourcePosition.squaredDistance(targetPosition));
+		_currentWeapon.weapon->fire();
+		_damageInterface->registerShotAtPlayer(_currentWeapon.weapon->getGunshotData(),sourcePosition.squaredDistance(targetPosition));
 	}
 }
 
+//newWep should be either 'Rifle','Pistol' or 'None'
 void EnemyCharacter::_actionChangeWeapon(const std::string& newWep)
 {
+	if(_currentWeapon.node != nullptr)
+	{
+		if(_currentWeapon.node->getAttachedObject(0) == nullptr)
+		{
+			//re-add the gun entity back to the original node.
+			Ogre::Entity* characterEntity = static_cast<Ogre::Entity*>(_movableObject);
+			Ogre::MovableObject* attachedWeap = characterEntity->detachObjectFromBone(_currentWeapon.weapon->_getGunNameString());
+			_currentWeapon.node->attachObject(attachedWeap);
+		}
+	}
 
+	//switch the _currentWeapon
+	if(newWep == "Rifle"){ _currentWeapon = _weaponRifle; }
+	if(newWep == "Pistol") { _currentWeapon = _weaponPistol; }
+	if(newWep == "None") { _currentWeapon.node = nullptr; _currentWeapon.weapon = nullptr; }
+
+	if(_currentWeapon.node != nullptr)
+	{
+		Ogre::MovableObject* unattachedWeap = _currentWeapon.node->detachObject(static_cast<unsigned short>(0));
+		static_cast<Ogre::Entity*>(_movableObject)->attachObjectToBone("FIRESPOT",unattachedWeap);
+	}
+	
 }

@@ -16,16 +16,18 @@ class EnemyCharacter : public NPCCharacter
 	EnemyCharacter(const std::string& name,const std::string& script,Ogre::SceneNode* node,CrowdManager* crowdMgr,DamageInterface* playerInterface = nullptr);
 
 	void update(float deltaTimeInMilliSecs);
+
+	void addWeapons(GraphicsManager* graphics,SoundManager* sound);
 private:
 	//Methods to implement actions specifically for Enemies
 	void _actionReload();
 	void _actionShoot(const std::string& target);
 	void _actionChangeWeapon(const std::string& newWep);
 
-	std::unique_ptr<cGunData> _weaponRifle;
-	std::unique_ptr<cGunData> _weaponPistol;
+	WeaponObject _weaponRifle;
+	WeaponObject _weaponPistol;
 
-	cGunData* _currentWeapon;
+	WeaponObject _currentWeapon;
 
 	DamageInterface* _damageInterface;
 };

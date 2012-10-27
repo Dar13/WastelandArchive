@@ -90,6 +90,44 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	
 	std::cout << "Player setup" << std::endl;
 
+	Ogre::Entity* levelEnt = static_cast<Ogre::Entity*>(_pairs.begin()->ogreNode->getAttachedObject(0));
+	InputGeometry levelGeometry(levelEnt);
+
+	RecastConfiguration params;
+	params.setAgentHeight(2.5f);
+	params.setAgentRadius(.2f);
+	params.setCellSize(.2f);
+
+	_recast.reset(new RecastInterface(_scene,params));
+	_recast->getRecastConfig().walkableRadius = static_cast<int>(.2f);
+	_recast->buildNavMesh(&levelGeometry);
+	_recast->exportPolygonMeshToObj("ARENATUTORIAL_RECAST_MESH.obj");
+
+	rcdtConfig config;
+	config.recastConfig = &_recast->getRecastConfig();
+	config.userConfig = &_recast->getRecastBuildConfiguration();
+
+	_detour.reset(new DetourInterface(_recast->getPolyMesh(),_recast->getDetailMesh(),config));
+
+	_crowd.reset(new CrowdManager(_detour.get(),&config));
+
+	auto npcList = list("resource\\xml\\lists\\arenalocker_npc_list.xml");
+	for(auto itr = npcList->file().begin(); itr != npcList->file().end(); ++itr)
+	{
+		characterobject_t* obj = characterObject(*itr).release();
+		Ogre::SceneNode* node = GameManager::createCharacterObject(_scene,obj,Graphics);
+
+		if(obj->type() == "NPC")
+		{
+			NPCCharacter* npc = new NPCCharacter(obj->name(),obj->scriptName(),node,_crowd.get());
+			npc->setMaxSpeed(.9f);
+			_npcs.push_back(npc);
+			LuaManager::getSingleton().addEntity(npc->getName(),npc);
+		}
+
+		delete obj;
+	}
+
 	_pauseMenu.reset(new PauseMenu(State::GAME_ARENA));
 	_pauseMenu->Setup(Input,Graphics,Gui,Sound);
 

@@ -17,7 +17,7 @@ NPCCharacter::NPCCharacter(const std::string& name,const std::string& script,Ogr
 	//check for animations
 	Ogre::Entity* ent = static_cast<Ogre::Entity*>(getMovableObject());
 	
-	node->scale(.1f,.1f,.1f);
+	node->scale(CHARACTER_SCALE_FACTOR,CHARACTER_SCALE_FACTOR,CHARACTER_SCALE_FACTOR);
 	if(ent != nullptr)
 	{
 		std::cout << "NPCCharacter \'" << name << "\' has an entity attached." << std::endl;
@@ -472,24 +472,20 @@ void NPCCharacter::_behaviorFollow(const std::string& targetName)
 		return;
 	}
 
-	if(ent->getType() == LevelData::NPC)
+	NPCCharacter* npc = static_cast<NPCCharacter*>(ent);
+	Ogre::Vector3 pos = getPosition(),npcPos = npc->getPosition();
+	pos.y = 0; npcPos.y = 0;
+	Ogre::Vector3 diff = npcPos - pos;
+	float len = diff.normalise();
+	if(len > 3)
 	{
-		NPCCharacter* npc = static_cast<NPCCharacter*>(ent);
-		Ogre::Vector3 pos = getPosition(),npcPos = npc->getPosition();
-		pos.y = 0; npcPos.y = 0;
-		Ogre::Vector3 diff = npcPos - pos;
-		float len = diff.normalise();
-		if(len > 3)
-		{
-			//new position = old position + (direction vector * (length - distance from target))
-			pos = pos + (diff * (len - 4.0f));
-			_behaviorMove(pos);
-		}
-		else
-		{
-			_isBhvFinished = true;
-		}
-
+		//new position = old position + (direction vector * (length - distance from target))
+		pos = pos + (diff * (len - 4.0f));
+		_behaviorMove(pos);
+	}
+	else
+	{
+		_isBhvFinished = true;
 	}
 
 }
@@ -524,7 +520,7 @@ void NPCCharacter::_actionLook(const Ogre::Vector3& target)
 		skel->getAnimation(i)->destroyNodeTrack(headBone->getHandle());
 	}
 
-	Ogre::Vector3 test = headBone->_getDerivedPosition() * .1f + _node->getPosition();
+	Ogre::Vector3 test = headBone->_getDerivedPosition() * CHARACTER_SCALE_FACTOR + _node->getPosition();
 	Ogre::Vector3 dir = target - test;
 	Ogre::Quaternion nodeRot,boneRot;
 	boneRot = headBone->_getDerivedOrientation();

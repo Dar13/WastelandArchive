@@ -8,6 +8,8 @@
 #include "../AnimationBlender.h"
 //#include "../AI_include.h"
 
+#define CHARACTER_SCALE_FACTOR .1f
+
 class NPCCharacter : public LevelData::BaseEntity,public Character
 {
 public:

@@ -10,6 +10,13 @@
 #include "PhysicsManager.h"
 #include "LevelData.h"
 
+#include "RecastInterface.h"
+#include "DetourInterface.h"
+#include "CrowdManager.h"
+
+#include "AI\npc_character.h"
+#include "AI\enemy_character.h"
+
 #define _PAUSE_ONLY_
 #include "menu\Menu.h"
 #undef _PAUSE_ONLY_
@@ -72,6 +79,14 @@ private:
 	//Sound stuff
 	std::vector<sSound> _sounds;
 	std::vector<FMOD::Channel*> _channels;
+
+	//Recast/Detour
+	std::unique_ptr<DetourInterface> _detour;
+	std::unique_ptr<RecastInterface> _recast;
+
+	std::unique_ptr<CrowdManager> _crowd;
+
+	std::vector<NPCCharacter*> _npcs;
 
 	//Lights management
 	void _setupLights(GraphicsManager* g, Ogre::SceneManager* scene);

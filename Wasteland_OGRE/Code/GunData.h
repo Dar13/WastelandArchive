@@ -51,6 +51,14 @@ struct EquippableObject
 	baseEquippable* equip;
 };
 
+class cGunData;
+
+struct WeaponObject
+{
+	Ogre::SceneNode* node;
+	cGunData* weapon;
+};
+
 /*! \brief Class that handles all gun-related data/manipulation tasks.
 */
 class cGunData : public baseEquippable, public Ogre::FrameListener
@@ -186,6 +194,8 @@ public:
 	static int getCorrespondingSoundID(int animID);
 	static bool isAnimationAlmostDone(Ogre::AnimationState* anim);
 
+	std::string _getGunNameString() { return _gunEntityName; }
+
 private:
 	//Gun data
 	GUN_TYPE _type;
@@ -213,6 +223,8 @@ private:
 	SoundManager* _soundMgr; // required.
 	std::map<int,sGunSound> _sounds;
 	FMOD::Channel* _soundChannel;
+
+	std::string _gunEntityName;
 	
 	AnimationBlender _animBlender;
 	

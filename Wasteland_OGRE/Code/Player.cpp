@@ -113,7 +113,7 @@ bool Player::Update(InputManager* input,
 					LevelData::BaseEntity* ent = LuaManager::getSingleton().getEntity(name);
 					if(ent != nullptr && (ent->getType() == LevelData::NPC || ent->getType() == LevelData::ENEMY))
 					{
-						_damageInterface->registerShotAtEnemy(gun->getGunshotData(),ent->getName());
+						_damageInterface->registerShotAtEnemy(gun->getGunshotData(),name);
 					}
 				}
 			};
@@ -173,7 +173,7 @@ void Player::equipObject(const EquippableObject& obj)
 		obj.node->getParentSceneNode()->removeChild(obj.node);
 		_equipNode->addChild(obj.node);
 	}
-	obj.node->setPosition(0.0f,0.0f,-.5f);
+	obj.node->setPosition(0.25f,-0.1f,-.25f);
 	std::cout << obj.node->getPosition() << std::endl;
 	std::cout << "Weapon equipped." << std::endl;
 }
@@ -231,7 +231,7 @@ void DamageInterface::registerShotAtEnemy(sGunShot gunshot,std::string& enemyNam
 
 double DamageInterface::getTotalDamagePlayer()
 {
-	double total;
+	double total = 0.0;
 	auto sumUp = [&total] (const double& dmg)
 	{
 		total += dmg;
@@ -245,6 +245,10 @@ double DamageInterface::getTotalDamagePlayer()
 
 double DamageInterface::getEnemyDamage(std::string& name)
 {
+	if(_damageEnemy.find(name) == _damageEnemy.end())
+	{
+		return 0;
+	}
 	double dmg = _damageEnemy[name];
 	_damageEnemy[name] = 0;
 	return dmg;

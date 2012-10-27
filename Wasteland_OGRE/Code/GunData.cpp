@@ -361,6 +361,8 @@ void cGunData::setAnimationFrames(Ogre::Entity* entity)
 	_animBlender.setEntity(entity);
 	_animBlender.init("idle",true);
 	std::cout << "AnimationFrames set for " << entity->getName() << std::endl;
+
+	_gunEntityName = entity->getName();
 }
 
 cGunData::~cGunData()
