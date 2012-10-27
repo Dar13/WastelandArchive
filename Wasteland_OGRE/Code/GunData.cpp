@@ -210,8 +210,6 @@ bool cGunData::frameStarted(const Ogre::FrameEvent& evt)
 		}
 	}
 
-	//std::cout << _animBlender.getSource()->getAnimationName() << std::endl;
-
 	//nothing else is going on, go to idle
 	if(!_reloading && (!_firing || _firingOverride) && !_moving)
 	{
