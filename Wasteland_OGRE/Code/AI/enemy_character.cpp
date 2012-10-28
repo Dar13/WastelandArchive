@@ -89,7 +89,7 @@ void EnemyCharacter::update(float deltaTimeInMilliSecs)
 
 	int behavior = 0,action = 0;
 	std::string bhvTarget,actTarget,changeWep;
-	Ogre::Vector3 moveTarget,tmp,min,max,mtmp;
+	Ogre::Vector3 moveTarget,min,max,target;
 
 	int bhvChange = 0,actChange = 0;
 
@@ -152,7 +152,48 @@ void EnemyCharacter::update(float deltaTimeInMilliSecs)
 			bhvTarget = LuaManager::getStringFromLuaTable(lua,"bhvtarget");
 			_behaviorTalk(bhvTarget);
 			break;
+		default:
+			_behaviorIdle();
 		}
+
+		switch(action)
+		{
+		case AI::ACT_IDLE:
+			_actionIdle();
+			break;
+		case AI::ACT_LOOKAT:
+			target = LuaManager::getVectorFromLuaTable(lua,"lookat");
+			if(target == Ogre::Vector3::ZERO || target == Ogre::Vector3(-1000,-1000,-1000))
+			{
+				_actionIdle();
+			}
+			else
+			{
+				_actionLook(target);
+			}
+			break;
+		case AI::ACT_CHANGEWEP:
+			changeWep = LuaManager::getStringFromLuaTable(lua,"weapon");
+			_actionChangeWeapon(changeWep);
+			break;
+		case AI::ACT_RELOAD:
+			if(_currentWeapon.weapon->isReloadNeeded())
+			{
+				_actionReload();
+			}
+			else
+			{
+				_actionIdle();
+			}
+			break;
+		case AI::ACT_SHOOT:
+			actTarget = LuaManager::getStringFromLuaTable(lua,"acttarget");
+			_actionShoot(actTarget);
+			break;
+		default:
+			_actionIdle();
+			break;
+		};
 	}
 }
 

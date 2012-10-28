@@ -77,38 +77,38 @@ void NPCCharacter::update(float deltaTimeInMilliSecs)
 
 	int behavior = 0,action = 0;
 	std::string bhvTarget,actTarget,changeWep;
-	Ogre::Vector3 moveTarget,shootTarget;
-	Ogre::Vector3 tmp;
+	Ogre::Vector3 moveTarget,shootTarget,target;
 
 	int bhvChange = 0,actChange = 0;
 
 	if(lua_istable(LuaManager::getSingleton().getLuaState(),1))
 	{
+		bhvChange = LuaManager::getIntegerFromLuaTable(lua,"bhvchange");
+		_bhvChange = (bhvChange) ? true : false;
+
 		//get behavior
-		lua_pushstring(lua,"behavior");
-		lua_gettable(lua,1);
-		behavior = lua_tointeger(lua,-1);
-		lua_pop(lua,1);
+		if(_bhvChange)
+		{
+			behavior = LuaManager::getIntegerFromLuaTable(lua,"behavior");
+		}
+		else
+		{
+			behavior = _prevBhv;
+		}
 
-		lua_pushstring(lua,"bhvchange");
-		lua_gettable(lua,1);
-		bhvChange = lua_tointeger(lua,-1);
-		lua_pop(lua,1);
-		_bhvChange = (bhvChange == 1) ? true : false;
+		actChange = LuaManager::getIntegerFromLuaTable(lua,"actchange");
+		_actChange = (actChange) ? true : false;
 
-		//get action
-		lua_pushstring(lua,"action");
-		lua_gettable(lua,1);
-		action = lua_tointeger(lua,-1);
-		lua_pop(lua,1);
-
-		lua_pushstring(lua,"actchange");
-		lua_gettable(lua,1);
-		actChange = lua_tointeger(lua,-1);
-		lua_pop(lua,1);
-		_actChange = (actChange == 1) ? true : false;
+		if(_actChange)
+		{
+			action = LuaManager::getIntegerFromLuaTable(lua,"action");
+		}
+		else
+		{
+			action = _prevAct;
+		}
 		
-		Ogre::Vector3 min,max,mtmp;
+		Ogre::Vector3 min,max;
 
 		switch(behavior)
 		{
@@ -116,77 +116,23 @@ void NPCCharacter::update(float deltaTimeInMilliSecs)
 			_behaviorIdle();
 			break;
 		case AI::BHV_WANDER:
-			lua_pushstring(lua,"bhvmin");
-			
-			lua_gettable(lua,1);
-			if(lua_istable(lua,-1))
+			min = LuaManager::getVectorFromLuaTable(lua,"bhvmin");
+			max = LuaManager::getVectorFromLuaTable(lua,"bhvmax");
+			if(min == Ogre::Vector3::ZERO || max == Ogre::Vector3::ZERO)
 			{
-				//this works.
-				for(int i = 0; i < 3; i++)
-				{
-					lua_pushnumber(lua,i+1);
-					lua_gettable(lua,-2);
-					mtmp[i] = static_cast<float>(lua_tonumber(lua,-1));
-					lua_pop(lua,1);
-					
-				}
+				min = _destination;
+				max = _destination;
 			}
-			lua_pop(lua,1);
-			if(mtmp != Ogre::Vector3(-1000,-1000,-1000))
-			{
-				min = mtmp;
-			} else { min = _destination; }
-
-			lua_pushstring(lua,"bhvmax");
-			lua_gettable(lua,1);
-			if(lua_istable(lua,-1))
-			{
-				for(int i = 0; i < 3; ++i)
-				{
-					lua_pushnumber(lua,i+1);
-					lua_gettable(lua,-2);
-					mtmp[i] = static_cast<float>(lua_tonumber(lua,-1));
-					lua_pop(lua,1);
-				}
-			}
-			lua_pop(lua,1);
-
-			if(mtmp != Ogre::Vector3(-1000,-1000,-1000))
-			{
-				max = mtmp;
-			} else { max = _destination; }
-
 			_behaviorWander(min,max);
 			break;
 		case AI::BHV_TALK:
-			lua_pushstring(lua,"bhvtarget");
-			lua_gettable(lua,1);
-			bhvTarget = lua_tostring(lua,-1);
-			lua_pop(lua,1);
+			bhvTarget = LuaManager::getStringFromLuaTable(lua,"bhvtarget");
 			_behaviorTalk(bhvTarget);
 			break;
 		case AI::BHV_MOVE:
-			lua_pushstring(lua,"bhvtarget");
-			lua_gettable(lua,1);
-			if(lua_istable(lua,-1))
-			{
-				//this works.
-				for(int i = 0; i < 3; i++)
-				{
-					lua_pushnumber(lua,i+1);
-					lua_gettable(lua,-2);
-					tmp[i] = static_cast<float>(lua_tonumber(lua,-1));
-					lua_pop(lua,1);
-					
-				}
-			}
-			lua_pop(lua,1);
+			moveTarget = LuaManager::getVectorFromLuaTable(lua,"bhvtarget");
 
-			if(tmp != Ogre::Vector3(-1000,-1000,-1000))
-			{
-				moveTarget = tmp;
-			}
-			else
+			if(moveTarget == Ogre::Vector3(-1000,-1000,-1000))
 			{
 				moveTarget = _destination;
 			}
@@ -194,68 +140,32 @@ void NPCCharacter::update(float deltaTimeInMilliSecs)
 			_behaviorMove(moveTarget);
 			break;
 		case AI::BHV_FOLLOW:
-			lua_pushstring(lua,"bhvtarget");
-			lua_gettable(lua,1);
-			bhvTarget = lua_tostring(lua,-1);
-			lua_pop(lua,1);
+			bhvTarget = LuaManager::getStringFromLuaTable(lua,"bhvtarget");
 			_behaviorFollow(bhvTarget);
+			break;
+		default:
+			_behaviorIdle();
 			break;
 		}
 
 		switch(action)
 		{
-		case AI::ACT_SHOOT:
-			lua_pushstring(lua,"acttarget");
-			lua_gettable(lua,1);
-			if(lua_istable(lua,-1))
-			{
-				for(int i = 0; i < 3; i++)
-				{
-					lua_pushnumber(lua,i+1);
-					lua_gettable(lua,-2);
-					shootTarget[i] = static_cast<float>(lua_tonumber(lua,-1));
-					lua_pop(lua,1);
-				}
-			}
-			lua_pop(lua,1);
-			break;
-		case AI::ACT_CHANGEWEP:
-			lua_pushstring(lua,"weapon");
-			lua_gettable(lua,1);
-			if(lua_isstring(lua,-1))
-			{
-				changeWep = lua_tostring(lua,-1);
-			}
-			lua_pop(lua,1);
-			break;
 		case AI::ACT_IDLE:
 			_actionIdle();
 			break;
 		case AI::ACT_LOOKAT:
-			lua_pushstring(lua,"lookat");
-			lua_gettable(lua,1);
-			Ogre::Vector3 tmp;
-			if(lua_istable(lua,-1))
-			{
-				//this works.
-				for(int i = 0; i < 3; i++)
-				{
-					lua_pushnumber(lua,i+1);
-					lua_gettable(lua,-2);
-					tmp[i] = static_cast<float>(lua_tonumber(lua,-1));
-					lua_pop(lua,1);
-				}
-			}
-			lua_pop(lua,1);
-
-			if(tmp != Ogre::Vector3(-1000,-1000,-1000))
-			{
-				_actionLook(tmp);
-			}
-			else
+			target = LuaManager::getVectorFromLuaTable(lua,"lookat");
+			if(target == Ogre::Vector3::ZERO || target == Ogre::Vector3(-1000,-1000,-1000))
 			{
 				_actionIdle();
 			}
+			else
+			{
+				_actionLook(target);
+			}
+			break;
+		default:
+			_actionIdle();
 			break;
 		}
 		
