@@ -3,7 +3,7 @@
 #include "Utility.h"
 #include "debug\print.h"
 
-void CharacterController::create(Ogre::Camera* camera,const Ogre::Vector3& initialPosition,btDiscreteDynamicsWorld* phyWorld,GraphicsManager* Graphics)
+void CharacterController::create(Ogre::Camera* camera,const Ogre::Vector3& initialPosition,const Ogre::Vector3& initialDirection,btDiscreteDynamicsWorld* phyWorld,GraphicsManager* Graphics)
 {
 	cCamera = camera;
 	_world = phyWorld; //saves having to pass in PhyManager pointers
@@ -38,12 +38,13 @@ void CharacterController::create(Ogre::Camera* camera,const Ogre::Vector3& initi
 	//NO! Gets rid of bullet physics initial positioning.
 	//cNode->setPosition(cCamera->getPosition());
 	cNode->setPosition(initialPosition); //NOT TESTED
-	cNode->setOrientation(cCamera->getOrientation());
+	Ogre::Vector3 origDir;
+	Ogre::Radian origAngle;
+	cNode->getOrientation().ToAngleAxis(origAngle,origDir);
+	Utility::rotateToTarget(cNode,initialDirection,true,origDir);
+	cGhostObject->getWorldTransform().setRotation(Utility::convert_OgreQuaternion(cNode->getOrientation()));
 	cCamera->setPosition(0,0,0);
 	cNode->attachObject(cCamera);
-
-	//Ogre::SceneNode* tmpNode = Graphics->createSceneNode(cCamera->getSceneManager(),object("resource\\xml\\test_box.xml").release(),cNode);
-	//tmpNode->setPosition(5.0f,1.0f,0.0f);
 
 	//for some reason, this expects a positive value.
 	//so make the global bullet gravity its inverse.

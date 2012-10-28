@@ -58,11 +58,9 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	
 	//set the camera aspect ratio
 	_camera->setAspectRatio(16.0f/9.0f);
-	//wireframe
-	//_camera->setPolygonMode(Ogre::PM_WIREFRAME);
 
 	//let's try out the character controller
-	_controller.reset(new CharacterController(_camera,Ogre::Vector3(70.0f,1.9f,0.0f),_physics->getWorld(),Graphics ) );
+	_controller.reset(new CharacterController(_camera,Ogre::Vector3(70.0f,1.9f,0.0f),Ogre::Vector3(0.0,0.0,-5.0f),_physics->getWorld(),Graphics ) );
 	//since we're using the character controller, should also lock the mouse.
 	Input->setMouseLock(true);
 
@@ -78,7 +76,7 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	std::cout << "Parser finished" << std::endl;
 
 	_setupLights(Graphics,_scene);
-	OgreBulletPair level = _pairs.at(1);
+	OgreBulletPair level = _pairs.at(0);
 	_setupDoors(level,_scene,_physics.get(),Graphics);
 
 	std::cout << "Level elements setup" << std::endl;
