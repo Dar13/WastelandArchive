@@ -15,6 +15,15 @@ namespace GameManager
 	cGunData::GUN_TYPE _correspondGunType(const std::string& typ);
 	cGunData::GUN_NAME _correspondGunName(const std::string& name);
 
+	void RenderScene(GraphicsManager* Graphics,Ogre::Viewport* view)
+	{
+		Graphics->getRoot()->getRenderSystem()->_setViewport(view);
+		Graphics->getRoot()->getRenderSystem()->clearFrameBuffer(Ogre::FBT_COLOUR | Ogre::FBT_DEPTH);
+
+		Graphics->getRenderWindow()->update(false);
+		Graphics->getRenderWindow()->swapBuffers(true);
+	}
+
 	bool UpdateManagers(GraphicsManager* graphicsManager,PhysicsManager* phyManager,float deltaTime)
 	{
 		bool retVal = true;

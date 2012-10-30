@@ -50,6 +50,8 @@
     <ClInclude Include="Code\RecastDetourUtil.h" />
     <ClInclude Include="Code\RecastInputGeometry.h" />
     <ClInclude Include="Code\RecastInterface.h" />
+    <ClInclude Include="Code\ShadowCompositorListener.h" />
+    <ClInclude Include="Code\ShadowListener.h" />
     <ClInclude Include="Code\SoundManager.h" />
     <ClInclude Include="Code\SplineTrack.h" />
     <ClInclude Include="Code\State.h" />

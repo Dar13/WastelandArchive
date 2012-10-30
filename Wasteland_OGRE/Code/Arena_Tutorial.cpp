@@ -27,6 +27,37 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	_camera->setAspectRatio(16.0f/9.0f);
 	_view = Graphics->getRenderWindow()->addViewport(_camera);
 	_view->setBackgroundColour(Ogre::ColourValue(0,0,0));
+	
+	_shadowListener = new ShadowListener();
+
+	_scene->setShadowTextureSelfShadow(true);
+	_scene->setShadowTextureCasterMaterial("shadow_caster");
+	_scene->setShadowTextureCount(1);
+	_scene->setShadowTextureSize(1024);
+	_scene->setShadowTexturePixelFormat(Ogre::PF_FLOAT32_GR);
+	_scene->setShadowTechnique(Ogre::SHADOWTYPE_TEXTURE_ADDITIVE_INTEGRATED);
+	_scene->setShadowCasterRenderBackFaces(false);
+	const unsigned numberShadowRTTs = _scene->getShadowTextureCount();
+	for(unsigned int i = 0; i < numberShadowRTTs; ++i)
+	{
+		Ogre::TexturePtr tex = _scene->getShadowTexture(i);
+		Ogre::Viewport* vp = tex->getBuffer()->getRenderTarget()->getViewport(0);
+		vp->setBackgroundColour(Ogre::ColourValue(1,1,1,1));
+		vp->setClearEveryFrame(true);
+	}
+	_scene->addListener(_shadowListener);
+
+	_shadowCompositorListener = new ShadowCompositorListener(_camera);
+	
+	_SSAO = Ogre::CompositorManager::getSingleton().addCompositor(_view,"ssao");
+	_SSAO->setEnabled(true);
+	_SSAO->addListener(_shadowCompositorListener);
+
+	Ogre::Light* test = _scene->createLight("testLight");
+	test->setType(Ogre::Light::LT_POINT);
+	test->setCastShadows(true);
+	Graphics->setLightRange(test,10.0f);
+	test->setDiffuseColour(Ogre::ColourValue(1.0f,0.0f,0.0f,1.0f));
 
 	DamageInterface* damage = new DamageInterface();
 
@@ -63,6 +94,8 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	_controller.reset(new CharacterController(_camera,Ogre::Vector3(70.0f,1.9f,0.0f),Ogre::Vector3(0.0,0.0,-5.0f),_physics->getWorld(),Graphics ) );
 	//since we're using the character controller, should also lock the mouse.
 	Input->setMouseLock(true);
+
+	_controller->getNode()->attachObject(test);
 
 	//let's setup the EWS system
 	_ews.reset(new EWSManager(_scene));
@@ -137,7 +170,6 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 {
 	_returnValue = State::GAME_LOCKER;
 	_stateShutdown=false;
-	//Ogre::SceneNode* tmpNode = (Ogre::SceneNode*)_scene->getRootSceneNode()->getChild("nodetestSphere");
 
 	OgreTransform playerTransform;
 
@@ -160,6 +192,13 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 			_deltaTime = 16.6f;
 			paused = false;
 
+		}
+
+		_crowd->updateTick(_deltaTime / 1000.0f);
+
+		for(auto itr = _npcs.begin(); itr != _npcs.end(); ++itr)
+		{
+			(*itr)->update(_deltaTime);
 		}
 
 		//quick visual debugging tool
@@ -203,6 +242,8 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 					 Input->isCFGKeyPressed(InputManager::ENVWARNSYS),
 					 _player->getPlayerData(),
 					 playerTransform);
+
+		//GameManager::RenderScene(Graphics,_view);
 
 		//True indicates success, so react on if it doesn't react properly
 		if(!GameManager::UpdateManagers(Graphics,_physics.get(),_deltaTime))
@@ -250,6 +291,9 @@ void ArenaTutorial::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIMa
 			delete trimesh;
 		}
 	});
+
+	delete _shadowCompositorListener;
+	//delete _shadowListener;
 
 	//clean up what you initialized in the Setup() function.
 	Graphics->getRenderWindow()->removeAllViewports();

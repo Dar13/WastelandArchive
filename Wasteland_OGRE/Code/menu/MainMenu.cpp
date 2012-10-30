@@ -36,6 +36,8 @@ void MainMenu::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 	_view = Graphics->getRenderWindow()->addViewport(_camera);
 	_view->setBackgroundColour(Ogre::ColourValue(0,0,0));
 
+	std::cout << _scene->getAmbientLight();
+
 	std::auto_ptr<list_t> objList = list("resource\\xml\\lists\\intro_list.xml");
 	for(list_t::file_const_iterator itr = objList.get()->file().begin(); itr != objList.get()->file().end(); ++itr)
 	{
@@ -50,11 +52,14 @@ void MainMenu::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 	_camNode->attachObject(_camera);
 	_camNode->setPosition(Ogre::Vector3(750.0f,500.0f,0.0f));
 
+
+	//this is all fucked up.
 	Ogre::Light* menuLight = _scene->createLight("mmLight");
 	menuLight->setType(Ogre::Light::LT_POINT);
-	Graphics->setLightRange(menuLight,1000.0f);
-	menuLight->setSpecularColour(Ogre::ColourValue(0.0f,0.0f,1.0f,.5f));
-	_lightNode = _camNode->createChildSceneNode("mmLightNode");
+	Graphics->setLightRange(menuLight,1500.0f);
+	menuLight->setSpecularColour(Ogre::ColourValue(0.0f,0.0f,1.0f,1.0f));
+	_lightNode = _scene->getRootSceneNode()->createChildSceneNode("mmLightNode");
+	_lightNode->setPosition(0.0f,0,750.0f);
 	_lightNode->attachObject(menuLight);
 	
 	if(!Gui->doesGUISheetExist("main_Root"))
@@ -153,7 +158,7 @@ int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,
 {
 	Ogre::Real rotProg = 0.0f;
 	//one rotation every minute
-	Ogre::Real rotFactor = 1.0f / 3600.0f;
+	Ogre::Real rotFactor = 1.0f / /*3600.0f*/ 1800.0f;
 	bool isCamRotating = true;
 
 	//no need for separate channels right now. SoundManager takes care of music for me.
@@ -199,7 +204,7 @@ int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,
 		Sound->Update(Input->getConfiguration());
 
 		Gui->Update(_deltaTime);
-
+		//GameManager::RenderScene(Graphics,_view);
 		GameManager::UpdateManagers(Graphics,NULL,_deltaTime);
 
 		if(_goto_Options && !inOptions)

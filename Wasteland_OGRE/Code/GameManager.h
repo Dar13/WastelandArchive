@@ -80,6 +80,8 @@ namespace GameManager
 		\param scene Current SceneManager for Ogre, needed to draw the stuff.
 	*/
 	void setDebugDrawer(Ogre::SceneManager* scene,PhysicsManager* phyManager);
+
+	void RenderScene(GraphicsManager* Graphics,Ogre::Viewport* view);
 	
 	/*! Updates the individual managers.
 

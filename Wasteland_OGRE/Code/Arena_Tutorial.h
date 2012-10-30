@@ -59,6 +59,10 @@ private:
 	Ogre::SceneNode* _rootNode;
 	std::vector<Ogre::SceneNode*> _nodes;
 
+	Ogre::CompositorInstance* _SSAO;
+	ShadowListener* _shadowListener;
+	ShadowCompositorListener* _shadowCompositorListener;
+
 	//Entity management
 	std::vector<Ogre::Entity*> _entities;
 

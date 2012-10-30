@@ -106,6 +106,9 @@
     <Filter Include="Include Files\Player\GunData">
       <UniqueIdentifier>{3eb9f36c-eaaa-4e38-ad63-01a911a59327}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include Files\Graphics\Shadows">
+      <UniqueIdentifier>{03490b4a-cef1-4afd-ab6e-f8923936501e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\State.h">
@@ -239,6 +242,12 @@
     </ClInclude>
     <ClInclude Include="Code\GunData.h">
       <Filter>Include Files\Player\GunData</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\ShadowListener.h">
+      <Filter>Include Files\Graphics\Shadows</Filter>
+    </ClInclude>
+    <ClInclude Include="Code\ShadowCompositorListener.h">
+      <Filter>Include Files\Graphics\Shadows</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

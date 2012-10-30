@@ -4,6 +4,9 @@
 #ifndef _OGRE_MANAGER_H_
 #define _OGRE_MANAGER_H_
 
+#include "ShadowCompositorListener.h"
+#include "ShadowListener.h"
+
 struct OgreTransform
 {
 	Ogre::Vector3 position;

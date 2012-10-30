@@ -72,6 +72,7 @@ bool GraphicsManager::Setup(configuration_t* currentConfig)
 	options["monitorIndex"] = "0";
 
 	_Window = _Root->createRenderWindow("WasTeLanD - DEBUG",resWidth,resHeight,fullscreen,&options);
+	//_Window->setAutoUpdated(false);
 	
 	//Leave the SceneManager, Camera/Viewport stuff for the appstates to deal with.
 
@@ -259,6 +260,7 @@ Ogre::SceneNode* GraphicsManager::createSceneNode(Ogre::SceneManager* scene,char
 	Ogre::Entity* model = scene->createEntity("ent" + objectInfo->name(),
 											  objectInfo->modelFilename(),
 											  objectInfo->resourceGroup());
+	model->setCastShadows(true);
 
 	if(model != nullptr)
 	{
