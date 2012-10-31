@@ -27,16 +27,20 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	_camera->setAspectRatio(16.0f/9.0f);
 	_view = Graphics->getRenderWindow()->addViewport(_camera);
 	_view->setBackgroundColour(Ogre::ColourValue(0,0,0));
+
+	_camera->setFarClipDistance(100);
+	_camera->setNearClipDistance(.01);
 	
 	_shadowListener = new ShadowListener();
 
 	_scene->setShadowTextureSelfShadow(true);
 	_scene->setShadowTextureCasterMaterial("shadow_caster");
-	_scene->setShadowTextureCount(1);
-	_scene->setShadowTextureSize(1024);
-	_scene->setShadowTexturePixelFormat(Ogre::PF_FLOAT32_GR);
-	_scene->setShadowTechnique(Ogre::SHADOWTYPE_TEXTURE_ADDITIVE_INTEGRATED);
+	_scene->setShadowTextureCount(4);
+	_scene->setShadowTextureSize(256);
+	_scene->setShadowTexturePixelFormat(Ogre::PF_FLOAT16_GR);
 	_scene->setShadowCasterRenderBackFaces(false);
+	//_scene->setShowDebugShadows(true);
+	//_scene->setShadowColour(Ogre::ColourValue(0.0f,0.0f,0.0f,1.0f));
 	const unsigned numberShadowRTTs = _scene->getShadowTextureCount();
 	for(unsigned int i = 0; i < numberShadowRTTs; ++i)
 	{
@@ -45,6 +49,8 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 		vp->setBackgroundColour(Ogre::ColourValue(1,1,1,1));
 		vp->setClearEveryFrame(true);
 	}
+	
+	_scene->setShadowTechnique(Ogre::SHADOWTYPE_TEXTURE_MODULATIVE_INTEGRATED);
 	_scene->addListener(_shadowListener);
 
 	_shadowCompositorListener = new ShadowCompositorListener(_camera);
@@ -53,11 +59,20 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	_SSAO->setEnabled(true);
 	_SSAO->addListener(_shadowCompositorListener);
 
+	_scene->setAmbientLight(Ogre::ColourValue(.8f,.8f,.8f));
+
 	Ogre::Light* test = _scene->createLight("testLight");
-	test->setType(Ogre::Light::LT_POINT);
+	test->setType(Ogre::Light::LT_SPOTLIGHT);
 	test->setCastShadows(true);
-	Graphics->setLightRange(test,10.0f);
+	Graphics->setLightRange(test,30.0f);
 	test->setDiffuseColour(Ogre::ColourValue(1.0f,0.0f,0.0f,1.0f));
+	test->setSpecularColour(Ogre::ColourValue(1.0f,1.0f,1.0f,1.0f));
+	test->setSpotlightInnerAngle(Ogre::Degree(25));
+	test->setSpotlightOuterAngle(Ogre::Degree(45));
+	test->setDirection(Ogre::Vector3(0,-1,0));
+	Ogre::SceneNode* light = _scene->getRootSceneNode()->createChildSceneNode("testLight");
+	light->attachObject(test);
+	light->setPosition(1.5f,5.0f,1.5f);
 
 	DamageInterface* damage = new DamageInterface();
 
@@ -95,7 +110,7 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	//since we're using the character controller, should also lock the mouse.
 	Input->setMouseLock(true);
 
-	_controller->getNode()->attachObject(test);
+	//_controller->getNode()->attachObject(test);
 
 	//let's setup the EWS system
 	_ews.reset(new EWSManager(_scene));
@@ -153,6 +168,7 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 			NPCCharacter* npc = new NPCCharacter(obj->name(),obj->scriptName(),node,_crowd.get());
 			npc->setMaxSpeed(.9f);
 			_npcs.push_back(npc);
+			//std::cout << npc->getNode()->getAttachedObject(0)->getCastShadows() << std::endl;
 			LuaManager::getSingleton().addEntity(npc->getName(),npc);
 		}
 

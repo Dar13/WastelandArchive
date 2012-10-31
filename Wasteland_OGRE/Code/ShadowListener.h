@@ -13,6 +13,7 @@ public:
 		float range = light->getAttenuationRange();
 		camera->setNearClipDistance(.01f);
 		camera->setFarClipDistance(range);
+		//std::cout << range << std::endl;
 	}
 
 	void shadowTexturesUpdated(size_t){}
