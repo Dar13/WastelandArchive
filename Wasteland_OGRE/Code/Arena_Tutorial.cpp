@@ -21,7 +21,7 @@ ArenaTutorial::ArenaTutorial()
 
 void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
 {
-	_scene = Graphics->getRoot()->createSceneManager(Ogre::ST_INTERIOR,"arenaTut");
+	_scene = Graphics->getRoot()->createSceneManager("OctreeSceneManager","arenaTut");
 
 	_camera = _scene->createCamera("arenaTutCam");
 	_camera->setAspectRatio(16.0f/9.0f);
@@ -36,7 +36,7 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	_scene->setShadowTextureSelfShadow(true);
 	_scene->setShadowTextureCasterMaterial("shadow_caster");
 	_scene->setShadowTextureCount(4);
-	_scene->setShadowTextureSize(256);
+	_scene->setShadowTextureSize(1024);
 	_scene->setShadowTexturePixelFormat(Ogre::PF_FLOAT16_GR);
 	_scene->setShadowCasterRenderBackFaces(false);
 	//_scene->setShowDebugShadows(true);
@@ -59,7 +59,7 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	_SSAO->setEnabled(true);
 	_SSAO->addListener(_shadowCompositorListener);
 
-	_scene->setAmbientLight(Ogre::ColourValue(.8f,.8f,.8f));
+	_scene->setAmbientLight(Ogre::ColourValue(.3f,.3f,.3f));
 
 	Ogre::Light* test = _scene->createLight("testLight");
 	test->setType(Ogre::Light::LT_SPOTLIGHT);
@@ -69,10 +69,11 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	test->setSpecularColour(Ogre::ColourValue(1.0f,1.0f,1.0f,1.0f));
 	test->setSpotlightInnerAngle(Ogre::Degree(25));
 	test->setSpotlightOuterAngle(Ogre::Degree(45));
-	test->setDirection(Ogre::Vector3(0,-1,0));
+	test->setDirection(Ogre::Vector3(0,0,-1));
 	Ogre::SceneNode* light = _scene->getRootSceneNode()->createChildSceneNode("testLight");
 	light->attachObject(test);
-	light->setPosition(1.5f,5.0f,1.5f);
+	light->setPosition(0.0f,.0f,-.50f);
+	light->getParent()->removeChild(light);
 
 	DamageInterface* damage = new DamageInterface();
 
@@ -110,7 +111,7 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	//since we're using the character controller, should also lock the mouse.
 	Input->setMouseLock(true);
 
-	//_controller->getNode()->attachObject(test);
+	_controller->getNode()->addChild(light);
 
 	//let's setup the EWS system
 	_ews.reset(new EWSManager(_scene));
@@ -196,6 +197,7 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 	//while the escape key isn't pressed and the state isn't told to shutdown.
 	while(!_stateShutdown)
 	{
+		//std::cout << "BatchCount:" << Graphics->getRenderWindow()->getBatchCount() << std::endl;
 		//current time
 		time = static_cast<float>(Graphics->getTimer()->getMilliseconds());
 		//getting the delta time
@@ -294,6 +296,7 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 //clean-up of state
 void ArenaTutorial::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
 {
+	
 	_controller->shutdown();
 
 	//undo what I set in OIS
@@ -308,8 +311,13 @@ void ArenaTutorial::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIMa
 		}
 	});
 
+	std::for_each(_npcs.begin(),_npcs.end(),[] (NPCCharacter* npc) {
+		delete npc;
+	});
+
 	delete _shadowCompositorListener;
-	//delete _shadowListener;
+	_scene->removeListener(_shadowListener);
+	delete _shadowListener;
 
 	//clean up what you initialized in the Setup() function.
 	Graphics->getRenderWindow()->removeAllViewports();
