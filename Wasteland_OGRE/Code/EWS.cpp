@@ -72,7 +72,12 @@ void EWSManager::Update(int newTime,bool isPlacing,const sPlayerData& playerData
 	{
 		if(_pointToPlayer)
 		{
+			//std::cout << _ewsNode->getPosition().y;
 			_ewsNode->lookAt(Ogre::Vector3(playerTransform.position.x,_ewsNode->getPosition().y,playerTransform.position.z),Ogre::Node::TS_WORLD);
+			Ogre::Quaternion quat = _ewsNode->getOrientation();
+			Ogre::Radian yaw = quat.getYaw();
+			quat.FromAngleAxis(yaw,Ogre::Vector3::UNIT_Y);
+			_ewsNode->setOrientation(quat);
 		}
 
 		//assumes timeElapsed is in ms
@@ -137,7 +142,17 @@ void EWSManager::Place(const Ogre::Vector3& rayCastPosition,const Ogre::Vector3&
 			//to avoid intersection with source node
 			if(rayCastNormal != Ogre::Vector3::NEGATIVE_UNIT_Y)
 			{
-				_ewsNode->setPosition(rayCastPosition + rayCastNormal);
+				if(rayCastNormal == Ogre::Vector3::UNIT_Y)
+				{
+					Ogre::Vector3 newPosition = rayCastPosition;
+					newPosition.y += _ewsEntity->getBoundingRadius();
+					std::cout << newPosition << std::endl;
+					_ewsNode->setPosition(newPosition);
+				}
+				else
+				{
+					_ewsNode->setPosition(rayCastPosition + rayCastNormal);
+				}
 			}
 			else
 			{
@@ -146,7 +161,7 @@ void EWSManager::Place(const Ogre::Vector3& rayCastPosition,const Ogre::Vector3&
 				_ewsNode->setPosition(rayCastPosition + v);
 			}
 			//check to see if it's intersecting with something
-			
+
 			//to avoid rotation build-up. Now the node rotates cleanly.
 			_ewsNode->resetOrientation();;
 			if(rayCastNormal == Ogre::Vector3::UNIT_Y || rayCastNormal == Ogre::Vector3::NEGATIVE_UNIT_Y)
@@ -160,10 +175,16 @@ void EWSManager::Place(const Ogre::Vector3& rayCastPosition,const Ogre::Vector3&
 									 Ogre::Node::TS_WORLD);
 				}
 				else
+				{
 					_ewsNode->lookAt(Ogre::Vector3(playerTransform.position.x,
-												   rayCastPosition.y + rayCastNormal.y,
+												   _ewsNode->convertLocalToWorldPosition(_ewsNode->getPosition()).y,
 												   playerTransform.position.z),
 									 Ogre::Node::TS_WORLD);
+					Ogre::Quaternion quat = _ewsNode->getOrientation();
+					Ogre::Radian yaw = quat.getYaw();
+					quat.FromAngleAxis(yaw,Ogre::Vector3::UNIT_Y);
+					_ewsNode->setOrientation(quat);
+				}
 			}
 			else
 			{
@@ -171,13 +192,9 @@ void EWSManager::Place(const Ogre::Vector3& rayCastPosition,const Ogre::Vector3&
 				_ewsNode->lookAt(rayCastNormal*2,Ogre::Node::TS_LOCAL);
 			}
 			_placed = true;
-			_ewsNode->setVisible(true);
+
+			_ewsNode->getAttachedObject(0)->setVisible(true);
 			placeToggle = 1;
-			/*VirtualConsole::getSingleton().put("---\n");
-			VirtualConsole::getSingleton().put(Utility::vector3_toStr(rayCastNormal));
-			VirtualConsole::getSingleton().put(Utility::vector3_toStr(rayCastPosition));
-			VirtualConsole::getSingleton().put(Utility::vector3_toStr(rayCastPosition + rayCastNormal));
-			VirtualConsole::getSingleton().put(Utility::vector3_toStr(playerTransform.position));*/
 		}
 	}
 }

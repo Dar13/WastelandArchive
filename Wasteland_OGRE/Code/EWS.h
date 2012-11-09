@@ -59,6 +59,9 @@ private:
 	Ogre::SceneNode* _ewsNode;
 	Ogre::Entity* _ewsEntity;
 
+	Ogre::BillboardSet* _ewsBillboardSet;
+	Ogre::Billboard* _ewsBillboard;
+
 	bool _placed;
 	int placeToggle;
 	bool _pointToPlayer;

@@ -56,7 +56,7 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	_shadowCompositorListener = new ShadowCompositorListener(_camera);
 	
 	_SSAO = Ogre::CompositorManager::getSingleton().addCompositor(_view,"ssao");
-	_SSAO->setEnabled(true);
+	//_SSAO->setEnabled(true);
 	_SSAO->addListener(_shadowCompositorListener);
 
 	_scene->setAmbientLight(Ogre::ColourValue(.3f,.3f,.3f));
