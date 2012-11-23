@@ -69,12 +69,6 @@ namespace LevelData
 	//TriggerZone, base of all other triggers
 	//============================
 
-	void TriggerZone::setTriggerType(TRIGGER_TYPE type)
-	{
-		_triggerType = type;
-	}
-	int TriggerZone::getTriggerType(){ return _triggerType; }
-
 	//============================
 	//Global Trigger, derived from TriggerZone
 	//============================

@@ -41,15 +41,6 @@ namespace LevelData
 		std::string _scriptName;
 	};
 
-	//TRIGGER ZONE STRUCTS/CLASSES/STRUCTS/FUNCTIONS
-	enum TRIGGER_TYPE
-	{
-		PLAYER = 1,
-		ENTITY,
-		TIME,
-		GLOBAL
-	};
-
 	//Base TriggerZone class
 	class TriggerZone : public BaseEntity
 	{
@@ -61,9 +52,6 @@ namespace LevelData
 			_triggerInZone = false;
 			_scriptName = scriptName;
 		}
-
-		void setTriggerType(TRIGGER_TYPE type);
-		int getTriggerType();
 
 		virtual void update(OgreTransform* playerTransformation, int deltaTimeInMs) {}
 
@@ -98,7 +86,6 @@ namespace LevelData
 			: TriggerZone(scriptName),
 			  _boundaries(boundaries)
 		{
-			setTriggerType(PLAYER);
 		}
 
 		virtual void update(OgreTransform* playerTransformation, int deltaTimeInMs);
@@ -119,7 +106,6 @@ namespace LevelData
 			  _boundaries(box),
 			  _target(targetName)
 		{
-			setTriggerType(ENTITY);
 		}
 		void setTriggerTarget(const std::string& targetName);
 		void setTriggerTargetNode(Ogre::SceneNode* rootNode);
@@ -146,7 +132,6 @@ namespace LevelData
 			  _goalTime(0),
 			  _timeActivated(false)
 		{
-			setTriggerType(TIME);
 		}
 		void setTimeDelay(int milliSecs);
 
