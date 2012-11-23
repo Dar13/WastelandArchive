@@ -350,7 +350,9 @@ namespace LevelData
 	}
 	Ogre::ColourValue LightData::getSpecularColour() { return _specColour; }
 
-	//Spotlight start
+	//===============
+	//Spotlight LightData
+	//===============
 	void SpotLightData::createLight(Ogre::SceneManager* scene,GraphicsManager* g)
 	{
 		_light = scene->createLight(_name);
@@ -395,7 +397,9 @@ namespace LevelData
 	}
 	Ogre::Vector3 SpotLightData::getPosition() { return _position;}
 
-	//directional start
+	//=================
+	//Directional LightData
+	//=================
 
 	void DirectionalLightData::createLight(Ogre::SceneManager* scene,GraphicsManager* g)
 	{
@@ -418,8 +422,9 @@ namespace LevelData
 	}
 	Ogre::Vector3 DirectionalLightData::getDirection() { return _direction; }
 
-	//point start
-
+	//==============
+	//Point LightData
+	//===============
 	void PointLightData::createLight(Ogre::SceneManager* scene,GraphicsManager* g)
 	{
 		_light = scene->createLight(_name);

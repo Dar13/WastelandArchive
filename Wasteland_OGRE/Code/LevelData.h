@@ -152,7 +152,7 @@ namespace LevelData
 	public:
 		LightData() : BaseEntity(false,LIGHT),_light(0) {}
 		
-		void update();
+		virtual void update();
 
 		void setLightType(int type);
 		int getLightType();
