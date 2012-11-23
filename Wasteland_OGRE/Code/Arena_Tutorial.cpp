@@ -93,13 +93,6 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 		_pairs.push_back(GameManager::createObject(_scene,tmp,_physics.get(),Graphics));
 	}
 
-	//camera setup
-	//_camera->setPosition(Ogre::Vector3(30,1.9f,0));
-	_camera->setPosition(Ogre::Vector3(0.0f,1.9f,0.0f));
-	_camera->setNearClipDistance(.001f);
-	_camera->setFarClipDistance(1000.0f);
-	_camera->lookAt(0,1.9f,0);
-
 	//player setup
 	_player.reset(new Player());
 	
@@ -122,20 +115,20 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	parser.parseLights(&_lights);
 	parser.parseTriggers(&_triggers,_scene->getRootSceneNode());
 
-	std::cout << "Parser finished" << std::endl;
+	std::cout << "Parser finished." << std::endl;
 
 	_setupLights(Graphics,_scene);
 	OgreBulletPair level = _pairs.at(0);
 	_setupDoors(level,_scene,_physics.get(),Graphics);
 
-	std::cout << "Level elements setup" << std::endl;
+	std::cout << "Level elements is set up." << std::endl;
 
 	//testing out the M9SE
 	EquippableObject equipObj = GameManager::createEquippable(_scene,"resource\\xml\\weapon_m9se.xml",Graphics,Sound,true);
 	_player->addEquippableObject(equipObj);
 	_player->Setup("TEST",Graphics,_controller->getNode(),damage);
 	
-	std::cout << "Player setup" << std::endl;
+	std::cout << "Player is set up." << std::endl;
 
 	Ogre::Entity* levelEnt = static_cast<Ogre::Entity*>(_pairs.begin()->ogreNode->getAttachedObject(0));
 	InputGeometry levelGeometry(levelEnt);
@@ -150,31 +143,15 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	_recast->buildNavMesh(&levelGeometry);
 	_recast->exportPolygonMeshToObj("ARENATUTORIAL_RECAST_MESH.obj");
 
-	rcdtConfig config;
-	config.recastConfig = &_recast->getRecastConfig();
-	config.userConfig = &_recast->getRecastBuildConfiguration();
+	rcdtConfig config = _recast->getConfigurations();
 
 	_detour.reset(new DetourInterface(_recast->getPolyMesh(),_recast->getDetailMesh(),config));
 
 	_crowd.reset(new CrowdManager(_detour.get(),&config));
 
-	auto npcList = list("resource\\xml\\lists\\arenalocker_npc_list.xml");
-	for(auto itr = npcList->file().begin(); itr != npcList->file().end(); ++itr)
-	{
-		characterobject_t* obj = characterObject(*itr).release();
-		Ogre::SceneNode* node = GameManager::createCharacterObject(_scene,obj,Graphics);
-
-		if(obj->type() == "NPC")
-		{
-			NPCCharacter* npc = new NPCCharacter(obj->name(),obj->scriptName(),node,_crowd.get());
-			npc->setMaxSpeed(.9f);
-			_npcs.push_back(npc);
-			//std::cout << npc->getNode()->getAttachedObject(0)->getCastShadows() << std::endl;
-			LuaManager::getSingleton().addEntity(npc->getName(),npc);
-		}
-
-		delete obj;
-	}
+	_AI.reset(new AIManager());
+	_AI->loadNPCsFromFile("resource\\xml\\lists\\arenalocker_npc_list.xml",_scene,Graphics,_crowd.get());
+	//_AI->loadEnemiesFromFile("resource\\xml\\lists\\arenalocker_enemy_list.xml",_scene,Graphics,_crowd.get());
 
 	_pauseMenu.reset(new PauseMenu(State::GAME_ARENA));
 	_pauseMenu->Setup(Input,Graphics,Gui,Sound);
@@ -309,10 +286,6 @@ void ArenaTutorial::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIMa
 			btTriangleMesh* trimesh = static_cast<btTriangleMesh*>(mesh->getUserPointer());
 			delete trimesh;
 		}
-	});
-
-	std::for_each(_npcs.begin(),_npcs.end(),[] (NPCCharacter* npc) {
-		delete npc;
 	});
 
 	delete _shadowCompositorListener;

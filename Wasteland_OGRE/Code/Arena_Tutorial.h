@@ -14,8 +14,7 @@
 #include "DetourInterface.h"
 #include "CrowdManager.h"
 
-#include "AI\npc_character.h"
-#include "AI\enemy_character.h"
+#include "AIManager.h"
 
 #define _PAUSE_ONLY_
 #include "menu\Menu.h"
@@ -91,6 +90,7 @@ private:
 	std::unique_ptr<CrowdManager> _crowd;
 
 	std::vector<NPCCharacter*> _npcs;
+	std::unique_ptr<AIManager> _AI;
 
 	//Lights management
 	void _setupLights(GraphicsManager* g, Ogre::SceneManager* scene);

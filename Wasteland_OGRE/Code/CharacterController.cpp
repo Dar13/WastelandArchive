@@ -6,6 +6,12 @@
 void CharacterController::create(Ogre::Camera* camera,const Ogre::Vector3& initialPosition,const Ogre::Vector3& initialDirection,btDiscreteDynamicsWorld* phyWorld,GraphicsManager* Graphics)
 {
 	cCamera = camera;
+
+	//some small camera set-up
+	cCamera->setFarClipDistance(1000.0f);
+	cCamera->setNearClipDistance(.001f);
+	cCamera->lookAt(0.0f,1.9f,0.0f);
+
 	_world = phyWorld; //saves having to pass in PhyManager pointers
 
 	btTransform initial;

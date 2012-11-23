@@ -10,6 +10,9 @@ struct rcConfig;
 
 struct RecastDetourConfiguration
 {
+	RecastDetourConfiguration(RecastConfiguration* _usrCfg,rcConfig* _rcCfg)
+		: userConfig(_usrCfg),
+		  recastConfig(_rcCfg) {}
 	RecastConfiguration* userConfig;
 	rcConfig* recastConfig;
 };
