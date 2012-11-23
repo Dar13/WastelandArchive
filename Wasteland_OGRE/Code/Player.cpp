@@ -68,11 +68,11 @@ void Player::Setup(const std::string& file,GraphicsManager* graphics,Ogre::Scene
 bool Player::Update(InputManager* input,
 					PhysicsManager* physics,
 					EWSManager* ews,
-					const OgreTransform& transform)
+					OgreTransform* transform)
 {
 	if(input->isCFGKeyPressed(InputManager::ENVWARNSYS))
 	{
-		placeEWS(ews,physics,transform);
+		placeEWS(ews,physics,*transform);
 	}
 
 	cGunData* gun = nullptr;

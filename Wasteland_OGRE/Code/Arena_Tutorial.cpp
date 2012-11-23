@@ -120,7 +120,7 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	parser.setFile("resource\\models\\mapscapeTEST\\zonedoor_scriptTest.ent");
 	parser.parseDoors(&_doors);
 	parser.parseLights(&_lights);
-	parser.parseTriggers(&_triggers);
+	parser.parseTriggers(&_triggers,_scene->getRootSceneNode());
 
 	std::cout << "Parser finished" << std::endl;
 
@@ -253,7 +253,7 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 		_controller->update(_deltaTime,Input,playerTransform);
 
 		//Update Player-specific stuff
-		_player->Update(Input,_physics.get(),_ews.get(),playerTransform);
+		_player->Update(Input,_physics.get(),_ews.get(),&playerTransform);
 
 		//Update the EWS system
 		_ews->Update(static_cast<int>(time),
@@ -271,7 +271,7 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 		}
 
 		_updateLights();
-		_updateTriggers(playerTransform,static_cast<int>(time));
+		_updateTriggers(&playerTransform,static_cast<int>(_deltaTime));
 		_updateDoors();
 
 		//handling the pause menu
@@ -379,22 +379,11 @@ void ArenaTutorial::_updateLights()
 	}
 }
 
-void ArenaTutorial::_updateTriggers(OgreTransform& playerTransform, int currentTime)
+void ArenaTutorial::_updateTriggers(OgreTransform* playerTransform, int currentTime)
 {
 	for(auto itr = _triggers.begin(); itr != _triggers.end(); ++itr)
 	{
-		switch((*itr)->getTriggerType())
-		{
-		case LevelData::PLAYER:
-			static_cast<LevelData::PlayerTrigger*>((*itr).get())->update(playerTransform);
-			break;
-		case LevelData::ENTITY:
-			static_cast<LevelData::EntityTrigger*>((*itr).get())->update();
-			break;
-		case LevelData::TIME:
-			static_cast<LevelData::TimeTrigger*>((*itr).get())->update(currentTime);
-			break;
-		};
+		(*itr)->update(playerTransform,currentTime);
 	}
 }
 

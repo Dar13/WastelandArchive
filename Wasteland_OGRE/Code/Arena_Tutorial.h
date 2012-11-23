@@ -98,7 +98,7 @@ private:
 	std::vector<std::unique_ptr<LevelData::LightData>> _lights;
 
 	//TriggerZone Management
-	void _updateTriggers(OgreTransform& playerTransform,int currentTime);
+	void _updateTriggers(OgreTransform* playerTransform,int currentTime);
 	std::vector<std::unique_ptr<LevelData::TriggerZone>> _triggers;
 
 	//Doors management

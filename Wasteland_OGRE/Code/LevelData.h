@@ -47,62 +47,114 @@ namespace LevelData
 		PLAYER = 1,
 		ENTITY,
 		TIME,
+		GLOBAL
 	};
+
+	//Base TriggerZone class
 	class TriggerZone : public BaseEntity
 	{
 	public:
-		TriggerZone() : BaseEntity(false,TRIGGERZONE)
+		TriggerZone(std::string& scriptName) : BaseEntity(false,TRIGGERZONE)
 		{
 			_triggered = false;
 			_triggerType = 0;
 			_triggerInZone = false;
-			_boundaries = Ogre::AxisAlignedBox::BOX_NULL;
+			_scriptName = scriptName;
 		}
 
-		void setBoundaries(const Ogre::AxisAlignedBox& zoneBoundaries);
 		void setTriggerType(TRIGGER_TYPE type);
 		int getTriggerType();
 
-	protected:
-		Ogre::AxisAlignedBox  _boundaries;
+		virtual void update(OgreTransform* playerTransformation, int deltaTimeInMs) {}
 
+	protected:
 		bool _triggered;
 		bool _triggerInZone;
 		int _triggerType;
 	};
 
+	//Derived TriggerZone class, allows for global scripts
+	//Used primarily for activating different bunches of scripts after activation.
+	class GlobalTrigger : public TriggerZone
+	{
+	public:
+		GlobalTrigger(std::string& scriptName,bool activated = false)
+			: TriggerZone(scriptName)
+		{}
+
+		virtual void update(OgreTransform* playerTransformation,int deltaTimeInMs);
+
+		void setContinuousExecution(bool continuous) { _continuousExecution = continuous; }
+	private:
+		bool _continuousExecution;
+		//do I even need anything here?
+	};
+
+	//Derived TriggerZone class, handles player walking into a defined zone.
 	class PlayerTrigger : public TriggerZone
 	{
 	public:
-		void update(const OgreTransform& playerTrans);
-		bool check(const OgreTransform& playerTrans);
-	private:
+		PlayerTrigger(std::string& scriptName,Ogre::AxisAlignedBox boundaries,bool activated = false)
+			: TriggerZone(scriptName),
+			  _boundaries(boundaries)
+		{
+			setTriggerType(PLAYER);
+		}
 
+		virtual void update(OgreTransform* playerTransformation, int deltaTimeInMs);
+
+		bool check(const OgreTransform& playerTrans);
+		
+		void setBoundaries(const Ogre::AxisAlignedBox& zoneBoundaries);
+	private:
+		Ogre::AxisAlignedBox  _boundaries;
 	};
 
+	//Derived TriggerZone class, handles entity being in a defined zone.
 	class EntityTrigger : public TriggerZone
 	{
 	public:
+		EntityTrigger(std::string& targetName,Ogre::AxisAlignedBox box,std::string& scriptName,bool activated = false)
+			: TriggerZone(scriptName),
+			  _boundaries(box),
+			  _target(targetName)
+		{
+			setTriggerType(ENTITY);
+		}
 		void setTriggerTarget(const std::string& targetName);
 		void setTriggerTargetNode(Ogre::SceneNode* rootNode);
 
-		void update();
+		virtual void update(OgreTransform* playerTransformation, int deltaTimeInMs);
 
 		bool check(const Ogre::Vector3& position);
+
+		void setBoundaries(const Ogre::AxisAlignedBox& zoneBoundaries);
 	private:
+		Ogre::AxisAlignedBox _boundaries;
 		std::string _target;
 		Ogre::SceneNode* _targetNode;
 	};
 
+	//Derived TriggerZone class, handles a timer.
 	class TimeTrigger : public TriggerZone
 	{
 	public:
+		TimeTrigger(std::string& scriptName, int milliSecs, bool activated = false)
+			: TriggerZone(scriptName),
+			  _timeDelay(milliSecs),
+			  _currentTime(0),
+			  _goalTime(0),
+			  _timeActivated(false)
+		{
+			setTriggerType(TIME);
+		}
 		void setTimeDelay(int milliSecs);
 
-		void update(int time_ms);
+		virtual void update(OgreTransform* playerTransformation,int deltaTimeInMs);
 
 		bool check(int time_ms);
 	private:
+		int _currentTime;
 		int _goalTime;
 		int _timeDelay;
 		bool _timeActivated;
@@ -282,7 +334,7 @@ namespace LevelData
 	public:
 		void setFile(const char* fileName);
 
-		void parseTriggers(std::vector<std::unique_ptr<TriggerZone>>* triggers);
+		void parseTriggers(std::vector<std::unique_ptr<TriggerZone>>* triggers, Ogre::SceneNode* rootNode);
 
 		void parseLights(std::vector<std::unique_ptr<LightData>>* lights);
 
