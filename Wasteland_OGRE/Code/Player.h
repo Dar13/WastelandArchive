@@ -38,7 +38,7 @@ public:
 	bool Update(InputManager* input,
 				PhysicsManager* physics,
 				EWSManager* ews,
-				OgreTransform* transform);
+				const OgreTransform& transform);
 	//! Cleans up the player instance's memory and such.
 	void Clean(bool reuse = false);
 

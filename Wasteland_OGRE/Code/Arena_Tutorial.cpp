@@ -28,10 +28,8 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	_view = Graphics->getRenderWindow()->addViewport(_camera);
 	_view->setBackgroundColour(Ogre::ColourValue(0,0,0));
 
-	//some small camera set-up
-	_camera->setFarClipDistance(1000.0f);
-	_camera->setNearClipDistance(.001f);
-	_camera->lookAt(0.0f,1.9f,0.0f);
+	_camera->setFarClipDistance(100);
+	_camera->setNearClipDistance(.01);
 	
 	_shadowListener = new ShadowListener();
 
@@ -52,8 +50,8 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 		vp->setClearEveryFrame(true);
 	}
 	
-	//_scene->setShadowTechnique(Ogre::SHADOWTYPE_TEXTURE_MODULATIVE_INTEGRATED);
-	//_scene->addListener(_shadowListener);
+	_scene->setShadowTechnique(Ogre::SHADOWTYPE_TEXTURE_MODULATIVE_INTEGRATED);
+	_scene->addListener(_shadowListener);
 
 	_shadowCompositorListener = new ShadowCompositorListener(_camera);
 	
@@ -95,8 +93,18 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 		_pairs.push_back(GameManager::createObject(_scene,tmp,_physics.get(),Graphics));
 	}
 
+	//camera setup
+	//_camera->setPosition(Ogre::Vector3(30,1.9f,0));
+	_camera->setPosition(Ogre::Vector3(0.0f,1.9f,0.0f));
+	_camera->setNearClipDistance(.001f);
+	_camera->setFarClipDistance(1000.0f);
+	_camera->lookAt(0,1.9f,0);
+
 	//player setup
 	_player.reset(new Player());
+	
+	//set the camera aspect ratio
+	_camera->setAspectRatio(16.0f/9.0f);
 
 	//let's try out the character controller
 	_controller.reset(new CharacterController(_camera,Ogre::Vector3(70.0f,1.9f,0.0f),Ogre::Vector3(0.0,0.0,-5.0f),_physics->getWorld(),Graphics ) );
@@ -112,22 +120,22 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	parser.setFile("resource\\models\\mapscapeTEST\\zonedoor_scriptTest.ent");
 	parser.parseDoors(&_doors);
 	parser.parseLights(&_lights);
-	parser.parseTriggers(&_triggers,_scene->getRootSceneNode());
+	parser.parseTriggers(&_triggers);
 
-	std::cout << "Parser finished." << std::endl;
+	std::cout << "Parser finished" << std::endl;
 
 	_setupLights(Graphics,_scene);
 	OgreBulletPair level = _pairs.at(0);
 	_setupDoors(level,_scene,_physics.get(),Graphics);
 
-	std::cout << "Level elements is set up." << std::endl;
+	std::cout << "Level elements setup" << std::endl;
 
 	//testing out the M9SE
 	EquippableObject equipObj = GameManager::createEquippable(_scene,"resource\\xml\\weapon_m9se.xml",Graphics,Sound,true);
 	_player->addEquippableObject(equipObj);
 	_player->Setup("TEST",Graphics,_controller->getNode(),damage);
 	
-	std::cout << "Player is set up." << std::endl;
+	std::cout << "Player setup" << std::endl;
 
 	Ogre::Entity* levelEnt = static_cast<Ogre::Entity*>(_pairs.begin()->ogreNode->getAttachedObject(0));
 	InputGeometry levelGeometry(levelEnt);
@@ -142,15 +150,31 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	_recast->buildNavMesh(&levelGeometry);
 	_recast->exportPolygonMeshToObj("ARENATUTORIAL_RECAST_MESH.obj");
 
-	rcdtConfig config = _recast->getConfigurations();
+	rcdtConfig config;
+	config.recastConfig = &_recast->getRecastConfig();
+	config.userConfig = &_recast->getRecastBuildConfiguration();
 
 	_detour.reset(new DetourInterface(_recast->getPolyMesh(),_recast->getDetailMesh(),config));
 
 	_crowd.reset(new CrowdManager(_detour.get(),&config));
 
-	//_AI.reset(new AIManager());
-	//_AI->loadNPCsFromFile("resource\\xml\\lists\\arenalocker_npc_list.xml",_scene,Graphics,_crowd.get());
-	//_AI->loadEnemiesFromFile("resource\\xml\\lists\\arenalocker_enemy_list.xml",_scene,Graphics,_crowd.get());
+	auto npcList = list("resource\\xml\\lists\\arenalocker_npc_list.xml");
+	for(auto itr = npcList->file().begin(); itr != npcList->file().end(); ++itr)
+	{
+		characterobject_t* obj = characterObject(*itr).release();
+		Ogre::SceneNode* node = GameManager::createCharacterObject(_scene,obj,Graphics);
+
+		if(obj->type() == "NPC")
+		{
+			NPCCharacter* npc = new NPCCharacter(obj->name(),obj->scriptName(),node,_crowd.get());
+			npc->setMaxSpeed(.9f);
+			_npcs.push_back(npc);
+			//std::cout << npc->getNode()->getAttachedObject(0)->getCastShadows() << std::endl;
+			LuaManager::getSingleton().addEntity(npc->getName(),npc);
+		}
+
+		delete obj;
+	}
 
 	_pauseMenu.reset(new PauseMenu(State::GAME_ARENA));
 	_pauseMenu->Setup(Input,Graphics,Gui,Sound);
@@ -229,7 +253,7 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 		_controller->update(_deltaTime,Input,playerTransform);
 
 		//Update Player-specific stuff
-		_player->Update(Input,_physics.get(),_ews.get(),&playerTransform);
+		_player->Update(Input,_physics.get(),_ews.get(),playerTransform);
 
 		//Update the EWS system
 		_ews->Update(static_cast<int>(time),
@@ -246,9 +270,9 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 			_stateShutdown = true;
 		}
 
-		//_updateLights();
-		//_updateTriggers(&playerTransform,static_cast<int>(_deltaTime));
-		//_updateDoors();
+		_updateLights();
+		_updateTriggers(playerTransform,static_cast<int>(time));
+		_updateDoors();
 
 		//handling the pause menu
 		if(Input->escapePressed() && !paused)
@@ -285,6 +309,10 @@ void ArenaTutorial::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIMa
 			btTriangleMesh* trimesh = static_cast<btTriangleMesh*>(mesh->getUserPointer());
 			delete trimesh;
 		}
+	});
+
+	std::for_each(_npcs.begin(),_npcs.end(),[] (NPCCharacter* npc) {
+		delete npc;
 	});
 
 	delete _shadowCompositorListener;
@@ -351,11 +379,22 @@ void ArenaTutorial::_updateLights()
 	}
 }
 
-void ArenaTutorial::_updateTriggers(OgreTransform* playerTransform, int currentTime)
+void ArenaTutorial::_updateTriggers(OgreTransform& playerTransform, int currentTime)
 {
 	for(auto itr = _triggers.begin(); itr != _triggers.end(); ++itr)
 	{
-		(*itr)->update(playerTransform,currentTime);
+		switch((*itr)->getTriggerType())
+		{
+		case LevelData::PLAYER:
+			static_cast<LevelData::PlayerTrigger*>((*itr).get())->update(playerTransform);
+			break;
+		case LevelData::ENTITY:
+			static_cast<LevelData::EntityTrigger*>((*itr).get())->update();
+			break;
+		case LevelData::TIME:
+			static_cast<LevelData::TimeTrigger*>((*itr).get())->update(currentTime);
+			break;
+		};
 	}
 }
 

@@ -225,7 +225,6 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalDependencies>DetourCrowd.lib;Detour.lib;DebugUtils.lib;Recast.lib;LuaLibrary.lib;fmodex_vc.lib;xerces-c_3D.lib;OgreMain_d.lib;OIS_d.lib;dxguid.lib;dinput8.lib;CEGUIBase_d.lib;CEGUIOgreRenderer_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <Profile>false</Profile>
     </Link>
     <PostBuildEvent>
       <Command>copy "$(OutDir)\$(TargetFileName)" "$(OGRE_HOME)\Bin\$(Configuration)"</Command>

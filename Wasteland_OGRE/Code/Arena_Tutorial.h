@@ -14,7 +14,8 @@
 #include "DetourInterface.h"
 #include "CrowdManager.h"
 
-#include "AIManager.h"
+#include "AI\npc_character.h"
+#include "AI\enemy_character.h"
 
 #define _PAUSE_ONLY_
 #include "menu\Menu.h"
@@ -90,7 +91,6 @@ private:
 	std::unique_ptr<CrowdManager> _crowd;
 
 	std::vector<NPCCharacter*> _npcs;
-	std::unique_ptr<AIManager> _AI;
 
 	//Lights management
 	void _setupLights(GraphicsManager* g, Ogre::SceneManager* scene);
@@ -98,7 +98,7 @@ private:
 	std::vector<std::unique_ptr<LevelData::LightData>> _lights;
 
 	//TriggerZone Management
-	void _updateTriggers(OgreTransform* playerTransform,int currentTime);
+	void _updateTriggers(OgreTransform& playerTransform,int currentTime);
 	std::vector<std::unique_ptr<LevelData::TriggerZone>> _triggers;
 
 	//Doors management

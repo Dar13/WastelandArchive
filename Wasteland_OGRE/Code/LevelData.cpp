@@ -69,39 +69,23 @@ namespace LevelData
 	//TriggerZone, base of all other triggers
 	//============================
 
-	//============================
-	//Global Trigger, derived from TriggerZone
-	//============================
-	void GlobalTrigger::update(OgreTransform* playerTransformation, int deltaTimeInMs)
+	void TriggerZone::setBoundaries(const Ogre::AxisAlignedBox& zoneBoundaries)
 	{
-		if(!_continuousExecution)
-		{
-			if(_activated && !_triggered)
-			{
-				_triggered = true;
-			}
-
-			if(_triggered)
-			{
-				LuaManager::getSingleton().callFunction(_scriptName);
-
-				_activated = false;
-				_triggered = false;
-			}
-		}
-		else
-		{
-			//this executes no matter the activation state.
-			LuaManager::getSingleton().callFunction(_scriptName);
-		}
+		_boundaries = zoneBoundaries;
 	}
+
+	void TriggerZone::setTriggerType(TRIGGER_TYPE type)
+	{
+		_triggerType = type;
+	}
+	int TriggerZone::getTriggerType(){ return _triggerType; }
 
 	//============================
 	//Player Trigger, derived from TriggerZone
 	//============================
-	void PlayerTrigger::update(OgreTransform* playerTransformation,int deltaTimeInMs)
+	void PlayerTrigger::update(const OgreTransform& playerTrans)
 	{
-		_triggered = check(*playerTransformation);
+		_triggered = check(playerTrans);
 		if((_triggered && !_triggerInZone) || _activated)
 		{
 			//callback to lua or other function
@@ -137,11 +121,6 @@ namespace LevelData
 		}
 	}
 
-	void PlayerTrigger::setBoundaries(const Ogre::AxisAlignedBox& zoneBoundaries)
-	{
-		_boundaries = zoneBoundaries;
-	}
-
 	//============================
 	//EntityTrigger, derived from TriggerZone
 	//============================
@@ -153,7 +132,7 @@ namespace LevelData
 	{
 		_targetNode = static_cast<Ogre::SceneNode*>(rootNode->getChild(_target));
 	}
-	void EntityTrigger::update(OgreTransform* playerTransform, int deltaTimeInMs)
+	void EntityTrigger::update()
 	{
 		_triggered = check(_targetNode->getPosition());
 
@@ -190,11 +169,6 @@ namespace LevelData
 		}
 	}
 
-	void EntityTrigger::setBoundaries(const Ogre::AxisAlignedBox& zoneBoundaries)
-	{
-		_boundaries = zoneBoundaries;
-	}
-
 	//===============================
 	//TimeTrigger, derived from TriggerZone
 	//===============================
@@ -203,12 +177,11 @@ namespace LevelData
 		_timeDelay = milliSecs;
 	}
 
-	void TimeTrigger::update(OgreTransform* playerTransformation, int deltaTimeInMs)
+	void TimeTrigger::update(int time_ms)
 	{
 		if(_timeActivated)
 		{
-			_currentTime += deltaTimeInMs;
-			_triggered = check(deltaTimeInMs);
+			_triggered = check(time_ms);
 		}
 		else
 		{
@@ -218,7 +191,7 @@ namespace LevelData
 		if(_activated && !_timeActivated)
 		{
 			_timeActivated = true;
-			_goalTime = _currentTime + _timeDelay;
+			_goalTime = time_ms + _timeDelay;
 			_activated = false;
 		}
 
@@ -238,7 +211,7 @@ namespace LevelData
 
 	bool TimeTrigger::check(int time_ms)
 	{
-		if(_currentTime >= _goalTime)
+		if(time_ms >= _goalTime)
 		{
 			return true;
 		}
@@ -350,9 +323,7 @@ namespace LevelData
 	}
 	Ogre::ColourValue LightData::getSpecularColour() { return _specColour; }
 
-	//===============
-	//Spotlight LightData
-	//===============
+	//Spotlight start
 	void SpotLightData::createLight(Ogre::SceneManager* scene,GraphicsManager* g)
 	{
 		_light = scene->createLight(_name);
@@ -397,9 +368,7 @@ namespace LevelData
 	}
 	Ogre::Vector3 SpotLightData::getPosition() { return _position;}
 
-	//=================
-	//Directional LightData
-	//=================
+	//directional start
 
 	void DirectionalLightData::createLight(Ogre::SceneManager* scene,GraphicsManager* g)
 	{
@@ -422,9 +391,8 @@ namespace LevelData
 	}
 	Ogre::Vector3 DirectionalLightData::getDirection() { return _direction; }
 
-	//==============
-	//Point LightData
-	//===============
+	//point start
+
 	void PointLightData::createLight(Ogre::SceneManager* scene,GraphicsManager* g)
 	{
 		_light = scene->createLight(_name);
@@ -806,7 +774,7 @@ namespace LevelData
 		_file = fileName;
 	}
 
-	void LevelParser::parseTriggers(std::vector<std::unique_ptr<TriggerZone>>* triggers, Ogre::SceneNode* rootNode)
+	void LevelParser::parseTriggers(std::vector<std::unique_ptr<TriggerZone>>* triggers)
 	{
 		std::ifstream dataFile(_file);
 		std::string data;
@@ -888,23 +856,35 @@ namespace LevelData
 			if(finishedObject)
 			{
 				std::unique_ptr<TriggerZone> tZone;
-				auto boundaries = Ogre::AxisAlignedBox(center - cornersOffset, center + cornersOffset);
 				if(type == "plr")
 				{
-					PlayerTrigger* playerTrig = new PlayerTrigger(script,boundaries);
+					PlayerTrigger* playerTrig = new PlayerTrigger();
+					playerTrig->setBoundaries(Ogre::AxisAlignedBox(center - cornersOffset,center + cornersOffset));
+					playerTrig->setTriggerType(PLAYER);
+					playerTrig->setScriptFunction(script);
+					playerTrig->activate(false);
 					tZone.reset(playerTrig);
 				}
 
 				if(type == "ent")
 				{
-					EntityTrigger* entTrig = new EntityTrigger(target,boundaries,script,false);
-					entTrig->setTriggerTargetNode(rootNode);
+					EntityTrigger* entTrig = new EntityTrigger();
+					entTrig->setBoundaries(Ogre::AxisAlignedBox(center - cornersOffset,center + cornersOffset));
+					entTrig->setTriggerTarget(target);
+					entTrig->setScriptFunction(script);
+					entTrig->setTriggerType(ENTITY);
+					entTrig->activate(false);
 					tZone.reset(entTrig);
 				}
 
 				if(type == "time")
 				{
-					TimeTrigger* timeTrig = new TimeTrigger(script,timeDelay,false);
+					TimeTrigger* timeTrig = new TimeTrigger();
+					timeTrig->setBoundaries(Ogre::AxisAlignedBox(center - cornersOffset,center + cornersOffset));
+					timeTrig->setTimeDelay(timeDelay);
+					timeTrig->setTriggerType(TIME);
+					timeTrig->setScriptFunction(script);
+					timeTrig->activate(false);
 					tZone.reset(timeTrig);
 				}
 

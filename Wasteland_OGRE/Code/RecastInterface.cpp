@@ -415,8 +415,3 @@ void RecastInterface::_printConfig()
 	std::cout << " - walkableMaxSlope:" << _config.walkableSlopeAngle << std::endl;
 	std::cout << " - walkableHeight:" << _config.walkableHeight << std::endl;
 }
-
-rcdtConfig RecastInterface::getConfigurations()
-{
-	return rcdtConfig(&_recastParams,&_config);
-}

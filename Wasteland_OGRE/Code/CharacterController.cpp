@@ -6,9 +6,6 @@
 void CharacterController::create(Ogre::Camera* camera,const Ogre::Vector3& initialPosition,const Ogre::Vector3& initialDirection,btDiscreteDynamicsWorld* phyWorld,GraphicsManager* Graphics)
 {
 	cCamera = camera;
-
-	
-
 	_world = phyWorld; //saves having to pass in PhyManager pointers
 
 	btTransform initial;

@@ -58,8 +58,6 @@ public:
 	rcPolyMesh* getPolyMesh() { return _polyMesh; }
 	rcPolyMeshDetail* getDetailMesh() { return _detailMesh; }
 
-	rcdtConfig getConfigurations();
-
 	void recastClean();
 
 protected:
