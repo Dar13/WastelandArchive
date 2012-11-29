@@ -47,6 +47,7 @@ namespace LevelData
 		PLAYER = 1,
 		ENTITY,
 		TIME,
+		GLOBAL
 	};
 	class TriggerZone : public BaseEntity
 	{
@@ -56,19 +57,26 @@ namespace LevelData
 			_triggered = false;
 			_triggerType = 0;
 			_triggerInZone = false;
-			_boundaries = Ogre::AxisAlignedBox::BOX_NULL;
 		}
 
-		void setBoundaries(const Ogre::AxisAlignedBox& zoneBoundaries);
 		void setTriggerType(TRIGGER_TYPE type);
 		int getTriggerType();
 
 	protected:
-		Ogre::AxisAlignedBox  _boundaries;
-
 		bool _triggered;
 		bool _triggerInZone;
 		int _triggerType;
+	};
+
+	class GlobalTrigger : public TriggerZone
+	{
+	public:
+		void update(OgreTransform& playerTransform,int deltaTimeMs);
+
+		void setContinuousExecution(bool continuous) { _continuousExecution = continuous; }
+
+	private:
+		bool _continuousExecution;
 	};
 
 	class PlayerTrigger : public TriggerZone
@@ -76,8 +84,10 @@ namespace LevelData
 	public:
 		void update(const OgreTransform& playerTrans);
 		bool check(const OgreTransform& playerTrans);
-	private:
 
+		void setBoundaries(const Ogre::AxisAlignedBox& zoneBoundaries);
+	private:
+		Ogre::AxisAlignedBox  _boundaries;
 	};
 
 	class EntityTrigger : public TriggerZone
@@ -89,9 +99,12 @@ namespace LevelData
 		void update();
 
 		bool check(const Ogre::Vector3& position);
+
+		void setBoundaries(const Ogre::AxisAlignedBox& zoneBoundaries);
 	private:
 		std::string _target;
 		Ogre::SceneNode* _targetNode;
+		Ogre::AxisAlignedBox  _boundaries;
 	};
 
 	class TimeTrigger : public TriggerZone
@@ -103,6 +116,7 @@ namespace LevelData
 
 		bool check(int time_ms);
 	private:
+		int _currentTime;
 		int _goalTime;
 		int _timeDelay;
 		bool _timeActivated;

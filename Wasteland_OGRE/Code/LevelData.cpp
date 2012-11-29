@@ -69,16 +69,35 @@ namespace LevelData
 	//TriggerZone, base of all other triggers
 	//============================
 
-	void TriggerZone::setBoundaries(const Ogre::AxisAlignedBox& zoneBoundaries)
-	{
-		_boundaries = zoneBoundaries;
-	}
-
 	void TriggerZone::setTriggerType(TRIGGER_TYPE type)
 	{
 		_triggerType = type;
 	}
 	int TriggerZone::getTriggerType(){ return _triggerType; }
+
+	//============================
+	//Global Trigger, derived from TriggerZone
+	//============================
+	void GlobalTrigger::update(OgreTransform& playerTransform,int deltaTimeMs)
+	{
+		if(!_continuousExecution)
+		{
+			if(_activated && !_triggered)
+			{
+				_triggered = true;
+			}
+		}
+		else
+		{
+			_triggered = true;
+		}
+
+		if(_triggered)
+		{
+			LuaManager::getSingleton().callFunction(_scriptName);
+			//handle whatever return values I want it to do(none?)
+		}
+	}
 
 	//============================
 	//Player Trigger, derived from TriggerZone
@@ -119,6 +138,11 @@ namespace LevelData
 		{
 			return false;
 		}
+	}
+
+	void PlayerTrigger::setBoundaries(const Ogre::AxisAlignedBox& zoneBoundaries)
+	{
+		_boundaries = zoneBoundaries;
 	}
 
 	//============================
@@ -169,6 +193,11 @@ namespace LevelData
 		}
 	}
 
+	void EntityTrigger::setBoundaries(const Ogre::AxisAlignedBox& zoneBoundaries)
+	{
+		_boundaries = zoneBoundaries;
+	}
+
 	//===============================
 	//TimeTrigger, derived from TriggerZone
 	//===============================
@@ -181,7 +210,8 @@ namespace LevelData
 	{
 		if(_timeActivated)
 		{
-			_triggered = check(time_ms);
+			_currentTime += time_ms;
+			_triggered = check(_currentTime);
 		}
 		else
 		{
@@ -191,7 +221,7 @@ namespace LevelData
 		if(_activated && !_timeActivated)
 		{
 			_timeActivated = true;
-			_goalTime = time_ms + _timeDelay;
+			_goalTime = _timeDelay;
 			_activated = false;
 		}
 
@@ -206,6 +236,7 @@ namespace LevelData
 			_triggered = false;
 			_timeActivated = false;
 			_goalTime = 0;
+			_currentTime = 0;
 		}
 	}
 
@@ -856,10 +887,11 @@ namespace LevelData
 			if(finishedObject)
 			{
 				std::unique_ptr<TriggerZone> tZone;
+				Ogre::AxisAlignedBox boundaries(center - cornersOffset,center + cornersOffset);
 				if(type == "plr")
 				{
 					PlayerTrigger* playerTrig = new PlayerTrigger();
-					playerTrig->setBoundaries(Ogre::AxisAlignedBox(center - cornersOffset,center + cornersOffset));
+					playerTrig->setBoundaries(boundaries);
 					playerTrig->setTriggerType(PLAYER);
 					playerTrig->setScriptFunction(script);
 					playerTrig->activate(false);
@@ -869,7 +901,7 @@ namespace LevelData
 				if(type == "ent")
 				{
 					EntityTrigger* entTrig = new EntityTrigger();
-					entTrig->setBoundaries(Ogre::AxisAlignedBox(center - cornersOffset,center + cornersOffset));
+					entTrig->setBoundaries(boundaries);
 					entTrig->setTriggerTarget(target);
 					entTrig->setScriptFunction(script);
 					entTrig->setTriggerType(ENTITY);
@@ -880,12 +912,21 @@ namespace LevelData
 				if(type == "time")
 				{
 					TimeTrigger* timeTrig = new TimeTrigger();
-					timeTrig->setBoundaries(Ogre::AxisAlignedBox(center - cornersOffset,center + cornersOffset));
 					timeTrig->setTimeDelay(timeDelay);
 					timeTrig->setTriggerType(TIME);
 					timeTrig->setScriptFunction(script);
 					timeTrig->activate(false);
 					tZone.reset(timeTrig);
+				}
+
+				if(type == "global")
+				{
+					GlobalTrigger* globTrig = new GlobalTrigger();
+					globTrig->setContinuousExecution(true);
+					globTrig->setTriggerType(GLOBAL);
+					globTrig->setScriptFunction(script);
+					globTrig->activate(false);
+					tZone.reset(globTrig);
 				}
 
 				triggers->push_back(std::move(tZone));

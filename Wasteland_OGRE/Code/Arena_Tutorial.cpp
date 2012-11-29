@@ -272,7 +272,7 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 		}
 
 		_updateLights();
-		_updateTriggers(playerTransform,static_cast<int>(time));
+		_updateTriggers(playerTransform,static_cast<int>(_deltaTime));
 		_updateDoors();
 
 		//handling the pause menu
@@ -394,6 +394,9 @@ void ArenaTutorial::_updateTriggers(OgreTransform& playerTransform, int currentT
 			break;
 		case LevelData::TIME:
 			static_cast<LevelData::TimeTrigger*>((*itr).get())->update(currentTime);
+			break;
+		case LevelData::GLOBAL:
+			static_cast<LevelData::GlobalTrigger*>((*itr).get())->update(playerTransform,currentTime);
 			break;
 		};
 	}
