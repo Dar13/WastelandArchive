@@ -10,6 +10,8 @@ struct rcConfig;
 
 struct RecastDetourConfiguration
 {
+	RecastDetourConfiguration() : recastConfig(nullptr),userConfig(nullptr) {}
+	RecastDetourConfiguration(rcConfig* rcCfg,RecastConfiguration* usrCfg) : recastConfig(rcCfg),userConfig(usrCfg) {}
 	RecastConfiguration* userConfig;
 	rcConfig* recastConfig;
 };

@@ -150,9 +150,10 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	_recast->buildNavMesh(&levelGeometry);
 	_recast->exportPolygonMeshToObj("ARENATUTORIAL_RECAST_MESH.obj");
 
-	rcdtConfig config;
-	config.recastConfig = &_recast->getRecastConfig();
-	config.userConfig = &_recast->getRecastBuildConfiguration();
+	rcdtConfig config = _recast->getConfigurations();
+	//rcdtConfig config(&_recast->getRecastConfig(),&_recast->getRecastBuildConfiguration());
+	//config.recastConfig = &_recast->getRecastConfig();
+	//config.userConfig = &_recast->getRecastBuildConfiguration();
 
 	_detour.reset(new DetourInterface(_recast->getPolyMesh(),_recast->getDetailMesh(),config));
 
