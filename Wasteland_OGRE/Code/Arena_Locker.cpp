@@ -66,9 +66,7 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 	_recast->buildNavMesh(&levelGeometry);
 	_recast->exportPolygonMeshToObj("ARENALOCKER_RECAST_MESH.obj");
 
-	rcdtConfig config;
-	config.recastConfig = &_recast->getRecastConfig();
-	config.userConfig = &_recast->getRecastBuildConfiguration();
+	rcdtConfig config = _recast->getConfigurations();
 
 	_detour.reset(new DetourInterface(_recast->getPolyMesh(),_recast->getDetailMesh(),config));
 

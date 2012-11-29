@@ -28,8 +28,10 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	_view = Graphics->getRenderWindow()->addViewport(_camera);
 	_view->setBackgroundColour(Ogre::ColourValue(0,0,0));
 
-	_camera->setFarClipDistance(100);
-	_camera->setNearClipDistance(.01);
+	//some small camera set-up
+	_camera->setFarClipDistance(1000.0f);
+	_camera->setNearClipDistance(.001f);
+	_camera->lookAt(0.0f,1.9f,0.0f);
 	
 	_shadowListener = new ShadowListener();
 
@@ -50,8 +52,8 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 		vp->setClearEveryFrame(true);
 	}
 	
-	_scene->setShadowTechnique(Ogre::SHADOWTYPE_TEXTURE_MODULATIVE_INTEGRATED);
-	_scene->addListener(_shadowListener);
+	//_scene->setShadowTechnique(Ogre::SHADOWTYPE_TEXTURE_MODULATIVE_INTEGRATED);
+	//_scene->addListener(_shadowListener);
 
 	_shadowCompositorListener = new ShadowCompositorListener(_camera);
 	
@@ -95,9 +97,6 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 
 	//player setup
 	_player.reset(new Player());
-	
-	//set the camera aspect ratio
-	_camera->setAspectRatio(16.0f/9.0f);
 
 	//let's try out the character controller
 	_controller.reset(new CharacterController(_camera,Ogre::Vector3(70.0f,1.9f,0.0f),Ogre::Vector3(0.0,0.0,-5.0f),_physics->getWorld(),Graphics ) );
@@ -149,8 +148,8 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 
 	_crowd.reset(new CrowdManager(_detour.get(),&config));
 
-	_AI.reset(new AIManager());
-	_AI->loadNPCsFromFile("resource\\xml\\lists\\arenalocker_npc_list.xml",_scene,Graphics,_crowd.get());
+	//_AI.reset(new AIManager());
+	//_AI->loadNPCsFromFile("resource\\xml\\lists\\arenalocker_npc_list.xml",_scene,Graphics,_crowd.get());
 	//_AI->loadEnemiesFromFile("resource\\xml\\lists\\arenalocker_enemy_list.xml",_scene,Graphics,_crowd.get());
 
 	_pauseMenu.reset(new PauseMenu(State::GAME_ARENA));
@@ -247,9 +246,9 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 			_stateShutdown = true;
 		}
 
-		_updateLights();
-		_updateTriggers(&playerTransform,static_cast<int>(_deltaTime));
-		_updateDoors();
+		//_updateLights();
+		//_updateTriggers(&playerTransform,static_cast<int>(_deltaTime));
+		//_updateDoors();
 
 		//handling the pause menu
 		if(Input->escapePressed() && !paused)
