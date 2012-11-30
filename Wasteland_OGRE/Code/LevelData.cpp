@@ -78,7 +78,7 @@ namespace LevelData
 	//============================
 	//Global Trigger, derived from TriggerZone
 	//============================
-	void GlobalTrigger::update(OgreTransform& playerTransform,int deltaTimeMs)
+	void GlobalTrigger::update(OgreTransform& playerTransform,int deltaTimeInMs)
 	{
 		if(!_continuousExecution)
 		{
@@ -102,9 +102,9 @@ namespace LevelData
 	//============================
 	//Player Trigger, derived from TriggerZone
 	//============================
-	void PlayerTrigger::update(const OgreTransform& playerTrans)
+	void PlayerTrigger::update(OgreTransform& playerTransform, int deltaTimeInMs)
 	{
-		_triggered = check(playerTrans);
+		_triggered = check(playerTransform);
 		if((_triggered && !_triggerInZone) || _activated)
 		{
 			//callback to lua or other function
@@ -156,7 +156,7 @@ namespace LevelData
 	{
 		_targetNode = static_cast<Ogre::SceneNode*>(rootNode->getChild(_target));
 	}
-	void EntityTrigger::update()
+	void EntityTrigger::update(OgreTransform& playerTransform,int deltaTimeInMs)
 	{
 		_triggered = check(_targetNode->getPosition());
 
@@ -206,11 +206,11 @@ namespace LevelData
 		_timeDelay = milliSecs;
 	}
 
-	void TimeTrigger::update(int time_ms)
+	void TimeTrigger::update(OgreTransform& playerTransform,int deltaTimeInMs)
 	{
 		if(_timeActivated)
 		{
-			_currentTime += time_ms;
+			_currentTime += deltaTimeInMs;
 			_triggered = check(_currentTime);
 		}
 		else
@@ -805,7 +805,7 @@ namespace LevelData
 		_file = fileName;
 	}
 
-	void LevelParser::parseTriggers(std::vector<std::unique_ptr<TriggerZone>>* triggers)
+	void LevelParser::parseTriggers(std::vector<std::unique_ptr<TriggerZone>>* triggers,Ogre::SceneNode* rootNode)
 	{
 		std::ifstream dataFile(_file);
 		std::string data;
@@ -890,42 +890,46 @@ namespace LevelData
 				Ogre::AxisAlignedBox boundaries(center - cornersOffset,center + cornersOffset);
 				if(type == "plr")
 				{
-					PlayerTrigger* playerTrig = new PlayerTrigger();
-					playerTrig->setBoundaries(boundaries);
-					playerTrig->setTriggerType(PLAYER);
-					playerTrig->setScriptFunction(script);
-					playerTrig->activate(false);
+					//PlayerTrigger* playerTrig = new PlayerTrigger();
+					PlayerTrigger* playerTrig = new PlayerTrigger(script,boundaries,false);
+					//playerTrig->setBoundaries(boundaries);
+					//playerTrig->setTriggerType(PLAYER);
+					//playerTrig->setScriptFunction(script);
+					//playerTrig->activate(false);
 					tZone.reset(playerTrig);
 				}
 
 				if(type == "ent")
 				{
-					EntityTrigger* entTrig = new EntityTrigger();
-					entTrig->setBoundaries(boundaries);
-					entTrig->setTriggerTarget(target);
-					entTrig->setScriptFunction(script);
-					entTrig->setTriggerType(ENTITY);
-					entTrig->activate(false);
+					//EntityTrigger* entTrig = new EntityTrigger();
+					EntityTrigger* entTrig = new EntityTrigger(script,target,boundaries,rootNode,false);
+					//entTrig->setBoundaries(boundaries);
+					//entTrig->setTriggerTarget(target);
+					//entTrig->setScriptFunction(script);
+					//entTrig->setTriggerType(ENTITY);
+					//entTrig->activate(false);
 					tZone.reset(entTrig);
 				}
 
 				if(type == "time")
 				{
-					TimeTrigger* timeTrig = new TimeTrigger();
-					timeTrig->setTimeDelay(timeDelay);
-					timeTrig->setTriggerType(TIME);
-					timeTrig->setScriptFunction(script);
-					timeTrig->activate(false);
+					//TimeTrigger* timeTrig = new TimeTrigger();
+					TimeTrigger* timeTrig = new TimeTrigger(script,timeDelay,false);
+					//timeTrig->setTimeDelay(timeDelay);
+					//timeTrig->setTriggerType(TIME);
+					//timeTrig->setScriptFunction(script);
+					//timeTrig->activate(false);
 					tZone.reset(timeTrig);
 				}
 
 				if(type == "global")
 				{
-					GlobalTrigger* globTrig = new GlobalTrigger();
-					globTrig->setContinuousExecution(true);
-					globTrig->setTriggerType(GLOBAL);
-					globTrig->setScriptFunction(script);
-					globTrig->activate(false);
+					//GlobalTrigger* globTrig = new GlobalTrigger();
+					GlobalTrigger* globTrig = new GlobalTrigger(script,true,false);
+					//globTrig->setContinuousExecution(true);
+					//globTrig->setTriggerType(GLOBAL);
+					//globTrig->setScriptFunction(script);
+					//globTrig->activate(false);
 					tZone.reset(globTrig);
 				}
 

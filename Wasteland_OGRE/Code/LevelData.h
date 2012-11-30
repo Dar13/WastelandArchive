@@ -58,6 +58,15 @@ namespace LevelData
 			_triggerType = 0;
 			_triggerInZone = false;
 		}
+		TriggerZone(std::string scriptName,bool activated = false) : BaseEntity(activated,TRIGGERZONE)
+		{
+			_scriptName = scriptName;
+			_triggered = false;
+			_triggerType = 0;
+			_triggerInZone = false;
+		}
+
+		virtual void update(OgreTransform& playerTransform, int deltaTimeInMs) {}
 
 		void setTriggerType(TRIGGER_TYPE type);
 		int getTriggerType();
@@ -71,7 +80,13 @@ namespace LevelData
 	class GlobalTrigger : public TriggerZone
 	{
 	public:
-		void update(OgreTransform& playerTransform,int deltaTimeMs);
+		GlobalTrigger() {}
+		GlobalTrigger(std::string scriptName,bool contExec = false,bool activated = false)
+			: TriggerZone(scriptName,activated),
+			  _continuousExecution(contExec)
+		{ _triggerType = GLOBAL; }
+
+		virtual void update(OgreTransform& playerTransform,int deltaTimeInMs);
 
 		void setContinuousExecution(bool continuous) { _continuousExecution = continuous; }
 
@@ -82,7 +97,13 @@ namespace LevelData
 	class PlayerTrigger : public TriggerZone
 	{
 	public:
-		void update(const OgreTransform& playerTrans);
+		PlayerTrigger() {}
+		PlayerTrigger(std::string scriptName, Ogre::AxisAlignedBox boundaries,bool activated = false)
+			: TriggerZone(scriptName,activated),
+			  _boundaries(boundaries)
+		{ _triggerType = PLAYER; }
+
+		virtual void update(OgreTransform& playerTransform, int deltaTimeInMs);
 		bool check(const OgreTransform& playerTrans);
 
 		void setBoundaries(const Ogre::AxisAlignedBox& zoneBoundaries);
@@ -93,10 +114,19 @@ namespace LevelData
 	class EntityTrigger : public TriggerZone
 	{
 	public:
+		EntityTrigger() {}
+		EntityTrigger(std::string scriptName,std::string& targetName, Ogre::AxisAlignedBox boundaries,Ogre::SceneNode* rootNode, bool activated = false)
+			: TriggerZone(scriptName,activated),
+			  _target(targetName)
+		{
+			setTriggerTargetNode(rootNode);
+			_triggerType = ENTITY;
+		}
+
 		void setTriggerTarget(const std::string& targetName);
 		void setTriggerTargetNode(Ogre::SceneNode* rootNode);
 
-		void update();
+		virtual void update(OgreTransform& playerTransform,int deltaTimeInMs);
 
 		bool check(const Ogre::Vector3& position);
 
@@ -110,9 +140,18 @@ namespace LevelData
 	class TimeTrigger : public TriggerZone
 	{
 	public:
+		TimeTrigger() {}
+		TimeTrigger(std::string scriptName, int timeDelay, bool activated = false)
+			: TriggerZone(scriptName,activated),
+			  _timeDelay(timeDelay),
+			  _currentTime(0),
+			  _goalTime(0),
+			  _timeActivated(false)
+		{ _triggerType = TIME; }
+
 		void setTimeDelay(int milliSecs);
 
-		void update(int time_ms);
+		virtual void update(OgreTransform& playerTransform,int deltaTimeInMs);
 
 		bool check(int time_ms);
 	private:
@@ -296,7 +335,7 @@ namespace LevelData
 	public:
 		void setFile(const char* fileName);
 
-		void parseTriggers(std::vector<std::unique_ptr<TriggerZone>>* triggers);
+		void parseTriggers(std::vector<std::unique_ptr<TriggerZone>>* triggers,Ogre::SceneNode* rootNode);
 
 		void parseLights(std::vector<std::unique_ptr<LightData>>* lights);
 
