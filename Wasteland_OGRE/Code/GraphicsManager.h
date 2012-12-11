@@ -14,6 +14,12 @@ struct OgreTransform
 	Ogre::Vector3 direction;
 };
 
+//Query flags
+#define LEVEL_MASK 1<<0
+#define CHARACTER_MASK 1<<1
+#define SCENERY_MASK 1<<2
+#define CAMERA_MASK 1<<3
+
 //Use this to implement callback from screen fader.
 //Is called when the fade is done.
 class ScreenFaderCallback

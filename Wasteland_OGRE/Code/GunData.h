@@ -138,6 +138,9 @@ public:
 	//! Gets the firing status of the gun that this class represents.
 	bool isFiring() { return _firing; }
 
+	//! Returns whether or not the mouse is held in relation to this gun
+	bool isMouseHeld() { return _mouseHeld; }
+
 	//! Sets the magazine size for the gun.
 	void setMagazineSize(const int& magSize);
 	//! Gets the magainze size of the gun.

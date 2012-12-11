@@ -13,6 +13,7 @@
 #define _PLAYER_H_
 
 #define CONV_EAIWEAP_TO_METER 0.0254f
+#define EQUIP_NODE_OFFSET_Y .675f
 
 #ifndef _PLAYER_INTERFACE_
 

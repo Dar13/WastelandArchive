@@ -35,6 +35,8 @@ void EWSManager::Setup(Ogre::SceneManager* scene)
 	}
 	//_ewsTexture = _material->getTechnique(0)->getPass(0)->getTextureUnitState(2)->_getTexturePtr();
 	_ewsTexture = _material->getTechnique(0)->getPass(0)->getTextureUnitState(1)->_getTexturePtr();
+	//_material->getTechnique(0)->getPass(0)->getTextureUnitState(1)->setTextureMipmapBias(-2.0f);
+	//_material->getTechnique(0)->setTextureAnisotropy(2);
 	
 	//get pixel buffer
 	_pixelBuffer = _ewsTexture->getBuffer();
@@ -45,6 +47,7 @@ void EWSManager::Setup(Ogre::SceneManager* scene)
 	_ewsNode->attachObject(_ewsEntity);
 	_ewsNode->setPosition(0.0f,2.0f,0.0f);
 	_ewsEntity->setMaterial(_material);
+	_ewsEntity->setMaterialLodBias(2.0f,0,0);
 
 	//_placed = true;
 	_placed = false;

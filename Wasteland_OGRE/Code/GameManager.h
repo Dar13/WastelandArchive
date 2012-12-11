@@ -7,9 +7,13 @@
 #include "GraphicsManager.h"
 #include "InputManager.h"
 #include "PhysicsManager.h"
-#include "EWS.h"
-#include "Player.h"
+#include "SoundManager.h"
 #include "Utility.h"
+
+#ifndef _GM_NO_EXTRAS_
+#include "GunData.h"
+#endif
+
 
 /*! \brief The Manager namespace of all the managers. The final abstraction layer.
 

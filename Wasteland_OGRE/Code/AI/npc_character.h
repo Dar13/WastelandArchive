@@ -37,6 +37,8 @@ protected:
 	bool _bhvChange,_actChange;
 
 	AnimationBlender _animHandler;
+
+	Ogre::Euler headOrientation;
 };
 
 #endif

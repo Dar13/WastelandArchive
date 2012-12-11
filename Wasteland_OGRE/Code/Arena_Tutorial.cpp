@@ -25,6 +25,7 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 
 	_camera = _scene->createCamera("arenaTutCam");
 	_camera->setAspectRatio(16.0f/9.0f);
+	_camera->setQueryFlags(CAMERA_MASK);
 	_view = Graphics->getRenderWindow()->addViewport(_camera);
 	_view->setBackgroundColour(Ogre::ColourValue(0,0,0));
 
@@ -94,8 +95,8 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	}
 
 	//camera setup
-	//_camera->setPosition(Ogre::Vector3(30,1.9f,0));
-	_camera->setPosition(Ogre::Vector3(0.0f,1.9f,0.0f));
+	_camera->setPosition(Ogre::Vector3(0,1.9f,0));
+	//_camera->setPosition(Ogre::Vector3(0.0f,5.0f,0.0f));
 	_camera->setNearClipDistance(.001f);
 	_camera->setFarClipDistance(1000.0f);
 	_camera->lookAt(0,1.9f,0);
@@ -106,12 +107,18 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	//set the camera aspect ratio
 	_camera->setAspectRatio(16.0f/9.0f);
 
+	///Ogre::Camera* testCamera = _scene->createCamera("ARENA_TUT_TESTCAM");
+	//testCamera->lookAt(0,1.9f,0);
+	//testCamera->setPosition(Ogre::Vector3(0.0f,1.9f,0.0f));
+
 	//let's try out the character controller
-	_controller.reset(new CharacterController(_camera,Ogre::Vector3(70.0f,1.9f,0.0f),Ogre::Vector3(0.0,0.0,-5.0f),_physics->getWorld(),Graphics ) );
+	_controller.reset(new CharacterController(_camera,Ogre::Vector3(1.0f,1.9f,5.0f),Ogre::Vector3(0.0,0.0,-5.0f),_physics->getWorld(),Graphics ) );
 	//since we're using the character controller, should also lock the mouse.
 	Input->setMouseLock(true);
 
 	_controller->getNode()->addChild(light);
+
+	//_camera->setAutoTracking(true,_controller->getNode());
 
 	//let's setup the EWS system
 	_ews.reset(new EWSManager(_scene));
@@ -170,7 +177,6 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 			NPCCharacter* npc = new NPCCharacter(obj->name(),obj->scriptName(),node,_crowd.get());
 			npc->setMaxSpeed(.9f);
 			_npcs.push_back(npc);
-			//std::cout << npc->getNode()->getAttachedObject(0)->getCastShadows() << std::endl;
 			LuaManager::getSingleton().addEntity(npc->getName(),npc);
 		}
 
@@ -192,8 +198,11 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 	OgreTransform playerTransform;
 
 	bool polySwitch = false;
+
+	LuaManager::getSingleton().addDataPointer("playerPosition",static_cast<void*>(&playerTransform.position));
 	
-	float time;
+	float time = Graphics->getTimer()->getMilliseconds();
+	_oldTime = time;
 	bool paused = false;
 	//while the escape key isn't pressed and the state isn't told to shutdown.
 	while(!_stateShutdown)
@@ -256,6 +265,9 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 		//Update Player-specific stuff
 		_player->Update(Input,_physics.get(),_ews.get(),playerTransform);
 
+		//std::cout << _controller->getNode()->getPosition() << std::endl;
+		//std::cout << static_cast<Ogre::Camera*>(_controller->getNode()->getAttachedObject(0))->getPosition() << std::endl;
+
 		//Update the EWS system
 		_ews->Update(static_cast<int>(time),
 					 Input->isCFGKeyPressed(InputManager::ENVWARNSYS),
@@ -290,6 +302,9 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 			}
 		}
 	}
+
+	LuaManager::getSingleton().purgeData();
+	LuaManager::getSingleton().purgeEntities();
 
 	return _returnValue;
 }

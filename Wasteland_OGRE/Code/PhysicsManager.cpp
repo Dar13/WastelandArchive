@@ -20,8 +20,6 @@ PhysicsManager::PhysicsManager()
 PhysicsManager::~PhysicsManager()
 {
 	Shutdown(false);
-
-	delete _debugDrawer;
 }
 
 void PhysicsManager::Setup()
@@ -236,16 +234,17 @@ void PhysicsManager::Shutdown(bool reuse)
 		delete shape;
 	}
 	_Shapes.clear(); //cleans up the vector.
-	
+
+	if(_debugDrawer)
+	{
+		delete _debugDrawer;
+	}
 
 	if(!reuse)
 	{
 		//Delete all the Bullet pointers.
 		//in opposite creation order.
-		if(_debugDrawer)
-		{
-			delete _debugDrawer;
-		}
+		
 		delete _World;
 		delete _Solver;
 		delete _OverlapPairCache;

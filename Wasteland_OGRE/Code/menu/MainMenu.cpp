@@ -2,7 +2,11 @@
 
 #include "Menu.h"
 #include "..\debug\console.h"
+
+#define _GM_NO_EXTRAS_
 #include "..\GameManager.h"
+#undef _GM_NO_EXTRAS_
+
 #include <boost\lexical_cast.hpp>
 
 #include <xercesc\dom\DOM.hpp>

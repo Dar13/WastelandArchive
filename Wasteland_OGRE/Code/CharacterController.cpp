@@ -3,6 +3,8 @@
 #include "Utility.h"
 #include "debug\print.h"
 
+#include <vectormath\scalar\vectormath_aos.h>
+
 void CharacterController::create(Ogre::Camera* camera,const Ogre::Vector3& initialPosition,const Ogre::Vector3& initialDirection,btDiscreteDynamicsWorld* phyWorld,GraphicsManager* Graphics)
 {
 	cCamera = camera;
@@ -19,7 +21,8 @@ void CharacterController::create(Ogre::Camera* camera,const Ogre::Vector3& initi
 	//collision shape
 	//Patch: uses a member variable instead of a 'new btGhostPairCallback' that causes a memory leak.
 	phyWorld->getPairCache()->setInternalGhostPairCallback(&__pairCallback);
-	btScalar charHeight = 1.9f;
+	//btScalar charHeight = 1.9f;
+	btScalar charHeight = 1.9f * .5f;
 	btScalar charWidth = .75f;
 	btConvexShape* capsule = new btCapsuleShape(charWidth,charHeight);
 	cGhostObject->setCollisionShape(capsule);
@@ -45,6 +48,7 @@ void CharacterController::create(Ogre::Camera* camera,const Ogre::Vector3& initi
 	cGhostObject->getWorldTransform().setRotation(Utility::convert_OgreQuaternion(cNode->getOrientation()));
 	cCamera->setPosition(0,0,0);
 	cNode->attachObject(cCamera);
+	cCamera->setPosition(0.0f,.675f,0.0f);
 
 	//for some reason, this expects a positive value.
 	//so make the global bullet gravity its inverse.
@@ -66,17 +70,22 @@ void CharacterController::update(float physicsTimeElapsed,InputManager* inputMan
 	btVector3 strafeDirection = cTransform.getBasis()[0]; strafeDirection.normalize();
 	btVector3 walkDirection; walkDirection.setZero();
 
+	btVector3 upDir = btVector3(0,1,0);
+	btVector3 frontDir = upDir.cross(strafeDirection);
+
 	//velocity = meters per second * kilometers per hour
 	btScalar walkVel = 2.0f * 4.0f;
 
 	Ogre::Vector3 direction; Ogre::Quaternion rotation;
 	if(inputManager->isCFGKeyPressed(InputManager::FORWARD))
 	{
-		walkDirection -= forwardDirection;
+		//walkDirection -= forwardDirection;
+		walkDirection += frontDir;
 	}
 	if(inputManager->isCFGKeyPressed(InputManager::BACKWARD))
 	{
-		walkDirection += forwardDirection;
+		//walkDirection += forwardDirection;
+		walkDirection -= frontDir;
 	}
 	if(inputManager->isCFGKeyPressed(InputManager::RIGHT))
 	{
@@ -100,12 +109,16 @@ void CharacterController::update(float physicsTimeElapsed,InputManager* inputMan
 	btScalar walkSpd = walkVel * (physicsTimeElapsed / 1000.0f);
 
 	//get direction vector.
+	//walkDirection.normalize();
 	direction = Utility::convert_btVector3(walkDirection);
 	rotation = cNode->getOrientation();
 	rotation.z = 0.0f;
 	//direction is normalized(should be). NOT FINISHED.
 	direction = rotation * (rotation * direction);
 	walkDirection = Utility::convert_OgreVector3(direction);
+	walkDirection.setY(0.0f);
+	walkDirection = walkDirection.safeNormalize();
+	if(walkDirection.x() == 1.0f) { walkDirection.setX(0.0f); }
 
 	//**
 	//Mouse look

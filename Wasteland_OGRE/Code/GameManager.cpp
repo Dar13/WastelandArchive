@@ -68,7 +68,6 @@ namespace GameManager
 
 		//Ogre part of this arrangement.
 		Ogre::SceneNode* node = graphicsManager->createSceneNode(scene,objectInfo,NULL);
-		retVal.ogreNode = node;
 
 		btCollisionShape* shape = NULL;
 
@@ -87,10 +86,12 @@ namespace GameManager
 				if(objectInfo->collisionShape() == "TriangleMesh")
 				{
 					shape = buildTriangleCollisionShape(node,graphicsManager);
+					node->getAttachedObject(0)->setQueryFlags(LEVEL_MASK);
 				}
 				else
 				{
 					shape = phyManager->generateCollisionShape(objectInfo);
+					node->getAttachedObject(0)->setQueryFlags(SCENERY_MASK);
 				}
 			}
 		
@@ -108,6 +109,8 @@ namespace GameManager
 				retVal.btBody = NULL;
 			}
 		}
+
+		retVal.ogreNode = node;
 
 		//return by value, not reference.
 		return retVal;
@@ -129,18 +132,17 @@ namespace GameManager
 		//Here's the variable that'll be passed back(by-value, not reference!).
 		OgreBulletPair retVal;
 
-		//That's dead simple, it's already passed in!
-		retVal.ogreNode=node;
-
 		//Easy(ish) function call.
 		btCollisionShape* shape = NULL;
 		if(objectInfo->mass()!= 0.0f)
 		{
 			shape = phyManager->generateCollisionShape(objectInfo);
+			node->getAttachedObject(0)->setQueryFlags(SCENERY_MASK);
 		}
 		else
 		{
 			shape = buildTriangleCollisionShape(node,graphicsManager);
+			node->getAttachedObject(0)->setQueryFlags(LEVEL_MASK);
 		}
 		btTransform init; init.setIdentity();
 		btVector3 pos;
@@ -148,6 +150,9 @@ namespace GameManager
 		pos.setY(objectInfo->positionY());
 		pos.setZ(objectInfo->positionZ());
 		retVal.btBody = phyManager->addRigidBody(shape,node,objectInfo->mass(),init);
+		
+		//That's dead simple, it's already passed in!
+		retVal.ogreNode=node;
 
 		return retVal;
 	}
@@ -159,6 +164,7 @@ namespace GameManager
 		Ogre::SceneNode* node = nullptr;
 
 		node = graphics->createSceneNode(scene,obj);
+		node->getAttachedObject(0)->setQueryFlags(CHARACTER_MASK);
 
 		if(node == nullptr)
 		{
@@ -187,6 +193,7 @@ namespace GameManager
 										_correspondGunName(wep->name()),
 										static_cast<int>(wep->gameplay().reloadQty()),4);
 			retVal.node = graphicsManager->createSceneNode(scene,wep,nullptr);
+			retVal.node->getAttachedObject(0)->setQueryFlags(SCENERY_MASK);
 			static_cast<cGunData*>(retVal.equip)->setAccuracyRadius(static_cast<int>(wep->gameplay().accuracy()));
 			static_cast<cGunData*>(retVal.equip)->setDamagePerBullet(static_cast<int>(wep->gameplay().damage()));
 			static_cast<cGunData*>(retVal.equip)->setEffectiveRange(static_cast<int>(wep->gameplay().range()));

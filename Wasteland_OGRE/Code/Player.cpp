@@ -95,31 +95,34 @@ bool Player::Update(InputManager* input,
 			//shoot gun
 			std::cout << "MB_Left pressed..." << std::endl;
 			gun->fire();
-			//check for collisions with enemies
-			Ogre::SceneManager* scene = _equipNode->getCreator();
-			Ogre::Vector3 dir = _equipNode->getOrientation() * Ogre::Vector3::NEGATIVE_UNIT_Z;
-			Ogre::Ray ray(_equipNode->_getDerivedPosition(),dir);
-
-			Ogre::RaySceneQuery* rayQuery = scene->createRayQuery(ray);
-			rayQuery->setSortByDistance(true);
-
-			Ogre::RaySceneQueryResult results = rayQuery->execute();
-
-			auto shot =  [this,gun] (Ogre::RaySceneQueryResultEntry& entry) 
+			//check for collisions with enemies if first time through
+			if(!gun->isMouseHeld())
 			{
-				if(entry.movable != nullptr)
-				{
-					std::string name = entry.movable->getName().substr(3,std::string::npos);
-					LevelData::BaseEntity* ent = LuaManager::getSingleton().getEntity(name);
-					if(ent != nullptr && (ent->getType() == LevelData::NPC || ent->getType() == LevelData::ENEMY))
-					{
-						_damageInterface->registerShotAtEnemy(gun->getGunshotData(),name);
-					}
-				}
-			};
-			std::for_each(results.begin(),results.end(),shot);
+				Ogre::SceneManager* scene = _equipNode->getCreator();
+				Ogre::Vector3 dir = transform.direction;
+				Ogre::Ray ray(transform.position,dir);
 
-			scene->destroyQuery(rayQuery);
+				Ogre::RaySceneQuery* rayQuery = scene->createRayQuery(ray);
+				rayQuery->setSortByDistance(true);
+
+				Ogre::RaySceneQueryResult results = rayQuery->execute();
+
+				auto shot =  [this,gun] (Ogre::RaySceneQueryResultEntry& entry) 
+				{
+					if(entry.movable != nullptr)
+					{
+						std::string name = entry.movable->getName().substr(3,std::string::npos);
+						LevelData::BaseEntity* ent = LuaManager::getSingleton().getEntity(name);
+						if(ent != nullptr && (ent->getType() == LevelData::NPC || ent->getType() == LevelData::ENEMY))
+						{
+							_damageInterface->registerShotAtEnemy(gun->getGunshotData(),name);
+						}
+					}
+				};
+				std::for_each(results.begin(),results.end(),shot);
+
+				scene->destroyQuery(rayQuery);
+			}
 		}
 		else
 		{
@@ -173,7 +176,7 @@ void Player::equipObject(const EquippableObject& obj)
 		obj.node->getParentSceneNode()->removeChild(obj.node);
 		_equipNode->addChild(obj.node);
 	}
-	obj.node->setPosition(0.11f,-0.08f,-.25f);
+	obj.node->setPosition(0.11f,-0.08f + EQUIP_NODE_OFFSET_Y,-.25f);
 	std::cout << obj.node->getPosition() << std::endl;
 	std::cout << "Weapon equipped." << std::endl;
 }

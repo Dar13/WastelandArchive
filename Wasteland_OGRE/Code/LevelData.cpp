@@ -820,6 +820,7 @@ namespace LevelData
 		std::string target;
 		std::string name;
 		int timeDelay = 0;
+		bool contExec = false;
 
 		bool startObject = false;
 		bool finishedObject = false;
@@ -876,6 +877,10 @@ namespace LevelData
 				if( *fieldS == "Callback" )
 				{
 					script = *boost::next(fieldS);
+				}
+				if( *fieldS == "ContExec" )
+				{
+					contExec = boost::lexical_cast<bool,std::string>(*boost::next(fieldS));
 				}
 				if( *fieldS == "}")
 				{

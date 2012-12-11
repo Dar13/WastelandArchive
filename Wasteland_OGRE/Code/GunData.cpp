@@ -260,7 +260,7 @@ bool cGunData::frameStarted(const Ogre::FrameEvent& evt)
 				_soundPlayed = true;
 		}
 	}
-	
+
 	return true;
 }
 
