@@ -150,7 +150,7 @@ bool cGunData::frameStarted(const Ogre::FrameEvent& evt)
 						_animBlender.blend("fire",AnimationBlender::BlendWhileAnimating,.2f,false);
 						_soundChannel->stop();
 						_soundChannel = _soundMgr->playSound(_sounds[SND_FIRE].sound);
-						std::cout << "fire" << std::endl;
+						//std::cout << "fire" << std::endl;
 					}
 				}
 				else

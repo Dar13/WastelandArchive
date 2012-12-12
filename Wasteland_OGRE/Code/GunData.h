@@ -141,6 +141,19 @@ public:
 	//! Returns whether or not the mouse is held in relation to this gun
 	bool isMouseHeld() { return _mouseHeld; }
 
+	bool shouldDamage()
+	{
+		if(_type == PISTOL || _type == SHOTGUN)
+		{
+			return !_mouseHeld;
+		}
+
+		if(_fireRate > 1)
+		{
+			//based on firerate and progression of animation.
+		}
+	}
+
 	//! Sets the magazine size for the gun.
 	void setMagazineSize(const int& magSize);
 	//! Gets the magainze size of the gun.

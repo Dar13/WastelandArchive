@@ -93,10 +93,10 @@ bool Player::Update(InputManager* input,
 		if(input->isMBPressed(OIS::MB_Left))
 		{
 			//shoot gun
-			std::cout << "MB_Left pressed..." << std::endl;
+			//std::cout << "MB_Left pressed..." << std::endl;
 			gun->fire();
 			//check for collisions with enemies if first time through
-			if(!gun->isMouseHeld())
+			if(gun->shouldDamage())
 			{
 				Ogre::SceneManager* scene = _equipNode->getCreator();
 				Ogre::Vector3 dir = transform.direction;
