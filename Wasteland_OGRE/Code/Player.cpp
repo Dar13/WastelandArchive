@@ -63,6 +63,10 @@ void Player::Setup(const std::string& file,GraphicsManager* graphics,Ogre::Scene
 	}
 
 	_damageInterface = damageInterface;
+
+	_ADSdestination = _equipNode->getPosition();
+
+	_gunOriginalPosition = _equippables[_curEquippable].node->getPosition();
 }
 
 bool Player::Update(InputManager* input,
@@ -127,6 +131,44 @@ bool Player::Update(InputManager* input,
 		else
 		{
 			gun->setFiring(false);
+		}
+
+		if(input->isMBPressed(OIS::MB_Right))
+		{
+			if(!_ADS)
+			{
+				_ADS = true;
+				_ADSsource = _equippables[_curEquippable].node->getPosition();
+				_ADSdestination = cGunData::getADSPosition(gun->getGunName());
+				_ADSdestination.y += EQUIP_NODE_OFFSET_Y;
+				std::cout << _ADSdestination << "," << _ADSsource << std::endl;
+				_ADStime = 0;
+				_returnFromADS = false;
+				//_ADSsrcorientation = _equipNode->getOrientation();
+				//_ADSdestorientation = (_ADSsrcorientation * Ogre::Vector3::UNIT_Z).getRotationTo(Ogre::Vector3::UNIT_Z);
+			}
+		}
+		else
+		{
+			_ADS = false;
+			if(!_returnFromADS)
+			{
+				_ADStime = 0;
+			}
+			_ADSdestination = _gunOriginalPosition;
+			_ADSsource = _equippables[_curEquippable].node->getPosition();
+			_returnFromADS = true;
+			//std::cout << _ADSsource << "," << _ADSdestination << std::endl;
+		}
+
+		if(_equippables[_curEquippable].node->getPosition().squaredDistance(_ADSdestination) > .001f)
+		{
+			//interpolate to that point, assuming delta time of 16ms
+			_equippables[_curEquippable].node->setPosition(Utility::vector3_lerp(_ADSsource,_ADSdestination,_ADStime,1));
+			if(_ADS) { _ADStime += 20.0f;}
+			_ADStime += 16.6f;
+
+			//also rotate the gun.
 		}
 
 		if(input->isCFGKeyPressed(InputManager::RELOAD))

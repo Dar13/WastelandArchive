@@ -152,6 +152,9 @@ public:
 		{
 			//based on firerate and progression of animation.
 		}
+
+		//when in doubt, say no.
+		return false;
 	}
 
 	//! Sets the magazine size for the gun.
@@ -209,6 +212,7 @@ public:
 	static bool isCorrespondAnimSoundID(int animID,int soundID);
 	static int getCorrespondingSoundID(int animID);
 	static bool isAnimationAlmostDone(Ogre::AnimationState* anim);
+	static Ogre::Vector3 getADSPosition(int gunName);
 
 	std::string _getGunNameString() { return _gunEntityName; }
 

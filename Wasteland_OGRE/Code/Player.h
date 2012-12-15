@@ -78,6 +78,15 @@ private:
 	std::vector<EquippableObject> _equippables;
 
 	DamageInterface* _damageInterface;
+
+	bool _ADS;
+	bool _returnFromADS;
+	Ogre::Vector3 _gunOriginalPosition;
+	Ogre::Vector3 _ADSsource;
+	Ogre::Vector3 _ADSdestination;
+	Ogre::Quaternion _ADSsrcorientation;
+	Ogre::Quaternion _ADSdestorientation;
+	float _ADStime;
 };
 
 #endif

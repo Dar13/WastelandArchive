@@ -402,6 +402,8 @@ namespace Utility
 						const Ogre::Vector3& target,
 						bool ignoreY = true,
 						Ogre::Vector3 originalOrientation = Ogre::Vector3::NEGATIVE_UNIT_Z);
+
+	Ogre::Vector3 vector3_lerp(Ogre::Vector3& source,Ogre::Vector3& destination, float timeInMs, float lengthInSecs);
 };
 
 #endif

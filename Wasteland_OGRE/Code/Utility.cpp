@@ -99,3 +99,8 @@ void Utility::rotateToTarget(Ogre::SceneNode* node,
 
 	return;
 }
+
+Ogre::Vector3 Utility::vector3_lerp(Ogre::Vector3& source,Ogre::Vector3& destination, float timeInMs,float lengthInSecs)
+{
+	return (source + (destination - source) * (timeInMs / (lengthInSecs * 1000.0f)));
+}
