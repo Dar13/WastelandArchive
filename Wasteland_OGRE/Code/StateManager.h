@@ -11,6 +11,7 @@
 #include "State.h"
 
 //actual states
+#include "Intro.h"
 #include "menu\Menu.h"
 #include "ArenaALL.h"
 

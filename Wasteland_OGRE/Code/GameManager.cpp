@@ -29,7 +29,7 @@ namespace GameManager
 		bool retVal = true;
 
 		//Update Bullet
-		if(phyManager != NULL)
+		if(phyManager != nullptr)
 			phyManager->Update(deltaTime /  1000.0f);
 
 		//Update Ogre

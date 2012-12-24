@@ -10,7 +10,7 @@ StateManager::StateManager()
 	//Make sure these pointers don't get lost!
 
 	//ToDo: Change the init to reflect the varying state classes.
-	_States[State::INTRO] = nullptr;
+	_States[State::INTRO] = new Introduction();
 	_States[State::MENU] = new MainMenu();
 	_States[State::GAME_ARENA] = new ArenaTutorial();
 	_States[State::GAME_LOCKER] = new ArenaLocker();
@@ -37,11 +37,11 @@ void StateManager::Setup(InputManager* inputManager,GraphicsManager* graphicsMan
 
 void StateManager::Run()
 {
-	//int curState=INTRO; //true start value
-	int curState=State::MENU; //will really start at INTRO
-	int oldState=curState;
+	int curState = State::INTRO; //true start value
+	//int curState=State::MENU; //will really start at INTRO
+	int oldState = curState;
 
-	while(curState!=State::END)
+	while(curState != State::END)
 	{
 		if(_States[curState] != NULL)
 		{
@@ -63,7 +63,7 @@ void StateManager::Run()
 			switch(curState)
 			{
 			case State::INTRO:
-				//_States[curState] = new
+				_States[curState] = new Introduction();
 				break;
 			case State::MENU:
 				_States[curState] = new MainMenu();

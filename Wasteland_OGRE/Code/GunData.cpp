@@ -113,6 +113,16 @@ void cGunData::reload()
 	_reloadNeeded = false;
 }
 
+void cGunData::aimDownSights()
+{
+	if(!_reloading)
+	{
+		_ADS = true;
+	}
+
+	return;
+}
+
 bool cGunData::frameStarted(const Ogre::FrameEvent& evt)
 {
 	_animBlender.addTime(evt.timeSinceLastFrame);
@@ -510,20 +520,4 @@ int cGunData::getCorrespondingSoundID(int animID)
 	}
 
 	return cGunData::NO_SOUND;
-}
-
-Ogre::Vector3 cGunData::getADSPosition(int gunName)
-{
-	switch(gunName)
-	{
-	case cGunData::M9:
-		return Ogre::Vector3(0,.05,-.28);
-		break;
-	case cGunData::G36C:
-		return Ogre::Vector3(0,.1,-.4);
-		break;
-	default:
-		return Ogre::Vector3::ZERO;
-		break;
-	};
 }

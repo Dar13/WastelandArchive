@@ -129,6 +129,8 @@ public:
 	void fire();
 	//! Allows outside classes to reload the gun that this class represents
 	void reload();
+	//! Allows outside classes to ADS the gun that this class represents
+	void aimDownSights();
 	//! Sets the moving state of the gun(necessary for animation).
 	void setMoving(bool moving) { _moving = moving; }
 	//! Gets the moving state of the gun.
@@ -137,6 +139,8 @@ public:
 	void setFiring(bool firing) { _firing = firing; if(!firing){_firingOverride = false;} }
 	//! Gets the firing status of the gun that this class represents.
 	bool isFiring() { return _firing; }
+	//! Gets the reloading status of the gun that this class represents
+	bool isReloading() { return _reloading; }
 
 	//! Returns whether or not the mouse is held in relation to this gun
 	bool isMouseHeld() { return _mouseHeld; }
@@ -212,7 +216,6 @@ public:
 	static bool isCorrespondAnimSoundID(int animID,int soundID);
 	static int getCorrespondingSoundID(int animID);
 	static bool isAnimationAlmostDone(Ogre::AnimationState* anim);
-	static Ogre::Vector3 getADSPosition(int gunName);
 
 	std::string _getGunNameString() { return _gunEntityName; }
 
@@ -233,7 +236,7 @@ private:
 
 	int _playingAnim;
 
-	bool _firing,_reloading,_moving;
+	bool _firing,_reloading,_moving,_ADS;
 	bool _mouseHeld,_firingOverride;
 
 	bool _reloadNeeded;

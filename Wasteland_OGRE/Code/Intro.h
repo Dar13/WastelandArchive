@@ -12,16 +12,19 @@ public:
 	Introduction();
 
 	//! Setup.
-	void Setup();
+	void Setup(InputManager* Input = nullptr,GraphicsManager* Graphics = nullptr,GUIManager* Gui = nullptr,SoundManager* Sound = nullptr);
 	//! Runs state.
-	int Run();
+	int Run(InputManager* Input = nullptr,GraphicsManager* Graphics = nullptr,GUIManager* Gui = nullptr,SoundManager* Sound = nullptr);
 	//! Shuts down state.
-	void Shutdown();
+	void Shutdown(InputManager* Input = nullptr,GraphicsManager* Graphics = nullptr,GUIManager* Gui = nullptr,SoundManager * Sound = nullptr);
 
 private:
-	bool _stateShutdown;
+	Ogre::Viewport* _view;
+	Ogre::SceneManager* _scene;
+	Ogre::Camera* _camera;
 
-	//not sure what else I'll need.
+	Ogre::SceneNode* _logoSceneNode;
+
 };
 
 #endif

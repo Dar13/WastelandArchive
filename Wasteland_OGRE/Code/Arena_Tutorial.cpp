@@ -30,7 +30,7 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	_view->setBackgroundColour(Ogre::ColourValue(0,0,0));
 
 	_camera->setFarClipDistance(100);
-	_camera->setNearClipDistance(.01);
+	_camera->setNearClipDistance(.001);
 	
 	_shadowListener = new ShadowListener();
 
@@ -240,7 +240,7 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 				}
 				else
 				{
-					_camera->setPolygonMode(Ogre::PM_WIREFRAME);
+					//_camera->setPolygonMode(Ogre::PM_WIREFRAME);
 				}
 				polySwitch = true;
 			}
