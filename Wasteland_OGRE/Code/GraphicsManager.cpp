@@ -521,7 +521,9 @@ bool GraphicsManager::isPointInTriangle2D(const Ogre::Vector3& pointA,const Ogre
 ScreenFader::ScreenFader(const char* overlayName,const char* materialName, ScreenFaderCallback* callback)
 	: _fadeOperation(FADE_NONE),
 	  _alpha(0.0),
-	  _callback(callback)
+	  _callback(callback),
+	  _hideAfterFadeIn(true),
+	  _hideAfterFadeOut(true)
 {
 	try
 	{
@@ -564,6 +566,8 @@ void ScreenFader::startFadeIn(double duration)
 	_currentDuration = duration;
 	_fadeOperation = FADE_IN;
 	_overlay->show();
+
+	_callback->updateFade(0.0,0.0,FADE_IN);
 }
 
 void ScreenFader::startFadeOut(double duration)
@@ -582,6 +586,8 @@ void ScreenFader::startFadeOut(double duration)
 	_currentDuration = 0.0;
 	_fadeOperation = FADE_OUT;
 	_overlay->show();
+
+	_callback->updateFade(0.0,0.0,FADE_OUT);
 }
 
 void ScreenFader::fade(double timeSinceLastFrame)
@@ -600,7 +606,9 @@ void ScreenFader::fade(double timeSinceLastFrame)
 			_alpha = _currentDuration / _totalDuration;
 			if( _alpha < 0.0 )
 			{
-				_overlay->hide();
+				if(_hideAfterFadeIn)
+					_overlay->hide();
+
 				_fadeOperation = FADE_NONE;
 				if( _callback )
 					_callback->fadeInCallback();
@@ -620,7 +628,9 @@ void ScreenFader::fade(double timeSinceLastFrame)
 			_alpha = _currentDuration / _totalDuration;
 			if( _alpha > 1.0 )
 			{
-				_overlay->hide();
+				if(_hideAfterFadeOut)
+					_overlay->hide();
+
 				_fadeOperation = FADE_NONE;
 				if( _callback )
 					_callback->fadeOutCallback();

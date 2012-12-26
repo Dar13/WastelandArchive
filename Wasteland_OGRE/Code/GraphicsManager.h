@@ -20,53 +20,8 @@ struct OgreTransform
 #define SCENERY_MASK 1<<2
 #define CAMERA_MASK 1<<3
 
-//Use this to implement callback from screen fader.
-//Is called when the fade is done.
-class ScreenFaderCallback
-{
-public:
-	virtual void fadeInCallback() {}
-	virtual void fadeOutCallback() {}
 
-	virtual void updateFade(double progress,double currentTime,int fadeOp) {}
-};
-
-class ScreenFader
-{
-public:
-	ScreenFader(const char* overlayName,const char* materialName,ScreenFaderCallback* callback = nullptr);
-	~ScreenFader();
-
-	void startFadeIn(double duration = 1.0f);
-	void startFadeOut(double duration = 1.0f);
-	void fade(double timeSinceLastFrame);
-
-protected:
-	double _alpha;
-	double _currentDuration;
-	double _totalDuration;
-	ScreenFaderCallback* _callback;
-	Ogre::TextureUnitState* _textureUnit;
-	Ogre::Overlay* _overlay;
-
-	enum _fadeOperation {
-		FADE_NONE,
-		FADE_IN,
-		FADE_OUT
-	} _fadeOperation;
-};
-
-class ScreenFaderUpdater : public Ogre::FrameListener
-{
-public:
-	void setFader(ScreenFader* fader) { _fader = fader; }
-
-	bool frameStarted(const Ogre::FrameEvent& evt) { _fader->fade(evt.timeSinceLastFrame); return true; }
-	bool frameRenderingQueued(const Ogre::FrameEvent& evt) { return true; }
-	bool frameEnded(const Ogre::FrameEvent& evt) { return true; }
-private:
-	ScreenFader* _fader;
-};
+#ifndef _SCREEN_FADER_ONLY_
 
 /*! \brief This class manages the entirety of Ogre3D(OOP Graphics Rendering Engine).
 
@@ -172,6 +127,61 @@ private:
 	unsigned long _windowHandle;
 	Ogre::Log* _Log;
 	Ogre::Timer* _Timer;
+};
+
+#endif
+
+//Use this to implement callback from screen fader.
+//Is called when the fade is done.
+class ScreenFaderCallback
+{
+public:
+	virtual void fadeInCallback() {}
+	virtual void fadeOutCallback() {}
+
+	virtual void updateFade(double progress,double currentTime,int fadeOp) {}
+};
+
+class ScreenFader
+{
+public:
+	ScreenFader(const char* overlayName,const char* materialName,ScreenFaderCallback* callback = nullptr);
+	~ScreenFader();
+
+	void startFadeIn(double duration = 1.0f);
+	void startFadeOut(double duration = 1.0f);
+	void fade(double timeSinceLastFrame);
+
+	void setHideOverlayAfterFadeOut(bool hide = true) { _hideAfterFadeOut = hide; }
+	void setHideOverlayAfterFadeIn(bool hide = true) { _hideAfterFadeIn = hide; }
+
+protected:
+	bool _hideAfterFadeIn,_hideAfterFadeOut;
+	double _alpha;
+	double _currentDuration;
+	double _totalDuration;
+	ScreenFaderCallback* _callback;
+	Ogre::TextureUnitState* _textureUnit;
+	Ogre::Overlay* _overlay;
+
+	enum _fadeOperation {
+		FADE_NONE,
+		FADE_IN,
+		FADE_OUT
+	} _fadeOperation;
+};
+
+
+class ScreenFaderUpdater : public Ogre::FrameListener
+{
+public:
+	void setFader(ScreenFader* fader) { _fader = fader; }
+
+	bool frameStarted(const Ogre::FrameEvent& evt) { _fader->fade(evt.timeSinceLastFrame); return true; }
+	bool frameRenderingQueued(const Ogre::FrameEvent& evt) { return true; }
+	bool frameEnded(const Ogre::FrameEvent& evt) { return true; }
+private:
+	ScreenFader* _fader;
 };
 
 #endif

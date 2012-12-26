@@ -40,12 +40,21 @@ void Introduction::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManage
 	_camera->setFarClipDistance(2000.0f);
 	_camera->setNearClipDistance(1.0f);
 
+	_fader = new ScreenFader("Overlays/FadeInOut","Overlays/FadeMaterial",&_faderCallback);
+	_faderUpdater.setFader(_fader);
+	Graphics->getRoot()->addFrameListener(&_faderUpdater);
+
 	return;
 }
 
 int Introduction::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
 {
 	//Ogre::Material* mat = static_cast<Ogre::Entity*>(_logoSceneNode->getAttachedObject(0))->getSubEntity(1)->getMaterial().get();
+
+	_fader->startFadeIn(2.0);
+	_fader->setHideOverlayAfterFadeOut(false);
+	bool fadeIn = true;
+	bool fadeOut = false;
 
 	float duration = 0;
 	_oldTime = Graphics->getTimer()->getMilliseconds();
@@ -60,9 +69,24 @@ int Introduction::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* 
 
 		GameManager::UpdateManagers(Graphics,nullptr,_deltaTime);
 
-		if(duration > 5000)
+		if(duration > 7000 && !fadeOut)
 		{
 			_stateShutdown = true;
+		}
+
+		if(_stateShutdown && !fadeOut)
+		{
+			fadeOut = true;
+			_fader->startFadeOut(2.0);
+			_stateShutdown = false;
+		}
+
+		if(fadeOut)
+		{
+			if(_faderCallback.isFadeFinished())
+			{
+				_stateShutdown = true;
+			}
 		}
 	}
 
@@ -73,11 +97,33 @@ int Introduction::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* 
 
 void Introduction::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
 {
-	//any fancy destruction goes up here.
+	_scene->getRootSceneNode()->removeAndDestroyAllChildren();
+
+	Graphics->Render();
+	
 	Graphics->getRenderWindow()->removeAllViewports();
 
-	//primary way of cleaning up the Ogre scene.
-	_scene->clearScene();
+	_scene->destroyCamera(_camera);
+
+	Graphics->getRoot()->destroySceneManager(_scene);
+
+	delete _fader;
+	Graphics->getRoot()->removeFrameListener(&_faderUpdater);
 
 	return;
+}
+
+void Intro_FaderCallback::fadeInCallback()
+{
+	_finished = true;
+}
+
+void Intro_FaderCallback::fadeOutCallback()
+{
+	_finished = true;
+}
+
+void Intro_FaderCallback::updateFade(double progress,double currentTime,int fadeOp)
+{
+	_finished = false;
 }

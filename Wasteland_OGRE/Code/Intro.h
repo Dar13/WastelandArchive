@@ -5,6 +5,23 @@
 
 #include "State.h"
 
+#define _SCREEN_FADER_ONLY_
+#include "GraphicsManager.h"
+#undef _SCREEN_FADER_ONLY
+
+class Intro_FaderCallback : public ScreenFaderCallback
+{
+public:
+	void fadeInCallback();
+	void fadeOutCallback();
+
+	void updateFade(double progress,double currentTime, int fadeOp);
+
+	bool isFadeFinished() { return _finished; }
+private:
+	bool _finished;
+};
+
 class Introduction : public State
 {
 public:
@@ -19,6 +36,10 @@ public:
 	void Shutdown(InputManager* Input = nullptr,GraphicsManager* Graphics = nullptr,GUIManager* Gui = nullptr,SoundManager * Sound = nullptr);
 
 private:
+	ScreenFader* _fader;
+	Intro_FaderCallback _faderCallback;
+	ScreenFaderUpdater _faderUpdater;
+
 	Ogre::Viewport* _view;
 	Ogre::SceneManager* _scene;
 	Ogre::Camera* _camera;
