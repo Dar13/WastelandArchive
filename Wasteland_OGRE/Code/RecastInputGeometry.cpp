@@ -245,7 +245,7 @@ void InputGeometry::_calculateExtents()
 	{
 		Ogre::Entity* tmpEnt = *itr;
 
-		transform = _referenceNode->_getFullTransform().inverse() * ent->getParentSceneNode()->_getFullTransform();
+		transform = _referenceNode->_getFullTransform().inverse() * tmpEnt->getParentSceneNode()->_getFullTransform();
 
 		sourceMeshBB = ent->getBoundingBox();
 		sourceMeshBB.transform(transform);

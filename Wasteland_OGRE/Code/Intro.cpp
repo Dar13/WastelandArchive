@@ -57,11 +57,11 @@ int Introduction::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* 
 	bool fadeOut = false;
 
 	float duration = 0;
-	_oldTime = Graphics->getTimer()->getMilliseconds();
+	_oldTime = static_cast<float>(Graphics->getTimer()->getMilliseconds());
 	float curTime = _oldTime;
 	while(!_stateShutdown)
 	{
-		curTime = Graphics->getTimer()->getMilliseconds();
+		curTime = static_cast<float>(Graphics->getTimer()->getMilliseconds());
 		_deltaTime = curTime - _oldTime;
 		_oldTime = curTime;
 

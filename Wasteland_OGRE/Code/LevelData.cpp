@@ -480,7 +480,7 @@ namespace LevelData
 			//shouldn't matter, but let's keep that in mind.
 			//means deltaX should be longer than deltaZ(if I set up the .ent file correctly anyways).
 			//getting deltaZ
-			float dZ = box.getMaximum().z - box.getMinimum().z;
+			//float dZ = box.getMaximum().z - box.getMinimum().z;
 
 			//get points on side of box(x-axis)
 			pSide = box.getMaximum();
@@ -517,7 +517,7 @@ namespace LevelData
 		{
 			//facing either x-positive or x-negative
 			//get deltaX
-			float dX = box.getMaximum().x - box.getMinimum().x;
+			//float dX = box.getMaximum().x - box.getMinimum().x;
 
 			pSide = box.getMaximum();
 			pSide.x = 0.0f;
@@ -598,7 +598,6 @@ namespace LevelData
 				//all necessary arguments are there
 				if(lua_isnumber(L,1))
 				{
-					int test = lua_toboolean(L,1);
 					motor = (lua_toboolean(L,1) != 0);
 				}
 				if(lua_isnumber(L,2))
@@ -679,7 +678,8 @@ namespace LevelData
 		_axis = axis;
 		if(_hinge)
 		{
-			_hinge->setAxis(Utility::convert_OgreVector3(axis));
+			btVector3 vec = Utility::convert_OgreVector3(axis);
+			_hinge->setAxis(vec);
 		}
 	}
 	Ogre::Vector3 DoorData::getAxis() { return _axis;}

@@ -518,6 +518,4 @@ int cGunData::getCorrespondingSoundID(int animID)
 		return cGunData::NO_SOUND;
 		break;
 	}
-
-	return cGunData::NO_SOUND;
 }

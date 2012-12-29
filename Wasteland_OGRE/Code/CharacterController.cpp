@@ -118,7 +118,7 @@ void CharacterController::update(float physicsTimeElapsed,InputManager* inputMan
 	walkDirection = Utility::convert_OgreVector3(direction);
 	walkDirection.setY(0.0f);
 	walkDirection = walkDirection.safeNormalize();
-	if(walkDirection.x() == 1.0f) { walkDirection.setX(0.0f); }
+	if(fabs(1.0f - walkDirection.x()) < std::numeric_limits<float>::epsilon()) { walkDirection.setX(0.0f); }
 
 	//**
 	//Mouse look

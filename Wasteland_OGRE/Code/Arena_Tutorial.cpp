@@ -29,8 +29,8 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 	_view = Graphics->getRenderWindow()->addViewport(_camera);
 	_view->setBackgroundColour(Ogre::ColourValue(0,0,0));
 
-	_camera->setFarClipDistance(100);
-	_camera->setNearClipDistance(.001);
+	_camera->setFarClipDistance(100.0f);
+	_camera->setNearClipDistance(.001f);
 	
 	_shadowListener = new ShadowListener();
 
@@ -201,7 +201,7 @@ int ArenaTutorial::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager*
 
 	LuaManager::getSingleton().addDataPointer("playerPosition",static_cast<void*>(&playerTransform.position));
 	
-	float time = Graphics->getTimer()->getMilliseconds();
+	float time = static_cast<float>(Graphics->getTimer()->getMilliseconds());
 	_oldTime = time;
 	bool paused = false;
 	//while the escape key isn't pressed and the state isn't told to shutdown.

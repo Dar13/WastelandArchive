@@ -649,7 +649,7 @@ int getNearestEntity(lua_State* lua)
 		return 1;
 	}
 
-	int ltype;
+	int ltype = LevelData::NONE;
 	if(type == "NPC") { ltype = LevelData::NPC; }
 	if(type == "Enemy") { ltype = LevelData::ENEMY; }
 	if(type == "Door") { ltype = LevelData::DOOR; }
@@ -668,7 +668,7 @@ int getNearestEntity(lua_State* lua)
 			case LevelData::NPC:
 				entPos = static_cast<NPCCharacter*>(itr->second)->getPosition();
 				dist = position.squaredDistance(entPos);
-				if(dist < closestDist && dist != 0.0f)
+				if(dist < closestDist && fabs(0.0f - dist) > std::numeric_limits<float>::epsilon())
 				{
 					closest = itr->second->getName();
 					closestDist = dist;
@@ -676,7 +676,7 @@ int getNearestEntity(lua_State* lua)
 				break;
 			case LevelData::ENEMY:
 				//dist = position.squardedDistance(static_cast<EnemyCharacter*>(itr->second)->getPosition());
-				if(dist < closestDist && dist != 0.0f)
+				if(dist < closestDist && fabs(0.0f - dist) > std::numeric_limits<float>::epsilon())
 				{
 					closest = itr->second->getName();
 					closestDist = dist;
@@ -705,7 +705,7 @@ int setIntegerData(lua_State* lua)
 	}
 
 	std::string dataName;
-	int data;
+	double data = 0;
 	if(lua_isstring(lua,1))
 	{
 		dataName = lua_tostring(lua,1);
@@ -768,7 +768,7 @@ int setBooleanData(lua_State* lua)
 
 	if(lua_isboolean(lua,2))
 	{
-		data = static_cast<bool>(lua_toboolean(lua,2));
+		data = (lua_toboolean(lua,2) != 0);
 	}
 
 	LuaData ld;

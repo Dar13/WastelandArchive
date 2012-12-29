@@ -74,7 +74,7 @@ namespace GameManager
 		//Only do this if it's an object.
 		if(objectInfo->type() == "entity")
 		{
-			if(objectInfo->mass()!=0.0f)
+			if(fabs(0.0f - objectInfo->mass()) > std::numeric_limits<float>::epsilon())
 			{
 				//get the collision shape.
 				shape = phyManager->generateCollisionShape(objectInfo);
@@ -134,7 +134,7 @@ namespace GameManager
 
 		//Easy(ish) function call.
 		btCollisionShape* shape = NULL;
-		if(objectInfo->mass()!= 0.0f)
+		if(fabs(0.0f - objectInfo->mass()) > std::numeric_limits<float>::epsilon())
 		{
 			shape = phyManager->generateCollisionShape(objectInfo);
 			node->getAttachedObject(0)->setQueryFlags(SCENERY_MASK);
@@ -182,6 +182,7 @@ namespace GameManager
 									  bool isWeapon)
 	{
 		EquippableObject retVal;
+		retVal.equip = nullptr; retVal.node = nullptr;
 		baseEquippable b;
 		b.setEquipped(false);
 		if(isWeapon)

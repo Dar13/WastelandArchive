@@ -778,10 +778,12 @@ void MainMenu::_saveOptionChanges()
 
 	CEGUI::Combobox* list = static_cast<CEGUI::Combobox*>(_opt_guiSheetChildren["opt_Config_Graphic_Res_list"]);
 	CEGUI::ListboxItem* item = list->getSelectedItem();
+	xercesc::DOMElement* element;
 
 	//can't combine these two options into one nice for-loop like I did with the movement/action values
 	//because the way of getting the values are radically different.
-	xercesc::DOMElement* element = doc->createElement(L"resolution");
+	//I can at least order them properly though.
+	element = doc->createElement(L"resolution");
 	graphics->appendChild(element);
 	std::string tmp = item->getText().c_str();
 	element->appendChild(doc->createTextNode(Utility::stringToWString(tmp).c_str()));

@@ -118,9 +118,6 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 	bool exitNow = _stateShutdown;
 	bool paused = false;
 
-	LuaData footstepData;
-	int timeSinceLastFootstep = 0;
-
 	float time,delta,oldtime = static_cast<float>(Graphics->getTimer()->getMilliseconds());
 	while(!_stateShutdown)
 	{
@@ -152,27 +149,6 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 		{
 			_stateShutdown = true;
 		}
-
-		/*if(LuaManager::getSingletonPtr()->searchForLuaData("lockerNPCFootsteps",&footstepData))
-		{
-			int data;
-			if(Utility::getIntFromLuaData(footstepData,data))
-			{
-				if(data == 1)
-				{
-					if(timeSinceLastFootstep > 500)
-					{
-						Ogre::Vector3 vel = Ogre::Vector3::ZERO;
-						Sound->playSound(_sounds[0],_npcs[0]->getPosition(),vel);
-						timeSinceLastFootstep = 0;
-					}
-					else
-					{
-						timeSinceLastFootstep += delta;
-					}
-				}
-			}
-		}*/
 
 		_handleSoundEvents(LuaManager::getSingletonPtr()->getSoundEventQueue(),Sound);
 		Sound->Update(Input->getConfiguration());

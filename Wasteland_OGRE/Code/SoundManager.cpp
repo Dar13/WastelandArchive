@@ -229,7 +229,7 @@ void SoundManager::Shutdown()
 
 void SoundManager::createSound(sSound& sound,const std::string& fileName)
 {
-	FMOD::Sound* nSound;
+	FMOD::Sound* nSound = nullptr;
 
 	unsigned int mode = 0;
 	if(sound.isLooping)
