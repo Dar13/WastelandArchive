@@ -127,7 +127,7 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 			_stateShutdown = true;
 		}
 
-		time = static_cast<float>(Graphics->getTimer()->getMilliseconds());
+		time = Graphics->getCurrentTimeMs();
 		delta = time - oldtime;
 		oldtime = time;
 
@@ -203,10 +203,7 @@ void ArenaLocker::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIMana
 
 	Graphics->getRenderWindow()->removeAllViewports();
 
-	_scene->destroyCamera(_camera);
-	_scene->clearScene();
-
-	Graphics->getRoot()->destroySceneManager(_scene);
+	Graphics->cleanAndDestroySceneManager(_scene);
 }
 
 void ArenaLocker::_handleScript(unsigned long deltaTime)

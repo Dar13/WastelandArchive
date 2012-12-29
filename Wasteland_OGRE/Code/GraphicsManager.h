@@ -62,6 +62,12 @@ public:
 	//! Returns the current Timer.
 	Ogre::Timer* getTimer(){return _Timer;}
 
+	//Some frequently used functions, simplified for the sake of cleaner code
+	//!Gets current time while converting it to float.
+	float getCurrentTimeMs() { return static_cast<float>(_Timer->getMilliseconds()); }
+	//!Cleans and Destroys given SceneManager
+	void cleanAndDestroySceneManager(Ogre::SceneManager* scene);
+
 	//! Creates an Ogre SceneNode and Entity based on passed in parameters
 	//! /returns Ogre::SceneNode*
 	/*!
@@ -106,7 +112,7 @@ public:
 
 	bool isPointInTriangle2D(const Ogre::Vector3& pointA,const Ogre::Vector3& pointB,const Ogre::Vector3& pointC,const Ogre::Vector3& pointP);
 	
-//! Calculates the attenuation for the passed-in Ogre::Light.
+	//! Calculates the attenuation for the passed-in Ogre::Light.
 	void setLightRange(Ogre::Light* l, Ogre::Real range);
 private:
 	//Hidden methods
@@ -114,7 +120,6 @@ private:
 	GraphicsManager& operator=(const GraphicsManager&);
 
 	//Private helper functions
-	
 	//! Converts a hexadecimal number into an Ogre::ColourValue.
 	Ogre::ColourValue getColorFromHex(int hexColor, float alpha = 1.0f);
 

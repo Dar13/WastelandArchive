@@ -515,6 +515,14 @@ bool GraphicsManager::isPointInTriangle2D(const Ogre::Vector3& pointA,const Ogre
 	return (r <= 1 && t<=1 && (r+t) <= 1);
 }
 
+//Frequently called functions
+void GraphicsManager::cleanAndDestroySceneManager(Ogre::SceneManager* scene)
+{
+	scene->destroyAllCameras();
+	scene->clearScene();
+	_Root->destroySceneManager(scene);
+}
+
 //--------------------------------------------------------------------------------------
 //http://www.ogre3d.org/tikiwiki/FadeEffectOverlay
 //--------------------------------------------------------------------------------------
