@@ -76,7 +76,7 @@ public:
 	*/
 	Ogre::SceneNode* createSceneNode(Ogre::SceneManager* scene, object_t* objectInfo,Ogre::SceneNode* parent);
 	Ogre::SceneNode* createSceneNode(Ogre::SceneManager* scene, weapon_t* objectInfo,Ogre::SceneNode* parent = nullptr);
-	Ogre::SceneNode* createSceneNode(Ogre::SceneManager* scene, characterobject_t* objectInfo,Ogre::SceneNode* parent = nullptr);
+	static Ogre::SceneNode* createSceneNode(Ogre::SceneManager* scene, characterobject_t* objectInfo,Ogre::SceneNode* parent = nullptr);
 
 	//! Retrieves all vertex and index data from a mesh.
 	//! Useful for generating complex Bullet rigid bodies.

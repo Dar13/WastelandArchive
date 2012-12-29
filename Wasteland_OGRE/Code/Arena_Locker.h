@@ -7,6 +7,7 @@
 
 #include "RecastInterface.h"
 #include "DetourInterface.h"
+#include "AIManager.h"
 
 //I only want the pause menu
 #define _PAUSE_ONLY_
@@ -14,9 +15,6 @@
 #undef _PAUSE_ONLY_
 
 //#include "CrowdManager.h"
-
-class CrowdManager;
-class NPCCharacter;
 
 /*! \brief Application state that is the Locker Room scene in Wasteland.
 
@@ -70,6 +68,7 @@ private:
 	FMOD::Channel* _footsteps;
 
 	std::vector<NPCCharacter*> _npcs;
+	std::unique_ptr<AIManager> _AIManager;
 
 };
 

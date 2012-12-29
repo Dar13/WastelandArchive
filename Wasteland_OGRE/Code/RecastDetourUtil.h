@@ -39,6 +39,25 @@ public:
 		eval();
 	}
 
+	RecastConfiguration(float agentRadius,float agentHeight)
+		: _cellSize(0.10f),
+		  _cellHeight(0.18f),
+		  _agentMaxSlope(45.0f),
+		  _agentHeight(agentHeight),
+		  _agentMaxClimb(.9f),
+		  _agentRadius(agentRadius),
+		  _edgeMaxLength(12.0f),
+		  _edgeMaxError(1.3f),
+		  _regionMinSize(8),
+		  _regionMergeSize(20),
+		  _verticesPerPolygon(6),
+		  _detailSampleDistance(6),
+		  _detailSampleMaxError(1),
+		  _keepIntermediateResults(false)
+	{
+		eval();
+	}
+
 	inline void setCellSize(float size) { _cellSize = size; eval(); }
 	inline float getCellSize() { return _cellSize; }
 

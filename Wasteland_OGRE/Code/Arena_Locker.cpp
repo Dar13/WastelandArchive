@@ -59,9 +59,7 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 	Ogre::Entity* levelEnt = static_cast<Ogre::Entity*>(_pairs.begin()->ogreNode->getAttachedObject(0));
 	InputGeometry levelGeometry(levelEnt);
 
-	RecastConfiguration params;
-	params.setAgentHeight(2.5f);
-	params.setAgentRadius(.2f);
+	RecastConfiguration params(.2f,2.5f);
 
 	_recast.reset(new RecastInterface(_scene,params));
 	_recast->getRecastConfig().walkableRadius = static_cast<int>(.2f); // zero?
@@ -76,8 +74,11 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 
 	_crowd.reset(new CrowdManager(_detour.get(),&config));
 
+	_AIManager.reset(new AIManager());
+	_AIManager->loadNPCs("resource\\xml\\lists\\arenalocker_npc_list.xml",_crowd.get(),_scene,.9f);
+
 	//NPC list
-	auto npcList = list("resource\\xml\\lists\\arenalocker_npc_list.xml");
+	/*auto npcList = list("resource\\xml\\lists\\arenalocker_npc_list.xml");
 	for(auto itr = npcList->file().begin(); itr != npcList->file().end(); ++itr)
 	{
 		characterobject_t* obj = characterObject(*itr).release();
@@ -89,7 +90,7 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 		LuaManager::getSingleton().addEntity(npc->getName(),npc);
 
 		delete obj;
-	}
+	}*/
 
 	//sound(walking of feet and such)
 	sSound walkingSound;
@@ -140,10 +141,11 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 		//Update the crowd manager
 		_crowd->updateTick(delta / 1000.0f);
 
-		for(auto itr = _npcs.begin(); itr != _npcs.end(); ++itr)
+		_AIManager->update(delta);
+		/*for(auto itr = _npcs.begin(); itr != _npcs.end(); ++itr)
 		{
 			(*itr)->update(delta);
-		}
+		}*/
 
 		if(!GameManager::UpdateManagers(Graphics,_physics.get(),delta))
 		{
@@ -180,12 +182,6 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 
 void ArenaLocker::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
 {
-	std::for_each(_npcs.begin(),_npcs.end(),[] (NPCCharacter* npc) {
-		delete npc;
-		npc = nullptr;
-	});
-	_npcs.clear();
-
 	std::for_each(_pairs.begin(),_pairs.end(),[] (OgreBulletPair ipair) {
 		if(ipair.btBody->getCollisionShape()->getShapeType() == TRIANGLE_MESH_SHAPE_PROXYTYPE)
 		{

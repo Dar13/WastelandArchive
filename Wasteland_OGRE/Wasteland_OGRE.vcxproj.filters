@@ -109,6 +109,9 @@
     <Filter Include="Include Files\Graphics\Shadows">
       <UniqueIdentifier>{03490b4a-cef1-4afd-ab6e-f8923936501e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Include Files\State\Lobby">
+      <UniqueIdentifier>{610e5e05-f216-4a34-b1d6-db176cc57b84}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Code\State.h">
@@ -249,6 +252,9 @@
     <ClInclude Include="Code\ShadowCompositorListener.h">
       <Filter>Include Files\Graphics\Shadows</Filter>
     </ClInclude>
+    <ClInclude Include="Code\Lobby.h">
+      <Filter>Include Files\State\Lobby</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">
@@ -373,6 +379,9 @@
     </ClCompile>
     <ClCompile Include="Code\GunData.cpp">
       <Filter>Include Files\Player\GunData</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\Lobby.cpp">
+      <Filter>Include Files\State\Lobby</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

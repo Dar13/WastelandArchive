@@ -163,7 +163,7 @@ namespace GameManager
 	{
 		Ogre::SceneNode* node = nullptr;
 
-		node = graphics->createSceneNode(scene,obj);
+		node = GraphicsManager::createSceneNode(scene,obj);
 		node->getAttachedObject(0)->setQueryFlags(CHARACTER_MASK);
 
 		if(node == nullptr)
