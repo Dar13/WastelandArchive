@@ -25,6 +25,11 @@ public:
 	SOUND_TYPE type;
 	bool is3D;
 	bool isLooping;
+
+	bool operator==(const SoundStruct& rhs);
+	bool operator==(const std::string& name);
+	bool operator!=(const SoundStruct& rhs);
+	bool operator!=(const std::string& name);
 };
 
 //Forward declaration of class.
@@ -39,12 +44,15 @@ public:
 	~SoundManager(){Shutdown();}
 	bool Setup();
 	bool Update(configuration_t* currentConfiguration);
+	bool Update(configuration_t* currentConfiguration, Ogre::Camera* cameraListener);
 	void Shutdown();
 
 	//Sound functions
 	void createSound(sSound& sound,const std::string& fileName);
 
 	FMOD::Channel* playSound(const sSound& sound);
+	FMOD::Channel* playSound(const sSound& sound,Ogre::Vector3& position, Ogre::Vector3& velocity);
+	FMOD::Channel* playSound(const sSound& sound,FMOD_VECTOR& position,FMOD_VECTOR& velocity);
 
 	void updateChannels(std::vector<FMOD::Channel*>* channelVector);
 
@@ -74,6 +82,7 @@ private:
 	float _mscVolume;
 	float _charVolume;
 
+	bool _musicPlaying;
 	bool _musicFade;
 	float _musicFadeVolume;
 };

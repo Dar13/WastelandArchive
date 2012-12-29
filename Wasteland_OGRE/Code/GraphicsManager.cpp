@@ -34,7 +34,7 @@ bool GraphicsManager::Setup(configuration_t* currentConfig)
 
 	//rendersystem crap
 	const Ogre::RenderSystemList &renderSystem = _Root->getAvailableRenderers();
-	Ogre::RenderSystemList::const_iterator &r_it = renderSystem.begin();
+	Ogre::RenderSystemList::const_iterator r_it = renderSystem.begin();
 	_Root->setRenderSystem(*r_it);
 	_Root->initialise(false);
 

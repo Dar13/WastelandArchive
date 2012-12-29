@@ -70,6 +70,15 @@ public:
 	//throughout the game, unlike the physics engine or the player construct.
 	void* _getData(const std::string& name);
 
+	//LuaData functions
+	bool searchForLuaData(std::string name,LuaData* luaData);
+	void addLuaData(LuaData data,lua_State* lua);
+
+	//SoundEvent functions
+	std::vector<SoundEvent>& getSoundEventQueue() { return _soundEvents; }
+	void addSoundEvent(SoundEvent& sEvent);
+	void addSoundEvent(std::string& name, FMOD_VECTOR& position);
+
 	//Helper functions
 	static int getIntegerFromLuaTable(lua_State* lua,const std::string& field);
 	static std::string getStringFromLuaTable(lua_State* lua,const std::string& field);
@@ -82,6 +91,9 @@ private:
 	std::map<std::string,LevelData::BaseEntity*> _entities;
 
 	std::map<std::string,void*> _data;
+	std::map<std::string,boost::variant<double,std::string,bool>> _luaData;
+
+	std::vector<SoundEvent> _soundEvents;
 
 	LuaManager(const LuaManager&);
 	LuaManager& operator=(const LuaManager&);
@@ -133,5 +145,17 @@ int distanceCheck(lua_State* lua);
 
 //Allows Lua access to player position information.
 int getPlayerPosition(lua_State* lua);
+
+//Allows Lua scripts to set an entry in a string/integer table
+int setIntegerData(lua_State* lua);
+
+//Allows Lua scripts to set an entry in a string/boost::variant map.
+int setStringData(lua_State* lua);
+
+//Allows Lua scripts to set an entry in a string/boost::variant map.
+int setBooleanData(lua_State* lua);
+
+//Allows Lua scripts to play sounds directly.
+int playSound(lua_State* lua);
 
 #endif

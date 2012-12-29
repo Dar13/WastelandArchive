@@ -32,6 +32,10 @@ void LuaManager::Setup(std::string luaListFileName)
 	registerFunction("getEntityPosition",getEntityPosition);
 	registerFunction("getEntityHeadPosition",getEntityHeadPosition);
 	registerFunction("getNearestEntity",getNearestEntity);
+	registerFunction("setIntegerData",setIntegerData);
+	registerFunction("setStringData",setStringData);
+	registerFunction("setBooleanData",setBooleanData);
+	registerFunction("playSound",playSound);
 
 	//exposes all Lua functions to luaState and thus to the program itself through the LuaManager.
 	list_t* llist = list(luaListFileName).release();
@@ -41,6 +45,10 @@ void LuaManager::Setup(std::string luaListFileName)
 		if(luaL_dofile(luaState,(*itr).c_str()))
 		{
 			std::cout << "Lua Error!" << std::endl;
+			if(lua_isstring(luaState,1))
+			{
+				std::cout << lua_tostring(luaState,1) << std::endl;
+			}
 		}
 	}
 
@@ -193,6 +201,55 @@ void* LuaManager::_getData(const std::string& name)
 		return NULL;
 	}
 }
+
+// LuaData functions
+bool LuaManager::searchForLuaData(std::string name,LuaData* luaData)
+{
+	bool found = false;
+	if(_luaData.find(name) == _luaData.end())
+	{
+		found = false;
+	}
+	else
+	{
+		found = true;
+		(*luaData).data = _luaData[name];
+		(*luaData).dataName = name;
+	}
+
+	return found;
+}
+
+void LuaManager::addLuaData(LuaData data,lua_State* lua)
+{
+	//a half-hearted attempt to force this functions use to be solely from functions called by Lua.
+	if(lua == nullptr)
+	{
+		return;
+	}
+
+	_luaData[data.dataName] = data.data;
+	
+
+	return;
+}
+// /LuaData functions
+
+//SoundEvent functions
+void LuaManager::addSoundEvent(SoundEvent& sEvent)
+{
+	_soundEvents.push_back(sEvent);
+}
+
+void LuaManager::addSoundEvent(std::string& name, FMOD_VECTOR& position)
+{
+	SoundEvent sEvent;
+	sEvent.name = name;
+	sEvent.is3D = true;
+	sEvent.position = position;
+	addSoundEvent(sEvent);
+}
+//end of SoundEvent functions
 
 int LuaManager::getIntegerFromLuaTable(lua_State* lua,const std::string& field)
 {
@@ -635,6 +692,163 @@ int getNearestEntity(lua_State* lua)
 	}
 
 	lua_pushstring(lua,closest.c_str());
+
+	return 1;
+}
+
+int setIntegerData(lua_State* lua)
+{
+	int numArg = lua_gettop(lua);
+	if(numArg == 0 || numArg > 2)
+	{
+		return 1;
+	}
+
+	std::string dataName;
+	int data;
+	if(lua_isstring(lua,1))
+	{
+		dataName = lua_tostring(lua,1);
+	}
+
+	if(lua_isnumber(lua,2))
+	{
+		data = lua_tonumber(lua,2);
+	}
+
+	LuaData ld;
+	ld.dataName = dataName;
+	ld.data = static_cast<double>(data);
+
+	LuaManager::getSingleton().addLuaData(ld,lua);
+
+	return 1;
+}
+
+int setStringData(lua_State* lua)
+{
+	if(lua_gettop(lua) == 0 || lua_gettop(lua) > 2)
+	{
+		return 1;
+	}
+
+	std::string dataName,data;
+	if(lua_isstring(lua,1))
+	{
+		dataName = lua_tostring(lua,1);
+	}
+
+	if(lua_isstring(lua,2))
+	{
+		data = lua_tostring(lua,2);
+	}
+
+	LuaData ld;
+	ld.dataName = dataName;
+	ld.data = data;
+
+	LuaManager::getSingleton().addLuaData(ld,lua);
+
+	return 1;
+}
+
+int setBooleanData(lua_State* lua)
+{
+	if(lua_gettop(lua) == 0 || lua_gettop(lua) > 2)
+	{
+		return 1;
+	}
+
+	std::string dataName;
+	bool data;
+	if(lua_isstring(lua,1))
+	{
+		dataName = lua_tostring(lua,1);
+	}
+
+	if(lua_isboolean(lua,2))
+	{
+		data = static_cast<bool>(lua_toboolean(lua,2));
+	}
+
+	LuaData ld;
+	ld.dataName = dataName;
+	ld.data = data;
+
+	LuaManager::getSingleton().addLuaData(ld,lua);
+
+	return 1;
+}
+
+/*
+overloads:
+playSound(string name) [2D sound]
+playSound(string name, vector absolutePosition) [3D sound]
+playSound(string name, string nameOfNPC, vector relativePosition) [3D sound]
+*/
+int playSound(lua_State* lua)
+{
+	int numArg = lua_gettop(lua);
+
+	SoundEvent sndEvent;
+	std::string entName;
+	Ogre::Vector3 v = Ogre::Vector3::ZERO;
+	LevelData::BaseEntity* ent;
+
+	switch(numArg)
+	{
+	case 1:
+		//2D sound
+		sndEvent.is3D = false;
+		if(lua_isstring(lua,1))
+		{
+			sndEvent.name = lua_tostring(lua,1);
+		}
+		else
+		{
+			return 1;
+		}
+		break;
+	case 2:
+		//3D sound, first overload
+		sndEvent.is3D = true;
+		if(lua_isstring(lua,1))
+		{
+			sndEvent.name = lua_tostring(lua,1);
+		} else { return 1; }
+
+		v = LuaManager::getVectorFromLua(lua,2);
+		sndEvent.position = Utility::ogreToFMOD(v);
+		break;
+	case 3:
+		sndEvent.is3D = true;
+		if(lua_isstring(lua,1))
+		{
+			sndEvent.name = lua_tostring(lua,1);
+		} else { return 1; }
+
+		if(lua_isstring(lua,2))
+		{
+			entName = lua_tostring(lua,2);
+		} else { return 1; }
+
+		if(lua_istable(lua,3))
+		{
+			v = LuaManager::getVectorFromLua(lua,3);
+		} else { return 1; }
+
+		//calculate the absolute position
+		ent = LuaManager::getSingletonPtr()->getEntity(entName);
+		v = static_cast<NPCCharacter*>(ent)->getNode()->_getDerivedPosition() + v;
+		sndEvent.position = Utility::ogreToFMOD(v);
+
+		break;
+	default:
+		return 1;
+		break;
+	}
+
+	LuaManager::getSingletonPtr()->addSoundEvent(sndEvent);
 
 	return 1;
 }

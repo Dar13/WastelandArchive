@@ -173,7 +173,7 @@ int MainMenu::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,
 	_fader->startFadeIn(4.0);
 	Gui->setCurrentGUISheet("main_Root");
 	
-	bool fadingIn = true;
+	//bool fadingIn = true;
 	bool fadingOut = false;
 	bool inOptions = false;
 	while(!_stateShutdown)
@@ -755,7 +755,7 @@ void MainMenu::_saveOptionChanges()
 	domImpl = xercesc::DOMImplementationRegistry::getDOMImplementation(xercesc::XMLString::transcode("core"));
 
 	xercesc::DOMLSSerializer* serializer = serImpl->createLSSerializer();
-	xercesc::DOMLSOutput* serOutput = serImpl->createLSOutput();
+	//xercesc::DOMLSOutput* serOutput = serImpl->createLSOutput();
 	//serOutput->set
 
 	serializer->getDomConfig()->setParameter(L"format-pretty-print",true);
@@ -774,10 +774,13 @@ void MainMenu::_saveOptionChanges()
 	xercesc::DOMElement* graphics = doc->createElement(L"graphics");
 	root->appendChild(graphics);
 	
-	std::wstring graphicsOpts[2] = {L"resolution",L"fullscreen"};
+	//std::wstring graphicsOpts[2] = {L"resolution",L"fullscreen"};
 
 	CEGUI::Combobox* list = static_cast<CEGUI::Combobox*>(_opt_guiSheetChildren["opt_Config_Graphic_Res_list"]);
 	CEGUI::ListboxItem* item = list->getSelectedItem();
+
+	//can't combine these two options into one nice for-loop like I did with the movement/action values
+	//because the way of getting the values are radically different.
 	xercesc::DOMElement* element = doc->createElement(L"resolution");
 	graphics->appendChild(element);
 	std::string tmp = item->getText().c_str();
@@ -829,7 +832,7 @@ void MainMenu::_saveOptionChanges()
 	volumeElement->appendChild(vol);
 	vol->appendChild(doc->createTextNode(boost::lexical_cast<std::wstring,int>(soundValue).c_str()));
 	
-	XMLCh* output = serializer->writeToString(doc);
+	//XMLCh* output = serializer->writeToString(doc);
 
 	serializer->writeToURI(doc,L"resource//xml//config.xml");
 

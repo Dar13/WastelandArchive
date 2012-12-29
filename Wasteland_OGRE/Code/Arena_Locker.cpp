@@ -11,6 +11,8 @@
 
 #include "CrowdManager.h"
 
+#include "SoundManager.h"
+
 ArenaLocker::ArenaLocker()
 	: _camera(nullptr),
 	  _view(nullptr),
@@ -89,15 +91,22 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 		delete obj;
 	}
 
+	//sound(walking of feet and such)
+	sSound walkingSound;
+	walkingSound.is3D = true;
+	walkingSound.isLooping = false;
+	walkingSound.name = "lockerFootsteps";
+	walkingSound.type = SFX;
+	Sound->createSound(walkingSound,"resource\\music\\locker\\footsteps.mp3");
+	_sounds.push_back(walkingSound);
+
 	_pauseMenu.reset(new PauseMenu(State::GAME_LOCKER));
 	_pauseMenu->Setup(Input,Graphics,Gui,Sound);
-
-	//_handleScript(1001);
 }
 
 int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
 {
-	_camera->setPosition(Ogre::Vector3(-5,25,-5));
+	_camera->setPosition(Ogre::Vector3(0,0,0));
 	_camera->setFarClipDistance(1000);
 	_camera->lookAt(Ogre::Vector3::ZERO);
 
@@ -108,6 +117,9 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 
 	bool exitNow = _stateShutdown;
 	bool paused = false;
+
+	LuaData footstepData;
+	int timeSinceLastFootstep = 0;
 
 	float time,delta,oldtime = static_cast<float>(Graphics->getTimer()->getMilliseconds());
 	while(!_stateShutdown)
@@ -140,6 +152,30 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 		{
 			_stateShutdown = true;
 		}
+
+		/*if(LuaManager::getSingletonPtr()->searchForLuaData("lockerNPCFootsteps",&footstepData))
+		{
+			int data;
+			if(Utility::getIntFromLuaData(footstepData,data))
+			{
+				if(data == 1)
+				{
+					if(timeSinceLastFootstep > 500)
+					{
+						Ogre::Vector3 vel = Ogre::Vector3::ZERO;
+						Sound->playSound(_sounds[0],_npcs[0]->getPosition(),vel);
+						timeSinceLastFootstep = 0;
+					}
+					else
+					{
+						timeSinceLastFootstep += delta;
+					}
+				}
+			}
+		}*/
+
+		_handleSoundEvents(LuaManager::getSingletonPtr()->getSoundEventQueue(),Sound);
+		Sound->Update(Input->getConfiguration());
 
 		if(Input->escapePressed() && !paused)
 		{
@@ -183,6 +219,10 @@ void ArenaLocker::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIMana
 		}
 	});
 
+	std::for_each(_sounds.begin(),_sounds.end(),[Sound] (sSound snd) {
+		Sound->destroySound(snd);
+	});
+
 	_pauseMenu->Shutdown(Input,Graphics,Gui,Sound);
 
 	Graphics->getRenderWindow()->removeAllViewports();
@@ -202,4 +242,51 @@ void ArenaLocker::_handleScript(unsigned long deltaTime)
 	LuaManager::getSingleton().pushFunctionArgVector(pos);
 	LuaManager::getSingleton().callFunction(2,0);
 	LuaManager::getSingleton().removeDataPointer("playerPosition");
+}
+
+void ArenaLocker::_handleSoundEvents(std::vector<SoundEvent>& events, SoundManager* Sound)
+{
+	if(events.size() == 0)
+	{
+		return;
+	}
+	//std::map<sSound,FMOD_VECTOR> soundsToPlay;
+	/*auto findSoundStruct = [this] (std::string& name) -> sSound
+	{
+		for(auto i = _sounds.begin(); i != _sounds.end(); ++i)
+		{
+			if((*i) == name)
+			{
+				return (*i);
+			}
+		}
+	};*/
+
+	sSound sndTmp;
+	FMOD_VECTOR vel; vel.x = 0; vel.y = 0; vel.z = 0;
+	for(auto itr = events.begin(); itr != events.end(); ++itr)
+	{
+		auto sndItr = std::find(_sounds.begin(),_sounds.end(),(*itr).name);
+		if(sndItr != _sounds.end())
+		{
+			sndTmp = *sndItr;
+		}
+		else
+		{
+			continue;
+		}
+
+		if(itr->is3D)
+		{
+			Sound->playSound(sndTmp,itr->position,vel);
+		}
+		else
+		{
+			Sound->playSound(sndTmp);
+		}
+	}
+
+	events.clear();
+
+	return;
 }

@@ -39,6 +39,8 @@ public:
 private:
 	void _handleScript(unsigned long deltaTime);
 
+	void _handleSoundEvents(std::vector<SoundEvent>& events, SoundManager* Sound);
+
 	//Pause menu variable
 	std::unique_ptr<PauseMenu> _pauseMenu;
 
@@ -63,7 +65,9 @@ private:
 	std::unique_ptr<RecastInterface> _recast;
 
 	std::vector<sSound> _sounds;
-	std::vector<FMOD::Channel*> _channels;
+	//std::vector<FMOD::Channel*> _channels;
+
+	FMOD::Channel* _footsteps;
 
 	std::vector<NPCCharacter*> _npcs;
 

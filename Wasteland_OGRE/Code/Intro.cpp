@@ -92,7 +92,7 @@ int Introduction::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* 
 
 
 	//return _returnValue;
-	return State::END;
+	return State::GAME_LOCKER;
 }
 
 void Introduction::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)

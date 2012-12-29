@@ -3,6 +3,8 @@
 #ifndef _UTILITY_H_
 #define _UTILITY_H_
 
+#include <fmod.h>
+
 /*! \brief Euler class from Kojack
 */
 // Euler class for Ogre
@@ -377,6 +379,47 @@ struct OgreBulletPair
 	btRigidBody* btBody;
 };
 
+/*! \brief Allows convenient transport of data from Lua to C++.
+*/
+struct LuaData
+{
+	std::string dataName;
+	boost::variant<bool,std::string,double> data;
+};
+
+class LuaDataVisitor : public boost::static_visitor<>
+{
+public:
+	LuaDataVisitor() : number(0.0),boolean(false),string("") {}
+	bool boolean;
+	std::string string;
+	double number;
+
+	enum DataTypes
+	{
+		BOOLEAN = 1,
+		STRING,
+		DOUBLE
+	};
+
+	void reset();
+	bool check(DataTypes type);
+
+	void operator()(const double& d);
+	void operator()(const bool& b);
+	void operator()(const std::string& s);
+
+private:
+	bool _setBool,_setNum,_setStr;
+};
+
+struct SoundEvent
+{
+	std::string name;
+	FMOD_VECTOR position;
+	bool is3D;
+};
+
 namespace Utility
 {
 
@@ -397,6 +440,13 @@ namespace Utility
 	std::string wstringToString(const std::wstring& wstr);
 
 	void fixMinMax(Ogre::Vector3& min,Ogre::Vector3& max);
+
+	FMOD_VECTOR ogreToFMOD(const Ogre::Vector3& v);
+
+	bool getIntFromLuaData(LuaData& ld,int& i);
+	bool getDoubleFromLuaData(LuaData& ld,double& d);
+	bool getStringFromLuaData(LuaData& ld,std::string& str);
+	bool getBooleanFromLuaData(LuaData& ld,bool& b);
 
 	void rotateToTarget(Ogre::SceneNode* node,
 						const Ogre::Vector3& target,

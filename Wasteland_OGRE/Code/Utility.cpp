@@ -1,6 +1,57 @@
 #include "StdAfx.h"
 #include "Utility.h"
 
+void LuaDataVisitor::operator()(const double& d)
+{
+#ifdef _DEBUG
+	assert(_setBool || _setStr || _setNum);
+#endif
+	number = d;
+	_setNum = true;
+}
+
+void LuaDataVisitor::operator()(const std::string& s)
+{
+#ifdef _DEBUG
+	assert(_setBool || _setStr || _setNum);
+#endif
+	string = s;
+	_setStr = true;
+}
+
+void LuaDataVisitor::operator()(const bool& b)
+{
+#ifdef _DEBUG
+	assert(_setBool || _setStr || _setNum);
+#endif
+	boolean = b;
+	_setBool = true;
+}
+
+bool LuaDataVisitor::check(DataTypes type)
+{
+	if( (_setBool == false) && (_setStr == false) && (_setNum == false) )
+	{
+		return false;
+	}
+
+	switch(type)
+	{
+	case BOOLEAN:
+		return _setBool;
+		break;
+	case STRING:
+		return _setStr;
+		break;
+	case DOUBLE:
+		return _setNum;
+		break;
+	default:
+		return false;
+		break;
+	}
+}
+
 Ogre::Vector3 Utility::convert_btVector3(const btVector3& v)
 {
 	return Ogre::Vector3(v.x(),v.y(),v.z());
@@ -103,4 +154,77 @@ void Utility::rotateToTarget(Ogre::SceneNode* node,
 Ogre::Vector3 Utility::vector3_lerp(Ogre::Vector3& source,Ogre::Vector3& destination, float timeInMs,float lengthInSecs)
 {
 	return (source + (destination - source) * (timeInMs / (lengthInSecs * 1000.0f)));
+}
+
+FMOD_VECTOR Utility::ogreToFMOD(const Ogre::Vector3& v)
+{
+	FMOD_VECTOR outV;
+	outV.x = v.x;
+	outV.y = v.y;
+	outV.z = v.z;
+	return outV;
+}
+
+bool Utility::getIntFromLuaData(LuaData& ld,int& i)
+{
+	LuaDataVisitor v;
+	ld.data.apply_visitor(v);
+
+	if(v.check(LuaDataVisitor::DOUBLE))
+	{
+		i = static_cast<int>(v.number);
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool Utility::getDoubleFromLuaData(LuaData& ld,double& d)
+{
+	LuaDataVisitor v;
+	ld.data.apply_visitor(v);
+
+	if(v.check(LuaDataVisitor::DOUBLE))
+	{
+		d = v.number;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool Utility::getStringFromLuaData(LuaData& ld, std::string& str)
+{
+	LuaDataVisitor v;
+	ld.data.apply_visitor(v);
+
+	if(v.check(LuaDataVisitor::STRING))
+	{
+		str = v.string;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
+}
+
+bool Utility::getBooleanFromLuaData(LuaData& ld, bool& b)
+{
+	LuaDataVisitor v;
+	ld.data.apply_visitor(v);
+
+	if(v.check(LuaDataVisitor::BOOLEAN))
+	{
+		b = v.boolean;
+		return true;
+	}
+	else
+	{
+		return false;
+	}
 }
