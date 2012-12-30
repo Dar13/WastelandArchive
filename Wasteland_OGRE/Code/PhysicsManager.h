@@ -24,7 +24,7 @@ public:
 	~PhysicsManager();
 
 	//! Sets up Bullet Physics.
-	void Setup();
+	void Setup(btVector3& gravitySpeeds);
 	//! Steps the Bullet Physics simulation.
 	/*! 
 		\param deltaTime Elapsed time represented in seconds.

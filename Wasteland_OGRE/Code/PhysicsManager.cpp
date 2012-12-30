@@ -22,13 +22,15 @@ PhysicsManager::~PhysicsManager()
 	Shutdown(false);
 }
 
-void PhysicsManager::Setup()
+void PhysicsManager::Setup(btVector3& gravitySpeeds)
 {
 	_Config = new btDefaultCollisionConfiguration();
 	_Dispatch = new btCollisionDispatcher(_Config);
 	_OverlapPairCache = new btDbvtBroadphase();
 	_Solver = new btSequentialImpulseConstraintSolver();
 	_World = new btDiscreteDynamicsWorld(_Dispatch,_OverlapPairCache,_Solver,_Config);
+
+	setGravity(gravitySpeeds);
 }
 
 void PhysicsManager::setDebugDrawer(CDebugDraw* drawer)

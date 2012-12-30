@@ -38,11 +38,11 @@ namespace GameManager
 	OgreBulletPair createObject(Ogre::SceneManager* scene,
 								std::string& file,
 								PhysicsManager* phyManager,
-								GraphicsManager* graphicsManager);
+								GraphicsManager* graphicsManager = nullptr);
 	OgreBulletPair createObject(Ogre::SceneManager* scene,
 								object_t* objectInfo,
 								PhysicsManager* phyManager,
-								GraphicsManager* graphicsManager);
+								GraphicsManager* graphicsManager = nullptr);
 	Ogre::SceneNode* createObject(Ogre::SceneManager* scene,
 								  std::string& file,
 								  GraphicsManager* graphics);

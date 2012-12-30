@@ -233,6 +233,11 @@ void LuaManager::addLuaData(LuaData data,lua_State* lua)
 
 	return;
 }
+
+void LuaManager::purgeLuaData()
+{
+	_luaData.clear();
+}
 // /LuaData functions
 
 //SoundEvent functions
@@ -289,6 +294,14 @@ Ogre::Vector3 LuaManager::getVectorFromLuaTable(lua_State* lua,const std::string
 	lua_pop(lua,1);
 
 	return ret;
+}
+
+//Deep Clean method for LuaManager
+void LuaManager::deepClean()
+{
+	purgeData();
+	purgeEntities();
+	purgeLuaData();
 }
 
 LuaManager::~LuaManager()

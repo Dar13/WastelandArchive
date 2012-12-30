@@ -15,7 +15,7 @@ CrowdManager::CrowdManager(DetourInterface* detour,rcdtConfig* config)
 	  _obstacleAvoidance(true),
 	  _separation(false),
 	  _separationWeight(2.0f),
-	  _config(config)
+	  _config(*config)
 {
 	_crowd = dtAllocCrowd();
 	if(!_crowd)
@@ -110,8 +110,8 @@ int CrowdManager::addAgent(const Ogre::Vector3& position,float maxSpeedFactor)
 {
 	dtCrowdAgentParams ap;
 	memset(&ap,0,sizeof(ap));
-	ap.radius = _config->userConfig->getAgentRadius();
-	ap.height = _config->userConfig->getAgentHeight();
+	ap.radius = _config.userConfig->getAgentRadius();
+	ap.height = _config.userConfig->getAgentHeight();
 	ap.maxAcceleration = 8.0f;
 	ap.maxSpeed = (ap.height / 2.0f) * maxSpeedFactor;
 	ap.collisionQueryRange = ap.radius * 12.0f;

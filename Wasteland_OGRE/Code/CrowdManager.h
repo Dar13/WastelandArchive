@@ -50,7 +50,7 @@ private:
 
 	dtCrowd* _crowd;
 	DetourInterface* _detour;
-	rcdtConfig* _config;
+	rcdtConfig _config;
 
 	dtPolyRef _targetRef;
 	float _targetPosition[3];

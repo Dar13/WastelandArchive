@@ -67,7 +67,7 @@ namespace GameManager
 		OgreBulletPair retVal;
 
 		//Ogre part of this arrangement.
-		Ogre::SceneNode* node = graphicsManager->createSceneNode(scene,objectInfo,NULL);
+		Ogre::SceneNode* node = GraphicsManager::createSceneNode(scene,objectInfo,NULL);
 
 		btCollisionShape* shape = NULL;
 

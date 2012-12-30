@@ -37,17 +37,12 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 	_rootNode = _scene->getRootSceneNode();
 
 	_physics.reset(new PhysicsManager());
-	_physics->Setup();
 	btVector3 grav(0.0f,-9.8f,0.0f);
-	_physics->setGravity(grav);
+	_physics->Setup(grav);
 	std::cout << "Arena Locker - physics setup" << std::endl;
 
 	//list of physics-based entities and such
-	auto objList = list("resource\\xml\\lists\\arenalocker_list.xml");
-	for(auto itr = objList->file().begin(); itr != objList->file().end(); ++itr)
-	{
-		_pairs.push_back(GameManager::createObject(_scene,(*itr),_physics.get(),Graphics));
-	}
+	_loadPhysicsEntities("resource\\xml\\lists\\arenalocker_list.xml");
 	std::cout << "Arena Locker - models loaded" << std::endl;
 
 	std::vector<LevelData::Waypoint> waypoints;
@@ -57,40 +52,10 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 	std::cout << "Arena Locker - parser finished" << std::endl;
 
 	Ogre::Entity* levelEnt = static_cast<Ogre::Entity*>(_pairs.begin()->ogreNode->getAttachedObject(0));
-	InputGeometry levelGeometry(levelEnt);
-
-	RecastConfiguration params(.2f,2.5f);
-
-	_recast.reset(new RecastInterface(_scene,params));
-	_recast->getRecastConfig().walkableRadius = static_cast<int>(.2f); // zero?
-	_recast->buildNavMesh(&levelGeometry);
-	_recast->exportPolygonMeshToObj("ARENALOCKER_RECAST_MESH.obj");
-
-	rcdtConfig config;
-	config.recastConfig = &_recast->getRecastConfig();
-	config.userConfig = &_recast->getRecastBuildConfiguration();
-
-	_detour.reset(new DetourInterface(_recast->getPolyMesh(),_recast->getDetailMesh(),config));
-
-	_crowd.reset(new CrowdManager(_detour.get(),&config));
+	_navigationMeshSetup(levelEnt);
 
 	_AIManager.reset(new AIManager());
 	_AIManager->loadNPCs("resource\\xml\\lists\\arenalocker_npc_list.xml",_crowd.get(),_scene,.9f);
-
-	//NPC list
-	/*auto npcList = list("resource\\xml\\lists\\arenalocker_npc_list.xml");
-	for(auto itr = npcList->file().begin(); itr != npcList->file().end(); ++itr)
-	{
-		characterobject_t* obj = characterObject(*itr).release();
-		Ogre::SceneNode* node = GameManager::createCharacterObject(_scene,obj,Graphics);
-
-		NPCCharacter* npc = new NPCCharacter(obj->name(),obj->scriptName(),node,_crowd.get());
-		npc->setMaxSpeed(.9f);
-		_npcs.push_back(npc);
-		LuaManager::getSingleton().addEntity(npc->getName(),npc);
-
-		delete obj;
-	}*/
 
 	//sound(walking of feet and such)
 	sSound walkingSound;
@@ -142,10 +107,6 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 		_crowd->updateTick(delta / 1000.0f);
 
 		_AIManager->update(delta);
-		/*for(auto itr = _npcs.begin(); itr != _npcs.end(); ++itr)
-		{
-			(*itr)->update(delta);
-		}*/
 
 		if(!GameManager::UpdateManagers(Graphics,_physics.get(),delta))
 		{
@@ -200,6 +161,8 @@ void ArenaLocker::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIMana
 	Graphics->getRenderWindow()->removeAllViewports();
 
 	Graphics->cleanAndDestroySceneManager(_scene);
+
+	LuaManager::getSingletonPtr()->deepClean();
 }
 
 void ArenaLocker::_handleScript(unsigned long deltaTime)
@@ -219,17 +182,6 @@ void ArenaLocker::_handleSoundEvents(std::vector<SoundEvent>& events, SoundManag
 	{
 		return;
 	}
-	//std::map<sSound,FMOD_VECTOR> soundsToPlay;
-	/*auto findSoundStruct = [this] (std::string& name) -> sSound
-	{
-		for(auto i = _sounds.begin(); i != _sounds.end(); ++i)
-		{
-			if((*i) == name)
-			{
-				return (*i);
-			}
-		}
-	};*/
 
 	sSound sndTmp;
 	FMOD_VECTOR vel; vel.x = 0; vel.y = 0; vel.z = 0;
@@ -258,4 +210,33 @@ void ArenaLocker::_handleSoundEvents(std::vector<SoundEvent>& events, SoundManag
 	events.clear();
 
 	return;
+}
+
+void ArenaLocker::_loadPhysicsEntities(std::string fileName)
+{
+	auto objList = list(fileName.c_str());
+	for(auto itr = objList->file().begin(); itr != objList->file().end(); ++itr)
+	{
+		_pairs.push_back(GameManager::createObject(_scene,(*itr),_physics.get()));
+	}
+}
+
+void ArenaLocker::_navigationMeshSetup(Ogre::Entity* levelEntity)
+{
+	InputGeometry levelGeometry(levelEntity);
+
+	RecastConfiguration params(.2f,2.5f);
+
+	_recast.reset(new RecastInterface(_scene,params));
+	_recast->getRecastConfig().walkableRadius = static_cast<int>(.2f); // zero?
+	_recast->buildNavMesh(&levelGeometry);
+	_recast->exportPolygonMeshToObj("ARENALOCKER_RECAST_MESH.obj");
+
+	rcdtConfig config;
+	config.recastConfig = &_recast->getRecastConfig();
+	config.userConfig = &_recast->getRecastBuildConfiguration();
+
+	_detour.reset(new DetourInterface(_recast->getPolyMesh(),_recast->getDetailMesh(),config));
+
+	_crowd.reset(new CrowdManager(_detour.get(),&config));
 }

@@ -74,7 +74,7 @@ public:
 		\param scene The SceneManager that will create the SceneNode.
 		\param objectInfo Class that holds all loaded information from the applicable xml file.
 	*/
-	Ogre::SceneNode* createSceneNode(Ogre::SceneManager* scene, object_t* objectInfo,Ogre::SceneNode* parent);
+	static Ogre::SceneNode* createSceneNode(Ogre::SceneManager* scene, object_t* objectInfo,Ogre::SceneNode* parent);
 	Ogre::SceneNode* createSceneNode(Ogre::SceneManager* scene, weapon_t* objectInfo,Ogre::SceneNode* parent = nullptr);
 	static Ogre::SceneNode* createSceneNode(Ogre::SceneManager* scene, characterobject_t* objectInfo,Ogre::SceneNode* parent = nullptr);
 

@@ -39,6 +39,10 @@ private:
 
 	void _handleSoundEvents(std::vector<SoundEvent>& events, SoundManager* Sound);
 
+	void _loadPhysicsEntities(std::string fileName);
+
+	void _navigationMeshSetup(Ogre::Entity* levelEntity);
+
 	//Pause menu variable
 	std::unique_ptr<PauseMenu> _pauseMenu;
 
@@ -63,11 +67,7 @@ private:
 	std::unique_ptr<RecastInterface> _recast;
 
 	std::vector<sSound> _sounds;
-	//std::vector<FMOD::Channel*> _channels;
 
-	FMOD::Channel* _footsteps;
-
-	std::vector<NPCCharacter*> _npcs;
 	std::unique_ptr<AIManager> _AIManager;
 
 };

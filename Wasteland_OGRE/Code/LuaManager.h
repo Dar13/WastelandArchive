@@ -67,12 +67,13 @@ public:
 	void purgeData();
 	//NOTE: The calling function takes full responsibility of the subsequent handling of the pointer.
 	//Any memory corruption called by the calling function can crash entire game, as this Manager is consistent
-	//throughout the game, unlike the physics engine or the player construct.
+	//throughout the game, unlike the physics engine or the navmesh.
 	void* _getData(const std::string& name);
 
 	//LuaData functions
 	bool searchForLuaData(std::string name,LuaData* luaData);
 	void addLuaData(LuaData data,lua_State* lua);
+	void purgeLuaData();
 
 	//SoundEvent functions
 	std::vector<SoundEvent>& getSoundEventQueue() { return _soundEvents; }
@@ -84,6 +85,9 @@ public:
 	static std::string getStringFromLuaTable(lua_State* lua,const std::string& field);
 	static Ogre::Vector3 getVectorFromLuaTable(lua_State* lua,const std::string& field);
 	static Ogre::Vector3 getVectorFromLua(lua_State* lua,int tableIndex);
+
+	//Comprehensive cleaning function. MUST BE CALLED IN EVERY AppState's Shutdown() METHOD!
+	void deepClean();
 
 private:
 	lua_State* luaState;

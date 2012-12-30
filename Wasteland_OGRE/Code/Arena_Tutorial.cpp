@@ -82,9 +82,8 @@ void ArenaTutorial::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManag
 
 	//physics setup
 	_physics.reset(new PhysicsManager() );
-	_physics->Setup();
 	btVector3 grav(0.0f,-9.8f,0.0f);
-	_physics->setGravity(grav);
+	_physics->Setup(grav);
 
 	//using a list instead of hardcoded files
 	std::auto_ptr<list_t> objList = list("resource\\xml\\lists\\arena_list.xml");
