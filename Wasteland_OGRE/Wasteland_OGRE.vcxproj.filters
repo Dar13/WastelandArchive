@@ -255,6 +255,9 @@
     <ClInclude Include="Code\Lobby.h">
       <Filter>Include Files\State\Lobby</Filter>
     </ClInclude>
+    <ClInclude Include="Code\interfaces\soundlist.hxx">
+      <Filter>Include Files\XML\interfaces</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Code\StateManager.cpp">
@@ -382,6 +385,9 @@
     </ClCompile>
     <ClCompile Include="Code\Lobby.cpp">
       <Filter>Include Files\State\Lobby</Filter>
+    </ClCompile>
+    <ClCompile Include="Code\interfaces\soundlist.cxx">
+      <Filter>Include Files\XML\interfaces</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

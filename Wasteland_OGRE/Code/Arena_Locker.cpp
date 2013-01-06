@@ -13,6 +13,8 @@
 
 #include "SoundManager.h"
 
+#include "interfaces\soundlist.hxx"
+
 ArenaLocker::ArenaLocker()
 	: _camera(nullptr),
 	  _view(nullptr),
@@ -57,14 +59,7 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 	_AIManager.reset(new AIManager());
 	_AIManager->loadNPCs("resource\\xml\\lists\\arenalocker_npc_list.xml",_crowd.get(),_scene,.9f);
 
-	//sound(walking of feet and such)
-	sSound walkingSound;
-	walkingSound.is3D = true;
-	walkingSound.isLooping = false;
-	walkingSound.name = "lockerFootsteps";
-	walkingSound.type = SFX;
-	Sound->createSound(walkingSound,"resource\\music\\locker\\footsteps.mp3");
-	_sounds.push_back(walkingSound);
+	_loadSounds("resource\\xml\\arena_locker\\locker_soundlist.xml",Sound);
 
 	_pauseMenu.reset(new PauseMenu(State::GAME_LOCKER));
 	_pauseMenu->Setup(Input,Graphics,Gui,Sound);
@@ -219,6 +214,22 @@ void ArenaLocker::_loadPhysicsEntities(std::string fileName)
 	{
 		_pairs.push_back(GameManager::createObject(_scene,(*itr),_physics.get()));
 	}
+}
+
+void ArenaLocker::_loadSounds(std::string fileName, SoundManager* Sound)
+{
+	auto sndList = soundList(fileName.c_str());
+	sSound sound;
+	for(auto itr = sndList->sound().begin(); itr != sndList->sound().end(); ++itr)
+	{
+		sound.is3D = itr->is3D();
+		sound.isLooping = itr->looping();
+		sound.name = itr->name();
+		Sound->createSound(sound,itr->filename().c_str());
+		_sounds.push_back(sound);
+	}
+
+	return;
 }
 
 void ArenaLocker::_navigationMeshSetup(Ogre::Entity* levelEntity)

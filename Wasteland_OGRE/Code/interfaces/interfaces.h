@@ -7,5 +7,6 @@
 #include "object.hxx"
 #include "weapon.hxx"
 #include "characterobject.hxx"
+#include "soundlist.hxx"
 
 #endif

@@ -40,6 +40,7 @@ private:
 	void _handleSoundEvents(std::vector<SoundEvent>& events, SoundManager* Sound);
 
 	void _loadPhysicsEntities(std::string fileName);
+	void _loadSounds(std::string fileName, SoundManager* Sound);
 
 	void _navigationMeshSetup(Ogre::Entity* levelEntity);
 
