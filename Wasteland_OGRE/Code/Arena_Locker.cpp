@@ -27,7 +27,8 @@ ArenaLocker::ArenaLocker()
 
 void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
 {
-	_scene = Graphics->getRoot()->createSceneManager(Ogre::ST_INTERIOR,"arenaLocker");
+	_scene = Graphics->createSceneManager(Ogre::ST_INTERIOR,"arenaLocker");
+	_rootNode = _scene->getRootSceneNode();
 
 	_camera = _scene->createCamera("arenaLockerCam");
 	_camera->setAspectRatio(16.0f / 9.0f);
@@ -35,8 +36,6 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 	_view = Graphics->getRenderWindow()->addViewport(_camera);
 	_view->setBackgroundColour(Ogre::ColourValue(0,0,0));
 	std::cout << "Arena Locker - scene manager and camera/viewport created " << std::endl;
-
-	_rootNode = _scene->getRootSceneNode();
 
 	_physics.reset(new PhysicsManager());
 	btVector3 grav(0.0f,-9.8f,0.0f);
@@ -58,11 +57,14 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 
 	_AIManager.reset(new AIManager());
 	_AIManager->loadNPCs("resource\\xml\\lists\\arenalocker_npc_list.xml",_crowd.get(),_scene,.9f);
+	std::cout << "NPCs loaded" << std::endl;
 
 	_loadSounds("resource\\xml\\arena_locker\\locker_soundlist.xml",Sound);
+	std::cout << "Sounds loaded" << std::endl;
 
 	_pauseMenu.reset(new PauseMenu(State::GAME_LOCKER));
 	_pauseMenu->Setup(Input,Graphics,Gui,Sound);
+	std::cout << "Pause menu initialized" << std::endl;
 }
 
 int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)

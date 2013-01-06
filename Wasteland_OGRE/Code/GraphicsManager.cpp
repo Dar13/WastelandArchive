@@ -516,6 +516,11 @@ bool GraphicsManager::isPointInTriangle2D(const Ogre::Vector3& pointA,const Ogre
 }
 
 //Frequently called functions
+Ogre::SceneManager* GraphicsManager::createSceneManager(Ogre::SceneType type, std::string name)
+{
+	return _Root->createSceneManager(type,name);
+}
+
 void GraphicsManager::cleanAndDestroySceneManager(Ogre::SceneManager* scene)
 {
 	scene->destroyAllCameras();

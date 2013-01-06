@@ -65,6 +65,8 @@ public:
 	//Some frequently used functions, simplified for the sake of cleaner code
 	//!Gets current time while converting it to float.
 	float getCurrentTimeMs() { return static_cast<float>(_Timer->getMilliseconds()); }
+	//!Creates SceneManager
+	Ogre::SceneManager* createSceneManager(Ogre::SceneType sceneType, std::string name);
 	//!Cleans and Destroys given SceneManager
 	void cleanAndDestroySceneManager(Ogre::SceneManager* scene);
 
