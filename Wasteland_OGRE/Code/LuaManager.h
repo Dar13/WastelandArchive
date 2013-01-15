@@ -92,6 +92,9 @@ public:
 	//Comprehensive cleaning function. MUST BE CALLED IN EVERY AppState's Shutdown() METHOD!
 	void deepClean();
 
+	//for debugging purposes only!
+	void _printStack();
+
 private:
 	lua_State* luaState;
 
@@ -110,7 +113,7 @@ private:
 class argVisitor : public boost::static_visitor<>
 {
 public:
-	argVisitor() : numeric(0),rational(0.0),string("") {}
+	argVisitor() : numeric(-9999),rational(-9999.99),string("") {}
 	int numeric;
 	double rational;
 	std::string string;

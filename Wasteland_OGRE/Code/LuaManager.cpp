@@ -82,7 +82,7 @@ void LuaManager::callFunction(const std::string& funcName,int expectedNumReturn)
 void LuaManager::prepFunction(const std::string& funcName)
 {
 	lua_getglobal(luaState,funcName.c_str());
-	if(lua_isnil(luaState,-1)) { std::cout << "Lua can't find function name!" << std::endl; }
+	if(lua_isnoneornil(luaState,-1)) { std::cout << "Lua can't find function name!" << std::endl; }
 	if(!lua_isfunction(luaState,-1)) { std::cout << "Lua function not pushed to stack!!" << std::endl; }
 }
 
@@ -128,6 +128,33 @@ void LuaManager::pushFunctionArgVector(const Ogre::Vector3& vector)
 		lua_pushnumber(luaState,vector[i]);
 		lua_settable(luaState,top);
 		
+	}
+}
+
+void LuaManager::_printStack()
+{
+	int top = lua_gettop(luaState);
+
+	std::cout << "Total in stack : " << top << std::endl;
+
+	for(int i = 1; i <= top; ++i)
+	{
+		int t = lua_type(luaState,i);
+		switch(t)
+		{
+		case LUA_TSTRING:
+			std::cout << " - String : " << lua_tostring(luaState,i) << std::endl;
+			break;
+		case LUA_TBOOLEAN:
+			std::cout << " - Bool : " << lua_toboolean(luaState,i) << std::endl;
+			break;
+		case LUA_TNUMBER:
+			std::cout << " - Number : " << lua_tonumber(luaState,i) << std::endl;
+			break;
+		default:
+			std::cout << lua_typename(luaState,t) << std::endl;
+			break;
+		}
 	}
 }
 
@@ -317,13 +344,13 @@ void argVisitor::getType(bool* num,bool* rat,bool* str)
 	*num = false;
 	*rat = false;
 	*str = false;
-	if(numeric != 0)
+	if(numeric != -9999)
 	{
 		*num = true;
 		return;
 	}
 	
-	if( fabs(rational - 0.0) > std::numeric_limits<double>::epsilon())
+	if( fabs(rational + 9999.99) > std::numeric_limits<double>::epsilon())
 	{
 		*rat = true;
 		return;

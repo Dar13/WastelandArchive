@@ -233,8 +233,11 @@ void ArenaLocker::_handleScript()
 		_cameraMovementTime = 0.0f;
 	}
 
+	LuaManager::getSingletonPtr()->clearLuaStack();
+
 	LuaManager::getSingletonPtr()->prepFunction("Bezier_Test");
 	LuaManager::getSingletonPtr()->pushFunctionArg(_cameraMovementTime);
+	//LuaManager::getSingletonPtr()->_printStack();
 	LuaManager::getSingletonPtr()->callFunction(1,1);
 
 	//get the vector from it.
