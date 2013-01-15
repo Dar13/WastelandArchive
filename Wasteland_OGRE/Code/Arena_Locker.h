@@ -35,7 +35,9 @@ public:
 	void Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound);
 
 private:
-	void _handleScript(unsigned long deltaTime);
+	void _handleScript();
+
+	void _handleCamera();
 
 	void _handleSoundEvents(std::vector<SoundEvent>& events, SoundManager* Sound);
 
@@ -60,6 +62,11 @@ private:
 	Ogre::SceneManager* _scene;
 	Ogre::SceneNode* _rootNode;
 
+
+	//TEST VARIABLE
+	Ogre::SceneNode* _sphere;
+	//TEST VARIABLE
+
 	std::unique_ptr<PhysicsManager> _physics;
 
 	std::unique_ptr<CrowdManager> _crowd;
@@ -70,6 +77,13 @@ private:
 	std::vector<sSound> _sounds;
 
 	std::unique_ptr<AIManager> _AIManager;
+
+	//Very state-specific variables
+	//directly related to the movement of the camera
+	Ogre::Vector3 _cameraPositionTarget;
+	Ogre::Vector3 _oldCameraPositionTarget;
+	Ogre::Vector3 _cameraLookTarget;
+	float _cameraMovementTime;
 
 };
 

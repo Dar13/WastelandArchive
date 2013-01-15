@@ -37,8 +37,8 @@ void StateManager::Setup(InputManager* inputManager,GraphicsManager* graphicsMan
 
 void StateManager::Run()
 {
-	int curState = State::INTRO; //true start value
-	//int curState=State::MENU; //will really start at INTRO
+	//int curState = State::INTRO; //true start value
+	int curState = State::GAME_LOCKER;
 	int oldState = curState;
 
 	while(curState != State::END)

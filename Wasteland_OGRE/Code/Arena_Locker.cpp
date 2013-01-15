@@ -20,7 +20,8 @@ ArenaLocker::ArenaLocker()
 	  _view(nullptr),
 	  _rootNode(nullptr),
 	  _stateShutdown(nullptr),
-	  _scene(nullptr)
+	  _scene(nullptr),
+	  _cameraMovementTime(0.0f)
 {
 	_returnValue = State::GAME_LOBBY;
 }
@@ -35,7 +36,7 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 	_camera->setNearClipDistance(0.001f);
 	_view = Graphics->getRenderWindow()->addViewport(_camera);
 	_view->setBackgroundColour(Ogre::ColourValue(0,0,0));
-	std::cout << "Arena Locker - scene manager and camera/viewport created " << std::endl;
+	std::cout << "Arena Locker - scene manager and camera/viewport created" << std::endl;
 
 	_physics.reset(new PhysicsManager());
 	btVector3 grav(0.0f,-9.8f,0.0f);
@@ -55,8 +56,8 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 	Ogre::Entity* levelEnt = static_cast<Ogre::Entity*>(_pairs.begin()->ogreNode->getAttachedObject(0));
 	_navigationMeshSetup(levelEnt);
 
-	_AIManager.reset(new AIManager());
-	_AIManager->loadNPCs("resource\\xml\\lists\\arenalocker_npc_list.xml",_crowd.get(),_scene,.9f);
+	//_AIManager.reset(new AIManager());
+	//_AIManager->loadNPCs("resource\\xml\\lists\\arenalocker_npc_list.xml",_crowd.get(),_scene,.9f);
 	std::cout << "NPCs loaded" << std::endl;
 
 	_loadSounds("resource\\xml\\arena_locker\\locker_soundlist.xml",Sound);
@@ -65,11 +66,21 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 	_pauseMenu.reset(new PauseMenu(State::GAME_LOCKER));
 	_pauseMenu->Setup(Input,Graphics,Gui,Sound);
 	std::cout << "Pause menu initialized" << std::endl;
+
+	_oldCameraPositionTarget = Ogre::Vector3(-7,.36f,-8.0f);
+	LuaManager::getSingleton().callFunction("Arena_InitCameraMovement",1);
+	_cameraPositionTarget = LuaManager::getVectorFromLua(LuaManager::getSingletonPtr()->getLuaState(),1);
+	LuaManager::getSingleton().clearLuaStack();
+
+	//TEST
+	_sphere = Graphics->createSceneNode(_scene,object("resource/xml/test_sphere.xml").get(),_rootNode);
+	//TEST
 }
 
 int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
 {
-	_camera->setPosition(Ogre::Vector3(0,0,0));
+	//_camera->setPosition(Ogre::Vector3(-7.0f,.36f,-8.07f));
+	_camera->setPosition(Ogre::Vector3(-20.0f,10.0f,-10.0f));
 	_camera->setFarClipDistance(1000);
 	_camera->lookAt(Ogre::Vector3::ZERO);
 
@@ -81,7 +92,7 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 	bool exitNow = _stateShutdown;
 	bool paused = false;
 
-	float time,delta,oldtime = static_cast<float>(Graphics->getTimer()->getMilliseconds());
+	float time; _oldTime = Graphics->getCurrentTimeMs();
 	while(!_stateShutdown)
 	{
 		//updates input manager.
@@ -91,21 +102,24 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 		}
 
 		time = Graphics->getCurrentTimeMs();
-		delta = time - oldtime;
-		oldtime = time;
+		_deltaTime = time - _oldTime;
+		_oldTime = time;
 
 		if(paused)
 		{
 			paused = false;
-			delta = 16.6f;
+			_deltaTime = 16.6f;
 		}
 
+		_handleScript();
+		//_handleCamera();
+
 		//Update the crowd manager
-		_crowd->updateTick(delta / 1000.0f);
+		//_crowd->updateTick(_deltaTime / 1000.0f);
 
-		_AIManager->update(delta);
+		//_AIManager->update(_deltaTime);
 
-		if(!GameManager::UpdateManagers(Graphics,_physics.get(),delta))
+		if(!GameManager::UpdateManagers(Graphics,_physics.get(),_deltaTime))
 		{
 			_stateShutdown = true;
 		}
@@ -162,15 +176,120 @@ void ArenaLocker::Shutdown(InputManager* Input,GraphicsManager* Graphics,GUIMana
 	LuaManager::getSingletonPtr()->deepClean();
 }
 
-void ArenaLocker::_handleScript(unsigned long deltaTime)
+void ArenaLocker::_handleScript()
 {
-	LuaManager::getSingleton().prepFunction("arena_Locker");
-	LuaManager::getSingleton().pushFunctionArg(static_cast<double>(deltaTime));
-	Ogre::Vector3 pos(1,2,4);
-	LuaManager::getSingleton().addDataPointer("playerPosition",&pos);
-	LuaManager::getSingleton().pushFunctionArgVector(pos);
-	LuaManager::getSingleton().callFunction(2,0);
-	LuaManager::getSingleton().removeDataPointer("playerPosition");
+	//LuaManager* lua = LuaManager::getSingletonPtr();
+	//lua->prepFunction("Arena_CameraMovement");
+	//lua->pushFunctionArgVector(_camera->getPosition());
+
+	//if(_deltaTime == 0)
+	//{
+	//	lua->pushFunctionArg(16.0f);
+	//}
+	//else
+	//{
+	//	lua->pushFunctionArg(_deltaTime);
+	//}
+	//lua->callFunction(2,2);
+
+	////check for returns
+	//lua_State* luaS = lua->getLuaState();
+	////assume it's a vector that's being returned. Otherwise some seriously fucked up shit is going on.
+	//Ogre::Vector3 targetVector = Ogre::Vector3::UNIT_X;
+
+	//if(lua_istable(luaS,1))
+	//{
+	//	targetVector = LuaManager::getVectorFromLua(luaS,1);
+	//	//std::cout << targetVector << std::endl;
+	//}
+
+	//if(lua_isnumber(luaS,2))
+	//{
+	//	_cameraMovementTime = lua_tonumber(luaS,2);
+	//}
+	//else
+	//{
+	//	_cameraMovementTime = 0.0f;
+	//}
+
+	//if(targetVector == Ogre::Vector3::ZERO)
+	//{
+	//	_stateShutdown = true;
+	//}
+	//else
+	//{
+	//	//only change if it's not the same target!
+	//	if(targetVector != _cameraPositionTarget)
+	//	{
+	//		_oldCameraPositionTarget = _cameraPositionTarget;
+	//		_cameraPositionTarget = targetVector;
+	//	}
+	//}
+
+	_cameraMovementTime += .005f;
+
+	if(_cameraMovementTime > 1.0f)
+	{
+		_cameraMovementTime = 0.0f;
+	}
+
+	LuaManager::getSingletonPtr()->prepFunction("Bezier_Test");
+	LuaManager::getSingletonPtr()->pushFunctionArg(_cameraMovementTime);
+	LuaManager::getSingletonPtr()->callFunction(1,1);
+
+	//get the vector from it.
+	Ogre::Vector2 tmp = Ogre::Vector2::ZERO;
+	lua_State* l = LuaManager::getSingleton().getLuaState();
+	if(lua_istable(l,1))
+	{
+		for(int i = 1; i < 3; ++i)
+		{
+			lua_pushnumber(l,i);
+			lua_gettable(l,1);
+			if(lua_isnumber(l,-1))
+			{
+				tmp[i-1] = static_cast<float>(lua_tonumber(l,-1));
+			}
+			else
+			{
+				tmp[i-1] = 0;
+			}
+			lua_pop(l,1);
+		}
+	}
+
+	if(tmp != Ogre::Vector2::ZERO)
+	{
+		//std::cout << tmp << std::endl;
+		//move something along it.
+		_sphere->setPosition(tmp.x,1.0f,tmp.y);
+	}
+
+	LuaManager::getSingletonPtr()->clearLuaStack();
+
+	//handle updating the camera in another function.
+	//keeps this one cleaner.
+
+	return;
+}
+
+void ArenaLocker::_handleCamera()
+{
+	//_cameraMovementTime += _deltaTime;
+	//position...
+	if(_cameraPositionTarget == _camera->getPosition())
+	{
+		//do nothing
+	}
+
+	//otherwise, let's go about updating the position
+	Ogre::Vector3 newPos = Utility::vector3_lerp(_oldCameraPositionTarget,_cameraPositionTarget,_cameraMovementTime,3.5);
+	_camera->setPosition(newPos);
+
+	//rotation...
+	_camera->lookAt(_cameraPositionTarget);
+
+	return;
 }
 
 void ArenaLocker::_handleSoundEvents(std::vector<SoundEvent>& events, SoundManager* Sound)

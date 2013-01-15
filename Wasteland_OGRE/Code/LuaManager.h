@@ -42,6 +42,9 @@ public:
 	void pushFunctionArgVector(const Ogre::Vector3& vector);
 	void pushFunctionArgVector(const btVector3& vector);
 
+	//Function cleanup
+	void clearLuaStack() { lua_settop(luaState,0); }
+
 	//Entity handling functions.
 	void addEntity(const std::string& name,LevelData::BaseEntity* entity);
 	LevelData::BaseEntity* getEntity(const std::string& name) 
