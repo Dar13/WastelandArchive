@@ -67,6 +67,8 @@ public:
 	void setMusicFadeVolume(float volume) { if(_musicFade) { _musicFadeVolume = volume; } }
 	float getDefaultMusicVolume() { return _mscVolume; }
 
+	FMOD::System* _getSystem() { return _system; }
+
 private:
 	//void _fadeTransition();
 	void _reportError();

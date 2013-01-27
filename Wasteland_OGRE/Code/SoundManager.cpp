@@ -236,6 +236,11 @@ void SoundManager::createSound(sSound& sound,const std::string& fileName)
 	{
 		mode = FMOD_LOOP_NORMAL;
 	}
+	else
+	{
+		mode = FMOD_LOOP_OFF;
+	}
+
 	if(sound.is3D)
 	{
 		if(mode == 0)
@@ -297,6 +302,15 @@ FMOD::Channel* SoundManager::playSound(const sSound& sound)
 	case CHARACTER:
 		channel->setVolume(_charVolume);
 		break;
+	}
+
+	if(sound.isLooping)
+	{
+		channel->setLoopCount(-1);
+	}
+	else
+	{
+		channel->setLoopCount(0);
 	}
 
 	channel->setPaused(false);

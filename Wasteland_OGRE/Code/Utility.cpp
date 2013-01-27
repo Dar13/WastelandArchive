@@ -156,6 +156,11 @@ Ogre::Vector3 Utility::vector3_lerp(Ogre::Vector3& source,Ogre::Vector3& destina
 	return (source + (destination - source) * (timeInMs / (lengthInSecs * 1000.0f)));
 }
 
+Ogre::Vector3 Utility::vector3_lerp(Ogre::Vector3& source,Ogre::Vector3& destination, float progress)
+{
+	return (source + (destination - source) * progress);
+}
+
 FMOD_VECTOR Utility::ogreToFMOD(const Ogre::Vector3& v)
 {
 	FMOD_VECTOR outV;

@@ -83,6 +83,8 @@ private:
 	Ogre::Vector3 _cameraPositionTarget;
 	Ogre::Vector3 _oldCameraPositionTarget;
 	Ogre::Vector3 _cameraLookTarget;
+	Ogre::Vector3 _oldCameraLookTarget;
+	Ogre::Quaternion _oldCameraOrientation;
 	float _cameraMovementTime;
 
 };

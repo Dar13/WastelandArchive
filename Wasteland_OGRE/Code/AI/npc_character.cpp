@@ -55,6 +55,8 @@ void NPCCharacter::update(float deltaTimeInMilliSecs)
 	updatePosition(deltaTimeInMilliSecs/1000.0f);
 
 	lua_State* lua = LuaManager::getSingleton().getLuaState();
+
+	LuaManager::getSingleton().clearLuaStack();
 	
 	lua_pushstring(lua,_name.c_str());
 	lua_setglobal(lua,"callingEntity");

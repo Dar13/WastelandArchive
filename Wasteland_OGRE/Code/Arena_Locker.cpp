@@ -67,9 +67,14 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 	_pauseMenu->Setup(Input,Graphics,Gui,Sound);
 	std::cout << "Pause menu initialized" << std::endl;
 
-	_oldCameraPositionTarget = Ogre::Vector3(-7,.36f,-8.0f);
-	LuaManager::getSingleton().callFunction("Arena_InitCameraMovement",1);
+	_oldCameraPositionTarget = Ogre::Vector3(-7,1.0f,-8.0f);
+	LuaManager::getSingleton().callFunction("Arena_InitCameraMovement",2);
 	_cameraPositionTarget = LuaManager::getVectorFromLua(LuaManager::getSingletonPtr()->getLuaState(),1);
+	Ogre::Vector3 startingLook = LuaManager::getVectorFromLua(LuaManager::getSingletonPtr()->getLuaState(),2);
+	_oldCameraLookTarget = startingLook;
+	_cameraLookTarget = startingLook;
+	_camera->rotate(_camera->getDirection().getRotationTo(startingLook));
+	_oldCameraOrientation = _camera->getOrientation();
 	LuaManager::getSingleton().clearLuaStack();
 
 	//TEST
@@ -79,7 +84,7 @@ void ArenaLocker::Setup(InputManager* Input,GraphicsManager* Graphics,GUIManager
 
 int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* Gui,SoundManager* Sound)
 {
-	//_camera->setPosition(Ogre::Vector3(-7.0f,.36f,-8.07f));
+	//_camera->setPosition(Ogre::Vector3(-7.0f,1.0f,-8.07f));
 	_camera->setPosition(Ogre::Vector3(-20.0f,10.0f,-10.0f));
 	_camera->setFarClipDistance(1000);
 	_camera->lookAt(Ogre::Vector3::ZERO);
@@ -111,8 +116,8 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 			_deltaTime = 16.6f;
 		}
 
-		_handleScript();
-		_handleCamera();
+		//_handleScript();
+		//_handleCamera();
 
 		//Update the crowd manager
 		_crowd->updateTick(_deltaTime / 1000.0f);
@@ -125,7 +130,11 @@ int ArenaLocker::Run(InputManager* Input,GraphicsManager* Graphics,GUIManager* G
 		}
 
 		_handleSoundEvents(LuaManager::getSingletonPtr()->getSoundEventQueue(),Sound);
-		Sound->Update(Input->getConfiguration());
+		Sound->Update(Input->getConfiguration(),_camera);
+
+		int numOfChannels;
+		Sound->_getSystem()->getChannelsPlaying(&numOfChannels);
+		//std::cout << numOfChannels << std::endl;
 
 		if(Input->escapePressed() && !paused)
 		{
@@ -191,26 +200,34 @@ void ArenaLocker::_handleScript()
 	{
 		lua->pushFunctionArg(_deltaTime);
 	}
-	lua->callFunction(1,2);
+	lua->callFunction(1,3);
 
-	//check for returns
+	//check for returned values
 	lua_State* luaS = lua->getLuaState();
 	//assume it's a vector that's being returned. Otherwise some seriously fucked up shit is going on.
 	Ogre::Vector3 targetVector = Ogre::Vector3::UNIT_X;
+	Ogre::Vector3 lookVector = Ogre::Vector3::UNIT_X;
 	if(lua_istable(luaS,1))
 	{
 		targetVector = LuaManager::getVectorFromLua(luaS,1);
 	}
 
-	if(lua_isnumber(luaS,2))
+	if(lua_istable(luaS,2))
 	{
-		_cameraMovementTime = lua_tonumber(luaS,2);
+		lookVector = LuaManager::getVectorFromLua(luaS,2);
+	}
+
+	//Movement time
+	if(lua_isnumber(luaS,3))
+	{
+		_cameraMovementTime = lua_tonumber(luaS,3);
 	}
 	else
 	{
 		_cameraMovementTime = 0.0f;
 	}
 
+	//Target Vector
 	if(targetVector == Ogre::Vector3::ZERO)
 	{
 		_stateShutdown = true;
@@ -219,6 +236,22 @@ void ArenaLocker::_handleScript()
 	{
 		_cameraPositionTarget = targetVector;
 	}
+
+	//Look vector
+	if(lookVector != Ogre::Vector3::ZERO)
+	{
+		//lookVector = _camera->getPosition() + lookVector;
+		if(lookVector != _oldCameraLookTarget)
+		{
+			std::cout << "CameraLookTarget changed!" << std::endl;
+			std::cout << "New LookTarget:" << lookVector << std::endl;
+			_oldCameraLookTarget = _cameraLookTarget;
+			_cameraLookTarget = lookVector;
+			_oldCameraOrientation = _camera->getOrientation();
+		}
+	}
+
+	
 
 	/*
 	_cameraMovementTime += .001f;
@@ -269,12 +302,28 @@ void ArenaLocker::_handleScript()
 
 void ArenaLocker::_handleCamera()
 {
-	//_cameraMovementTime += _deltaTime;
 	//position...
-	_camera->setPosition(_cameraPositionTarget);
+	//_camera->setPosition(_cameraPositionTarget);
 	
 	//rotation...
-	_camera->lookAt(_cameraPositionTarget);
+	//in the script, the cameraMovementTime is divided into three to give the LookProgress counter access to all of the lookProg states.
+	float progress = _cameraMovementTime;
+	if(progress > .33 && progress <= .67f)
+	{
+		progress -= .33f;
+		progress *= 3;
+	}
+	else if(progress > .67f)
+	{
+		progress -= .67f;
+		progress *= 3;
+	}
+	else
+	{
+		progress *= 3;
+	}
+	Ogre::Vector3 look = Utility::vector3_lerp(_oldCameraLookTarget,_cameraLookTarget,progress);
+	_camera->setDirection(look);
 
 	return;
 }
